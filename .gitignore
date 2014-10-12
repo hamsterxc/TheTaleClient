@@ -1,6 +1,7 @@
 /.gradle
 /.idea
 /local.properties
+/gradle.properties
 
 /app/src/androidTest
 /app/src/main/res/raw
