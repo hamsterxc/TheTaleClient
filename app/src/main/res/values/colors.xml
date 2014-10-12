@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="artifact_common">#333333</color>
+    <color name="artifact_epic">#a335ee</color>
+    <color name="artifact_power_physical">#aa4444</color>
+    <color name="artifact_power_magical">#4444aa</color>
+    <color name="artifact_rare">#0070dd</color>
+
+    <color name="card_common">#333333</color>
+    <color name="card_uncommon">#30b030</color>
+    <color name="card_rare">#0070dd</color>
+    <color name="card_epic">#a335ee</color>
+    <color name="card_legendary">#ff8000</color>
+
+    <color name="common_delimiter">#cccccc</color>
+    <color name="common_error">#ff0000</color>
+    <color name="common_link">#0088cc</color>
+
+    <color name="drawer_background">@android:color/white</color>
+    <color name="drawer_item_background_pressed">#660099cc</color>
+
+    <color name="game_additional_info">#999999</color>
+
+    <color name="game_info_level_background">#bbbbbb</color>
+    <color name="game_info_level_text">#ffffff</color>
+
+</resources>

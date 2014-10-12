@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="2dp"
+    android:layout_marginBottom="2dp"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:id="@+id/equipment_icon"
+        android:layout_width="@dimen/game_info_icon_size"
+        android:layout_height="@dimen/game_info_icon_size"
+        android:layout_marginRight="8dp"/>
+
+    <TextView
+        android:id="@+id/equipment_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:includeFontPadding="false"
+        style="?android:attr/textAppearanceMedium"/>
+
+    <TextView
+        android:id="@+id/equipment_power"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:includeFontPadding="false"
+        style="?android:attr/textAppearanceMedium"/>
+
+</LinearLayout>

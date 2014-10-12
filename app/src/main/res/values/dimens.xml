@@ -1,0 +1,13 @@
+<resources>
+
+    <dimen name="drawer_item_height">48dp</dimen>
+    <dimen name="drawer_width">240dp</dimen>
+    <dimen name="tab_strip_height">48dp</dimen>
+
+    <dimen name="cards_help_progress_margins">2dp</dimen>
+
+    <dimen name="game_info_bar_height">@dimen/game_info_icon_size</dimen>
+    <dimen name="game_info_icon_size">16dp</dimen>
+    <dimen name="game_info_quest_icon_size">64dp</dimen>
+
+</resources>

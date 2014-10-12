@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:title="@string/settings_notification">
+
+        <CheckBoxPreference
+            android:key="@string/settings_key_notification_death"
+            android:title="@string/settings_title_notification_death"
+            android:defaultValue="true"/>
+
+        <CheckBoxPreference
+            android:key="@string/settings_key_notification_idleness"
+            android:title="@string/settings_title_notification_idleness"
+            android:defaultValue="true"/>
+
+        <CheckBoxPreference
+            android:key="@string/settings_key_notification_health"
+            android:title="@string/settings_title_notification_health"
+            android:defaultValue="true"/>
+
+        <EditTextPreference
+            android:key="@string/settings_key_notification_health_threshold"
+            android:title="@string/settings_title_notification_health_threshold"
+            android:defaultValue="@integer/settings_notification_threshold_health_default"
+            android:numeric="integer"/>
+
+        <CheckBoxPreference
+            android:key="@string/settings_key_notification_energy"
+            android:title="@string/settings_title_notification_energy"
+            android:defaultValue="true"/>
+
+        <EditTextPreference
+            android:key="@string/settings_key_notification_energy_threshold"
+            android:title="@string/settings_title_notification_energy_threshold"
+            android:defaultValue="@integer/settings_notification_threshold_energy_default"
+            android:numeric="integer"/>
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

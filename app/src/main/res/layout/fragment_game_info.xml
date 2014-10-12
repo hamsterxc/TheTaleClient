@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:padding="8dp"
+            android:background="@drawable/block_background"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/game_info_race_gender"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="?android:attr/textAppearanceMedium"
+                android:textColor="@color/game_additional_info"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/game_info_level"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="?android:attr/textAppearanceLarge"
+                    android:paddingLeft="8dp"
+                    android:paddingRight="8dp"
+                    android:background="@color/game_info_level_background"
+                    android:textColor="@color/game_info_level_text"/>
+
+                <TextView
+                    android:id="@+id/game_info_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="?android:attr/textAppearanceLarge"
+                    android:layout_marginLeft="8dp"/>
+
+            </LinearLayout>
+
+            <!-- health, experience, energy -->
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:stretchColumns="1">
+
+                <TableRow
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:layout_width="@dimen/game_info_icon_size"
+                        android:layout_height="@dimen/game_info_icon_size"
+                        android:src="@drawable/ic_health"/>
+
+                    <ProgressBar
+                        android:id="@+id/game_info_health_progress"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/game_info_bar_height"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginRight="16dp"
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:progressDrawable="@drawable/game_info_health"/>
+
+                    <TextView
+                        android:id="@+id/game_info_health_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right"
+                        android:includeFontPadding="false"
+                        style="?android:attr/textAppearanceMedium"/>
+
+                </TableRow>
+
+                <TableRow
+                    android:layout_marginTop="8dp"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:layout_width="@dimen/game_info_icon_size"
+                        android:layout_height="@dimen/game_info_icon_size"
+                        android:src="@drawable/ic_experience"/>
+
+                    <ProgressBar
+                        android:id="@+id/game_info_experience_progress"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/game_info_bar_height"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginRight="16dp"
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:progressDrawable="@drawable/game_info_experience"/>
+
+                    <TextView
+                        android:id="@+id/game_info_experience_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right"
+                        android:includeFontPadding="false"
+                        style="?android:attr/textAppearanceMedium"/>
+
+                </TableRow>
+
+                <TableRow
+                    android:layout_marginTop="8dp"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:layout_width="@dimen/game_info_icon_size"
+                        android:layout_height="@dimen/game_info_icon_size"
+                        android:src="@drawable/ic_energy"/>
+
+                    <ProgressBar
+                        android:id="@+id/game_info_energy_progress"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/game_info_bar_height"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginRight="16dp"
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:progressDrawable="@drawable/game_info_energy"/>
+
+                    <TextView
+                        android:id="@+id/game_info_energy_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right"
+                        android:includeFontPadding="false"
+                        style="?android:attr/textAppearanceMedium"/>
+
+                </TableRow>
+
+            </TableLayout>
+
+            <!-- power, money, might -->
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:stretchColumns="*">
+
+                <TableRow>
+
+                    <!-- physical power -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="@dimen/game_info_icon_size"
+                            android:layout_height="@dimen/game_info_icon_size"
+                            android:src="@drawable/ic_power_physical"/>
+
+                        <TextView
+                            android:id="@+id/game_info_power_physical"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="8dp"
+                            android:includeFontPadding="false"
+                            style="?android:attr/textAppearanceMedium"/>
+
+                    </LinearLayout>
+
+                    <!-- money -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="@dimen/game_info_icon_size"
+                            android:layout_height="@dimen/game_info_icon_size"
+                            android:src="@drawable/ic_money"/>
+
+                        <TextView
+                            android:id="@+id/game_info_money"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="8dp"
+                            android:includeFontPadding="false"
+                            style="?android:attr/textAppearanceMedium"/>
+
+                    </LinearLayout>
+
+                </TableRow>
+
+                <TableRow
+                    android:layout_marginTop="8dp">
+
+                    <!-- magical power -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="@dimen/game_info_icon_size"
+                            android:layout_height="@dimen/game_info_icon_size"
+                            android:src="@drawable/ic_power_magical"/>
+
+                        <TextView
+                            android:id="@+id/game_info_power_magical"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="8dp"
+                            android:includeFontPadding="false"
+                            style="?android:attr/textAppearanceMedium"/>
+
+                    </LinearLayout>
+
+                    <!-- might -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="@dimen/game_info_icon_size"
+                            android:layout_height="@dimen/game_info_icon_size"
+                            android:src="@drawable/ic_might"/>
+
+                        <TextView
+                            android:id="@+id/game_info_might"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="8dp"
+                            android:includeFontPadding="false"
+                            style="?android:attr/textAppearanceMedium"/>
+
+                    </LinearLayout>
+
+                </TableRow>
+
+            </TableLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="8dp"
+            android:padding="8dp"
+            android:background="@drawable/block_background"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/game_info_action_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="?android:attr/textAppearanceMedium"/>
+
+            <ProgressBar
+                android:id="@+id/game_info_action_progress"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/game_info_bar_height"
+                android:layout_marginTop="8dp"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:progressDrawable="@drawable/game_info_action"/>
+
+            <com.lonebytesoft.thetaleclient.widget.RequestActionView
+                android:id="@+id/game_help"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_gravity="center_horizontal"
+                custom:action_text="@string/game_help"
+                custom:mode="action"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/journal_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="8dp"
+            android:padding="8dp"
+            android:background="@drawable/block_background"
+            android:orientation="vertical"/>
+
+    </LinearLayout>
+
+</ScrollView>

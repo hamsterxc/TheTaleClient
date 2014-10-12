@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="RequestActionView">
+        <attr name="action_text" format="string"/>
+        <attr name="error_text" format="string"/>
+        <attr name="mode" format="enum">
+            <enum name="action" value="0"/>
+            <enum name="loading" value="1"/>
+            <enum name="error" value="2"/>
+        </attr>
+        <attr name="auto_switch_mode" format="boolean"/>
+    </declare-styleable>
+
+</resources>

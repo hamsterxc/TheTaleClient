@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">The Tale Client</string>
+
+    <string name="action_refresh">Обновить</string>
+
+    <string name="artifact_equipment_type">экипировка: %s</string>
+    <string name="artifact_power_physical">физическая сила: %d</string>
+    <string name="artifact_power_magical">магическая сила: %d</string>
+    <string name="artifact_integrity">целостность: %1$.2f%% (%2$d из %3$d)</string>
+    <string name="artifact_rating">полезность: %.2f</string>
+
+    <string name="drawer_title_close">Закрыть меню</string>
+    <string name="drawer_title_game">Игра</string>
+    <string name="drawer_title_logout">Выход</string>
+    <string name="drawer_title_open">Открыть меню</string>
+    <string name="drawer_title_settings">Настройки</string>
+    <string name="drawer_title_site">Перейти к сайту</string>
+
+    <string name="game_bag_drop_item">Выбросить предмет</string>
+
+    <string name="game_boss_fight">" \u2605"</string>
+    <string name="game_card_take">Взять карту!</string>
+    <string name="game_help">Помочь</string>
+    <string name="game_help_progress_to_next_card">%1$d / %2$d</string>
+    <string name="game_help_to_next_card">Помощи до новой карты</string>
+
+    <string name="game_might_help_critical_chance">Критический эффект помощи: %.2f%%</string>
+    <string name="game_might_pvp_effectiveness_bonus">Бонус к эффективности в PvP: %.2f%%</string>
+
+    <string name="game_title_bag">Рюкзак (%1$s/%2$s)</string>
+    <string name="game_title_cards">Карты</string>
+    <string name="game_title_diary">Дневник</string>
+    <string name="game_title_equipment">Экипировка</string>
+    <string name="game_title_info">Игра</string>
+    <string name="game_title_might">Могущество</string>
+    <string name="game_title_quests">Задания</string>
+
+    <string name="login_action_login">Войти</string>
+    <string name="login_action_password_remind">Забыли пароль?</string>
+    <string name="login_action_registration">Создать героя</string>
+    <string name="login_text_login">Email</string>
+    <string name="login_text_password">Пароль</string>
+
+    <string name="notification_death">Герой мертв</string>
+    <string name="notification_high_energy">Энергия накопилась: %d</string>
+    <string name="notification_idle">Герой бездействует</string>
+    <string name="notification_low_health">Низкое здоровье: %d HP</string>
+
+    <string name="quest_actor_race">Раса</string>
+    <string name="quest_actor_gender">Пол</string>
+    <string name="quest_actor_place">Город</string>
+    <string name="quest_actor_profession">Профессия</string>
+    <string name="quest_actor_mastery">Мастерство</string>
+
+    <string name="quest_choice_part">"\u2014 "</string>
+    <string name="quest_reward_experience">+%d опыта</string>
+    <string name="quest_reward_power">+%d влияния</string>
+
+    <string name="settings_notification">Уведомления</string>
+    <string name="settings_key_notification_death">KEY_SETTINGS_NOTIFICATION_DEATH</string>
+    <string name="settings_key_notification_idleness">KEY_SETTINGS_NOTIFICATION_IDLENESS</string>
+    <string name="settings_key_notification_health">KEY_SETTINGS_NOTIFICATION_HEALTH</string>
+    <string name="settings_key_notification_health_threshold">KEY_SETTINGS_NOTIFICATION_HEALTH_THRESHOLD</string>
+    <string name="settings_key_notification_energy">KEY_SETTINGS_NOTIFICATION_ENERGY</string>
+    <string name="settings_key_notification_energy_threshold">KEY_SETTINGS_NOTIFICATION_ENERGY_THRESHOLD</string>
+    <string name="settings_summary_notification_energy">Уведомление при энергии не ниже %s</string>
+    <string name="settings_summary_notification_health">Уведомление, если здоровье ниже %s</string>
+    <string name="settings_title_notification_death">Смерть героя</string>
+    <string name="settings_title_notification_idleness">Бездействие героя</string>
+    <string name="settings_title_notification_health">Низкое здоровье</string>
+    <string name="settings_title_notification_health_threshold">Уровень здоровья</string>
+    <string name="settings_title_notification_energy">Накопившаяся энергия</string>
+    <string name="settings_title_notification_energy_threshold">Уровень энергии</string>
+
+</resources>

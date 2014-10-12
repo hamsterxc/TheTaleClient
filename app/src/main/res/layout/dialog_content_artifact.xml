@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="8dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/dialog_artifact_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="?android:attr/textAppearanceMedium"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/dialog_artifact_equipment_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="?android:attr/textAppearanceMedium"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/dialog_artifact_power_physical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="?android:attr/textAppearanceMedium"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/dialog_artifact_power_magical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="?android:attr/textAppearanceMedium"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/dialog_artifact_integrity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="?android:attr/textAppearanceMedium"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/dialog_artifact_rating"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="?android:attr/textAppearanceMedium"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/dialog_artifact_effect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="?android:attr/textAppearanceMedium"
+        android:textStyle="italic"
+        android:visibility="gone"/>
+
+</LinearLayout>

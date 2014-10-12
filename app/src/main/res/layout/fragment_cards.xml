@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:gravity="center_horizontal">
+
+            <LinearLayout
+                android:id="@+id/cards_container_help_to_next_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="?android:attr/textAppearanceMedium"
+                    android:text="@string/game_help_to_next_card"/>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp">
+
+                    <ProgressBar
+                        android:id="@+id/cards_help_counter_progress"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:progressDrawable="@drawable/game_info_energy"/>
+
+                    <TextView
+                        android:id="@+id/cards_help_counter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/cards_help_progress_margins"
+                        android:layout_marginBottom="@dimen/cards_help_progress_margins"
+                        android:layout_centerInParent="true"
+                        style="?android:attr/textAppearanceMedium"/>
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+            <com.lonebytesoft.thetaleclient.widget.RequestActionView
+                android:id="@+id/cards_take_card"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                custom:action_text="@string/game_card_take"
+                custom:mode="action"/>
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/cards_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:padding="8dp"
+            android:orientation="vertical"
+            android:background="@drawable/block_background"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="8dp"/>
+
+    </LinearLayout>
+
+</ScrollView>

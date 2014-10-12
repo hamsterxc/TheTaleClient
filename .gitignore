@@ -1,0 +1,12 @@
+/.gradle
+/.idea
+/local.properties
+
+/app/src/androidTest
+/app/src/main/res/raw
+build
+*.iml
+
+crashlytics.properties
+com_crashlytics_export_strings.xml
+crashlytics-build.properties
