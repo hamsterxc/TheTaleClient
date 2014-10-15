@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/map_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="@string/drawer_title_map"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:padding="4dp"
+        android:orientation="vertical"
+        android:gravity="right"
+        android:background="@drawable/map_navigation_background">
+
+        <TextView
+            android:id="@+id/map_style"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            style="?android:attr/textAppearanceSmall"
+            android:textColor="@color/common_link"/>
+
+        <View style="@style/Delimiter"/>
+
+        <TextView
+            android:id="@+id/map_find_place"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            style="?android:attr/textAppearanceSmall"
+            android:textColor="@color/common_link"
+            android:text="@string/map_find_place"/>
+
+        <View style="@style/Delimiter"/>
+
+        <TextView
+            android:id="@+id/map_find_hero"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            style="?android:attr/textAppearanceSmall"
+            android:textColor="@color/common_link"
+            android:text="@string/map_find_hero"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

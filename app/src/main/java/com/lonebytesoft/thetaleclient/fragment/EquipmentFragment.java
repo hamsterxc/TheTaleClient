@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.lonebytesoft.thetaleclient.DataViewMode;
 import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.api.ApiResponseCallback;
 import com.lonebytesoft.thetaleclient.api.dictionary.Action;
@@ -60,7 +61,8 @@ public class EquipmentFragment extends WrapperFragment {
         return wrapView(layoutInflater, rootView);
     }
 
-    protected void refresh(final boolean showLoading) {
+    @Override
+    public void refresh(final boolean showLoading) {
         super.refresh(showLoading);
 
         new GameInfoRequest().execute(new ApiResponseCallback<GameInfoResponse>() {
@@ -166,7 +168,7 @@ public class EquipmentFragment extends WrapperFragment {
                     bagContainer.addView(bagEntryView);
                 }
 
-                setMode(Mode.DATA);
+                setMode(DataViewMode.DATA);
             }
 
             @Override

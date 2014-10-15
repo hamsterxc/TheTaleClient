@@ -6,6 +6,7 @@ import android.text.TextUtils;
 
 import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.TheTaleClientApplication;
+import com.lonebytesoft.thetaleclient.api.dictionary.MapStyle;
 
 /**
  * @author Hamster
@@ -15,6 +16,7 @@ public class PreferencesManager {
 
     private static final String KEY_LOGIN = "KEY_LOGIN";
     private static final String KEY_PASSWORD = "KEY_PASSWORD";
+    private static final String KEY_MAP_STYLE = "KEY_MAP_STYLE";
 
     private static SharedPreferences sharedPreferences =
             PreferenceManager.getDefaultSharedPreferences(TheTaleClientApplication.getContext());
@@ -64,6 +66,16 @@ public class PreferencesManager {
         return TextUtils.isEmpty(value) ?
                 TheTaleClientApplication.getContext().getResources().getInteger(R.integer.settings_notification_threshold_energy_default) :
                 Integer.decode(value);
+    }
+
+    public static MapStyle getMapStyle() {
+        return MapStyle.values()[sharedPreferences.getInt(KEY_MAP_STYLE, 0)];
+    }
+
+    public static void setMapStyle(final MapStyle mapStyle) {
+        sharedPreferences.edit()
+                .putInt(KEY_MAP_STYLE, mapStyle.ordinal())
+                .commit();
     }
 
 }

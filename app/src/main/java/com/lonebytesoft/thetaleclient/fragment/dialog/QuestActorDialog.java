@@ -86,7 +86,7 @@ public class QuestActorDialog extends BaseDialog {
                             @Override
                             public void processResponse(MapResponse response) {
                                 UiUtils.setText(view.findViewById(R.id.dialog_quest_actor_place_size),
-                                        String.valueOf(response.places.get(questActorInfo.placeInfo.id).size));
+                                        getString(R.string.map_tile_place_size, response.places.get(questActorInfo.placeInfo.id).size));
                             }
 
                             @Override

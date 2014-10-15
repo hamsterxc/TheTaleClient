@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 
 import com.lonebytesoft.thetaleclient.api.cache.RequestCacheManager;
+import com.lonebytesoft.thetaleclient.util.MapManager;
 
 /**
  * @author Hamster
@@ -27,6 +28,9 @@ public class TheTaleClientApplication extends Application {
         super.onLowMemory();
 
         RequestCacheManager.invalidate();
+        MapManager.cleanup();
+
+        System.gc();
     }
 
     public static Context getContext() {

@@ -2,8 +2,10 @@ package com.lonebytesoft.thetaleclient.util;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
 /**
@@ -36,6 +38,14 @@ public class UiUtils {
         intent.setAction(Intent.ACTION_VIEW);
         intent.setData(Uri.parse(url));
         return intent;
+    }
+
+    public static void removeGlobalLayoutListener(final View view, final ViewTreeObserver.OnGlobalLayoutListener listener) {
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+            view.getViewTreeObserver().removeGlobalOnLayoutListener(listener);
+        } else {
+            view.getViewTreeObserver().removeOnGlobalLayoutListener(listener);
+        }
     }
 
 }

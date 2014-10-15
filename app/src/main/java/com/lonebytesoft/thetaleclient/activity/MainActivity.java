@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.lonebytesoft.thetaleclient.ApplicationPart;
+import com.lonebytesoft.thetaleclient.DataViewMode;
 import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.TheTaleClientApplication;
 import com.lonebytesoft.thetaleclient.api.ApiResponseCallback;
@@ -24,7 +25,9 @@ import com.lonebytesoft.thetaleclient.api.response.CommonResponse;
 import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;
 import com.lonebytesoft.thetaleclient.api.response.InfoResponse;
 import com.lonebytesoft.thetaleclient.fragment.GameFragment;
+import com.lonebytesoft.thetaleclient.fragment.MapFragment;
 import com.lonebytesoft.thetaleclient.fragment.NavigationDrawerFragment;
+import com.lonebytesoft.thetaleclient.fragment.Refreshable;
 import com.lonebytesoft.thetaleclient.fragment.SettingsFragment;
 import com.lonebytesoft.thetaleclient.fragment.WrapperFragment;
 import com.lonebytesoft.thetaleclient.util.PreferencesManager;
@@ -119,7 +122,7 @@ public class MainActivity extends ActionBarActivity
 
                     final Fragment fragment = getSupportFragmentManager().findFragmentByTag(currentItem.getFragmentTag());
                     if(fragment instanceof WrapperFragment) {
-                        ((WrapperFragment) fragment).setMode(WrapperFragment.Mode.LOADING);
+                        ((WrapperFragment) fragment).setMode(DataViewMode.LOADING);
                     }
 
                     new LogoutRequest().execute(new ApiResponseCallback<CommonResponse>() {
@@ -178,12 +181,10 @@ public class MainActivity extends ActionBarActivity
     }
 
     private void refresh() {
-        if(currentItem == DrawerItem.GAME) {
-            onRefreshStarted();
-            final Fragment fragment = getSupportFragmentManager().findFragmentByTag(DrawerItem.GAME.getFragmentTag());
-            if(fragment instanceof GameFragment) {
-                ((GameFragment) fragment).refresh();
-            }
+        onRefreshStarted();
+        final Fragment fragment = getSupportFragmentManager().findFragmentByTag(currentItem.getFragmentTag());
+        if(fragment instanceof Refreshable) {
+            ((Refreshable) fragment).refresh(true);
         }
     }
 
@@ -261,6 +262,12 @@ public class MainActivity extends ActionBarActivity
             @Override
             public Fragment getFragment() {
                 return new GameFragment();
+            }
+        },
+        MAP(R.string.drawer_title_map, "FRAGMENT_TAG_MAP") {
+            @Override
+            public Fragment getFragment() {
+                return new MapFragment();
             }
         },
         SITE(0, ""),

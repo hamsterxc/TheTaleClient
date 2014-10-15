@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import com.lonebytesoft.thetaleclient.DataViewMode;
 import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.activity.MainActivity;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
@@ -14,7 +15,7 @@ import com.lonebytesoft.thetaleclient.util.UiUtils;
  * @author Hamster
  * @since 07.10.2014
  */
-public class WrapperFragment extends Fragment {
+public class WrapperFragment extends Fragment implements Refreshable {
 
     private View dataView;
     private View loadingView;
@@ -40,14 +41,14 @@ public class WrapperFragment extends Fragment {
         return wrapped;
     }
 
-    public void setMode(final Mode mode) {
+    public void setMode(final DataViewMode mode) {
         if(!isAdded()) {
             return;
         }
 
-        dataView.setVisibility(mode == Mode.DATA ? View.VISIBLE : View.GONE);
-        loadingView.setVisibility(mode == Mode.LOADING ? View.VISIBLE : View.GONE);
-        errorView.setVisibility(mode == Mode.ERROR ? View.VISIBLE : View.GONE);
+        dataView.setVisibility(mode == DataViewMode.DATA ? View.VISIBLE : View.GONE);
+        loadingView.setVisibility(mode == DataViewMode.LOADING ? View.VISIBLE : View.GONE);
+        errorView.setVisibility(mode == DataViewMode.ERROR ? View.VISIBLE : View.GONE);
 
         final Activity activity = getActivity();
         if(activity instanceof MainActivity) {
@@ -65,29 +66,24 @@ public class WrapperFragment extends Fragment {
     }
 
     public void setError(final String error) {
-        setMode(Mode.ERROR);
+        setMode(DataViewMode.ERROR);
         UiUtils.setText(errorView.findViewById(R.id.fragment_part_error_text), error);
     }
 
-    protected void refresh(final boolean showLoading) {
+    @Override
+    public void refresh(final boolean isGlobal) {
         if(!isAdded()) {
             return;
         }
 
-        if(showLoading) {
-            setMode(Mode.LOADING);
+        if(isGlobal) {
+            setMode(DataViewMode.LOADING);
         }
 
         final Activity activity = getActivity();
         if(activity instanceof MainActivity) {
             ((MainActivity) activity).onDataRefresh();
         }
-    }
-
-    public enum Mode {
-        DATA,
-        LOADING,
-        ERROR,
     }
 
 }

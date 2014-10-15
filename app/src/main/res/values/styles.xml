@@ -19,4 +19,10 @@
         <item name="android:background">@color/common_delimiter</item>
     </style>
 
+    <style name="DelimiterVertical">
+        <item name="android:layout_width">2dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">@color/common_delimiter</item>
+    </style>
+
 </resources>

@@ -6,19 +6,21 @@ package com.lonebytesoft.thetaleclient.api.dictionary;
  */
 public enum Race {
 
-    HUMAN(0, "человек"),
-    ELF(1, "эльф"),
-    ORC(2, "орк"),
-    GOBLIN(3, "гоблин"),
-    DWARF(4, "дварф"),
+    HUMAN(0, "человек", "люди"),
+    ELF(1, "эльф", "эльфы"),
+    ORC(2, "орк", "орки"),
+    GOBLIN(3, "гоблин", "гоблины"),
+    DWARF(4, "дварф", "дварфы"),
     ;
 
     private final int code;
     private final String name;
+    private final String namePlural;
 
-    private Race(final int code, final String name) {
+    private Race(final int code, final String name, final String namePlural) {
         this.code = code;
         this.name = name;
+        this.namePlural = namePlural;
     }
 
     public int getCode() {
@@ -27,6 +29,10 @@ public enum Race {
 
     public String getName() {
         return name;
+    }
+
+    public String getNamePlural() {
+        return namePlural;
     }
 
 }

@@ -6,9 +6,10 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.FrameLayout;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.lonebytesoft.thetaleclient.DataViewMode;
 import com.lonebytesoft.thetaleclient.R;
 
 /**
@@ -17,17 +18,26 @@ import com.lonebytesoft.thetaleclient.R;
  */
 public abstract class BaseDialog extends DialogFragment {
 
+    private TextView caption;
+    private ViewGroup content;
+    private View contentProgress;
+
     protected View wrapView(final LayoutInflater layoutInflater, final View view, final String caption) {
         final View wrapped = layoutInflater.inflate(R.layout.dialog_base, null);
 
-        ((TextView) wrapped.findViewById(R.id.dialog_caption)).setText(caption);
+        this.caption = (TextView) wrapped.findViewById(R.id.dialog_caption);
+        setCaption(caption);
+
         wrapped.findViewById(R.id.dialog_close).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dismiss();
             }
         });
-        ((FrameLayout) wrapped.findViewById(R.id.dialog_content)).addView(view);
+
+        contentProgress = wrapped.findViewById(R.id.dialog_content_progress);
+        content = (ViewGroup) wrapped.findViewById(R.id.dialog_content);
+        content.addView(view);
 
         return wrapped;
     }
@@ -44,6 +54,27 @@ public abstract class BaseDialog extends DialogFragment {
     public void onPause() {
         dismiss();
         super.onPause();
+    }
+
+    public void setMode(final DataViewMode mode) {
+        switch(mode) {
+            case DATA:
+                contentProgress.setVisibility(View.GONE);
+                content.setVisibility(View.VISIBLE);
+                break;
+
+            case LOADING:
+                contentProgress.setVisibility(View.VISIBLE);
+                content.setVisibility(View.GONE);
+                break;
+
+            case ERROR:
+                throw new IllegalArgumentException("Error data view mode is not supported");
+        }
+    }
+
+    public void setCaption(final CharSequence caption) {
+        this.caption.setText(caption);
     }
 
 }

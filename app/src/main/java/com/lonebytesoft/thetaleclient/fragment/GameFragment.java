@@ -22,7 +22,7 @@ import java.util.Map;
  * @author Hamster
  * @since 05.10.2014
  */
-public class GameFragment extends Fragment {
+public class GameFragment extends Fragment implements Refreshable {
 
     private static final String KEY_PAGE_INDEX = "KEY_PAGE_INDEX";
 
@@ -62,12 +62,13 @@ public class GameFragment extends Fragment {
         outState.putInt(KEY_PAGE_INDEX, viewPager.getCurrentItem());
     }
 
-    public void refresh() {
+    @Override
+    public void refresh(final boolean isGlobal) {
         final PagerAdapter pagerAdapter = viewPager.getAdapter();
         if(pagerAdapter instanceof GamePagerAdapter) {
             final Fragment fragment = ((GamePagerAdapter) pagerAdapter).getFragment(viewPager.getCurrentItem());
             if(fragment instanceof WrapperFragment) {
-                ((WrapperFragment) fragment).refresh(true);
+                ((WrapperFragment) fragment).refresh(isGlobal);
             }
         }
     }

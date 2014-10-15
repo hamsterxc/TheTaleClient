@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.lonebytesoft.thetaleclient.DataViewMode;
 import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.api.ApiResponseCallback;
 import com.lonebytesoft.thetaleclient.api.model.DiaryEntry;
@@ -34,8 +35,9 @@ public class DiaryFragment extends WrapperFragment {
         return wrapView(layoutInflater, rootView);
     }
 
-    protected void refresh(final boolean showLoading) {
-        super.refresh(showLoading);
+    @Override
+    public void refresh(final boolean isGlobal) {
+        super.refresh(isGlobal);
 
         new GameInfoRequest().execute(new ApiResponseCallback<GameInfoResponse>() {
             @Override
@@ -57,7 +59,7 @@ public class DiaryFragment extends WrapperFragment {
                     ((TextView) diaryEntryView.findViewById(R.id.diary_text)).setText(diaryEntry.text);
                     diaryContainer.addView(diaryEntryView);
                 }
-                setMode(Mode.DATA);
+                setMode(DataViewMode.DATA);
             }
 
             @Override

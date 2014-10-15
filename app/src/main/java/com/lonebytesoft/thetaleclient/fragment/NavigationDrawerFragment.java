@@ -59,6 +59,12 @@ public class NavigationDrawerFragment extends Fragment {
                 onDrawerItemSelected(MainActivity.DrawerItem.GAME);
             }
         });
+        view.findViewById(R.id.drawer_item_map).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onDrawerItemSelected(MainActivity.DrawerItem.MAP);
+            }
+        });
         view.findViewById(R.id.drawer_item_site).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

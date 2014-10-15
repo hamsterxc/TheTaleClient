@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.lonebytesoft.thetaleclient.DataViewMode;
 import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.api.ApiResponseCallback;
 import com.lonebytesoft.thetaleclient.api.CommonResponseCallback;
@@ -61,8 +62,9 @@ public class QuestsFragment extends WrapperFragment {
         return wrapView(layoutInflater, rootView);
     }
 
-    protected void refresh(final boolean showLoading) {
-        super.refresh(showLoading);
+    @Override
+    public void refresh(final boolean isGlobal) {
+        super.refresh(isGlobal);
 
         new GameInfoRequest().execute(new ApiResponseCallback<GameInfoResponse>() {
             @Override
@@ -212,7 +214,7 @@ public class QuestsFragment extends WrapperFragment {
                     });
                 }
 
-                setMode(Mode.DATA);
+                setMode(DataViewMode.DATA);
             }
 
             @Override

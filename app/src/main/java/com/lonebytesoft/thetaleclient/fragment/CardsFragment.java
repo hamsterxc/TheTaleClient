@@ -13,6 +13,7 @@ import android.view.ViewTreeObserver;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.lonebytesoft.thetaleclient.DataViewMode;
 import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.api.ApiResponseCallback;
 import com.lonebytesoft.thetaleclient.api.dictionary.CardType;
@@ -20,6 +21,7 @@ import com.lonebytesoft.thetaleclient.api.request.GameInfoRequest;
 import com.lonebytesoft.thetaleclient.api.request.TakeCardRequest;
 import com.lonebytesoft.thetaleclient.api.response.CommonResponse;
 import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;
+import com.lonebytesoft.thetaleclient.util.UiUtils;
 import com.lonebytesoft.thetaleclient.widget.RequestActionView;
 
 /**
@@ -54,8 +56,9 @@ public class CardsFragment extends WrapperFragment {
         return wrapView(layoutInflater, rootView);
     }
 
-    protected void refresh(final boolean showLoading) {
-        super.refresh(showLoading);
+    @Override
+    public void refresh(final boolean isGlobal) {
+        super.refresh(isGlobal);
 
         new GameInfoRequest().execute(new ApiResponseCallback<GameInfoResponse>() {
             @Override
@@ -103,7 +106,7 @@ public class CardsFragment extends WrapperFragment {
                             final ViewGroup.LayoutParams layoutParams = helpCounterProgress.getLayoutParams();
                             layoutParams.height = (int) (helpCounter.getHeight() + 2 * getResources().getDimension(R.dimen.cards_help_progress_margins));
                             helpCounterProgress.setLayoutParams(layoutParams);
-                            helpCounter.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                            UiUtils.removeGlobalLayoutListener(helpCounter, this);
                         }
                     });
                 }
@@ -127,7 +130,7 @@ public class CardsFragment extends WrapperFragment {
                         cardsContainer.addView(cardEntryView);
                     }
                 }
-                setMode(Mode.DATA);
+                setMode(DataViewMode.DATA);
             }
 
             @Override

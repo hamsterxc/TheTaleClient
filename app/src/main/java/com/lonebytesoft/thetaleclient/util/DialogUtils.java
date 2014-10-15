@@ -8,8 +8,10 @@ import com.lonebytesoft.thetaleclient.api.model.ArtifactInfo;
 import com.lonebytesoft.thetaleclient.api.model.MightInfo;
 import com.lonebytesoft.thetaleclient.api.model.QuestActorInfo;
 import com.lonebytesoft.thetaleclient.fragment.dialog.ArtifactDialog;
+import com.lonebytesoft.thetaleclient.fragment.dialog.ChoiceDialog;
 import com.lonebytesoft.thetaleclient.fragment.dialog.MightDialog;
 import com.lonebytesoft.thetaleclient.fragment.dialog.QuestActorDialog;
+import com.lonebytesoft.thetaleclient.fragment.dialog.TabbedDialog;
 
 /**
  * @author Hamster
@@ -17,9 +19,11 @@ import com.lonebytesoft.thetaleclient.fragment.dialog.QuestActorDialog;
  */
 public class DialogUtils {
 
-    private static final String DIALOG_MIGHT_TAG = "DIALOG_MIGHT_TAG";
-    private static final String DIALOG_ARTIFACT_TAG = "DIALOG_ARTIFACT_TAG";
-    private static final String DIALOG_QUEST_ACTOR_TAG = "DIALOG_QUEST_ACTOR_TAG";
+    public static final String DIALOG_MIGHT_TAG = "DIALOG_MIGHT_TAG";
+    public static final String DIALOG_ARTIFACT_TAG = "DIALOG_ARTIFACT_TAG";
+    public static final String DIALOG_QUEST_ACTOR_TAG = "DIALOG_QUEST_ACTOR_TAG";
+    public static final String DIALOG_CHOICE_TAG = "DIALOG_CHOICE_TAG";
+    public static final String DIALOG_TABBED_TAG = "DIALOG_TABBED_TAG";
 
     private static FragmentTransaction getFragmentTransaction(final FragmentManager fragmentManager) {
         final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -40,7 +44,23 @@ public class DialogUtils {
     }
 
     public static void showQuestActorDialog(final FragmentManager fragmentManager, final QuestActorInfo questActorInfo) {
-        QuestActorDialog.newInstance(questActorInfo).show(fragmentManager, DIALOG_QUEST_ACTOR_TAG);
+        QuestActorDialog.newInstance(questActorInfo).show(getFragmentTransaction(fragmentManager), DIALOG_QUEST_ACTOR_TAG);
+    }
+
+    public static void showChoiceDialog(final FragmentManager fragmentManager, final String caption,
+                                        final String[] choices, final ChoiceDialog.ItemChooseListener listener) {
+        final ChoiceDialog dialog = ChoiceDialog.newInstance(caption, choices);
+        dialog.setItemChooseListener(listener);
+        dialog.show(getFragmentTransaction(fragmentManager), DIALOG_CHOICE_TAG);
+    }
+
+    public static void showTabbedDialog(final FragmentManager fragmentManager,
+                                        final String caption, final TabbedDialog.TabbedDialogTabsAdapter tabsAdapter) {
+        final TabbedDialog dialog = TabbedDialog.newInstance(caption);
+        if(tabsAdapter != null) {
+            dialog.setTabsAdapter(tabsAdapter);
+        }
+        dialog.show(getFragmentTransaction(fragmentManager), DIALOG_TABBED_TAG);
     }
 
 }

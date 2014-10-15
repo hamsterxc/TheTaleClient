@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.lonebytesoft.thetaleclient.DataViewMode;
 import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.api.ApiResponseCallback;
 import com.lonebytesoft.thetaleclient.api.dictionary.Action;
@@ -130,8 +131,9 @@ public class GameInfoFragment extends WrapperFragment {
         handler.removeCallbacks(refreshRunnable);
     }
 
-    protected void refresh(final boolean showLoading) {
-        super.refresh(showLoading);
+    @Override
+    public void refresh(final boolean isGlobal) {
+        super.refresh(isGlobal);
 
         new GameInfoRequest().execute(new ApiResponseCallback<GameInfoResponse>() {
             @Override
@@ -217,7 +219,7 @@ public class GameInfoFragment extends WrapperFragment {
                     }
                 });
 
-                setMode(Mode.DATA);
+                setMode(DataViewMode.DATA);
             }
 
             @Override

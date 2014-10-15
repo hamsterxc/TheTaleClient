@@ -61,10 +61,9 @@ public abstract class AbstractApiRequest<T extends AbstractApiResponse> {
         }
     }
 
-    public void execute(final Map<String, String> getParams, final Map<String, String> postParams,
+    protected void execute(final Map<String, String> getParams, final Map<String, String> postParams,
                         final ApiResponseCallback<T> callback) {
         final String url = String.format(URL, methodUrl);
-//        Log.d("@XX", String.format("execute: url = %s", url));
         final Request request = new Request(url, httpMethod, getParams, postParams);
 
         final long staleTime = getStaleTime();
@@ -122,20 +121,13 @@ public abstract class AbstractApiRequest<T extends AbstractApiResponse> {
                     }
                 }
 
-//                Log.d("@XX", "cookies sent:");
-//                for(final Cookie cookie : httpClient.getCookieStore().getCookies()) {
-//                    Log.d("@XX", cookie.toString());
-//                }
-
                 final HttpRequest httpRequest = httpMethod.getHttpRequest(url, requestGetParams, requestPostParams);
                 try {
                     final OutputStream outputStream = new ByteArrayOutputStream();
                     httpClient.execute((HttpUriRequest) httpRequest).getEntity().writeTo(outputStream);
                     outputStream.close();
 
-//                    Log.d("@XX", "cookies got:");
                     for(final Cookie cookie : httpClient.getCookieStore().getCookies()) {
-//                        Log.d("@XX", cookie.toString());
                         final HttpCookie httpCookie = new HttpCookie(cookie.getName(), cookie.getValue());
                         httpCookie.setDomain(cookie.getDomain());
                         httpCookie.setPath(cookie.getPath());
@@ -151,8 +143,6 @@ public abstract class AbstractApiRequest<T extends AbstractApiResponse> {
             }
 
             protected void onPostExecute(String[] result) {
-//                Log.d("@XX", String.format("execute: response = [%s, %s]", result[0], result[1]));
-
                 if(staleTime > 0) {
                     if (result[0] == null) {
                         RequestCacheManager.onRequestFinishError(request);
@@ -202,15 +192,11 @@ public abstract class AbstractApiRequest<T extends AbstractApiResponse> {
     protected abstract T getResponse(final String response) throws JSONException;
 
     protected void processFinishedResponse(final T response, final ApiResponseCallback<T> callback) {
-//        if (isFinished(response)) {
-            if (isError(response)) {
-                callback.processError(response);
-            } else {
-                callback.processResponse(response);
-            }
-//        } else {
-//            throw new IllegalArgumentException("Request is not finished");
-//        }
+        if (isError(response)) {
+            callback.processError(response);
+        } else {
+            callback.processResponse(response);
+        }
     }
 
     protected boolean isFinished(final T response) {
