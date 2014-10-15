@@ -106,6 +106,7 @@ public class LoginActivity extends Activity {
                                 authorize(login, password);
                             } else {
                                 switchLoadingMode(false);
+                                textLogin.requestFocus();
                             }
                         } else {
                             onSuccessfulLogin();
@@ -144,11 +145,14 @@ public class LoginActivity extends Activity {
                         LoginActivity.this.processError(response.errorMessage, login, password);
                         if (response.errorsLogin != null) {
                             UiUtils.setText(textErrorLogin, TextUtils.join("\n", response.errorsLogin));
+                            textLogin.requestFocus();
                         }
                         if (response.errorsPassword != null) {
                             UiUtils.setText(textErrorPassword, TextUtils.join("\n", response.errorsPassword));
                             if(response.errorsLogin == null) {
                                 textPassword.requestFocus();
+                            } else {
+                                textLogin.requestFocus();
                             }
                         }
                     }
@@ -167,6 +171,7 @@ public class LoginActivity extends Activity {
                 @Override
                 public void processError(InfoResponse response) {
                     LoginActivity.this.processError(response.errorMessage, login, password);
+                    textLogin.requestFocus();
                 }
             });
         } else {
@@ -175,7 +180,6 @@ public class LoginActivity extends Activity {
     }
 
     private void switchLoadingMode(final boolean isLoading) {
-        textLogin.requestFocus();
         viewProgress.setVisibility(isLoading ? View.VISIBLE : View.GONE);
         viewContent.setVisibility(isLoading ? View.GONE : View.VISIBLE);
     }
