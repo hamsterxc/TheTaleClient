@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.crashlytics.android.Crashlytics;
 import com.lonebytesoft.thetaleclient.ApplicationPart;
+import com.lonebytesoft.thetaleclient.BuildConfig;
 import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.TheTaleClientApplication;
 import com.lonebytesoft.thetaleclient.api.ApiResponseCallback;
@@ -48,7 +49,9 @@ public class LoginActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Crashlytics.start(this);
+        if(!BuildConfig.DEBUG) {
+            Crashlytics.start(this);
+        }
         setContentView(R.layout.activity_login);
 
         textLogin = (TextView) findViewById(R.id.login_text_login);
