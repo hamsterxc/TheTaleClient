@@ -30,6 +30,11 @@ import com.lonebytesoft.thetaleclient.api.response.InfoResponse;
 import com.lonebytesoft.thetaleclient.util.DialogUtils;
 import com.lonebytesoft.thetaleclient.widget.RequestActionView;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -91,7 +96,7 @@ public class EquipmentFragment extends WrapperFragment {
                         textName.setVisibility(View.GONE);
                         textPower.setVisibility(View.GONE);
                     } else {
-                        final Spanned[] artifactStrings = getArtifactString(artifactInfo, true);
+                        final Spanned[] artifactStrings = getArtifactString(artifactInfo, true, 1);
                         textName.setText(artifactStrings[0]);
                         textPower.setText(artifactStrings[1]);
 
@@ -111,7 +116,6 @@ public class EquipmentFragment extends WrapperFragment {
                         response.account.hero.basicInfo.bagCapacity));
 
                 bagContainer.removeAllViews();
-
 
                 final View dropView = layoutInflater.inflate(R.layout.item_bag_drop, bagContainer, false);
                 final RequestActionView dropActionView = (RequestActionView) dropView.findViewById(R.id.bag_drop);
@@ -153,11 +157,45 @@ public class EquipmentFragment extends WrapperFragment {
                 }
                 bagContainer.addView(dropView);
 
-                for(final Map.Entry<Integer, ArtifactInfo> bagEntry : response.account.hero.bag.entrySet()) {
-                    final View bagEntryView = layoutInflater.inflate(R.layout.item_bag, bagContainer, false);
-                    final ArtifactInfo artifactInfo = bagEntry.getValue();
+                final List<ArtifactInfo> bagItems = new ArrayList<>();
+                bagItems.addAll(response.account.hero.bag.values());
+                Collections.sort(bagItems, new Comparator<ArtifactInfo>() {
+                    @Override
+                    public int compare(ArtifactInfo lhs, ArtifactInfo rhs) {
+                        if(lhs.name.equals(rhs.name)) {
+                            if(lhs.powerPhysical == rhs.powerPhysical) {
+                                if(lhs.powerMagical == rhs.powerMagical) {
+                                    if(lhs.type == ArtifactType.JUNK) {
+                                        return rhs.type == ArtifactType.JUNK ? 0 : 1;
+                                    } else {
+                                        return rhs.type == ArtifactType.JUNK ? -1 : 0;
+                                    }
+                                } else {
+                                    return lhs.powerMagical - rhs.powerMagical;
+                                }
+                            } else {
+                                return lhs.powerPhysical - rhs.powerPhysical;
+                            }
+                        } else {
+                            return lhs.name.compareTo(rhs.name);
+                        }
+                    }
+                });
+                final Map<ArtifactInfo, Integer> bagItemsList = new LinkedHashMap<>();
+                for(final ArtifactInfo artifactInfo : bagItems) {
+                    final Integer count = bagItemsList.get(artifactInfo);
+                    if(count == null) {
+                        bagItemsList.put(artifactInfo, 1);
+                    } else {
+                        bagItemsList.put(artifactInfo, count + 1);
+                    }
+                }
 
-                    ((TextView) bagEntryView.findViewById(R.id.bag_item_name)).setText(getArtifactString(artifactInfo, false)[0]);
+                for(final Map.Entry<ArtifactInfo, Integer> bagEntry : bagItemsList.entrySet()) {
+                    final View bagEntryView = layoutInflater.inflate(R.layout.item_bag, bagContainer, false);
+                    final ArtifactInfo artifactInfo = bagEntry.getKey();
+
+                    ((TextView) bagEntryView.findViewById(R.id.bag_item_name)).setText(getArtifactString(artifactInfo, false, bagEntry.getValue())[0]);
                     bagEntryView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -178,13 +216,15 @@ public class EquipmentFragment extends WrapperFragment {
         });
     }
 
-    private Spanned[] getArtifactString(final ArtifactInfo artifactInfo, final boolean isEquipped) {
+    private Spanned[] getArtifactString(final ArtifactInfo artifactInfo, final boolean isEquipped, final int count) {
+        final String countString = count == 1 ? "" : getString(R.string.game_bag_item_count, count);
+
         final Spannable name = new SpannableString(artifactInfo.name);
         name.setSpan(new ForegroundColorSpan(getResources().getColor(artifactInfo.rarity.getColorResId())),
                 0, name.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         if(artifactInfo.type == ArtifactType.JUNK) {
-            return new Spannable[]{name};
+            return new Spanned[]{(Spanned) TextUtils.concat(name, countString)};
         } else {
             final Spannable powerPhysical = new SpannableString(String.valueOf(artifactInfo.powerPhysical));
             powerPhysical.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.artifact_power_physical)),
@@ -203,7 +243,7 @@ public class EquipmentFragment extends WrapperFragment {
             if(isEquipped) {
                 return new Spanned[]{name, (Spanned) TextUtils.concat(powerPhysical, " ", powerMagical)};
             } else {
-                return new Spanned[]{(Spanned) TextUtils.concat(name, " ", powerPhysical, " ", powerMagical)};
+                return new Spanned[]{(Spanned) TextUtils.concat(name, " ", powerPhysical, " ", powerMagical, countString)};
             }
         }
 

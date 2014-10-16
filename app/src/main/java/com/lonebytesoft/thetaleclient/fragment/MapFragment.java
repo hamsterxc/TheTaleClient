@@ -37,7 +37,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 
 import uk.co.senab.photoview.PhotoViewAttacher;
 
@@ -205,10 +204,9 @@ public class MapFragment extends WrapperFragment {
                                             @Override
                                             public void processResponse(MapResponse response) {
                                                 PlaceInfo placeInfo = null;
-                                                for(final Map.Entry<Integer, PlaceInfo> entry : response.places.entrySet()) {
-                                                    final PlaceInfo entryPlaceInfo = entry.getValue();
-                                                    if((entryPlaceInfo.x == tileX) && (entryPlaceInfo.y == tileY)) {
-                                                        placeInfo = entryPlaceInfo;
+                                                for(final PlaceInfo currentPlaceInfo : response.places.values()) {
+                                                    if((currentPlaceInfo.x == tileX) && (currentPlaceInfo.y == tileY)) {
+                                                        placeInfo = currentPlaceInfo;
                                                         break;
                                                     }
                                                 }
@@ -253,8 +251,8 @@ public class MapFragment extends WrapperFragment {
                                     @Override
                                     public void processResponse(MapResponse response) {
                                         places = new ArrayList<>(response.places.size());
-                                        for(final Map.Entry<Integer, PlaceInfo> entry : response.places.entrySet()) {
-                                            places.add(entry.getValue());
+                                        for(final PlaceInfo placeInfo : response.places.values()) {
+                                            places.add(placeInfo);
                                         }
                                         Collections.sort(places, new Comparator<PlaceInfo>() {
                                             @Override

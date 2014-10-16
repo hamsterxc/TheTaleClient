@@ -152,8 +152,7 @@ public class MapManager {
                                             }
 
                                             // todo hacky calculation of sizes & positions
-                                            for(final Map.Entry<Integer, PlaceInfo> entry : response.places.entrySet()) {
-                                                final PlaceInfo placeInfo = entry.getValue();
+                                            for(final PlaceInfo placeInfo : response.places.values()) {
                                                 final String text = String.format(PLACE_CAPTION, placeInfo.size, placeInfo.name);
 
                                                 final Paint textPaint = new Paint();

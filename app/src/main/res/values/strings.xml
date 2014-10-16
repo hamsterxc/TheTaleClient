@@ -20,6 +20,7 @@
     <string name="drawer_title_site">Перейти к сайту</string>
 
     <string name="game_bag_drop_item">Выбросить предмет</string>
+    <string name="game_bag_item_count">" (x%d)"</string>
 
     <string name="game_boss_fight">" \u2605"</string>
     <string name="game_card_take">Взять карту!</string>
