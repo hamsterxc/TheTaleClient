@@ -247,6 +247,7 @@ public class MainActivity extends ActionBarActivity
     @Override
     public void onBackPressed() {
         switch(currentItem) {
+            case MAP:
             case SETTINGS:
                 onNavigationDrawerItemSelected(DrawerItem.GAME);
                 break;
