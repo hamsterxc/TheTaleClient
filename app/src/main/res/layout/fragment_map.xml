@@ -27,6 +27,7 @@
             android:paddingTop="8dp"
             android:paddingBottom="8dp"
             style="?android:attr/textAppearanceSmall"
+            android:background="@drawable/common_list_item_background"
             android:textColor="@color/common_link"/>
 
         <View style="@style/Delimiter"/>
@@ -38,6 +39,7 @@
             android:paddingTop="8dp"
             android:paddingBottom="8dp"
             style="?android:attr/textAppearanceSmall"
+            android:background="@drawable/common_list_item_background"
             android:textColor="@color/common_link"
             android:text="@string/map_find_place"/>
 
@@ -50,6 +52,7 @@
             android:paddingTop="8dp"
             android:paddingBottom="8dp"
             style="?android:attr/textAppearanceSmall"
+            android:background="@drawable/common_list_item_background"
             android:textColor="@color/common_link"
             android:text="@string/map_find_hero"/>
 
