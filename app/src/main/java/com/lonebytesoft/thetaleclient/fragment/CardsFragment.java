@@ -73,6 +73,7 @@ public class CardsFragment extends WrapperFragment {
 
                 if(response.account.hero.basicInfo.cardHelpCurrent >= response.account.hero.basicInfo.cardHelpTotal) {
                     helpCounterContainer.setVisibility(View.GONE);
+                    helpTakeCardWidget.setMode(RequestActionView.Mode.ACTION);
                     helpTakeCardWidget.setVisibility(View.VISIBLE);
 
                     helpTakeCardWidget.setActionClickListener(new Runnable() {
