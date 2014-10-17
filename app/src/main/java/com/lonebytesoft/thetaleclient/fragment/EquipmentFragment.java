@@ -157,9 +157,7 @@ public class EquipmentFragment extends WrapperFragment {
                 }
                 bagContainer.addView(dropView);
 
-                final List<ArtifactInfo> bagItems = new ArrayList<>();
-                bagItems.addAll(response.account.hero.bag.values());
-                Collections.sort(bagItems, new Comparator<ArtifactInfo>() {
+                final Comparator<ArtifactInfo> bagArtifactComparator = new Comparator<ArtifactInfo>() {
                     @Override
                     public int compare(ArtifactInfo lhs, ArtifactInfo rhs) {
                         if(lhs.name.equals(rhs.name)) {
@@ -180,14 +178,19 @@ public class EquipmentFragment extends WrapperFragment {
                             return lhs.name.compareTo(rhs.name);
                         }
                     }
-                });
+                };
+                final List<ArtifactInfo> bagItems = new ArrayList<>();
+                bagItems.addAll(response.account.hero.bag.values());
+                Collections.sort(bagItems, bagArtifactComparator);
+
+                ArtifactInfo bagPrevious = null;
                 final Map<ArtifactInfo, Integer> bagItemsList = new LinkedHashMap<>();
                 for(final ArtifactInfo artifactInfo : bagItems) {
-                    final Integer count = bagItemsList.get(artifactInfo);
-                    if(count == null) {
+                    if((bagPrevious == null) || (bagArtifactComparator.compare(bagPrevious, artifactInfo) != 0)) {
+                        bagPrevious = artifactInfo;
                         bagItemsList.put(artifactInfo, 1);
                     } else {
-                        bagItemsList.put(artifactInfo, count + 1);
+                        bagItemsList.put(bagPrevious, bagItemsList.get(bagPrevious) + 1);
                     }
                 }
 
