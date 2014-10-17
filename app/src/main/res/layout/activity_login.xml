@@ -21,6 +21,14 @@
         android:layout_centerInParent="true"
         android:orientation="vertical"
         android:visibility="gone">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/game_logo"
+            android:contentDescription="@string/app_name"/>
         
         <TextView
             android:id="@+id/login_error"
