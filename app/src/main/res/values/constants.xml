@@ -1,7 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <integer name="settings_notification_threshold_health_default">200</integer>
-    <integer name="settings_notification_threshold_energy_default">8</integer>
+    <bool name="settings_notification_common_default">true</bool>
+    <integer name="settings_notification_health_threshold_default">200</integer>
+    <integer name="settings_notification_energy_threshold_default">8</integer>
+
+    <bool name="settings_autohelp_common_bonus_energy_default">false</bool>
+    <integer name="settings_autohelp_common_bonus_energy_threshold_default">10</integer>
+    <bool name="settings_autohelp_common_default">false</bool>
+
+    <integer name="settings_autohelp_death_energy_threshold_default">4</integer>
+
+    <integer name="settings_autohelp_idle_energy_threshold_default">4</integer>
+
+    <integer name="settings_autohelp_health_amount_threshold_default">200</integer>
+    <integer name="settings_autohelp_health_energy_threshold_default">4</integer>
+    <bool name="settings_autohelp_health_boss_default">true</bool>
+
+    <integer name="settings_autohelp_energy_energy_threshold_default">8</integer>
 
 </resources>

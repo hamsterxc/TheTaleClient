@@ -21,6 +21,23 @@ public class PreferencesManager {
     private static SharedPreferences sharedPreferences =
             PreferenceManager.getDefaultSharedPreferences(TheTaleClientApplication.getContext());
 
+    private static boolean getBoolean(final int resId) {
+        return TheTaleClientApplication.getContext().getResources().getBoolean(resId);
+    }
+
+    private static int getInteger(final int resId) {
+        return TheTaleClientApplication.getContext().getResources().getInteger(resId);
+    }
+
+    private static String getString(final int resId) {
+        return TheTaleClientApplication.getContext().getResources().getString(resId);
+    }
+
+    private static int getIntegerIfExist(final int keyResId, final int defaultValueResId) {
+        final String value = sharedPreferences.getString(getString(keyResId), null);
+        return TextUtils.isEmpty(value) ? getInteger(defaultValueResId) : Integer.decode(value);
+    }
+
     public static String getLogin() {
         return sharedPreferences.getString(KEY_LOGIN, null);
     }
@@ -37,35 +54,133 @@ public class PreferencesManager {
     }
 
     public static boolean shouldNotifyDeath() {
-        return sharedPreferences.getBoolean(TheTaleClientApplication.getContext().getString(R.string.settings_key_notification_death), true);
+        return sharedPreferences.getBoolean(
+                getString(R.string.settings_key_notification_death),
+                getBoolean(R.bool.settings_notification_common_default));
     }
 
     public static boolean shouldNotifyIdleness() {
-        return sharedPreferences.getBoolean(TheTaleClientApplication.getContext().getString(R.string.settings_key_notification_idleness), true);
+        return sharedPreferences.getBoolean(
+                getString(R.string.settings_key_notification_idleness),
+                getBoolean(R.bool.settings_notification_common_default));
     }
 
     public static boolean shouldNotifyHealth() {
-        return sharedPreferences.getBoolean(TheTaleClientApplication.getContext().getString(R.string.settings_key_notification_health), true);
+        return sharedPreferences.getBoolean(
+                getString(R.string.settings_key_notification_health),
+                getBoolean(R.bool.settings_notification_common_default));
     }
 
     public static int getNotificationThresholdHealth() {
-        final String value = sharedPreferences.getString(
-                TheTaleClientApplication.getContext().getString(R.string.settings_key_notification_health_threshold), null);
-        return TextUtils.isEmpty(value) ?
-                TheTaleClientApplication.getContext().getResources().getInteger(R.integer.settings_notification_threshold_health_default) :
-                Integer.decode(value);
+        return getIntegerIfExist(R.string.settings_key_notification_health_threshold, R.integer.settings_notification_health_threshold_default);
     }
 
     public static boolean shouldNotifyEnergy() {
-        return sharedPreferences.getBoolean(TheTaleClientApplication.getContext().getString(R.string.settings_key_notification_energy), true);
+        return sharedPreferences.getBoolean(
+                getString(R.string.settings_key_notification_energy),
+                getBoolean(R.bool.settings_notification_common_default));
     }
 
     public static int getNotificationThresholdEnergy() {
-        final String value = sharedPreferences.getString(
-                TheTaleClientApplication.getContext().getString(R.string.settings_key_notification_energy_threshold), null);
-        return TextUtils.isEmpty(value) ?
-                TheTaleClientApplication.getContext().getResources().getInteger(R.integer.settings_notification_threshold_energy_default) :
-                Integer.decode(value);
+        return getIntegerIfExist(R.string.settings_key_notification_energy_threshold, R.integer.settings_notification_energy_threshold_default);
+    }
+
+    public static boolean shouldAutohelpDeath() {
+        return sharedPreferences.getBoolean(
+                getString(R.string.settings_key_autohelp_death),
+                getBoolean(R.bool.settings_autohelp_common_default));
+    }
+
+    public static int getAutohelpDeathEnergyThreshold() {
+        return getIntegerIfExist(R.string.settings_key_autohelp_death_energy_threshold, R.integer.settings_autohelp_death_energy_threshold_default);
+    }
+
+    public static boolean shouldAutohelpDeathUseBonusEnergy() {
+        return sharedPreferences.getBoolean(
+                getString(R.string.settings_key_autohelp_death_bonus_energy),
+                getBoolean(R.bool.settings_autohelp_common_bonus_energy_default));
+    }
+
+    public static int getAutohelpDeathBonusEnergyThreshold() {
+        return getIntegerIfExist(R.string.settings_key_autohelp_death_bonus_energy_threshold, R.integer.settings_autohelp_common_bonus_energy_threshold_default);
+    }
+
+    public static boolean shouldAutohelpIdle() {
+        return sharedPreferences.getBoolean(
+                getString(R.string.settings_key_autohelp_idle),
+                getBoolean(R.bool.settings_autohelp_common_default));
+    }
+
+    public static int getAutohelpIdleEnergyThreshold() {
+        return getIntegerIfExist(R.string.settings_key_autohelp_idle_energy_threshold, R.integer.settings_autohelp_idle_energy_threshold_default);
+    }
+
+    public static boolean shouldAutohelpIdleUseBonusEnergy() {
+        return sharedPreferences.getBoolean(
+                getString(R.string.settings_key_autohelp_idle_bonus_energy),
+                getBoolean(R.bool.settings_autohelp_common_bonus_energy_default));
+    }
+
+    public static int getAutohelpIdleBonusEnergyThreshold() {
+        return getIntegerIfExist(R.string.settings_key_autohelp_idle_bonus_energy_threshold, R.integer.settings_autohelp_common_bonus_energy_threshold_default);
+    }
+
+    public static boolean shouldAutohelpHealth() {
+        return sharedPreferences.getBoolean(
+                getString(R.string.settings_key_autohelp_health),
+                getBoolean(R.bool.settings_autohelp_common_default));
+    }
+
+    public static int getAutohelpHealthAmountThreshold() {
+        return getIntegerIfExist(R.string.settings_key_autohelp_health_amount_threshold, R.integer.settings_autohelp_health_amount_threshold_default);
+    }
+
+    public static int getAutohelpHealthEnergyThreshold() {
+        return getIntegerIfExist(R.string.settings_key_autohelp_health_energy_threshold, R.integer.settings_autohelp_health_energy_threshold_default);
+    }
+
+    public static boolean shouldAutohelpHealthUseBonusEnergy() {
+        return sharedPreferences.getBoolean(
+                getString(R.string.settings_key_autohelp_health_bonus_energy),
+                getBoolean(R.bool.settings_autohelp_common_bonus_energy_default));
+    }
+
+    public static int getAutohelpHealthBonusEnergyThreshold() {
+        return getIntegerIfExist(R.string.settings_key_autohelp_health_bonus_energy_threshold, R.integer.settings_autohelp_common_bonus_energy_threshold_default);
+    }
+
+    public static boolean shouldAutohelpHealthBossOnly() {
+        return sharedPreferences.getBoolean(
+                getString(R.string.settings_key_autohelp_health_boss),
+                getBoolean(R.bool.settings_autohelp_health_boss_default));
+    }
+
+    public static boolean shouldAutohelpEnergy() {
+        return sharedPreferences.getBoolean(
+                getString(R.string.settings_key_autohelp_energy),
+                getBoolean(R.bool.settings_autohelp_common_default));
+    }
+
+    public static int getAutohelpEnergyEnergyThreshold() {
+        return getIntegerIfExist(R.string.settings_key_autohelp_energy_energy_threshold, R.integer.settings_autohelp_energy_energy_threshold_default);
+    }
+
+    public static boolean shouldAutohelpEnergyBattle() {
+        return sharedPreferences.getBoolean(
+                getString(R.string.settings_key_autohelp_energy_battle),
+                getBoolean(R.bool.settings_autohelp_common_default));
+    }
+
+    public static boolean shouldAutohelpEnergyReligious() {
+        return sharedPreferences.getBoolean(
+                getString(R.string.settings_key_autohelp_energy_religious),
+                getBoolean(R.bool.settings_autohelp_common_default));
+    }
+
+    public static boolean shouldAutohelpEnergyTravel() {
+        return sharedPreferences.getBoolean(
+                getString(R.string.settings_key_autohelp_energy_travel),
+                getBoolean(R.bool.settings_autohelp_common_default));
     }
 
     public static MapStyle getMapStyle() {

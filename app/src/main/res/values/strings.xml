@@ -87,4 +87,52 @@
     <string name="settings_title_notification_energy">Накопившаяся энергия</string>
     <string name="settings_title_notification_energy_threshold">Уровень энергии</string>
 
+    <string name="settings_autohelp">Автоматическая помощь</string>
+    <string name="settings_summary_autohelp_common_bonus_energy_threshold">Помогать при дополнительной энергии не ниже %s</string>
+    <string name="settings_summary_autohelp_common_energy_threshold">Помогать при энергии не ниже %s</string>
+    <string name="settings_title_autohelp_common_bonus_energy">Использовать дополнительную энергию</string>
+    <string name="settings_title_autohelp_common_bonus_energy_threshold">Порог дополнительной энергии</string>
+    <string name="settings_title_autohelp_common_energy_threshold">Порог энергии</string>
+
+    <string name="settings_key_autohelp_death">KEY_SETTINGS_AUTOHELP_DEATH</string>
+    <string name="settings_key_autohelp_death_screen">KEY_SETTINGS_AUTOHELP_DEATH_SCREEN</string>
+    <string name="settings_key_autohelp_death_bonus_energy">KEY_SETTINGS_AUTOHELP_DEATH_BONUS_ENERGY</string>
+    <string name="settings_key_autohelp_death_bonus_energy_threshold">KEY_SETTINGS_AUTOHELP_DEATH_BONUS_ENERGY_THRESHOLD</string>
+    <string name="settings_key_autohelp_death_energy_threshold">KEY_SETTINGS_AUTOHELP_DEATH_ENERGY_THRESHOLD</string>
+    <string name="settings_title_autohelp_death">Герой мертв</string>
+    <string name="settings_title_autohelp_death_details">Настройки помощи: смерть</string>
+
+    <string name="settings_key_autohelp_idle">KEY_SETTINGS_AUTOHELP_IDLE</string>
+    <string name="settings_key_autohelp_idle_screen">KEY_SETTINGS_AUTOHELP_IDLE_SCREEN</string>
+    <string name="settings_key_autohelp_idle_bonus_energy">KEY_SETTINGS_AUTOHELP_IDLE_BONUS_ENERGY</string>
+    <string name="settings_key_autohelp_idle_bonus_energy_threshold">KEY_SETTINGS_AUTOHELP_IDLE_BONUS_ENERGY_THRESHOLD</string>
+    <string name="settings_key_autohelp_idle_energy_threshold">KEY_SETTINGS_AUTOHELP_IDLE_ENERGY_THRESHOLD</string>
+    <string name="settings_title_autohelp_idle">Герой бездействует</string>
+    <string name="settings_title_autohelp_idle_details">Настройки помощи: бездействие</string>
+
+    <string name="settings_key_autohelp_health">KEY_SETTINGS_AUTOHELP_HEALTH</string>
+    <string name="settings_key_autohelp_health_screen">KEY_SETTINGS_AUTOHELP_HEALTH_SCREEN</string>
+    <string name="settings_key_autohelp_health_amount_threshold">KEY_SETTINGS_AUTOHELP_HEALTH_AMOUNT</string>
+    <string name="settings_key_autohelp_health_bonus_energy">KEY_SETTINGS_AUTOHELP_HEALTH_BONUS_ENERGY</string>
+    <string name="settings_key_autohelp_health_bonus_energy_threshold">KEY_SETTINGS_AUTOHELP_HEALTH_BONUS_ENERGY_THRESHOLD</string>
+    <string name="settings_key_autohelp_health_boss">KEY_SETTINGS_AUTOHELP_HEALTH_BOSS</string>
+    <string name="settings_key_autohelp_health_energy_threshold">KEY_SETTINGS_AUTOHELP_HEALTH_ENERGY_THRESHOLD</string>
+    <string name="settings_summary_autohelp_health_amount_threshold">Помогать, если здоровье ниже %s</string>
+    <string name="settings_title_autohelp_health">Низкое здоровье</string>
+    <string name="settings_title_autohelp_health_amount_threshold">Уровень здоровья</string>
+    <string name="settings_title_autohelp_health_boss">Только в бою с \"боссом\"</string>
+    <string name="settings_title_autohelp_health_details">Настройки помощи: здоровье</string>
+
+    <string name="settings_key_autohelp_energy">KEY_SETTINGS_AUTOHELP_ENERGY</string>
+    <string name="settings_key_autohelp_energy_screen">KEY_SETTINGS_AUTOHELP_ENERGY_SCREEN</string>
+    <string name="settings_key_autohelp_energy_battle">KEY_SETTINGS_AUTOHELP_ENERGY_BATTLE</string>
+    <string name="settings_key_autohelp_energy_energy_threshold">KEY_SETTINGS_AUTOHELP_ENERGY_ENERGY_THRESHOLD</string>
+    <string name="settings_key_autohelp_energy_religious">KEY_SETTINGS_AUTOHELP_ENERGY_RELIGIOUS</string>
+    <string name="settings_key_autohelp_energy_travel">KEY_SETTINGS_AUTOHELP_ENERGY_TRAVEL</string>
+    <string name="settings_title_autohelp_energy">Накопившаяся энергия</string>
+    <string name="settings_title_autohelp_energy_battle">В бою</string>
+    <string name="settings_title_autohelp_energy_details">Настройки помощи: энергия</string>
+    <string name="settings_title_autohelp_energy_religious">Во время обряда</string>
+    <string name="settings_title_autohelp_energy_travel">В пути</string>
+
 </resources>

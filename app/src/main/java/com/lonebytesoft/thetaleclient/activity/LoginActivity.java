@@ -21,7 +21,7 @@ import com.lonebytesoft.thetaleclient.api.request.InfoRequest;
 import com.lonebytesoft.thetaleclient.api.response.AuthResponse;
 import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;
 import com.lonebytesoft.thetaleclient.api.response.InfoResponse;
-import com.lonebytesoft.thetaleclient.service.NotificationService;
+import com.lonebytesoft.thetaleclient.service.WatcherService;
 import com.lonebytesoft.thetaleclient.util.PreferencesManager;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
 
@@ -196,7 +196,7 @@ public class LoginActivity extends Activity {
     }
 
     private void onSuccessfulLogin() {
-        startService(new Intent(this, NotificationService.class));
+        startService(new Intent(this, WatcherService.class));
         startMainActivity();
     }
 

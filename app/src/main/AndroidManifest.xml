@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.lonebytesoft.thetaleclient" >
+    package="com.lonebytesoft.thetaleclient">
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.VIBRATE"/>
@@ -15,12 +15,13 @@
         android:theme="@style/AppTheme"
         android:name=".TheTaleClientApplication">
 
-        <activity android:name=".activity.LoginActivity"
+        <activity
+            android:name=".activity.LoginActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
 
@@ -30,7 +31,7 @@
             android:screenOrientation="portrait"/>
 
         <service
-            android:name=".service.NotificationService"
+            android:name=".service.WatcherService"
             android:exported="false"/>
 
     </application>
