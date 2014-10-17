@@ -126,6 +126,7 @@ public class EquipmentFragment extends WrapperFragment {
                         public void processResponse(InfoResponse response) {
                             if(gameInfoResponse.account.hero.energy.current + gameInfoResponse.account.hero.energy.bonus
                                     >= response.abilitiesCost.get(Action.DROP_ITEM)) {
+                                dropActionView.setEnabled(true);
                                 dropActionView.setActionClickListener(new Runnable() {
                                     @Override
                                     public void run() {

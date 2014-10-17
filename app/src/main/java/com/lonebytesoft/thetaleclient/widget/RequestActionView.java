@@ -72,6 +72,9 @@ public class RequestActionView extends FrameLayout {
     @Override
     public void setEnabled(boolean enabled) {
         textAction.setEnabled(enabled);
+        textAction.setTextColor(enabled ?
+                getContext().getResources().getColor(R.color.common_link) :
+                getContext().getResources().getColor(R.color.common_disabled));
     }
 
     public void setActionClickListener(final Runnable listener) {
