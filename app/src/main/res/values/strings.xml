@@ -27,6 +27,7 @@
     <string name="game_help">Помочь</string>
     <string name="game_help_progress_to_next_card">%1$d / %2$d</string>
     <string name="game_help_to_next_card">Помощи до новой карты</string>
+    <string name="game_lvlup">\u2b06</string>
 
     <string name="game_might_help_critical_chance">Критический эффект помощи: %.2f%%</string>
     <string name="game_might_pvp_effectiveness_bonus">Бонус к эффективности в PvP: %.2f%%</string>

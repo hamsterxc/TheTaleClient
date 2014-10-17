@@ -47,6 +47,7 @@ public class GameInfoFragment extends WrapperFragment {
     private TextView textRaceGender;
     private TextView textLevel;
     private TextView textName;
+    private View textLevelUp;
 
     private ProgressBar progressHealth;
     private TextView textHealth;
@@ -77,6 +78,7 @@ public class GameInfoFragment extends WrapperFragment {
         textRaceGender = (TextView) rootView.findViewById(R.id.game_info_race_gender);
         textLevel = (TextView) rootView.findViewById(R.id.game_info_level);
         textName = (TextView) rootView.findViewById(R.id.game_info_name);
+        textLevelUp = rootView.findViewById(R.id.game_info_lvlup);
 
         progressHealth = (ProgressBar) rootView.findViewById(R.id.game_info_health_progress);
         textHealth = (TextView) rootView.findViewById(R.id.game_info_health_text);
@@ -151,6 +153,7 @@ public class GameInfoFragment extends WrapperFragment {
                         response.account.hero.basicInfo.gender.getName()));
                 textLevel.setText(String.valueOf(response.account.hero.basicInfo.level));
                 textName.setText(response.account.hero.basicInfo.name);
+                textLevelUp.setVisibility(response.account.hero.basicInfo.destinyPoints > 0 ? View.VISIBLE : View.GONE);
 
                 progressHealth.setMax(response.account.hero.basicInfo.healthMax);
                 progressHealth.setProgress(response.account.hero.basicInfo.healthCurrent);
