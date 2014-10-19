@@ -3,8 +3,8 @@ package com.lonebytesoft.thetaleclient.api.response;
 import com.lonebytesoft.thetaleclient.api.model.PlaceInfo;
 import com.lonebytesoft.thetaleclient.api.model.RoadInfo;
 import com.lonebytesoft.thetaleclient.api.model.SpriteTileInfo;
-import com.lonebytesoft.thetaleclient.util.MapManager;
 import com.lonebytesoft.thetaleclient.util.ObjectUtils;
+import com.lonebytesoft.thetaleclient.util.map.MapManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;

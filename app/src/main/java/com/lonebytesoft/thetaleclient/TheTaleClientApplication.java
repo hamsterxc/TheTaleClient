@@ -4,7 +4,7 @@ import android.app.Application;
 import android.content.Context;
 
 import com.lonebytesoft.thetaleclient.api.cache.RequestCacheManager;
-import com.lonebytesoft.thetaleclient.util.MapManager;
+import com.lonebytesoft.thetaleclient.util.map.MapManager;
 
 /**
  * @author Hamster

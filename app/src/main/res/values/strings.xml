@@ -56,6 +56,7 @@
     <string name="map_tile_tab_terrain">Местность</string>
     <string name="map_style">Карта: %s</string>
     <string name="map_style_caption">Карта</string>
+    <string name="map_wilderness">дикие земли</string>
 
     <string name="notification_death">Герой мертв</string>
     <string name="notification_high_energy">Энергия накопилась: %d</string>

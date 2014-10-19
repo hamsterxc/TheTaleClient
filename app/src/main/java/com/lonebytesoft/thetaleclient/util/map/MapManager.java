@@ -1,4 +1,4 @@
-package com.lonebytesoft.thetaleclient.util;
+package com.lonebytesoft.thetaleclient.util.map;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -79,7 +80,29 @@ public class MapManager {
         final long time = System.currentTimeMillis();
         final CachedMap cachedMap = mapCache.get(mapStyle);
         if((cachedMap != null) && (cachedMap.map.get() != null) && (cachedMap.time + STALE_TIMEOUT_MILLIS >= time)) {
-            callback.onBitmapBuilt(cachedMap.map.get().copy(Bitmap.Config.ARGB_8888, true));
+            new GameInfoRequest().execute(new ApiResponseCallback<GameInfoResponse>() {
+                @Override
+                public void processResponse(GameInfoResponse response) {
+                    new MapRequest(response.mapVersion).execute(new CommonResponseCallback<MapResponse, String>() {
+                        @Override
+                        public void processResponse(MapResponse response) {
+                            final Bitmap result = cachedMap.map.get().copy(Bitmap.Config.ARGB_8888, true);
+                            drawPlaceNames(result, response.places.values());
+                            callback.onBitmapBuilt(result);
+                        }
+
+                        @Override
+                        public void processError(String error) {
+                            callback.onError();
+                        }
+                    });
+                }
+
+                @Override
+                public void processError(GameInfoResponse response) {
+                    callback.onError();
+                }
+            });
         } else {
             if(cachedMap != null) {
                 cachedMap.map.clear();
@@ -151,38 +174,14 @@ public class MapManager {
                                                 }
                                             }
 
-                                            // todo hacky calculation of sizes & positions
-                                            for(final PlaceInfo placeInfo : response.places.values()) {
-                                                final String text = String.format(PLACE_CAPTION, placeInfo.size, placeInfo.name);
-
-                                                final Paint textPaint = new Paint();
-                                                textPaint.setTextSize(PLACE_TEXT_SIZE);
-                                                textPaint.setColor(TheTaleClientApplication.getContext().getResources().getColor(R.color.map_place_name));
-
-                                                final Rect textRect = new Rect();
-                                                textPaint.getTextBounds(text, 0, text.length(), textRect);
-
-                                                final float x = (placeInfo.x + 0.5f) * MAP_TILE_SIZE - (textRect.right - textRect.left) / 2.0f + PLACE_TEXT_X_SHIFT;
-                                                final float y = (placeInfo.y + 1.0f) * MAP_TILE_SIZE + PLACE_TEXT_Y_SHIFT;
-
-                                                final Paint backgroundPaint = new Paint();
-                                                backgroundPaint.setColor(TheTaleClientApplication.getContext().getResources().getColor(R.color.map_place_name_background));
-
-                                                mapCanvas.drawRect(
-                                                        x + textRect.left - PLACE_TEXT_BACKGROUND_PADDING * 2,
-                                                        y + textRect.top - PLACE_TEXT_BACKGROUND_PADDING,
-                                                        x + textRect.right + PLACE_TEXT_BACKGROUND_PADDING * 4,
-                                                        y + textRect.bottom + PLACE_TEXT_BACKGROUND_PADDING,
-                                                        backgroundPaint);
-                                                mapCanvas.drawText(text, 0, text.length(), x, y, textPaint);
-                                            }
-
                                             final CachedMap built = new CachedMap();
                                             built.time = time;
                                             built.map = new WeakReference<>(map);
                                             mapCache.put(mapStyle, built);
 
-                                            callback.onBitmapBuilt(map.copy(Bitmap.Config.ARGB_8888, true));
+                                            final Bitmap result = map.copy(Bitmap.Config.ARGB_8888, true);
+                                            drawPlaceNames(result, response.places.values());
+                                            callback.onBitmapBuilt(result);
 
                                             return null;
                                         }
@@ -208,6 +207,35 @@ public class MapManager {
                     callback.onError();
                 }
             });
+        }
+    }
+
+    // todo hacky calculation of sizes & positions
+    public static void drawPlaceNames(final Bitmap map, final Collection<PlaceInfo> places) {
+        final Canvas mapCanvas = new Canvas(map);
+        for(final PlaceInfo placeInfo : places) {
+            final String text = String.format(PLACE_CAPTION, placeInfo.size, placeInfo.name);
+
+            final Paint textPaint = new Paint();
+            textPaint.setTextSize(PLACE_TEXT_SIZE);
+            textPaint.setColor(TheTaleClientApplication.getContext().getResources().getColor(R.color.map_place_name));
+
+            final Rect textRect = new Rect();
+            textPaint.getTextBounds(text, 0, text.length(), textRect);
+
+            final float x = (placeInfo.x + 0.5f) * MAP_TILE_SIZE - (textRect.right - textRect.left) / 2.0f + PLACE_TEXT_X_SHIFT;
+            final float y = (placeInfo.y + 1.0f) * MAP_TILE_SIZE + PLACE_TEXT_Y_SHIFT;
+
+            final Paint backgroundPaint = new Paint();
+            backgroundPaint.setColor(TheTaleClientApplication.getContext().getResources().getColor(R.color.map_place_name_background));
+
+            mapCanvas.drawRect(
+                    x + textRect.left - PLACE_TEXT_BACKGROUND_PADDING * 2,
+                    y + textRect.top - PLACE_TEXT_BACKGROUND_PADDING,
+                    x + textRect.right + PLACE_TEXT_BACKGROUND_PADDING * 4,
+                    y + textRect.bottom + PLACE_TEXT_BACKGROUND_PADDING,
+                    backgroundPaint);
+            mapCanvas.drawText(text, 0, text.length(), x, y, textPaint);
         }
     }
 
