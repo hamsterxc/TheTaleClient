@@ -22,7 +22,7 @@ public class MapTileTerrainFragment extends Fragment {
         final MapTileTerrainFragment dialog = new MapTileTerrainFragment();
 
         Bundle args = new Bundle();
-        args.putStringArray(PARAM_TERRAIN_DESCRIPTION, cellInfo.terrainText.toArray(new String[cellInfo.terrainText.size()]));
+        args.putStringArray(PARAM_TERRAIN_DESCRIPTION, cellInfo.terrain.toArray(new String[cellInfo.terrain.size()]));
 
         dialog.setArguments(args);
         return dialog;

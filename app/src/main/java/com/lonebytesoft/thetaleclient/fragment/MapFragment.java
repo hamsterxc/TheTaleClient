@@ -1,6 +1,7 @@
 package com.lonebytesoft.thetaleclient.fragment;
 
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.RectF;
 import android.os.Bundle;
 import android.os.Handler;
@@ -21,17 +22,23 @@ import com.lonebytesoft.thetaleclient.api.dictionary.MapStyle;
 import com.lonebytesoft.thetaleclient.api.model.PlaceInfo;
 import com.lonebytesoft.thetaleclient.api.model.PositionInfo;
 import com.lonebytesoft.thetaleclient.api.request.GameInfoRequest;
+import com.lonebytesoft.thetaleclient.api.request.InfoRequest;
 import com.lonebytesoft.thetaleclient.api.request.MapCellRequest;
 import com.lonebytesoft.thetaleclient.api.request.MapRequest;
+import com.lonebytesoft.thetaleclient.api.request.MapTerrainRequest;
 import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;
+import com.lonebytesoft.thetaleclient.api.response.InfoResponse;
 import com.lonebytesoft.thetaleclient.api.response.MapCellResponse;
 import com.lonebytesoft.thetaleclient.api.response.MapResponse;
+import com.lonebytesoft.thetaleclient.api.response.MapTerrainResponse;
 import com.lonebytesoft.thetaleclient.fragment.dialog.ChoiceDialog;
 import com.lonebytesoft.thetaleclient.fragment.dialog.TabbedDialog;
 import com.lonebytesoft.thetaleclient.util.DialogUtils;
-import com.lonebytesoft.thetaleclient.util.MapManager;
+import com.lonebytesoft.thetaleclient.util.ObjectUtils;
 import com.lonebytesoft.thetaleclient.util.PreferencesManager;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
+import com.lonebytesoft.thetaleclient.util.map.MapManager;
+import com.lonebytesoft.thetaleclient.util.map.MapModification;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -56,6 +63,7 @@ public class MapFragment extends WrapperFragment {
     private PhotoViewAttacher mapViewHelper;
 
     private View actionMapStyle;
+    private View actionMapModification;
 
     private float mapZoom;
     private float mapShiftX;
@@ -64,6 +72,7 @@ public class MapFragment extends WrapperFragment {
 
     private PositionInfo heroPosition;
     private List<PlaceInfo> places;
+    private MapModification mapModification;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -79,13 +88,8 @@ public class MapFragment extends WrapperFragment {
         actionMapStyle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final int count = MapStyle.values().length;
-                final String[] choices = new String[count];
-                for(int i = 0; i < count; i++) {
-                    choices[i] = MapStyle.values()[i].getName();
-                }
-
-                DialogUtils.showChoiceDialog(getFragmentManager(), getString(R.string.map_style_caption), choices, new ChoiceDialog.ItemChooseListener() {
+                DialogUtils.showChoiceDialog(getFragmentManager(), getString(R.string.map_style_caption),
+                        ObjectUtils.getNamesForEnum(MapStyle.class), new ChoiceDialog.ItemChooseListener() {
                     @Override
                     public void onItemSelected(int position) {
                         PreferencesManager.setMapStyle(MapStyle.values()[position]);
@@ -121,6 +125,22 @@ public class MapFragment extends WrapperFragment {
             }
         });
 
+        actionMapModification = rootView.findViewById(R.id.map_modification);
+        actionMapModification.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DialogUtils.showChoiceDialog(getChildFragmentManager(), getString(R.string.map_modification_caption),
+                        ObjectUtils.getNamesForEnum(MapModification.class), new ChoiceDialog.ItemChooseListener() {
+                    @Override
+                    public void onItemSelected(int position) {
+                        mapModification = MapModification.values()[position];
+                        refresh(true);
+                    }
+                });
+            }
+        });
+        mapModification = MapModification.NONE;
+
         return wrapView(layoutInflater, rootView);
     }
 
@@ -152,122 +172,68 @@ public class MapFragment extends WrapperFragment {
         final MapStyle mapStyle = PreferencesManager.getMapStyle();
         UiUtils.setText(actionMapStyle, getString(R.string.map_style, mapStyle.getName()));
 
-        MapManager.buildMapBitmap(new MapManager.MapBitmapCallback() {
+        UiUtils.setText(actionMapModification, getString(R.string.map_modification, mapModification.getName()));
+
+        new InfoRequest().execute(new ApiResponseCallback<InfoResponse>() {
             @Override
-            public void onBitmapBuilt(final Bitmap map) {
+            public void processResponse(final InfoResponse infoResponse) {
                 new GameInfoRequest().execute(new ApiResponseCallback<GameInfoResponse>() {
                     @Override
-                    public void processResponse(final GameInfoResponse response) {
-                        new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    public void processResponse(final GameInfoResponse gameInfoResponse) {
+                        new MapRequest(gameInfoResponse.mapVersion).execute(new CommonResponseCallback<MapResponse, String>() {
                             @Override
-                            public void run() {
-                                heroPosition = response.account.hero.position;
-                                MapManager.drawHero(map, heroPosition,
-                                        MapManager.getSpriteTile(response.account.hero.spriteId), mapStyle);
-                                mapView.setImageBitmap(map);
-                                mapViewHelper.update();
-                                if(isMapInitialPosition) {
-                                    isMapInitialPosition = false;
-                                } else {
-                                    mapViewHelper.setScale(mapZoom);
-                                    mapViewHelper.onDrag(mapShiftX, mapShiftY);
-                                }
-
-                                final int width = mapView.getDrawable().getIntrinsicWidth();
-                                final int height = mapView.getDrawable().getIntrinsicHeight();
-
-                                mapView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                            public void processResponse(final MapResponse mapResponse) {
+                                MapManager.getMapSprite(mapStyle, infoResponse, new MapManager.MapBitmapCallback() {
                                     @Override
-                                    public void onGlobalLayout() {
-                                        final int viewWidth = mapView.getWidth();
-                                        final int viewHeight = mapView.getHeight();
-                                        if((viewWidth != 0) && (viewHeight != 0)) {
-                                            if(viewWidth < viewHeight) {
-                                                mapViewHelper.setMinimumScale((float) viewWidth / width);
-                                            } else {
-                                                mapViewHelper.setMinimumScale((float) viewHeight / height);
-                                            }
-                                            UiUtils.removeGlobalLayoutListener(mapView, this);
-                                        }
-                                    }
-                                });
+                                    public void onBitmapBuilt(final Bitmap sprite) {
+                                        heroPosition = gameInfoResponse.account.hero.position;
 
-                                mapViewHelper.setOnPhotoTapListener(new PhotoViewAttacher.OnPhotoTapListener() {
-                                    @Override
-                                    public void onPhotoTap(View view, float x, float y) {
-                                        final int tileX = (int) Math.floor(x * width / MapManager.MAP_TILE_SIZE);
-                                        final int tileY = (int) Math.floor(y * height / MapManager.MAP_TILE_SIZE);
+                                        final Bitmap map = MapManager.getMapBitmap(mapResponse);
+                                        final Canvas canvas = new Canvas(map);
 
-                                        DialogUtils.showTabbedDialog(getChildFragmentManager(), getString(R.string.drawer_title_map), null);
+                                        if(mapModification == MapModification.NONE) {
+                                            MapManager.drawBaseLayer(canvas, mapResponse, sprite);
+                                            MapManager.drawPlaceNamesLayer(canvas, mapResponse);
+                                            MapManager.drawHeroLayer(canvas, gameInfoResponse.account.hero, sprite);
+                                            setMap(map, mapResponse);
+                                        } else {
+                                            new MapTerrainRequest().execute(new CommonResponseCallback<MapTerrainResponse, String>() {
+                                                @Override
+                                                public void processResponse(final MapTerrainResponse mapTerrainResponse) {
+                                                    switch(mapModification) {
+                                                        case WIND:
+                                                            MapManager.drawModificationLayer(canvas, mapResponse, mapTerrainResponse, mapModification);
+                                                            break;
 
-                                        new MapRequest(response.mapVersion).execute(new CommonResponseCallback<MapResponse, String>() {
-                                            @Override
-                                            public void processResponse(MapResponse response) {
-                                                PlaceInfo placeInfo = null;
-                                                for(final PlaceInfo currentPlaceInfo : response.places.values()) {
-                                                    if((currentPlaceInfo.x == tileX) && (currentPlaceInfo.y == tileY)) {
-                                                        placeInfo = currentPlaceInfo;
-                                                        break;
+                                                        case INFLUENCE:
+                                                            MapManager.drawBaseLayer(canvas, mapResponse, sprite);
+                                                            MapManager.drawModificationLayer(canvas, mapResponse, mapTerrainResponse, mapModification);
+                                                            MapManager.drawPlaceNamesLayer(canvas, mapResponse);
+                                                            MapManager.drawHeroLayer(canvas, gameInfoResponse.account.hero, sprite);
+                                                            break;
                                                     }
+                                                    setMap(map, mapResponse);
                                                 }
 
-                                                final PlaceInfo placeInfoFinal = placeInfo;
-                                                new MapCellRequest().execute(tileX, tileY, new CommonResponseCallback<MapCellResponse, String>() {
-                                                    @Override
-                                                    public void processResponse(final MapCellResponse response) {
-                                                        // request may be completed before fragment is instantiated, we'll wait for it
-                                                        final Handler handler = new Handler();
-                                                        handler.post(new Runnable() {
-                                                            @Override
-                                                            public void run() {
-                                                                final TabbedDialog dialog = (TabbedDialog) getChildFragmentManager().findFragmentByTag(DialogUtils.DIALOG_TABBED_TAG);
-                                                                if (dialog == null) {
-                                                                    handler.post(this);
-                                                                } else {
-                                                                    dialog.setCaption(placeInfoFinal == null ? getString(R.string.map_tile_caption, tileX, tileY) : placeInfoFinal.name);
-                                                                    dialog.setTabsAdapter(new TileTabsAdapter(response, placeInfoFinal));
-                                                                    dialog.setMode(DataViewMode.DATA);
-                                                                }
-                                                            }
-                                                        });
-                                                    }
-
-                                                    @Override
-                                                    public void processError(String error) {
-                                                        setError(getString(R.string.map_error));
-                                                    }
-                                                });
-                                            }
-
-                                            @Override
-                                            public void processError(String error) {
-                                                setError(getString(R.string.map_error));
-                                            }
-                                        });
-                                    }
-                                });
-
-                                new MapRequest(response.mapVersion).execute(new CommonResponseCallback<MapResponse, String>() {
-                                    @Override
-                                    public void processResponse(MapResponse response) {
-                                        places = new ArrayList<>(response.places.size());
-                                        for(final PlaceInfo placeInfo : response.places.values()) {
-                                            places.add(placeInfo);
+                                                @Override
+                                                public void processError(String error) {
+                                                    setError(getString(R.string.map_error));
+                                                    mapModification = MapModification.NONE;
+                                                }
+                                            });
                                         }
-                                        Collections.sort(places, new Comparator<PlaceInfo>() {
-                                            @Override
-                                            public int compare(PlaceInfo lhs, PlaceInfo rhs) {
-                                                return lhs.name.compareTo(rhs.name);
-                                            }
-                                        });
-                                        setMode(DataViewMode.DATA);
                                     }
 
                                     @Override
-                                    public void processError(String error) {
+                                    public void onError() {
                                         setError(getString(R.string.map_error));
                                     }
                                 });
+                            }
+
+                            @Override
+                            public void processError(String error) {
+                                setError(getString(R.string.map_error));
                             }
                         });
                     }
@@ -280,10 +246,10 @@ public class MapFragment extends WrapperFragment {
             }
 
             @Override
-            public void onError() {
+            public void processError(InfoResponse response) {
                 setError(getString(R.string.map_error));
             }
-        }, mapStyle);
+        });
     }
 
     private void moveToTile(final int tileX, final int tileY) {
@@ -295,6 +261,110 @@ public class MapFragment extends WrapperFragment {
         final float newRectTop = mapView.getHeight() / 2.0f - newCenterY;
         final RectF currentRect = mapViewHelper.getDisplayRect();
         mapViewHelper.onDrag(newRectLeft - currentRect.left, newRectTop - currentRect.top);
+    }
+
+    private void setMap(final Bitmap map, final MapResponse mapResponse) {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                mapView.setImageBitmap(map);
+                mapViewHelper.update();
+                if (isMapInitialPosition) {
+                    isMapInitialPosition = false;
+                } else {
+                    mapViewHelper.setScale(mapZoom);
+                    mapViewHelper.onDrag(mapShiftX, mapShiftY);
+                }
+
+                final int width = mapView.getDrawable().getIntrinsicWidth();
+                final int height = mapView.getDrawable().getIntrinsicHeight();
+
+                mapView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        final int viewWidth = mapView.getWidth();
+                        final int viewHeight = mapView.getHeight();
+                        if ((viewWidth != 0) && (viewHeight != 0)) {
+                            if (viewWidth < viewHeight) {
+                                mapViewHelper.setMinimumScale((float) viewWidth / width);
+                            } else {
+                                mapViewHelper.setMinimumScale((float) viewHeight / height);
+                            }
+                            UiUtils.removeGlobalLayoutListener(mapView, this);
+                        }
+                    }
+                });
+
+                mapViewHelper.setOnPhotoTapListener(new PhotoViewAttacher.OnPhotoTapListener() {
+                    @Override
+                    public void onPhotoTap(View view, float x, float y) {
+                        final int tileX = (int) Math.floor(x * width / MapManager.MAP_TILE_SIZE);
+                        final int tileY = (int) Math.floor(y * height / MapManager.MAP_TILE_SIZE);
+
+                        DialogUtils.showTabbedDialog(getChildFragmentManager(), getString(R.string.drawer_title_map), null);
+
+                        PlaceInfo placeInfo = null;
+                        for(final PlaceInfo currentPlaceInfo : mapResponse.places.values()) {
+                            if((currentPlaceInfo.x == tileX) && (currentPlaceInfo.y == tileY)) {
+                                placeInfo = currentPlaceInfo;
+                                break;
+                            }
+                        }
+
+                        final PlaceInfo placeInfoFinal = placeInfo;
+                        new MapCellRequest().execute(tileX, tileY, new CommonResponseCallback<MapCellResponse, String>() {
+                            @Override
+                            public void processResponse(final MapCellResponse response) {
+                                // request may be completed before fragment is instantiated, we'll wait for it
+                                final Handler handler = new Handler();
+                                handler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        final TabbedDialog dialog = (TabbedDialog) getChildFragmentManager().findFragmentByTag(DialogUtils.DIALOG_TABBED_TAG);
+                                        if (dialog == null) {
+                                            handler.post(this);
+                                        } else {
+                                            dialog.setCaption(placeInfoFinal == null ? getString(R.string.map_tile_caption, tileX, tileY) : placeInfoFinal.name);
+                                            dialog.setTabsAdapter(new TileTabsAdapter(response, placeInfoFinal));
+                                            dialog.setMode(DataViewMode.DATA);
+                                        }
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void processError(String error) {
+                                final Handler handler = new Handler();
+                                handler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        final TabbedDialog dialog = (TabbedDialog) getChildFragmentManager().findFragmentByTag(DialogUtils.DIALOG_TABBED_TAG);
+                                        if (dialog == null) {
+                                            handler.post(this);
+                                        } else {
+                                            dialog.dismiss();
+                                        }
+                                    }
+                                });
+                                setError(getString(R.string.map_error));
+                            }
+                        });
+                    }
+                });
+
+                places = new ArrayList<>(mapResponse.places.size());
+                for (final PlaceInfo placeInfo : mapResponse.places.values()) {
+                    places.add(placeInfo);
+                }
+                Collections.sort(places, new Comparator<PlaceInfo>() {
+                    @Override
+                    public int compare(PlaceInfo lhs, PlaceInfo rhs) {
+                        return lhs.name.compareTo(rhs.name);
+                    }
+                });
+                setMode(DataViewMode.DATA);
+            }
+        });
     }
 
     private class TileTabsAdapter extends TabbedDialog.TabbedDialogTabsAdapter {

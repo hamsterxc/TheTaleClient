@@ -16,6 +16,7 @@ import java.util.Map;
 public class ObjectUtils {
 
     private static final Map<Class<?>, Map<?, ?>> codeToEnumCache = new HashMap<>();
+    private static final Map<Class<?>, String[]> enumToNamesCache = new HashMap<>();
 
     public static <T> T getModelFromJson(final Class<T> clazz, final JSONObject json) {
         if(json == null) {
@@ -82,6 +83,28 @@ public class ObjectUtils {
         }catch(JSONException e) {
             return null;
         }
+    }
+
+    public static <E extends Enum<E>> String[] getNamesForEnum(final Class<E> clazz) {
+        if(!clazz.isEnum()) {
+            return null;
+        }
+
+        String[] names = enumToNamesCache.get(clazz);
+        if(names == null) {
+            try {
+                final int count = clazz.getEnumConstants().length;
+                names = new String[count];
+                final Method getNameMethod = clazz.getMethod("getName");
+                for(int i = 0; i < count; i++) {
+                    names[i] = (String) getNameMethod.invoke(clazz.getEnumConstants()[i]);
+                }
+                enumToNamesCache.put(clazz, names);
+            } catch(NoSuchMethodException|IllegalAccessException|InvocationTargetException e) {
+                return null;
+            }
+        }
+        return names;
     }
 
 }

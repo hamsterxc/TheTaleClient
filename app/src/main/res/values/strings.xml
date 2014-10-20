@@ -49,6 +49,8 @@
     <string name="map_find_hero">Найти героя</string>
     <string name="map_find_place">Найти город</string>
     <string name="map_error">Произошла ошибка при построении карты. Пожалуйста, обновите страницу.</string>
+    <string name="map_modification">Вид: %s</string>
+    <string name="map_modification_caption">Вид карты</string>
     <string name="map_tile_caption">Квадрат %1$dx%2$d</string>
     <string name="map_tile_place_race">Основное население: %s</string>
     <string name="map_tile_place_size">Размер: %d</string>
@@ -56,7 +58,6 @@
     <string name="map_tile_tab_terrain">Местность</string>
     <string name="map_style">Карта: %s</string>
     <string name="map_style_caption">Карта</string>
-    <string name="map_wilderness">дикие земли</string>
 
     <string name="notification_death">Герой мертв</string>
     <string name="notification_high_energy">Энергия накопилась: %d</string>

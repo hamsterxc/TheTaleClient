@@ -10,24 +10,18 @@ import android.os.AsyncTask;
 
 import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.TheTaleClientApplication;
-import com.lonebytesoft.thetaleclient.api.ApiResponseCallback;
-import com.lonebytesoft.thetaleclient.api.CommonResponseCallback;
 import com.lonebytesoft.thetaleclient.api.dictionary.MapStyle;
+import com.lonebytesoft.thetaleclient.api.model.HeroInfo;
+import com.lonebytesoft.thetaleclient.api.model.MapCellTerrainInfo;
 import com.lonebytesoft.thetaleclient.api.model.PlaceInfo;
-import com.lonebytesoft.thetaleclient.api.model.PositionInfo;
 import com.lonebytesoft.thetaleclient.api.model.SpriteTileInfo;
-import com.lonebytesoft.thetaleclient.api.request.GameInfoRequest;
-import com.lonebytesoft.thetaleclient.api.request.InfoRequest;
-import com.lonebytesoft.thetaleclient.api.request.MapRequest;
-import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;
 import com.lonebytesoft.thetaleclient.api.response.InfoResponse;
 import com.lonebytesoft.thetaleclient.api.response.MapResponse;
+import com.lonebytesoft.thetaleclient.api.response.MapTerrainResponse;
 
 import java.io.IOException;
-import java.lang.ref.WeakReference;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -71,149 +65,95 @@ public class MapManager {
             128, 128, 128, 128, 160, 160, 160, 160, 160, 160,
             160, 160, 160, 160};
 
-    private static final int STALE_TIMEOUT_MILLIS = 600000; // 10 min
+    private static final Map<MapStyle, Bitmap> mapSpriteCache = new HashMap<>(MapStyle.values().length);
 
-    private static Map<MapStyle, CachedMap> mapCache = new HashMap<>(MapStyle.values().length);
-    private static Map<MapStyle, Bitmap> mapSpriteCache = new HashMap<>(MapStyle.values().length);
+    /**
+     * Returns a bitmap to draw a map on
+     * @param mapInfo map information
+     * @return empty bitmap of necessary size
+     */
+    public static Bitmap getMapBitmap(final MapResponse mapInfo) {
+        return Bitmap.createBitmap(mapInfo.width * MAP_TILE_SIZE, mapInfo.height * MAP_TILE_SIZE, Bitmap.Config.ARGB_8888);
+    }
 
-    public static void buildMapBitmap(final MapBitmapCallback callback, final MapStyle mapStyle) {
-        final long time = System.currentTimeMillis();
-        final CachedMap cachedMap = mapCache.get(mapStyle);
-        if((cachedMap != null) && (cachedMap.map.get() != null) && (cachedMap.time + STALE_TIMEOUT_MILLIS >= time)) {
-            new GameInfoRequest().execute(new ApiResponseCallback<GameInfoResponse>() {
-                @Override
-                public void processResponse(GameInfoResponse response) {
-                    new MapRequest(response.mapVersion).execute(new CommonResponseCallback<MapResponse, String>() {
-                        @Override
-                        public void processResponse(MapResponse response) {
-                            final Bitmap result = cachedMap.map.get().copy(Bitmap.Config.ARGB_8888, true);
-                            drawPlaceNames(result, response.places.values());
-                            callback.onBitmapBuilt(result);
-                        }
-
-                        @Override
-                        public void processError(String error) {
-                            callback.onError();
-                        }
-                    });
+    /**
+     * Synchronously draws a base layer of the map (terrain, places, buildings)
+     * @param canvas a canvas for the map bitmap to draw layer on
+     * @param mapInfo map information
+     * @param sprite map sprite
+     */
+    public static void drawBaseLayer(final Canvas canvas, final MapResponse mapInfo, final Bitmap sprite) {
+        final Rect tileRect = new Rect(0, 0, MAP_TILE_SIZE, MAP_TILE_SIZE);
+        final int rowsCount = mapInfo.tiles.size();
+        for(int i = 0; i < rowsCount; i++) {
+            final List<List<SpriteTileInfo>> row = mapInfo.tiles.get(i);
+            final int cellsCount = row.size();
+            for(int j = 0; j < cellsCount; j++) {
+                final Rect dst = new Rect(
+                        j * MAP_TILE_SIZE, i * MAP_TILE_SIZE,
+                        (j + 1) * MAP_TILE_SIZE, (i + 1) * MAP_TILE_SIZE);
+                for(final SpriteTileInfo tile : row.get(j)) {
+                    if(tile.rotation == 0) {
+                        final Rect src = new Rect(
+                                tile.x, tile.y,
+                                tile.x + tile.size, tile.y + tile.size);
+                        canvas.drawBitmap(sprite, src, dst, null);
+                    } else {
+                        final Matrix rotationMatrix = new Matrix();
+                        rotationMatrix.setRotate(tile.rotation);
+                        final Bitmap rotatingTileBitmap = Bitmap.createBitmap(
+                                sprite,
+                                tile.x, tile.y,
+                                MAP_TILE_SIZE, MAP_TILE_SIZE,
+                                rotationMatrix, true);
+                        canvas.drawBitmap(rotatingTileBitmap, tileRect, dst, null);
+                    }
                 }
-
-                @Override
-                public void processError(GameInfoResponse response) {
-                    callback.onError();
-                }
-            });
-        } else {
-            if(cachedMap != null) {
-                cachedMap.map.clear();
             }
-            mapCache.remove(mapStyle);
-            System.gc();
-
-            new InfoRequest().execute(new ApiResponseCallback<InfoResponse>() {
-                @Override
-                public void processResponse(InfoResponse response) {
-                    final String mapSpriteUrl = String.format(MAP_SPRITE_URL, response.staticContentUrl, mapStyle.getPath());
-
-                    new GameInfoRequest().execute(new ApiResponseCallback<GameInfoResponse>() {
-                        @Override
-                        public void processResponse(GameInfoResponse response) {
-                            new MapRequest(response.mapVersion).execute(new CommonResponseCallback<MapResponse, String>() {
-                                @Override
-                                public void processResponse(final MapResponse response) {
-                                    new AsyncTask<Void, Void, Void>() {
-                                        @Override
-                                        protected Void doInBackground(Void... params) {
-                                            Bitmap mapSprite = mapSpriteCache.get(mapStyle);
-                                            if(mapSprite == null) {
-                                                try {
-                                                    final URL url = new URL(mapSpriteUrl);
-                                                    final URLConnection urlConnection = url.openConnection();
-                                                    urlConnection.setDoInput(true);
-                                                    urlConnection.connect();
-                                                    mapSprite = BitmapFactory.decodeStream(urlConnection.getInputStream());
-                                                } catch (IOException e) {
-                                                    callback.onError();
-                                                    return null;
-                                                }
-                                                mapSpriteCache.put(mapStyle, mapSprite);
-                                            }
-
-                                            final Bitmap map = Bitmap.createBitmap(
-                                                    response.width * MAP_TILE_SIZE,
-                                                    response.height * MAP_TILE_SIZE,
-                                                    Bitmap.Config.ARGB_8888);
-                                            final Canvas mapCanvas = new Canvas(map);
-
-                                            final Rect tileRect = new Rect(0, 0, MAP_TILE_SIZE, MAP_TILE_SIZE);
-                                            final int rowsCount = response.tiles.size();
-                                            for(int i = 0; i < rowsCount; i++) {
-                                                final List<List<SpriteTileInfo>> row = response.tiles.get(i);
-                                                final int cellsCount = row.size();
-                                                for(int j = 0; j < cellsCount; j++) {
-                                                    final Rect dst = new Rect(
-                                                            j * MAP_TILE_SIZE, i * MAP_TILE_SIZE,
-                                                            (j + 1) * MAP_TILE_SIZE, (i + 1) * MAP_TILE_SIZE);
-                                                    for(final SpriteTileInfo tile : row.get(j)) {
-                                                        if(tile.rotation == 0) {
-                                                            final Rect src = new Rect(
-                                                                    tile.x, tile.y,
-                                                                    tile.x + tile.size, tile.y + tile.size);
-                                                            mapCanvas.drawBitmap(mapSprite, src, dst, null);
-                                                        } else {
-                                                            final Matrix rotationMatrix = new Matrix();
-                                                            rotationMatrix.setRotate(tile.rotation);
-                                                            final Bitmap rotatingTileBitmap = Bitmap.createBitmap(
-                                                                    mapSprite,
-                                                                    tile.x, tile.y,
-                                                                    MAP_TILE_SIZE, MAP_TILE_SIZE,
-                                                                    rotationMatrix, true);
-                                                            mapCanvas.drawBitmap(rotatingTileBitmap, tileRect, dst, null);
-                                                        }
-                                                    }
-                                                }
-                                            }
-
-                                            final CachedMap built = new CachedMap();
-                                            built.time = time;
-                                            built.map = new WeakReference<>(map);
-                                            mapCache.put(mapStyle, built);
-
-                                            final Bitmap result = map.copy(Bitmap.Config.ARGB_8888, true);
-                                            drawPlaceNames(result, response.places.values());
-                                            callback.onBitmapBuilt(result);
-
-                                            return null;
-                                        }
-                                    }.execute();
-                                }
-
-                                @Override
-                                public void processError(String error) {
-                                    callback.onError();
-                                }
-                            });
-                        }
-
-                        @Override
-                        public void processError(GameInfoResponse response) {
-                            callback.onError();
-                        }
-                    });
-                }
-
-                @Override
-                public void processError(InfoResponse response) {
-                    callback.onError();
-                }
-            });
         }
     }
 
-    // todo hacky calculation of sizes & positions
-    public static void drawPlaceNames(final Bitmap map, final Collection<PlaceInfo> places) {
-        final Canvas mapCanvas = new Canvas(map);
-        for(final PlaceInfo placeInfo : places) {
+    /**
+     * Asynchronously gets an appropriate map sprite
+     * @param mapStyle desired map style
+     * @param infoResponse result of InfoRequest
+     * @param callback bitmap callback
+     */
+    public static void getMapSprite(final MapStyle mapStyle, final InfoResponse infoResponse, final MapBitmapCallback callback) {
+        final Bitmap mapSprite = mapSpriteCache.get(mapStyle);
+        if(mapSprite == null) {
+            new AsyncTask<Void, Void, Void>() {
+                @Override
+                protected Void doInBackground(Void... params) {
+                    final Bitmap mapSprite;
+                    try {
+                        final URL url = new URL(String.format(MAP_SPRITE_URL, infoResponse.staticContentUrl, mapStyle.getPath()));
+                        final URLConnection urlConnection = url.openConnection();
+                        urlConnection.setDoInput(true);
+                        urlConnection.connect();
+                        mapSprite = BitmapFactory.decodeStream(urlConnection.getInputStream());
+                    } catch (IOException e) {
+                        callback.onError();
+                        return null;
+                    }
+                    mapSpriteCache.put(mapStyle, mapSprite);
+                    callback.onBitmapBuilt(mapSprite);
+                    return null;
+                }
+            }.execute();
+        } else {
+            callback.onBitmapBuilt(mapSprite);
+        }
+    }
+
+    /**
+     * Synchronously draws a layer with place names
+     * todo hacky calculation of sizes & positions
+     * @param canvas a canvas for the map bitmap to draw layer on
+     * @param mapInfo map information
+     */
+    public static void drawPlaceNamesLayer(final Canvas canvas, final MapResponse mapInfo) {
+        for(final PlaceInfo placeInfo : mapInfo.places.values()) {
             final String text = String.format(PLACE_CAPTION, placeInfo.size, placeInfo.name);
 
             final Paint textPaint = new Paint();
@@ -229,40 +169,54 @@ public class MapManager {
             final Paint backgroundPaint = new Paint();
             backgroundPaint.setColor(TheTaleClientApplication.getContext().getResources().getColor(R.color.map_place_name_background));
 
-            mapCanvas.drawRect(
+            canvas.drawRect(
                     x + textRect.left - PLACE_TEXT_BACKGROUND_PADDING * 2,
                     y + textRect.top - PLACE_TEXT_BACKGROUND_PADDING,
                     x + textRect.right + PLACE_TEXT_BACKGROUND_PADDING * 4,
                     y + textRect.bottom + PLACE_TEXT_BACKGROUND_PADDING,
                     backgroundPaint);
-            mapCanvas.drawText(text, 0, text.length(), x, y, textPaint);
+            canvas.drawText(text, 0, text.length(), x, y, textPaint);
         }
     }
 
-    public static void drawHero(final Bitmap map, final PositionInfo position, final SpriteTileInfo tile, final MapStyle mapStyle) {
-        final Bitmap mapSprite = mapSpriteCache.get(mapStyle);
-        if(mapSprite == null) {
-            throw new IllegalStateException("buildMapBitmap() must be called before drawHero()");
-        }
-
-        final Canvas mapCanvas = new Canvas(map);
+    /**
+     * Synchronously draws a layer with hero
+     * @param canvas a canvas for the map bitmap to draw layer on
+     * @param heroInfo hero information
+     * @param sprite map sprite
+     */
+    public static void drawHeroLayer(final Canvas canvas, final HeroInfo heroInfo, final Bitmap sprite) {
         final Rect dst = new Rect(
-                (int) (position.x * MAP_TILE_SIZE), (int) (position.y * MAP_TILE_SIZE + HERO_SPRITE_SHIFT_Y),
-                (int) ((position.x + 1.0) * MAP_TILE_SIZE), (int) ((position.y + 1.0) * MAP_TILE_SIZE + HERO_SPRITE_SHIFT_Y));
-        if(position.sightX >= 0) {
+                (int) (heroInfo.position.x * MAP_TILE_SIZE),
+                (int) (heroInfo.position.y * MAP_TILE_SIZE + HERO_SPRITE_SHIFT_Y),
+                (int) ((heroInfo.position.x + 1.0) * MAP_TILE_SIZE),
+                (int) ((heroInfo.position.y + 1.0) * MAP_TILE_SIZE + HERO_SPRITE_SHIFT_Y));
+        final SpriteTileInfo tile = getSpriteTile(heroInfo.spriteId);
+        if(heroInfo.position.sightX >= 0) {
             final Rect src = new Rect(
                     tile.x, tile.y,
                     tile.x + tile.size, tile.y + tile.size);
-            mapCanvas.drawBitmap(mapSprite, src, dst, null);
+            canvas.drawBitmap(sprite, src, dst, null);
         } else {
             final Matrix mirroringMatrix = new Matrix();
             mirroringMatrix.setScale(-1, 1);
             final Bitmap mirroredTileBitmap = Bitmap.createBitmap(
-                    mapSprite,
+                    sprite,
                     tile.x, tile.y,
                     MAP_TILE_SIZE, MAP_TILE_SIZE,
                     mirroringMatrix, true);
-            mapCanvas.drawBitmap(mirroredTileBitmap, new Rect(0, 0, MAP_TILE_SIZE, MAP_TILE_SIZE), dst, null);
+            canvas.drawBitmap(mirroredTileBitmap, new Rect(0, 0, MAP_TILE_SIZE, MAP_TILE_SIZE), dst, null);
+        }
+    }
+
+    public static void drawModificationLayer(final Canvas canvas, final MapResponse mapInfo,
+                                             final MapTerrainResponse terrainInfo, final MapModification modification) {
+        MapModification.init(modification, mapInfo);
+        for(int y = 0; y < mapInfo.height; y++) {
+            final List<MapCellTerrainInfo> row = terrainInfo.cells.get(y);
+            for(int x = 0; x < mapInfo.width; x++) {
+                modification.modifyCell(canvas, x, y, row.get(x));
+            }
         }
     }
 
@@ -274,26 +228,15 @@ public class MapManager {
         return getSpriteTile(spriteId, 0);
     }
 
-    public interface MapBitmapCallback {
-        void onBitmapBuilt(Bitmap map);
-        void onError();
-    }
-
-    private static class CachedMap {
-        public long time;
-        public WeakReference<Bitmap> map;
-    }
-
     public static void cleanup() {
         for(final MapStyle mapStyle : MapStyle.values()) {
-            final CachedMap cachedMap = mapCache.get(mapStyle);
-            if ((cachedMap != null) && (cachedMap.map != null)) {
-                cachedMap.map.clear();
-            }
-            mapCache.remove(mapStyle);
-
             mapSpriteCache.remove(mapStyle);
         }
+    }
+
+    public interface MapBitmapCallback {
+        void onBitmapBuilt(Bitmap bitmap);
+        void onError();
     }
 
 }
