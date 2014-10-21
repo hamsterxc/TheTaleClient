@@ -85,6 +85,12 @@ public class PreferencesManager {
         return getIntegerIfExist(R.string.settings_key_notification_energy_threshold, R.integer.settings_notification_energy_threshold_default);
     }
 
+    public static boolean shouldNotifyNewMessages() {
+        return sharedPreferences.getBoolean(
+                getString(R.string.settings_key_notification_new_messages),
+                getBoolean(R.bool.settings_notification_common_default));
+    }
+
     public static boolean shouldAutohelpDeath() {
         return sharedPreferences.getBoolean(
                 getString(R.string.settings_key_autohelp_death),

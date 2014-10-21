@@ -19,6 +19,7 @@ import com.lonebytesoft.thetaleclient.service.notifier.DeathNotifier;
 import com.lonebytesoft.thetaleclient.service.notifier.EnergyNotifier;
 import com.lonebytesoft.thetaleclient.service.notifier.HealthNotifier;
 import com.lonebytesoft.thetaleclient.service.notifier.IdlenessNotifier;
+import com.lonebytesoft.thetaleclient.service.notifier.NewMessagesNotifier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,6 +80,7 @@ public class WatcherService extends Service {
         watchers.add(new IdlenessNotifier());
         watchers.add(new HealthNotifier());
         watchers.add(new EnergyNotifier());
+        watchers.add(new NewMessagesNotifier());
 
         autohelpers = new ArrayList<>();
         autohelpers.add(new DeathAutohelper());

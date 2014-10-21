@@ -63,6 +63,7 @@
     <string name="notification_high_energy">Энергия накопилась: %d</string>
     <string name="notification_idle">Герой бездействует</string>
     <string name="notification_low_health">Низкое здоровье: %d HP</string>
+    <string name="notification_new_messages">Новых сообщений: %d</string>
 
     <string name="quest_actor_race">Раса</string>
     <string name="quest_actor_gender">Пол</string>
@@ -81,6 +82,7 @@
     <string name="settings_key_notification_health_threshold">KEY_SETTINGS_NOTIFICATION_HEALTH_THRESHOLD</string>
     <string name="settings_key_notification_energy">KEY_SETTINGS_NOTIFICATION_ENERGY</string>
     <string name="settings_key_notification_energy_threshold">KEY_SETTINGS_NOTIFICATION_ENERGY_THRESHOLD</string>
+    <string name="settings_key_notification_new_messages">KEY_SETTINGS_NOTIFICATION_NEW_MESSAGES</string>
     <string name="settings_summary_notification_energy">Уведомление при энергии не ниже %s</string>
     <string name="settings_summary_notification_health">Уведомление, если здоровье ниже %s</string>
     <string name="settings_title_notification_death">Смерть героя</string>
@@ -89,6 +91,7 @@
     <string name="settings_title_notification_health_threshold">Уровень здоровья</string>
     <string name="settings_title_notification_energy">Накопившаяся энергия</string>
     <string name="settings_title_notification_energy_threshold">Уровень энергии</string>
+    <string name="settings_title_notification_new_messages">Новые сообщения</string>
 
     <string name="settings_autohelp">Автоматическая помощь</string>
     <string name="settings_summary_autohelp_common_bonus_energy_threshold">Помогать при дополнительной энергии не ниже %s</string>

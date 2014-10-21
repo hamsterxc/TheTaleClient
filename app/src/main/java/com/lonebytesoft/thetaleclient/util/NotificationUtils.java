@@ -45,6 +45,10 @@ public class NotificationUtils {
         }
     }
 
+    public static void notifyNewMessages(final int newMessages) {
+        notify(getMainActivityIntent(), context.getString(R.string.notification_new_messages, newMessages));
+    }
+
     private static void notify(final PendingIntent intent, final String message) {
         final Notification notification = new NotificationCompat.Builder(context)
                 .setSmallIcon(R.drawable.ic_push)
