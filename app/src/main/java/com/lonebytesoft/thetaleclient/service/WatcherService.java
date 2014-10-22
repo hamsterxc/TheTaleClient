@@ -66,7 +66,7 @@ public class WatcherService extends Service {
                 public void processError(GameInfoResponse response) {
                     handler.postDelayed(refreshRunnable, REQUEST_TIMEOUT_MILLIS);
                 }
-            });
+            }, false);
         }
     };
 

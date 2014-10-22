@@ -62,12 +62,17 @@ public abstract class AbstractApiRequest<T extends AbstractApiResponse> {
     }
 
     protected void execute(final Map<String, String> getParams, final Map<String, String> postParams,
-                        final ApiResponseCallback<T> callback) {
+                           final ApiResponseCallback<T> callback) {
+        execute(getParams, postParams, callback, true);
+    }
+
+    protected void execute(final Map<String, String> getParams, final Map<String, String> postParams,
+                           final ApiResponseCallback<T> callback, final boolean useCache) {
         final String url = String.format(URL, methodUrl);
         final Request request = new Request(url, httpMethod, getParams, postParams);
 
         final long staleTime = getStaleTime();
-        if((staleTime > 0) && !RequestCacheManager.initRequest(request, staleTime)) {
+        if(useCache && (staleTime > 0) && !RequestCacheManager.initRequest(request, staleTime)) {
             RequestCacheManager.addListener(request, new CommonResponseCallback<String, Void>() {
                 @Override
                 public void processResponse(String response) {

@@ -66,7 +66,7 @@ public class DiaryFragment extends WrapperFragment {
             public void processError(GameInfoResponse response) {
                 setError(response.errorMessage);
             }
-        });
+        }, true);
     }
 
 }

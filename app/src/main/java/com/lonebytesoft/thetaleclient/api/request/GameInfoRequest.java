@@ -20,14 +20,15 @@ public class GameInfoRequest extends AbstractApiRequest<GameInfoResponse> {
         super(HttpMethod.GET, "game/api/info", "1.1", true);
     }
 
-    public void execute(final int accountId, final ApiResponseCallback<GameInfoResponse> callback) {
+    public void execute(final int accountId, final ApiResponseCallback<GameInfoResponse> callback,
+                        final boolean useCache) {
         final Map<String, String> getParams = new HashMap<>(1);
         getParams.put("account", String.valueOf(accountId));
-        execute(getParams, null, callback);
+        execute(getParams, null, callback, useCache);
     }
 
-    public void execute(final ApiResponseCallback<GameInfoResponse> callback) {
-        execute(null, null, callback);
+    public void execute(final ApiResponseCallback<GameInfoResponse> callback, final boolean useCache) {
+        execute(null, null, callback, useCache);
     }
 
     protected GameInfoResponse getResponse(final String response) throws JSONException {

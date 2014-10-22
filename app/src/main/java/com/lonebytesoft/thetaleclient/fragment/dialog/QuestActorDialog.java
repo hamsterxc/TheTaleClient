@@ -74,7 +74,7 @@ public class QuestActorDialog extends BaseDialog {
                     @Override
                     public void processError(GameInfoResponse response) {
                     }
-                });
+                }, true);
                 break;
 
             case PLACE:
@@ -98,7 +98,7 @@ public class QuestActorDialog extends BaseDialog {
                     @Override
                     public void processError(GameInfoResponse response) {
                     }
-                });
+                }, true);
                 break;
 
             case SPENDING:

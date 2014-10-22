@@ -229,7 +229,7 @@ public class GameInfoFragment extends WrapperFragment {
             public void processError(GameInfoResponse response) {
                 setError(response.errorMessage);
             }
-        });
+        }, false);
     }
 
 }

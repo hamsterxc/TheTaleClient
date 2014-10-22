@@ -233,7 +233,7 @@ public class MainActivity extends ActionBarActivity
                     public void processError(GameInfoResponse response) {
                         UiUtils.setText(timeTextView, null);
                     }
-                });
+                }, true);
             }
 
             @Override

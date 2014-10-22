@@ -120,7 +120,7 @@ public class LoginActivity extends Activity {
                     public void processError(GameInfoResponse response) {
                         LoginActivity.this.processError(response.errorMessage, PreferencesManager.getLogin(), PreferencesManager.getPassword());
                     }
-                });
+                }, false);
             }
 
             @Override

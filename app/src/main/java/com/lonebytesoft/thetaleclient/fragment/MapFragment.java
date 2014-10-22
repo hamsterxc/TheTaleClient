@@ -242,7 +242,7 @@ public class MapFragment extends WrapperFragment {
                     public void processError(GameInfoResponse response) {
                         setError(getString(R.string.map_error));
                     }
-                });
+                }, true);
             }
 
             @Override
