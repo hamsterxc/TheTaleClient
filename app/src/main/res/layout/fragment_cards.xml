@@ -75,9 +75,7 @@
             android:orientation="vertical"
             android:background="@drawable/block_background"/>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="8dp"/>
+        <View style="@style/Padder"/>
 
     </LinearLayout>
 

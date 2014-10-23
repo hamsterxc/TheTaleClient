@@ -25,4 +25,9 @@
         <item name="android:background">@color/common_delimiter</item>
     </style>
 
+    <style name="Padder">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">8dp</item>
+    </style>
+
 </resources>

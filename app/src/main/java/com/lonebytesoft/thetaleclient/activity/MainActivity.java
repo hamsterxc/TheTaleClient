@@ -38,6 +38,7 @@ public class MainActivity extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
     public static final String KEY_GAME_TAB_INDEX = "KEY_GAME_TAB_INDEX";
+    private static final String KEY_DRAWER_TAB_INDEX = "KEY_DRAWER_TAB_INDEX";
 
     private static final String URL_GAME = "http://the-tale.org/game/";
 
@@ -73,6 +74,12 @@ public class MainActivity extends ActionBarActivity
 
         accountNameTextView = (TextView) findViewById(R.id.drawer_account_name);
         timeTextView = (TextView) findViewById(R.id.drawer_time);
+
+        int tabIndex = DrawerItem.GAME.ordinal();
+        if(savedInstanceState != null) {
+            tabIndex = savedInstanceState.getInt(KEY_DRAWER_TAB_INDEX, tabIndex);
+        }
+        onNavigationDrawerItemSelected(DrawerItem.values()[tabIndex]);
     }
 
     @Override
@@ -101,6 +108,13 @@ public class MainActivity extends ActionBarActivity
 
         RequestCacheManager.invalidate();
         TheTaleClientApplication.onApplicationPartSelected(ApplicationPart.INSIGNIFICANT);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putInt(KEY_DRAWER_TAB_INDEX, currentItem.ordinal());
     }
 
     @Override
@@ -142,11 +156,17 @@ public class MainActivity extends ActionBarActivity
                     break;
 
                 default:
-                    // update the main content by replacing fragments
                     FragmentManager fragmentManager = getSupportFragmentManager();
-                    fragmentManager.beginTransaction()
-                            .replace(R.id.container, item.getFragment(), item.getFragmentTag())
-                            .commit();
+                    final Fragment oldFragment = fragmentManager.findFragmentByTag(item.getFragmentTag());
+                    if(oldFragment == null) {
+                        fragmentManager.beginTransaction()
+                                .replace(R.id.container, item.getFragment(), item.getFragmentTag())
+                                .commit();
+                    } else if(oldFragment.isDetached()) {
+                        fragmentManager.beginTransaction()
+                                .attach(oldFragment)
+                                .commit();
+                    }
 
                     mTitle = getString(item.getTitleResId());
                     currentItem = item;

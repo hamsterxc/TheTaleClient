@@ -2,6 +2,7 @@ package com.lonebytesoft.thetaleclient.fragment;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.PointF;
 import android.graphics.RectF;
 import android.os.Bundle;
 import android.os.Handler;
@@ -52,6 +53,11 @@ import uk.co.senab.photoview.PhotoViewAttacher;
  * @since 12.10.2014
  */
 public class MapFragment extends WrapperFragment {
+
+    private static final String KEY_MAP_ZOOM = "KEY_MAP_ZOOM";
+    private static final String KEY_MAP_SHIFT_X = "KEY_MAP_SHIFT_X";
+    private static final String KEY_MAP_SHIFT_Y = "KEY_MAP_SHIFT_Y";
+    private static final String KEY_MAP_MODIFICATION = "KEY_MAP_MODIFICATION";
 
     private static final float ZOOM_MAX = 3f;
 
@@ -140,9 +146,30 @@ public class MapFragment extends WrapperFragment {
                         R.layout.dialog_content_map_modification, R.id.dialog_map_modification_list);
             }
         });
-        mapModification = MapModification.NONE;
+
+        if(savedInstanceState != null) {
+            mapZoom = savedInstanceState.getFloat(KEY_MAP_ZOOM, 1.0f);
+            mapShiftX = savedInstanceState.getFloat(KEY_MAP_SHIFT_X, 0.0f);
+            mapShiftY = savedInstanceState.getFloat(KEY_MAP_SHIFT_Y, 0.0f);
+            mapModification = MapModification.values()[savedInstanceState.getInt(KEY_MAP_MODIFICATION, MapModification.NONE.ordinal())];
+        } else {
+            mapZoom = 1.0f;
+            mapShiftX = 0.0f;
+            mapShiftY = 0.0f;
+            mapModification = MapModification.NONE;
+        }
 
         return wrapView(layoutInflater, rootView);
+    }
+
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putFloat(KEY_MAP_ZOOM, getMapZoom());
+
+        final PointF mapShift = getMapShift();
+        outState.putFloat(KEY_MAP_SHIFT_X, mapShift.x);
+        outState.putFloat(KEY_MAP_SHIFT_Y, mapShift.y);
+
+        outState.putInt(KEY_MAP_MODIFICATION, mapModification.ordinal());
     }
 
     @Override
@@ -150,21 +177,11 @@ public class MapFragment extends WrapperFragment {
         super.refresh(isGlobal);
 
         if(!isMapInitialPosition) {
-            mapZoom = mapViewHelper.getScale();
-            if (mapZoom > ZOOM_MAX) {
-                mapZoom = ZOOM_MAX;
-            }
+            mapZoom = getMapZoom();
 
-            final RectF currentRect = mapViewHelper.getDisplayRect();
-            final float currentDrawableWidth = currentRect.right - currentRect.left;
-            final float currentDrawableHeight = currentRect.bottom - currentRect.top;
-            final float viewWidth = mapView.getWidth();
-            final float viewHeight = mapView.getHeight();
-
-            final float centeredRectLeft = (viewWidth - currentDrawableWidth) / 2.0f;
-            final float centeredRectTop = (viewHeight - currentDrawableHeight) / 2.0f;
-            mapShiftX = currentRect.left - centeredRectLeft;
-            mapShiftY = currentRect.top - centeredRectTop;
+            final PointF mapShift = getMapShift();
+            mapShiftX = mapShift.x;
+            mapShiftY = mapShift.y;
         }
 
         mapView.setImageBitmap(null);
@@ -264,15 +281,35 @@ public class MapFragment extends WrapperFragment {
         mapViewHelper.onDrag(newRectLeft - currentRect.left, newRectTop - currentRect.top);
     }
 
+    private float getMapZoom() {
+        float mapZoom = mapViewHelper.getScale();
+        if (mapZoom > ZOOM_MAX) {
+            mapZoom = ZOOM_MAX;
+        }
+
+        return mapZoom;
+    }
+
+    private PointF getMapShift() {
+        final RectF currentRect = mapViewHelper.getDisplayRect();
+        final float currentDrawableWidth = currentRect.right - currentRect.left;
+        final float currentDrawableHeight = currentRect.bottom - currentRect.top;
+        final float viewWidth = mapView.getWidth();
+        final float viewHeight = mapView.getHeight();
+
+        final float centeredRectLeft = (viewWidth - currentDrawableWidth) / 2.0f;
+        final float centeredRectTop = (viewHeight - currentDrawableHeight) / 2.0f;
+
+        return new PointF(currentRect.left - centeredRectLeft, currentRect.top - centeredRectTop);
+    }
+
     private void setMap(final Bitmap map, final MapResponse mapResponse) {
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
                 mapView.setImageBitmap(map);
                 mapViewHelper.update();
-                if (isMapInitialPosition) {
-                    isMapInitialPosition = false;
-                } else {
+                if (!isMapInitialPosition) {
                     mapViewHelper.setScale(mapZoom);
                     mapViewHelper.onDrag(mapShiftX, mapShiftY);
                 }
@@ -291,6 +328,13 @@ public class MapFragment extends WrapperFragment {
                             } else {
                                 mapViewHelper.setMinimumScale((float) viewHeight / height);
                             }
+
+                            if (isMapInitialPosition) {
+                                isMapInitialPosition = false;
+                                mapViewHelper.setScale(mapZoom);
+                                mapViewHelper.onDrag(mapShiftX, mapShiftY);
+                            }
+
                             UiUtils.removeGlobalLayoutListener(mapView, this);
                         }
                     }
