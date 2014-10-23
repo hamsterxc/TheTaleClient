@@ -19,6 +19,9 @@ public class ChoiceDialog extends BaseDialog {
     private static final String PARAM_CAPTION = "PARAM_CAPTION";
     private static final String PARAM_CHOICES = "PARAM_CHOICES";
 
+    private int layoutResId;
+    private int listViewResId;
+
     private LayoutInflater layoutInflater;
     private ItemChooseListener listener;
 
@@ -33,12 +36,22 @@ public class ChoiceDialog extends BaseDialog {
         return dialog;
     }
 
+    public ChoiceDialog() {
+        layoutResId = R.layout.dialog_content_choice;
+        listViewResId = R.id.dialog_choice_list;
+    }
+
+    public void setLayout(final int layoutResId, final int listViewResId) {
+        this.layoutResId = layoutResId;
+        this.listViewResId = listViewResId;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         layoutInflater = inflater;
-        final View view = inflater.inflate(R.layout.dialog_content_choice, container, false);
+        final View view = inflater.inflate(layoutResId, container, false);
 
-        ((ListView) view.findViewById(R.id.dialog_choice_list)).setAdapter(new ChoiceAdapter(getArguments().getStringArray(PARAM_CHOICES)));
+        ((ListView) view.findViewById(listViewResId)).setAdapter(new ChoiceAdapter(getArguments().getStringArray(PARAM_CHOICES)));
 
         return wrapView(inflater, view, getArguments().getString(PARAM_CAPTION));
     }

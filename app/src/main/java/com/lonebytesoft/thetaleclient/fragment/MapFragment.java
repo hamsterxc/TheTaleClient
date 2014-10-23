@@ -131,12 +131,13 @@ public class MapFragment extends WrapperFragment {
             public void onClick(View v) {
                 DialogUtils.showChoiceDialog(getChildFragmentManager(), getString(R.string.map_modification_caption),
                         ObjectUtils.getNamesForEnum(MapModification.class), new ChoiceDialog.ItemChooseListener() {
-                    @Override
-                    public void onItemSelected(int position) {
-                        mapModification = MapModification.values()[position];
-                        refresh(true);
-                    }
-                });
+                            @Override
+                            public void onItemSelected(int position) {
+                                mapModification = MapModification.values()[position];
+                                refresh(true);
+                            }
+                        },
+                        R.layout.dialog_content_map_modification, R.id.dialog_map_modification_list);
             }
         });
         mapModification = MapModification.NONE;

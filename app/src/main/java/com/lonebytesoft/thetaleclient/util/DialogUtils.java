@@ -54,6 +54,15 @@ public class DialogUtils {
         dialog.show(getFragmentTransaction(fragmentManager), DIALOG_CHOICE_TAG);
     }
 
+    public static void showChoiceDialog(final FragmentManager fragmentManager, final String caption,
+                                        final String[] choices, final ChoiceDialog.ItemChooseListener listener,
+                                        final int layoutResId, final int listViewResId) {
+        final ChoiceDialog dialog = ChoiceDialog.newInstance(caption, choices);
+        dialog.setItemChooseListener(listener);
+        dialog.setLayout(layoutResId, listViewResId);
+        dialog.show(getFragmentTransaction(fragmentManager), DIALOG_CHOICE_TAG);
+    }
+
     public static void showTabbedDialog(final FragmentManager fragmentManager,
                                         final String caption, final TabbedDialog.TabbedDialogTabsAdapter tabsAdapter) {
         final TabbedDialog dialog = TabbedDialog.newInstance(caption);

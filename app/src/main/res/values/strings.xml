@@ -51,6 +51,7 @@
     <string name="map_error">Произошла ошибка при построении карты. Пожалуйста, обновите страницу.</string>
     <string name="map_modification">Вид: %s</string>
     <string name="map_modification_caption">Вид карты</string>
+    <string name="map_modification_warning">Внимание! Построение вида карты, отличного от обычного, может занять длительное время.</string>
     <string name="map_tile_caption">Квадрат %1$dx%2$d</string>
     <string name="map_tile_place_race">Основное население: %s</string>
     <string name="map_tile_place_size">Размер: %d</string>
