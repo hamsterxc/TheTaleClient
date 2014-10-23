@@ -35,7 +35,12 @@ public class PreferencesManager {
 
     private static int getIntegerIfExist(final int keyResId, final int defaultValueResId) {
         final String value = sharedPreferences.getString(getString(keyResId), null);
-        return TextUtils.isEmpty(value) ? getInteger(defaultValueResId) : Integer.decode(value);
+        final int intDefault = getInteger(defaultValueResId);
+        try {
+            return TextUtils.isEmpty(value) ? intDefault : Integer.decode(value);
+        } catch (NumberFormatException e) {
+            return intDefault;
+        }
     }
 
     public static String getLogin() {
