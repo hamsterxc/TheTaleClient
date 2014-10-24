@@ -57,6 +57,7 @@
     <string name="map_modification_caption">Вид карты</string>
     <string name="map_modification_warning">Внимание! Построение вида карты, отличного от обычного, может занять длительное время.</string>
     <string name="map_tile_caption">Квадрат %1$dx%2$d</string>
+    <string name="map_tile_place_name">Название: %s</string>
     <string name="map_tile_place_race">Основное население: %s</string>
     <string name="map_tile_place_size">Размер: %d</string>
     <string name="map_tile_tab_params">Параметры</string>

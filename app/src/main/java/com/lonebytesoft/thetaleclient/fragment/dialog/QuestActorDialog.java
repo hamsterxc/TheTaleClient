@@ -79,6 +79,8 @@ public class QuestActorDialog extends BaseDialog {
 
             case PLACE:
                 view = inflater.inflate(R.layout.dialog_content_quest_actor_place, container, false);
+                UiUtils.setText(view.findViewById(R.id.dialog_quest_actor_place_name),
+                        getString(R.string.map_tile_place_name, questActorInfo.placeInfo.name));
                 new GameInfoRequest().execute(new ApiResponseCallback<GameInfoResponse>() {
                     @Override
                     public void processResponse(GameInfoResponse response) {
