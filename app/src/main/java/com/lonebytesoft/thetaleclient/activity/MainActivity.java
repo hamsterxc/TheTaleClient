@@ -24,6 +24,7 @@ import com.lonebytesoft.thetaleclient.api.request.LogoutRequest;
 import com.lonebytesoft.thetaleclient.api.response.CommonResponse;
 import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;
 import com.lonebytesoft.thetaleclient.api.response.InfoResponse;
+import com.lonebytesoft.thetaleclient.fragment.ChatFragment;
 import com.lonebytesoft.thetaleclient.fragment.GameFragment;
 import com.lonebytesoft.thetaleclient.fragment.MapFragment;
 import com.lonebytesoft.thetaleclient.fragment.NavigationDrawerFragment;
@@ -32,7 +33,6 @@ import com.lonebytesoft.thetaleclient.fragment.SettingsFragment;
 import com.lonebytesoft.thetaleclient.fragment.WrapperFragment;
 import com.lonebytesoft.thetaleclient.util.PreferencesManager;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
-
 
 public class MainActivity extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
@@ -289,6 +289,12 @@ public class MainActivity extends ActionBarActivity
             @Override
             public Fragment getFragment() {
                 return new MapFragment();
+            }
+        },
+        CHAT(R.string.drawer_title_chat, "FRAGMENT_TAG_CHAT") {
+            @Override
+            public Fragment getFragment() {
+                return new ChatFragment();
             }
         },
         SITE(0, ""),

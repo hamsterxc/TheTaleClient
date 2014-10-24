@@ -1,11 +1,16 @@
 package com.lonebytesoft.thetaleclient.util;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
 /**
@@ -14,17 +19,24 @@ import android.widget.TextView;
  */
 public class UiUtils {
 
+    private static final Handler mainHandler = new Handler(Looper.getMainLooper());
+
     public static void setText(final TextView textView, final CharSequence text) {
         if(textView == null) {
             return;
         }
 
-        if(TextUtils.isEmpty(text)) {
-            textView.setVisibility(View.GONE);
-        } else {
-            textView.setVisibility(View.VISIBLE);
-            textView.setText(text);
-        }
+        mainHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                if(TextUtils.isEmpty(text)) {
+                    textView.setVisibility(View.GONE);
+                } else {
+                    textView.setVisibility(View.VISIBLE);
+                    textView.setText(text);
+                }
+            }
+        });
     }
 
     public static void setText(final View view, final CharSequence text) {
@@ -45,6 +57,14 @@ public class UiUtils {
             view.getViewTreeObserver().removeGlobalOnLayoutListener(listener);
         } else {
             view.getViewTreeObserver().removeOnGlobalLayoutListener(listener);
+        }
+    }
+
+    public static void hideKeyboard(final Activity activity) {
+        final View view = activity.getCurrentFocus();
+        if(view != null) {
+            final InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
 

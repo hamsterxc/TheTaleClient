@@ -11,6 +11,10 @@
     <string name="artifact_integrity">целостность: %1$.2f%% (%2$d из %3$d)</string>
     <string name="artifact_rating">полезность: %.2f</string>
 
+    <string name="chat_error">Произошла ошибка при обновлении чата. Пожалуйста, обновите страницу.</string>
+    <string name="chat_error_send">Произошла ошибка при отправке сообщения. Попробуйте еще раз.</string>
+
+    <string name="drawer_title_chat">Чат</string>
     <string name="drawer_title_close">Закрыть меню</string>
     <string name="drawer_title_game">Игра</string>
     <string name="drawer_title_logout">Выход</string>
