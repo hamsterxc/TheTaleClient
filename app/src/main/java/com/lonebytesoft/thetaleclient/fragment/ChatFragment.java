@@ -74,13 +74,23 @@ public class ChatFragment extends WrapperFragment {
                     ChatManager.post(text, new ChatManager.ChatCallback() {
                         @Override
                         public void onSuccess() {
-                            message.setText(null);
+                            mainHandler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    message.setText(null);
+                                }
+                            });
                             refresh(false);
                         }
 
                         @Override
                         public void onError() {
-                            errorSend.setVisibility(View.VISIBLE);
+                            mainHandler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    errorSend.setVisibility(View.VISIBLE);
+                                }
+                            });
                         }
                     });
                 }
