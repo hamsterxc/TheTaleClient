@@ -46,8 +46,8 @@
                         android:id="@+id/cards_help_counter"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/cards_help_progress_margins"
-                        android:layout_marginBottom="@dimen/cards_help_progress_margins"
+                        android:layout_marginTop="@dimen/game_info_bar_padding"
+                        android:layout_marginBottom="@dimen/game_info_bar_padding"
                         android:layout_centerInParent="true"
                         style="?android:attr/textAppearanceMedium"/>
 

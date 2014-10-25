@@ -297,13 +297,29 @@
                 android:layout_height="wrap_content"
                 style="?android:attr/textAppearanceMedium"/>
 
-            <ProgressBar
-                android:id="@+id/game_info_action_progress"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/game_info_bar_height"
-                android:layout_marginTop="8dp"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:progressDrawable="@drawable/game_info_action"/>
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp">
+
+                <ProgressBar
+                    android:id="@+id/game_info_action_progress"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/game_info_bar_height"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:progressDrawable="@drawable/game_info_action"/>
+
+                <TextView
+                    android:id="@+id/game_info_action_progress_health"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/game_info_bar_padding"
+                    android:layout_marginBottom="@dimen/game_info_bar_padding"
+                    android:layout_centerInParent="true"
+                    style="?android:attr/textAppearanceSmall"
+                    android:visibility="gone"/>
+
+            </RelativeLayout>
 
             <com.lonebytesoft.thetaleclient.widget.RequestActionView
                 android:id="@+id/game_help"

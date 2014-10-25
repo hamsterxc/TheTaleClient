@@ -6,6 +6,7 @@ import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -13,6 +14,8 @@ import com.lonebytesoft.thetaleclient.DataViewMode;
 import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.api.ApiResponseCallback;
 import com.lonebytesoft.thetaleclient.api.dictionary.Action;
+import com.lonebytesoft.thetaleclient.api.dictionary.HeroAction;
+import com.lonebytesoft.thetaleclient.api.model.HeroActionInfo;
 import com.lonebytesoft.thetaleclient.api.model.JournalEntry;
 import com.lonebytesoft.thetaleclient.api.model.MightInfo;
 import com.lonebytesoft.thetaleclient.api.request.AbilityUseRequest;
@@ -22,7 +25,12 @@ import com.lonebytesoft.thetaleclient.api.response.CommonResponse;
 import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;
 import com.lonebytesoft.thetaleclient.api.response.InfoResponse;
 import com.lonebytesoft.thetaleclient.util.DialogUtils;
+import com.lonebytesoft.thetaleclient.util.UiUtils;
 import com.lonebytesoft.thetaleclient.widget.RequestActionView;
+
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Hamster
@@ -62,10 +70,15 @@ public class GameInfoFragment extends WrapperFragment {
     private TextView textMight;
 
     private ProgressBar progressAction;
+    private TextView progressActionHealth;
     private TextView textAction;
     private RequestActionView actionHelp;
 
     private ViewGroup journalContainer;
+
+    private int lastJournalTimestamp;
+    private double lastFightProgress;
+    private int lastKnownHealth;
 
     public GameInfoFragment() {
     }
@@ -93,6 +106,7 @@ public class GameInfoFragment extends WrapperFragment {
         textMight = (TextView) rootView.findViewById(R.id.game_info_might);
 
         progressAction = (ProgressBar) rootView.findViewById(R.id.game_info_action_progress);
+        progressActionHealth = (TextView) rootView.findViewById(R.id.game_info_action_progress_health);
         textAction = (TextView) rootView.findViewById(R.id.game_info_action_text);
         actionHelp = (RequestActionView) rootView.findViewById(R.id.game_help);
 
@@ -137,6 +151,12 @@ public class GameInfoFragment extends WrapperFragment {
     public void refresh(final boolean isGlobal) {
         super.refresh(isGlobal);
 
+        if(isGlobal) {
+            lastJournalTimestamp = 0;
+            lastFightProgress = 0;
+            lastKnownHealth = 0;
+        }
+
         new GameInfoRequest().execute(new ApiResponseCallback<GameInfoResponse>() {
             @Override
             public void processResponse(GameInfoResponse response) {
@@ -146,6 +166,10 @@ public class GameInfoFragment extends WrapperFragment {
 
                 if(response.account == null) {
                     return;
+                }
+
+                if(lastKnownHealth == 0) {
+                    lastKnownHealth = (int) Math.round((450.0 + 50.0 * response.account.hero.basicInfo.level) / 4.0);
                 }
 
                 textRaceGender.setText(String.format("%s-%s",
@@ -187,21 +211,70 @@ public class GameInfoFragment extends WrapperFragment {
                     }
                 });
 
+                final HeroActionInfo action = response.account.hero.action;
                 progressAction.setMax(1000);
-                progressAction.setProgress((int) (1000 * response.account.hero.action.completion));
-                String currentAction = response.account.hero.action.description;
-                if(response.account.hero.action.isBossFight) {
+                progressAction.setProgress((int) (1000 * action.completion));
+                String currentAction = action.description;
+                if(action.isBossFight) {
                     currentAction += getString(R.string.game_boss_fight);
                 }
                 textAction.setText(currentAction);
 
+                final List<JournalEntry> journal = response.account.hero.journal;
                 journalContainer.removeAllViews();
-                for(int i = response.account.hero.journal.size() - 1; i >= 0; i--) {
-                    final JournalEntry journalEntry = response.account.hero.journal.get(i);
+                for(int i = journal.size() - 1; i >= 0; i--) {
+                    final JournalEntry journalEntry = journal.get(i);
                     final View journalEntryView = layoutInflater.inflate(R.layout.item_journal, journalContainer, false);
                     ((TextView) journalEntryView.findViewById(R.id.journal_time)).setText(journalEntry.time);
                     ((TextView) journalEntryView.findViewById(R.id.journal_text)).setText(journalEntry.text);
                     journalContainer.addView(journalEntryView);
+                }
+
+                final int size = journal.size();
+                if(size > 0) {
+                    if((size > 1) && (journal.get(size - 2).timestamp == lastJournalTimestamp) && (action.type == HeroAction.BATTLE)) {
+                        final Pattern pattern = Pattern.compile("(\\d+)");
+                        final Matcher matcher = pattern.matcher(journal.get(size - 1).text);
+                        if(matcher.find()) {
+                            final String number = matcher.group(1);
+                            if(!matcher.find()) {
+                                final int amount = Integer.decode(number);
+                                final double difference = Math.abs(action.completion - lastFightProgress);
+                                if(difference != 0) {
+                                    lastKnownHealth = (int) Math.round(amount / difference);
+                                }
+                            }
+                        }
+                    }
+
+                    lastJournalTimestamp = journal.get(size - 1).timestamp;
+                    if(action.type == HeroAction.BATTLE) {
+                        lastFightProgress = action.completion;
+                    } else {
+                        lastFightProgress = 0;
+                    }
+                } else {
+                    lastJournalTimestamp = 0;
+                    lastFightProgress = 0;
+                }
+                if((action.type == HeroAction.BATTLE) && (lastKnownHealth != 0)) {
+                    progressActionHealth.setText(String.format("%d / %d HP",
+                            Math.round(lastKnownHealth * (1 - action.completion)), lastKnownHealth));
+                    progressActionHealth.setVisibility(View.VISIBLE);
+                    progressActionHealth.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                        @Override
+                        public void onGlobalLayout() {
+                            final int height = progressActionHealth.getHeight();
+                            if(height > 0) {
+                                UiUtils.setHeight(progressAction,
+                                        height + 2 * (int) getResources().getDimension(R.dimen.game_info_bar_padding));
+                                UiUtils.removeGlobalLayoutListener(progressActionHealth, this);
+                            }
+                        }
+                    });
+                } else {
+                    progressActionHealth.setVisibility(View.GONE);
+                    UiUtils.setHeight(progressAction, (int) getResources().getDimension(R.dimen.game_info_bar_height));
                 }
 
                 final int currentEnergyTotal = response.account.hero.energy.current + response.account.hero.energy.bonus;
