@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.lonebytesoft.thetaleclient.ApplicationPart;
 import com.lonebytesoft.thetaleclient.DataViewMode;
+import com.lonebytesoft.thetaleclient.DrawerItem;
 import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.TheTaleClientApplication;
 import com.lonebytesoft.thetaleclient.api.ApiResponseCallback;
@@ -24,13 +25,11 @@ import com.lonebytesoft.thetaleclient.api.request.LogoutRequest;
 import com.lonebytesoft.thetaleclient.api.response.CommonResponse;
 import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;
 import com.lonebytesoft.thetaleclient.api.response.InfoResponse;
-import com.lonebytesoft.thetaleclient.fragment.ChatFragment;
 import com.lonebytesoft.thetaleclient.fragment.GameFragment;
-import com.lonebytesoft.thetaleclient.fragment.MapFragment;
 import com.lonebytesoft.thetaleclient.fragment.NavigationDrawerFragment;
 import com.lonebytesoft.thetaleclient.fragment.Refreshable;
-import com.lonebytesoft.thetaleclient.fragment.SettingsFragment;
 import com.lonebytesoft.thetaleclient.fragment.WrapperFragment;
+import com.lonebytesoft.thetaleclient.util.HistoryStack;
 import com.lonebytesoft.thetaleclient.util.PreferencesManager;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
 
@@ -52,6 +51,7 @@ public class MainActivity extends ActionBarActivity
      */
     private CharSequence mTitle;
     private DrawerItem currentItem;
+    private HistoryStack<DrawerItem> history;
 
     private Menu menu;
 
@@ -75,6 +75,7 @@ public class MainActivity extends ActionBarActivity
         accountNameTextView = (TextView) findViewById(R.id.drawer_account_name);
         timeTextView = (TextView) findViewById(R.id.drawer_time);
 
+        history = new HistoryStack<>(DrawerItem.values().length);
         int tabIndex = DrawerItem.GAME.ordinal();
         if(savedInstanceState != null) {
             tabIndex = savedInstanceState.getInt(KEY_DRAWER_TAB_INDEX, tabIndex);
@@ -168,10 +169,11 @@ public class MainActivity extends ActionBarActivity
                                 .commit();
                     }
 
-                    mTitle = getString(item.getTitleResId());
                     currentItem = item;
+                    mTitle = getString(currentItem.getTitleResId());
                     TheTaleClientApplication.onApplicationPartSelected(
                             currentItem == DrawerItem.GAME ? ApplicationPart.GAME_INFO : ApplicationPart.INSIGNIFICANT);
+                    history.set(currentItem);
                     supportInvalidateOptionsMenu();
 
                     break;
@@ -266,67 +268,12 @@ public class MainActivity extends ActionBarActivity
 
     @Override
     public void onBackPressed() {
-        switch(currentItem) {
-            case MAP:
-            case SETTINGS:
-                onNavigationDrawerItemSelected(DrawerItem.GAME);
-                break;
-
-            default:
-                super.onBackPressed();
+        final DrawerItem drawerItem = history.pop();
+        if(drawerItem == null) {
+            super.onBackPressed();
+        } else {
+            onNavigationDrawerItemSelected(drawerItem);
         }
-    }
-
-    public enum DrawerItem {
-
-        GAME(R.string.drawer_title_game, "FRAGMENT_TAG_GAME") {
-            @Override
-            public Fragment getFragment() {
-                return new GameFragment();
-            }
-        },
-        MAP(R.string.drawer_title_map, "FRAGMENT_TAG_MAP") {
-            @Override
-            public Fragment getFragment() {
-                return new MapFragment();
-            }
-        },
-        CHAT(R.string.drawer_title_chat, "FRAGMENT_TAG_CHAT") {
-            @Override
-            public Fragment getFragment() {
-                return new ChatFragment();
-            }
-        },
-        SITE(0, ""),
-        SETTINGS(R.string.drawer_title_settings, "FRAGMENT_TAG_SETTINGS") {
-            @Override
-            public Fragment getFragment() {
-                return new SettingsFragment();
-            }
-        },
-        LOGOUT(0, ""),
-        ;
-
-        private final int titleResId;
-        private final String fragmentTag;
-
-        private DrawerItem(final int titleResId, final String fragmentTag) {
-            this.titleResId = titleResId;
-            this.fragmentTag = fragmentTag;
-        }
-
-        public Fragment getFragment() {
-            return null;
-        }
-
-        public int getTitleResId() {
-            return titleResId;
-        }
-
-        public String getFragmentTag() {
-            return fragmentTag;
-        }
-
     }
 
 }

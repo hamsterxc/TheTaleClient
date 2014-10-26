@@ -16,8 +16,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.lonebytesoft.thetaleclient.DrawerItem;
 import com.lonebytesoft.thetaleclient.R;
-import com.lonebytesoft.thetaleclient.activity.MainActivity;
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.
@@ -51,42 +51,17 @@ public class NavigationDrawerFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
 
-        view.findViewById(R.id.drawer_item_game).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onDrawerItemSelected(MainActivity.DrawerItem.GAME);
+        for(final DrawerItem drawerItem : DrawerItem.values()) {
+            final View drawerItemView = view.findViewById(drawerItem.getViewResId());
+            if(drawerItemView != null) {
+                drawerItemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        onDrawerItemSelected(drawerItem);
+                    }
+                });
             }
-        });
-        view.findViewById(R.id.drawer_item_map).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onDrawerItemSelected(MainActivity.DrawerItem.MAP);
-            }
-        });
-        view.findViewById(R.id.drawer_item_chat).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onDrawerItemSelected(MainActivity.DrawerItem.CHAT);
-            }
-        });
-        view.findViewById(R.id.drawer_item_site).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onDrawerItemSelected(MainActivity.DrawerItem.SITE);
-            }
-        });
-        view.findViewById(R.id.drawer_item_settings).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onDrawerItemSelected(MainActivity.DrawerItem.SETTINGS);
-            }
-        });
-        view.findViewById(R.id.drawer_item_logout).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onDrawerItemSelected(MainActivity.DrawerItem.LOGOUT);
-            }
-        });
+        }
 
         return view;
     }
@@ -195,7 +170,7 @@ public class NavigationDrawerFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
-    private void onDrawerItemSelected(final MainActivity.DrawerItem item) {
+    private void onDrawerItemSelected(final DrawerItem item) {
         if (mDrawerLayout != null) {
             mDrawerLayout.closeDrawer(mFragmentContainerView);
         }
@@ -220,6 +195,6 @@ public class NavigationDrawerFragment extends Fragment {
     }
 
     public interface NavigationDrawerCallbacks {
-        void onNavigationDrawerItemSelected(MainActivity.DrawerItem item);
+        void onNavigationDrawerItemSelected(DrawerItem item);
     }
 }
