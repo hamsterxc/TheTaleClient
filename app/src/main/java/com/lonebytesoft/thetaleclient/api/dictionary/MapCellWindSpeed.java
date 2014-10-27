@@ -15,6 +15,7 @@ public enum MapCellWindSpeed {
     FRESH_BREEZE("свежий ветер"),
     STRONG_BREEZE("сильный ветер"),
     MODERATE_GALE("крепкий ветер"),
+    FRESH_GALE("очень крепкий ветер"),
     ;
 
     private final String code;
