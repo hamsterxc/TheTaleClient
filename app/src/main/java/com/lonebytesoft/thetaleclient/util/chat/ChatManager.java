@@ -87,7 +87,7 @@ public class ChatManager {
                 final List<NameValuePair> httpRequestLoginParams = new ArrayList<>(1);
                 httpRequestLoginParams.add(new BasicNameValuePair("nickname", nickname));
                 try {
-                    httpRequestLogin.setEntity(new UrlEncodedFormEntity(httpRequestLoginParams));
+                    httpRequestLogin.setEntity(new UrlEncodedFormEntity(httpRequestLoginParams, "UTF-8"));
                 } catch(UnsupportedEncodingException e) {
                     callback.onError();
                     return null;
