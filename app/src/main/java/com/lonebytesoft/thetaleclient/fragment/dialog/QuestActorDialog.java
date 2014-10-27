@@ -61,6 +61,10 @@ public class QuestActorDialog extends BaseDialog {
                         new MapRequest(response.mapVersion).execute(new CommonResponseCallback<MapResponse, String>() {
                             @Override
                             public void processResponse(MapResponse response) {
+                                if(!isAdded()) {
+                                    return;
+                                }
+
                                 UiUtils.setText(view.findViewById(R.id.dialog_quest_actor_person_place),
                                         getInfoItem(R.string.quest_actor_place, response.places.get(questActorInfo.personInfo.placeId).name));
                             }
@@ -87,6 +91,10 @@ public class QuestActorDialog extends BaseDialog {
                         new MapRequest(response.mapVersion).execute(new CommonResponseCallback<MapResponse, String>() {
                             @Override
                             public void processResponse(MapResponse response) {
+                                if(!isAdded()) {
+                                    return;
+                                }
+
                                 UiUtils.setText(view.findViewById(R.id.dialog_quest_actor_place_size),
                                         getString(R.string.map_tile_place_size, response.places.get(questActorInfo.placeInfo.id).size));
                             }

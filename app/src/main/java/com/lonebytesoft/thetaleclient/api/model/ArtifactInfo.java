@@ -38,7 +38,7 @@ public class ArtifactInfo implements Parcelable {
             integrityCurrent = 0;
             integrityTotal = 0;
             rarity = ArtifactRarity.COMMON;
-            effect = null;
+            effect = ArtifactEffect.NO_EFFECT;
             rating = 0;
         } else {
             powerPhysical = json.getJSONArray("power").getInt(0);

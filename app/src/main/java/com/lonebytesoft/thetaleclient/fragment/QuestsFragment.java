@@ -197,6 +197,10 @@ public class QuestsFragment extends WrapperFragment {
                     new MapRequest(response.mapVersion).execute(new CommonResponseCallback<MapResponse, String>() {
                         @Override
                         public void processResponse(MapResponse response) {
+                            if(!isAdded()) {
+                                return;
+                            }
+
                             for (final Map.Entry<TextView, Integer> actorNameEntry : actorNames.entrySet()) {
                                 final Spannable placeText = new SpannableString(String.format(" (%s)", response.places.get(actorNameEntry.getValue()).name));
                                 placeText.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.game_additional_info)),
