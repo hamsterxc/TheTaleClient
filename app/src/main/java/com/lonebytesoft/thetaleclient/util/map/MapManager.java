@@ -38,6 +38,7 @@ public class MapManager {
 
     private static final String PLACE_CAPTION = "(%d) %s";
     private static final float PLACE_TEXT_SIZE = 12f;
+    private static final float PLACE_TEXT_SIZE_MIN = 8f;
     private static final float PLACE_TEXT_X_SHIFT = -2f;
     private static final float PLACE_TEXT_Y_SHIFT = 12f;
     private static final float PLACE_TEXT_BACKGROUND_PADDING = 2f;
@@ -67,13 +68,22 @@ public class MapManager {
 
     private static final Map<MapStyle, Bitmap> mapSpriteCache = new HashMap<>(MapStyle.values().length);
 
+    private static int sizeDenominator = 1;
+
     /**
      * Returns a bitmap to draw a map on
      * @param mapInfo map information
      * @return empty bitmap of necessary size
      */
     public static Bitmap getMapBitmap(final MapResponse mapInfo) {
-        return Bitmap.createBitmap(mapInfo.width * MAP_TILE_SIZE, mapInfo.height * MAP_TILE_SIZE, Bitmap.Config.ARGB_8888);
+        for(sizeDenominator = 1;; sizeDenominator *= 2) {
+            final long size = (mapInfo.width * MAP_TILE_SIZE / sizeDenominator) *
+                    (mapInfo.height * MAP_TILE_SIZE / sizeDenominator) * 4;
+            if(size < TheTaleClientApplication.getFreeMemory() * 0.9) {
+                return Bitmap.createBitmap(mapInfo.width * MAP_TILE_SIZE / sizeDenominator,
+                        mapInfo.height * MAP_TILE_SIZE / sizeDenominator, Bitmap.Config.ARGB_8888);
+            }
+        }
     }
 
     /**
@@ -90,8 +100,8 @@ public class MapManager {
             final int cellsCount = row.size();
             for(int j = 0; j < cellsCount; j++) {
                 final Rect dst = new Rect(
-                        j * MAP_TILE_SIZE, i * MAP_TILE_SIZE,
-                        (j + 1) * MAP_TILE_SIZE, (i + 1) * MAP_TILE_SIZE);
+                        j * MAP_TILE_SIZE / sizeDenominator, i * MAP_TILE_SIZE / sizeDenominator,
+                        (j + 1) * MAP_TILE_SIZE / sizeDenominator, (i + 1) * MAP_TILE_SIZE / sizeDenominator);
                 for(final SpriteTileInfo tile : row.get(j)) {
                     if(tile.rotation == 0) {
                         final Rect src = new Rect(
@@ -153,26 +163,35 @@ public class MapManager {
      * @param mapInfo map information
      */
     public static void drawPlaceNamesLayer(final Canvas canvas, final MapResponse mapInfo) {
+        if(sizeDenominator > 2) {
+            return;
+        }
+
         for(final PlaceInfo placeInfo : mapInfo.places.values()) {
+            float textSizeDenominator = sizeDenominator;
+            if(PLACE_TEXT_SIZE / sizeDenominator < PLACE_TEXT_SIZE_MIN) {
+                textSizeDenominator = PLACE_TEXT_SIZE / PLACE_TEXT_SIZE_MIN;
+            }
+
             final String text = String.format(PLACE_CAPTION, placeInfo.size, placeInfo.name);
 
             final Paint textPaint = new Paint();
-            textPaint.setTextSize(PLACE_TEXT_SIZE);
+            textPaint.setTextSize(PLACE_TEXT_SIZE / textSizeDenominator);
             textPaint.setColor(TheTaleClientApplication.getContext().getResources().getColor(R.color.map_place_name));
 
             final Rect textRect = new Rect();
             textPaint.getTextBounds(text, 0, text.length(), textRect);
 
-            final float x = (placeInfo.x + 0.5f) * MAP_TILE_SIZE - (textRect.right - textRect.left) / 2.0f + PLACE_TEXT_X_SHIFT;
-            final float y = (placeInfo.y + 1.0f) * MAP_TILE_SIZE + PLACE_TEXT_Y_SHIFT;
+            final float x = ((placeInfo.x + 0.5f) * MAP_TILE_SIZE + PLACE_TEXT_X_SHIFT) / sizeDenominator - (textRect.right - textRect.left) / 2.0f;
+            final float y = ((placeInfo.y + 1.0f) * MAP_TILE_SIZE + PLACE_TEXT_Y_SHIFT) / sizeDenominator;
 
             final Paint backgroundPaint = new Paint();
             backgroundPaint.setColor(TheTaleClientApplication.getContext().getResources().getColor(R.color.map_place_name_background));
 
             canvas.drawRect(
-                    x + textRect.left - PLACE_TEXT_BACKGROUND_PADDING * 2,
+                    x + textRect.left - PLACE_TEXT_BACKGROUND_PADDING * 2 * (sizeDenominator / textSizeDenominator),
                     y + textRect.top - PLACE_TEXT_BACKGROUND_PADDING,
-                    x + textRect.right + PLACE_TEXT_BACKGROUND_PADDING * 4,
+                    x + textRect.right + PLACE_TEXT_BACKGROUND_PADDING * 4 * (sizeDenominator / textSizeDenominator),
                     y + textRect.bottom + PLACE_TEXT_BACKGROUND_PADDING,
                     backgroundPaint);
             canvas.drawText(text, 0, text.length(), x, y, textPaint);
@@ -187,10 +206,10 @@ public class MapManager {
      */
     public static void drawHeroLayer(final Canvas canvas, final HeroInfo heroInfo, final Bitmap sprite) {
         final Rect dst = new Rect(
-                (int) (heroInfo.position.x * MAP_TILE_SIZE),
-                (int) (heroInfo.position.y * MAP_TILE_SIZE + HERO_SPRITE_SHIFT_Y),
-                (int) ((heroInfo.position.x + 1.0) * MAP_TILE_SIZE),
-                (int) ((heroInfo.position.y + 1.0) * MAP_TILE_SIZE + HERO_SPRITE_SHIFT_Y));
+                (int) (heroInfo.position.x * MAP_TILE_SIZE / sizeDenominator),
+                (int) ((heroInfo.position.y * MAP_TILE_SIZE + HERO_SPRITE_SHIFT_Y) / sizeDenominator),
+                (int) ((heroInfo.position.x + 1.0) * MAP_TILE_SIZE / sizeDenominator),
+                (int) (((heroInfo.position.y + 1.0) * MAP_TILE_SIZE + HERO_SPRITE_SHIFT_Y) / sizeDenominator));
         final SpriteTileInfo tile = getSpriteTile(heroInfo.spriteId);
         if(heroInfo.position.sightX >= 0) {
             final Rect src = new Rect(
@@ -237,6 +256,10 @@ public class MapManager {
     public interface MapBitmapCallback {
         void onBitmapBuilt(Bitmap bitmap);
         void onError();
+    }
+
+    public static int getCurrentSizeDenominator() {
+        return sizeDenominator;
     }
 
 }

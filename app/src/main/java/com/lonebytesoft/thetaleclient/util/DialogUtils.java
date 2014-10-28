@@ -9,6 +9,7 @@ import com.lonebytesoft.thetaleclient.api.model.MightInfo;
 import com.lonebytesoft.thetaleclient.api.model.QuestActorInfo;
 import com.lonebytesoft.thetaleclient.fragment.dialog.ArtifactDialog;
 import com.lonebytesoft.thetaleclient.fragment.dialog.ChoiceDialog;
+import com.lonebytesoft.thetaleclient.fragment.dialog.MessageDialog;
 import com.lonebytesoft.thetaleclient.fragment.dialog.MightDialog;
 import com.lonebytesoft.thetaleclient.fragment.dialog.QuestActorDialog;
 import com.lonebytesoft.thetaleclient.fragment.dialog.TabbedDialog;
@@ -24,6 +25,7 @@ public class DialogUtils {
     public static final String DIALOG_QUEST_ACTOR_TAG = "DIALOG_QUEST_ACTOR_TAG";
     public static final String DIALOG_CHOICE_TAG = "DIALOG_CHOICE_TAG";
     public static final String DIALOG_TABBED_TAG = "DIALOG_TABBED_TAG";
+    public static final String DIALOG_MESSAGE_TAG = "DIALOG_MESSAGE_TAG";
 
     private static FragmentTransaction getFragmentTransaction(final FragmentManager fragmentManager) {
         final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -70,6 +72,10 @@ public class DialogUtils {
             dialog.setTabsAdapter(tabsAdapter);
         }
         dialog.show(getFragmentTransaction(fragmentManager), DIALOG_TABBED_TAG);
+    }
+
+    public static void showMessageDialog(final FragmentManager fragmentManager, final String caption, final String message) {
+        MessageDialog.newInstance(caption, message).show(getFragmentTransaction(fragmentManager), DIALOG_MESSAGE_TAG);
     }
 
 }

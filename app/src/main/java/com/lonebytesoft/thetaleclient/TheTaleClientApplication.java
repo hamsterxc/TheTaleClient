@@ -45,4 +45,8 @@ public class TheTaleClientApplication extends Application {
         return applicationPart;
     }
 
+    public static long getFreeMemory() {
+        return Runtime.getRuntime().maxMemory() - Runtime.getRuntime().totalMemory() + Runtime.getRuntime().freeMemory();
+    }
+
 }

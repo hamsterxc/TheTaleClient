@@ -50,6 +50,8 @@
     <string name="login_text_login">Email</string>
     <string name="login_text_password">Пароль</string>
 
+    <string name="map_decreased_quality_title">Внимание</string>
+    <string name="map_decreased_quality">Из-за нехватки памяти на устройстве карта будет показана в меньшем разрешении. Также будут отключены некоторые функции.</string>
     <string name="map_find_hero">Найти героя</string>
     <string name="map_find_place">Найти город</string>
     <string name="map_error">Произошла ошибка при построении карты. Пожалуйста, обновите страницу.</string>

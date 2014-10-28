@@ -56,17 +56,26 @@
             android:textColor="@color/common_link"
             android:text="@string/map_find_hero"/>
 
-        <View style="@style/Delimiter"/>
-
-        <TextView
-            android:id="@+id/map_modification"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/map_modification_container"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            style="?android:attr/textAppearanceSmall"
-            android:background="@drawable/common_list_item_background"
-            android:textColor="@color/common_link"/>
+            android:gravity="right"
+            android:orientation="vertical">
+
+            <View style="@style/Delimiter"/>
+
+            <TextView
+                android:id="@+id/map_modification"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                style="?android:attr/textAppearanceSmall"
+                android:background="@drawable/common_list_item_background"
+                android:textColor="@color/common_link"/>
+
+        </LinearLayout>
 
     </LinearLayout>
 

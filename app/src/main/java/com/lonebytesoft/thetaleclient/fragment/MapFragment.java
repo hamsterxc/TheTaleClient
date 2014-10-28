@@ -70,6 +70,7 @@ public class MapFragment extends WrapperFragment {
 
     private View actionMapStyle;
     private View actionMapModification;
+    private View actionMapModificationContainer;
 
     private float mapZoom;
     private float mapShiftX;
@@ -88,7 +89,6 @@ public class MapFragment extends WrapperFragment {
         mapView = (ImageView) rootView.findViewById(R.id.map_content);
         mapViewHelper = new PhotoViewAttacher(mapView);
         mapViewHelper.setScaleType(ImageView.ScaleType.CENTER);
-        mapViewHelper.setMaximumScale(ZOOM_MAX);
 
         actionMapStyle = rootView.findViewById(R.id.map_style);
         actionMapStyle.setOnClickListener(new View.OnClickListener() {
@@ -131,6 +131,7 @@ public class MapFragment extends WrapperFragment {
             }
         });
 
+        actionMapModificationContainer = rootView.findViewById(R.id.map_modification_container);
         actionMapModification = rootView.findViewById(R.id.map_modification);
         actionMapModification.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -209,6 +210,15 @@ public class MapFragment extends WrapperFragment {
                                         final Bitmap map = MapManager.getMapBitmap(mapResponse);
                                         final Canvas canvas = new Canvas(map);
 
+                                        if(MapManager.getCurrentSizeDenominator() == 1) {
+                                            actionMapModificationContainer.setVisibility(View.VISIBLE);
+                                        } else {
+                                            actionMapModificationContainer.setVisibility(View.GONE);
+                                            DialogUtils.showMessageDialog(getChildFragmentManager(),
+                                                    getString(R.string.map_decreased_quality_title),
+                                                    getString(R.string.map_decreased_quality));
+                                        }
+
                                         if(mapModification == MapModification.NONE) {
                                             MapManager.drawBaseLayer(canvas, mapResponse, sprite);
                                             MapManager.drawPlaceNamesLayer(canvas, mapResponse);
@@ -271,10 +281,10 @@ public class MapFragment extends WrapperFragment {
     }
 
     private void moveToTile(final int tileX, final int tileY) {
-        mapViewHelper.setScale(ZOOM_MAX);
+        mapViewHelper.setScale(ZOOM_MAX * MapManager.getCurrentSizeDenominator());
         final float scale = mapViewHelper.getScale();
-        final float newCenterX = (tileX + 0.5f) * MapManager.MAP_TILE_SIZE * scale;
-        final float newCenterY = (tileY + 0.5f) * MapManager.MAP_TILE_SIZE * scale;
+        final float newCenterX = (tileX + 0.5f) * MapManager.MAP_TILE_SIZE / MapManager.getCurrentSizeDenominator() * scale;
+        final float newCenterY = (tileY + 0.5f) * MapManager.MAP_TILE_SIZE / MapManager.getCurrentSizeDenominator() * scale;
         final float newRectLeft = mapView.getWidth() / 2.0f - newCenterX;
         final float newRectTop = mapView.getHeight() / 2.0f - newCenterY;
         final RectF currentRect = mapViewHelper.getDisplayRect();
@@ -323,11 +333,17 @@ public class MapFragment extends WrapperFragment {
                         final int viewWidth = mapView.getWidth();
                         final int viewHeight = mapView.getHeight();
                         if ((viewWidth != 0) && (viewHeight != 0)) {
+                            final int currentSizeDenominator = MapManager.getCurrentSizeDenominator();
+                            final float minimumScale;
                             if (viewWidth < viewHeight) {
-                                mapViewHelper.setMinimumScale((float) viewWidth / width);
+                                minimumScale = (float) viewWidth / width;
                             } else {
-                                mapViewHelper.setMinimumScale((float) viewHeight / height);
+                                minimumScale = (float) viewHeight / height;
                             }
+                            mapViewHelper.setMaximumScale(ZOOM_MAX * currentSizeDenominator);
+                            mapViewHelper.setMediumScale((ZOOM_MAX * currentSizeDenominator + minimumScale) / 2.0f);
+                            mapViewHelper.setMinimumScale(minimumScale);
+                            mapViewHelper.setScale(mapViewHelper.getMediumScale());
 
                             if (isMapInitialPosition) {
                                 isMapInitialPosition = false;
@@ -343,8 +359,8 @@ public class MapFragment extends WrapperFragment {
                 mapViewHelper.setOnPhotoTapListener(new PhotoViewAttacher.OnPhotoTapListener() {
                     @Override
                     public void onPhotoTap(View view, float x, float y) {
-                        final int tileX = (int) Math.floor(x * width / MapManager.MAP_TILE_SIZE);
-                        final int tileY = (int) Math.floor(y * height / MapManager.MAP_TILE_SIZE);
+                        final int tileX = (int) Math.floor(x * width * MapManager.getCurrentSizeDenominator() / MapManager.MAP_TILE_SIZE);
+                        final int tileY = (int) Math.floor(y * height * MapManager.getCurrentSizeDenominator() / MapManager.MAP_TILE_SIZE);
 
                         DialogUtils.showTabbedDialog(getChildFragmentManager(), getString(R.string.drawer_title_map), null);
 
