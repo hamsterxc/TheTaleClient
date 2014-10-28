@@ -92,7 +92,7 @@ public class MapManager {
      * @param mapInfo map information
      * @param sprite map sprite
      */
-    public static void drawBaseLayer(final Canvas canvas, final MapResponse mapInfo, final Bitmap sprite) {
+    public static void drawBaseLayer(final Canvas canvas, final MapResponse mapInfo, final Bitmap sprite, final List<ExcludeTileInfo> excludeTiles) {
         final Rect tileRect = new Rect(0, 0, MAP_TILE_SIZE, MAP_TILE_SIZE);
         final int rowsCount = mapInfo.tiles.size();
         for(int i = 0; i < rowsCount; i++) {
@@ -102,7 +102,23 @@ public class MapManager {
                 final Rect dst = new Rect(
                         j * MAP_TILE_SIZE / sizeDenominator, i * MAP_TILE_SIZE / sizeDenominator,
                         (j + 1) * MAP_TILE_SIZE / sizeDenominator, (i + 1) * MAP_TILE_SIZE / sizeDenominator);
-                for(final SpriteTileInfo tile : row.get(j)) {
+                final List<SpriteTileInfo> tiles = row.get(j);
+                final int tilesCount = tiles.size();
+                for(int index = 0; index < tilesCount; index++) {
+                    boolean exclude = false;
+                    if(excludeTiles != null) {
+                        for (final ExcludeTileInfo excludeTileInfo : excludeTiles) {
+                            if ((i == excludeTileInfo.y) && (j == excludeTileInfo.x) && (index == excludeTileInfo.index)) {
+                                exclude = true;
+                                break;
+                            }
+                        }
+                    }
+                    if(exclude) {
+                        continue;
+                    }
+
+                    final SpriteTileInfo tile = tiles.get(index);
                     if(tile.rotation == 0) {
                         final Rect src = new Rect(
                                 tile.x, tile.y,
@@ -256,6 +272,20 @@ public class MapManager {
     public interface MapBitmapCallback {
         void onBitmapBuilt(Bitmap bitmap);
         void onError();
+    }
+
+    public static class ExcludeTileInfo {
+
+        public final int x;
+        public final int y;
+        public final int index;
+
+        public ExcludeTileInfo(final int x, final int y, final int index) {
+            this.x = x;
+            this.y = y;
+            this.index = index;
+        }
+
     }
 
     public static int getCurrentSizeDenominator() {

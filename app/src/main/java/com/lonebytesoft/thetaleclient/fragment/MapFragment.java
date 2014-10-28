@@ -1,9 +1,12 @@
 package com.lonebytesoft.thetaleclient.fragment;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.PointF;
+import android.graphics.Rect;
 import android.graphics.RectF;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -18,8 +21,11 @@ import com.lonebytesoft.thetaleclient.DataViewMode;
 import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.TheTaleClientApplication;
 import com.lonebytesoft.thetaleclient.api.ApiResponseCallback;
+import com.lonebytesoft.thetaleclient.api.CommonRequest;
 import com.lonebytesoft.thetaleclient.api.CommonResponseCallback;
+import com.lonebytesoft.thetaleclient.api.HttpMethod;
 import com.lonebytesoft.thetaleclient.api.dictionary.MapStyle;
+import com.lonebytesoft.thetaleclient.api.model.HeroInfo;
 import com.lonebytesoft.thetaleclient.api.model.PlaceInfo;
 import com.lonebytesoft.thetaleclient.api.model.PositionInfo;
 import com.lonebytesoft.thetaleclient.api.request.GameInfoRequest;
@@ -41,6 +47,12 @@ import com.lonebytesoft.thetaleclient.util.UiUtils;
 import com.lonebytesoft.thetaleclient.util.map.MapManager;
 import com.lonebytesoft.thetaleclient.util.map.MapModification;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -218,23 +230,118 @@ public class MapFragment extends WrapperFragment {
                                                     getString(R.string.common_dialog_attention_title),
                                                     getString(R.string.map_decreased_quality));
                                         }
+                                        
+                                        if (mapModification == MapModification.NONE) {
+                                            new CommonRequest() {
+                                                @Override
+                                                protected long getStaleTime() {
+                                                    return 0;
+                                                }
+                                            }.execute("http://g-test.net/thetale/nekro.js", HttpMethod.GET, null, null, new CommonResponseCallback<String, Throwable>() {
+                                                @Override
+                                                public void processResponse(String response) {
+                                                    try {
+                                                        final JSONObject json = new JSONObject(response);
+                                                        final String placeName = json.getString("place");
+                                                        final String person = json.getString("person");
+                                                        boolean placeFound = false;
+                                                        for (final PlaceInfo placeInfo : mapResponse.places.values()) {
+                                                            if (placeInfo.name.equals(placeName)) {
+                                                                placeFound = true;
+                                                                new MapCellRequest().execute(placeInfo.x, placeInfo.y, new CommonResponseCallback<MapCellResponse, String>() {
+                                                                    @Override
+                                                                    public void processResponse(MapCellResponse response) {
+                                                                        final Integer influence = response.influence.get(person);
+                                                                        if (influence == null) {
+                                                                            drawMap(map, canvas, mapResponse, sprite, gameInfoResponse.account.hero);
+                                                                        } else {
+                                                                            new AsyncTask<Void, Void, Void>() {
+                                                                                @Override
+                                                                                protected Void doInBackground(Void... params) {
+                                                                                    final Bitmap buildingSprite;
+                                                                                    int spriteX = 0;
+                                                                                    int spriteY = 0;
+                                                                                    try {
+                                                                                        final URL url = new URL(json.getString("sprite"));
+                                                                                        final URLConnection urlConnection = url.openConnection();
+                                                                                        urlConnection.setDoInput(true);
+                                                                                        urlConnection.connect();
+                                                                                        buildingSprite = BitmapFactory.decodeStream(urlConnection.getInputStream());
 
-                                        if(mapModification == MapModification.NONE) {
-                                            MapManager.drawBaseLayer(canvas, mapResponse, sprite);
-                                            MapManager.drawPlaceNamesLayer(canvas, mapResponse);
-                                            MapManager.drawHeroLayer(canvas, gameInfoResponse.account.hero, sprite);
-                                            setMap(map, mapResponse);
+                                                                                        boolean stateFound = false;
+                                                                                        final int statesCount = json.getJSONArray("states").length();
+                                                                                        for (int i = 0; i < statesCount; i++) {
+                                                                                            final JSONObject stateJson = json.getJSONArray("states").getJSONObject(i);
+                                                                                            if ((influence >= stateJson.getInt("min")) && (influence <= stateJson.getInt("max"))) {
+                                                                                                stateFound = true;
+                                                                                                spriteX = stateJson.getInt("x");
+                                                                                                spriteY = stateJson.getInt("y");
+                                                                                                break;
+                                                                                            }
+                                                                                        }
+                                                                                        if (!stateFound) {
+                                                                                            drawMap(map, canvas, mapResponse, sprite, gameInfoResponse.account.hero);
+                                                                                            return null;
+                                                                                        }
+                                                                                    } catch (IOException | JSONException e) {
+                                                                                        drawMap(map, canvas, mapResponse, sprite, gameInfoResponse.account.hero);
+                                                                                        return null;
+                                                                                    }
+
+                                                                                    final List<MapManager.ExcludeTileInfo> exclude = new ArrayList<>(1);
+                                                                                    exclude.add(new MapManager.ExcludeTileInfo(placeInfo.x, placeInfo.y,
+                                                                                            mapResponse.tiles.get(placeInfo.y).get(placeInfo.x).size() - 1));
+                                                                                    MapManager.drawBaseLayer(canvas, mapResponse, sprite, exclude);
+                                                                                    canvas.drawBitmap(buildingSprite,
+                                                                                            new Rect(spriteX, spriteY, spriteX + MapManager.MAP_TILE_SIZE, spriteY + MapManager.MAP_TILE_SIZE),
+                                                                                            new Rect(
+                                                                                                    placeInfo.x * MapManager.MAP_TILE_SIZE,
+                                                                                                    placeInfo.y * MapManager.MAP_TILE_SIZE,
+                                                                                                    (placeInfo.x + 1) * MapManager.MAP_TILE_SIZE,
+                                                                                                    (placeInfo.y + 1) * MapManager.MAP_TILE_SIZE),
+                                                                                            null);
+                                                                                    MapManager.drawPlaceNamesLayer(canvas, mapResponse);
+                                                                                    MapManager.drawHeroLayer(canvas, gameInfoResponse.account.hero, sprite);
+                                                                                    setMap(map, mapResponse);
+
+                                                                                    return null;
+                                                                                }
+                                                                            }.execute();
+                                                                        }
+                                                                    }
+
+                                                                    @Override
+                                                                    public void processError(String error) {
+                                                                        drawMap(map, canvas, mapResponse, sprite, gameInfoResponse.account.hero);
+                                                                    }
+                                                                });
+                                                                break;
+                                                            }
+                                                        }
+                                                        if (!placeFound) {
+                                                            drawMap(map, canvas, mapResponse, sprite, gameInfoResponse.account.hero);
+                                                        }
+                                                    } catch (JSONException e) {
+                                                        drawMap(map, canvas, mapResponse, sprite, gameInfoResponse.account.hero);
+                                                    }
+                                                }
+
+                                                @Override
+                                                public void processError(Throwable error) {
+                                                    drawMap(map, canvas, mapResponse, sprite, gameInfoResponse.account.hero);
+                                                }
+                                            });
                                         } else {
                                             new MapTerrainRequest().execute(new CommonResponseCallback<MapTerrainResponse, String>() {
                                                 @Override
                                                 public void processResponse(final MapTerrainResponse mapTerrainResponse) {
-                                                    switch(mapModification) {
+                                                    switch (mapModification) {
                                                         case WIND:
                                                             MapManager.drawModificationLayer(canvas, mapResponse, mapTerrainResponse, mapModification);
                                                             break;
 
                                                         case INFLUENCE:
-                                                            MapManager.drawBaseLayer(canvas, mapResponse, sprite);
+                                                            MapManager.drawBaseLayer(canvas, mapResponse, sprite, null);
                                                             MapManager.drawModificationLayer(canvas, mapResponse, mapTerrainResponse, mapModification);
                                                             MapManager.drawPlaceNamesLayer(canvas, mapResponse);
                                                             MapManager.drawHeroLayer(canvas, gameInfoResponse.account.hero, sprite);
@@ -278,6 +385,13 @@ public class MapFragment extends WrapperFragment {
                 setError(getString(R.string.map_error));
             }
         });
+    }
+
+    private void drawMap(final Bitmap map, final Canvas canvas, final MapResponse mapResponse, final Bitmap sprite, final HeroInfo heroInfo) {
+        MapManager.drawBaseLayer(canvas, mapResponse, sprite, null);
+        MapManager.drawPlaceNamesLayer(canvas, mapResponse);
+        MapManager.drawHeroLayer(canvas, heroInfo, sprite);
+        setMap(map, mapResponse);
     }
 
     private void moveToTile(final int tileX, final int tileY) {
