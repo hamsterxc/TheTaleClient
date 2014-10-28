@@ -62,6 +62,7 @@ public class HistoryStack<T> {
         if(index <= 0) {
             return null;
         } else {
+            stack.remove(index);
             return stack.get(--index);
         }
     }
