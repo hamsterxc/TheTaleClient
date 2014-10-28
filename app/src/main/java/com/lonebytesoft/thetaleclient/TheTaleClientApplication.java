@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 
 import com.lonebytesoft.thetaleclient.api.cache.RequestCacheManager;
+import com.lonebytesoft.thetaleclient.util.NotificationUtils;
 import com.lonebytesoft.thetaleclient.util.map.MapManager;
 
 /**
@@ -39,6 +40,9 @@ public class TheTaleClientApplication extends Application {
 
     public static void onApplicationPartSelected(final ApplicationPart applicationPart) {
         TheTaleClientApplication.applicationPart = applicationPart;
+        if(applicationPart == ApplicationPart.GAME_INFO) {
+            NotificationUtils.clearNotifications();
+        }
     }
 
     public static ApplicationPart getSelectedApplicationPart() {

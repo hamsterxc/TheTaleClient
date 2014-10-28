@@ -73,4 +73,8 @@ public class NotificationUtils {
                 PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
+    public static void clearNotifications() {
+        ((NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE)).cancelAll();
+    }
+
 }
