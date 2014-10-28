@@ -340,14 +340,13 @@ public class MapFragment extends WrapperFragment {
                             } else {
                                 minimumScale = (float) viewHeight / height;
                             }
-                            mapViewHelper.setMaximumScale(ZOOM_MAX * currentSizeDenominator);
-                            mapViewHelper.setMediumScale((ZOOM_MAX * currentSizeDenominator + minimumScale) / 2.0f);
-                            mapViewHelper.setMinimumScale(minimumScale);
-                            mapViewHelper.setScale(mapViewHelper.getMediumScale());
 
                             if (isMapInitialPosition) {
                                 isMapInitialPosition = false;
-                                mapViewHelper.setScale(mapZoom);
+                                mapViewHelper.setMaximumScale(ZOOM_MAX * currentSizeDenominator);
+                                mapViewHelper.setMediumScale((ZOOM_MAX * currentSizeDenominator + minimumScale) / 2.0f);
+                                mapViewHelper.setMinimumScale(minimumScale);
+                                mapViewHelper.setScale(mapViewHelper.getMediumScale());
                                 mapViewHelper.onDrag(mapShiftX, mapShiftY);
                             }
 
