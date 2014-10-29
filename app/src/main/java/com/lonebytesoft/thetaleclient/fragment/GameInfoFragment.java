@@ -25,6 +25,7 @@ import com.lonebytesoft.thetaleclient.api.response.CommonResponse;
 import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;
 import com.lonebytesoft.thetaleclient.api.response.InfoResponse;
 import com.lonebytesoft.thetaleclient.util.DialogUtils;
+import com.lonebytesoft.thetaleclient.util.GameInfoUtils;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
 import com.lonebytesoft.thetaleclient.widget.RequestActionView;
 
@@ -159,50 +160,50 @@ public class GameInfoFragment extends WrapperFragment {
 
         new GameInfoRequest().execute(new ApiResponseCallback<GameInfoResponse>() {
             @Override
-            public void processResponse(GameInfoResponse response) {
+            public void processResponse(final GameInfoResponse gameInfoResponse) {
                 if(!isAdded()) {
                     return;
                 }
 
-                if(response.account == null) {
+                if(gameInfoResponse.account == null) {
                     return;
                 }
 
                 if(lastKnownHealth == 0) {
-                    lastKnownHealth = (int) Math.round((450.0 + 50.0 * response.account.hero.basicInfo.level) / 4.0);
+                    lastKnownHealth = (int) Math.round((450.0 + 50.0 * gameInfoResponse.account.hero.basicInfo.level) / 4.0);
                 }
 
                 textRaceGender.setText(String.format("%s-%s",
-                        response.account.hero.basicInfo.race.getName(),
-                        response.account.hero.basicInfo.gender.getName()));
-                textLevel.setText(String.valueOf(response.account.hero.basicInfo.level));
-                textName.setText(response.account.hero.basicInfo.name);
-                textLevelUp.setVisibility(response.account.hero.basicInfo.destinyPoints > 0 ? View.VISIBLE : View.GONE);
+                        gameInfoResponse.account.hero.basicInfo.race.getName(),
+                        gameInfoResponse.account.hero.basicInfo.gender.getName()));
+                textLevel.setText(String.valueOf(gameInfoResponse.account.hero.basicInfo.level));
+                textName.setText(gameInfoResponse.account.hero.basicInfo.name);
+                textLevelUp.setVisibility(gameInfoResponse.account.hero.basicInfo.destinyPoints > 0 ? View.VISIBLE : View.GONE);
 
-                progressHealth.setMax(response.account.hero.basicInfo.healthMax);
-                progressHealth.setProgress(response.account.hero.basicInfo.healthCurrent);
+                progressHealth.setMax(gameInfoResponse.account.hero.basicInfo.healthMax);
+                progressHealth.setProgress(gameInfoResponse.account.hero.basicInfo.healthCurrent);
                 textHealth.setText(String.format("%d/%d",
-                        response.account.hero.basicInfo.healthCurrent,
-                        response.account.hero.basicInfo.healthMax));
+                        gameInfoResponse.account.hero.basicInfo.healthCurrent,
+                        gameInfoResponse.account.hero.basicInfo.healthMax));
 
-                progressExperience.setMax(response.account.hero.basicInfo.experienceForNextLevel);
-                progressExperience.setProgress(response.account.hero.basicInfo.experienceCurrent);
+                progressExperience.setMax(gameInfoResponse.account.hero.basicInfo.experienceForNextLevel);
+                progressExperience.setProgress(gameInfoResponse.account.hero.basicInfo.experienceCurrent);
                 textExperience.setText(String.format("%d/%d",
-                        response.account.hero.basicInfo.experienceCurrent,
-                        response.account.hero.basicInfo.experienceForNextLevel));
+                        gameInfoResponse.account.hero.basicInfo.experienceCurrent,
+                        gameInfoResponse.account.hero.basicInfo.experienceForNextLevel));
 
-                progressEnergy.setMax(response.account.hero.energy.max);
-                progressEnergy.setProgress(response.account.hero.energy.current);
+                progressEnergy.setMax(gameInfoResponse.account.hero.energy.max);
+                progressEnergy.setProgress(gameInfoResponse.account.hero.energy.current);
                 textEnergy.setText(String.format("%d/%d + %d",
-                        response.account.hero.energy.current,
-                        response.account.hero.energy.max,
-                        response.account.hero.energy.bonus));
+                        gameInfoResponse.account.hero.energy.current,
+                        gameInfoResponse.account.hero.energy.max,
+                        gameInfoResponse.account.hero.energy.bonus));
 
-                textPowerPhysical.setText(String.valueOf(response.account.hero.basicInfo.powerPhysical));
-                textPowerMagical.setText(String.valueOf(response.account.hero.basicInfo.powerMagical));
-                textMoney.setText(String.valueOf(response.account.hero.basicInfo.money));
+                textPowerPhysical.setText(String.valueOf(gameInfoResponse.account.hero.basicInfo.powerPhysical));
+                textPowerMagical.setText(String.valueOf(gameInfoResponse.account.hero.basicInfo.powerMagical));
+                textMoney.setText(String.valueOf(gameInfoResponse.account.hero.basicInfo.money));
 
-                final MightInfo mightInfo = response.account.hero.might;
+                final MightInfo mightInfo = gameInfoResponse.account.hero.might;
                 textMight.setText(String.valueOf(mightInfo.value));
                 textMight.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -211,7 +212,7 @@ public class GameInfoFragment extends WrapperFragment {
                     }
                 });
 
-                final HeroActionInfo action = response.account.hero.action;
+                final HeroActionInfo action = gameInfoResponse.account.hero.action;
                 progressAction.setMax(1000);
                 progressAction.setProgress((int) (1000 * action.completion));
                 String currentAction = action.description;
@@ -220,7 +221,7 @@ public class GameInfoFragment extends WrapperFragment {
                 }
                 textAction.setText(currentAction);
 
-                final List<JournalEntry> journal = response.account.hero.journal;
+                final List<JournalEntry> journal = gameInfoResponse.account.hero.journal;
                 journalContainer.removeAllViews();
                 for(int i = journal.size() - 1; i >= 0; i--) {
                     final JournalEntry journalEntry = journal.get(i);
@@ -277,12 +278,11 @@ public class GameInfoFragment extends WrapperFragment {
                     UiUtils.setHeight(progressAction, (int) getResources().getDimension(R.dimen.game_info_bar_height));
                 }
 
-                final int currentEnergyTotal = response.account.hero.energy.current + response.account.hero.energy.bonus;
                 actionHelp.setVisibility(View.GONE);
                 new InfoRequest().execute(new ApiResponseCallback<InfoResponse>() {
                     @Override
-                    public void processResponse(InfoResponse response) {
-                        if(currentEnergyTotal >= response.abilitiesCost.get(Action.HELP)) {
+                    public void processResponse(final InfoResponse infoResponse) {
+                        if(GameInfoUtils.isEnoughEnergy(gameInfoResponse.account.hero.energy, infoResponse.abilitiesCost.get(Action.HELP))) {
                             actionHelp.setVisibility(View.VISIBLE);
                         }
                     }

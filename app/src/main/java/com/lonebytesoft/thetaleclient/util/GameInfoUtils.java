@@ -16,6 +16,10 @@ public class GameInfoUtils {
                 || shouldUseBonusEnergy && (energyInfo.bonus >= bonusEnergyThreshold);
     }
 
+    public static boolean isEnoughEnergy(final EnergyInfo energyInfo, final int need) {
+        return (energyInfo.current + energyInfo.bonus - energyInfo.discount) >= need;
+    }
+
     public static boolean isHeroIdle(final GameInfoResponse gameInfoResponse) {
         return gameInfoResponse.account.hero.quests.get(gameInfoResponse.account.hero.quests.size() - 1).get(0).type == QuestType.NO_QUEST;
     }

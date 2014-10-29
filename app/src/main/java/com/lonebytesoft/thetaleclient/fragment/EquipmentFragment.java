@@ -28,6 +28,7 @@ import com.lonebytesoft.thetaleclient.api.response.CommonResponse;
 import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;
 import com.lonebytesoft.thetaleclient.api.response.InfoResponse;
 import com.lonebytesoft.thetaleclient.util.DialogUtils;
+import com.lonebytesoft.thetaleclient.util.GameInfoUtils;
 import com.lonebytesoft.thetaleclient.widget.RequestActionView;
 
 import java.util.ArrayList;
@@ -124,8 +125,7 @@ public class EquipmentFragment extends WrapperFragment {
                     new InfoRequest().execute(new ApiResponseCallback<InfoResponse>() {
                         @Override
                         public void processResponse(InfoResponse response) {
-                            if(gameInfoResponse.account.hero.energy.current + gameInfoResponse.account.hero.energy.bonus
-                                    >= response.abilitiesCost.get(Action.DROP_ITEM)) {
+                            if(GameInfoUtils.isEnoughEnergy(gameInfoResponse.account.hero.energy, response.abilitiesCost.get(Action.DROP_ITEM))) {
                                 dropActionView.setEnabled(true);
                                 dropActionView.setActionClickListener(new Runnable() {
                                     @Override
