@@ -133,7 +133,7 @@ public class MainActivity extends ActionBarActivity
                     break;
 
                 case LOGOUT:
-                    PreferencesManager.setCredentials(null, null);
+                    PreferencesManager.setSession("");
 
                     final Fragment fragment = getSupportFragmentManager().findFragmentByTag(currentItem.getFragmentTag());
                     if(fragment instanceof WrapperFragment) {

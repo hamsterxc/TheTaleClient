@@ -215,7 +215,7 @@ public class MapFragment extends WrapperFragment {
                                         } else {
                                             actionMapModificationContainer.setVisibility(View.GONE);
                                             DialogUtils.showMessageDialog(getChildFragmentManager(),
-                                                    getString(R.string.map_decreased_quality_title),
+                                                    getString(R.string.common_dialog_attention_title),
                                                     getString(R.string.map_decreased_quality));
                                         }
 

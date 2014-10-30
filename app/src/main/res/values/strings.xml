@@ -2,8 +2,10 @@
 <resources>
 
     <string name="app_name">The Tale Client</string>
+    <string name="app_description">The Tale Client by Hamster</string>
 
     <string name="action_refresh">Обновить</string>
+    <string name="action_retry">Повторить попытку</string>
 
     <string name="artifact_equipment_type">экипировка: %s</string>
     <string name="artifact_power_physical">физическая сила: %d</string>
@@ -13,6 +15,8 @@
 
     <string name="chat_error">Произошла ошибка при обновлении чата. Пожалуйста, обновите страницу.</string>
     <string name="chat_error_send">Произошла ошибка при отправке сообщения. Попробуйте еще раз.</string>
+
+    <string name="common_dialog_attention_title">Внимание</string>
 
     <string name="drawer_title_chat">Чат</string>
     <string name="drawer_title_close">Закрыть меню</string>
@@ -47,10 +51,12 @@
     <string name="login_action_login">Войти</string>
     <string name="login_action_password_remind">Забыли пароль?</string>
     <string name="login_action_registration">Создать героя</string>
+    <string name="login_action_authorization_site">Войти через сайт</string>
+    <string name="login_action_authorization_login_password">Войти с помощью логина и пароля</string>
+    <string name="login_dialog_confirm_authorization">Для входа в игру подтвердите, пожалуйста, авторизацию приложения на сайте.</string>
     <string name="login_text_login">Email</string>
     <string name="login_text_password">Пароль</string>
 
-    <string name="map_decreased_quality_title">Внимание</string>
     <string name="map_decreased_quality">Из-за нехватки памяти на устройстве карта будет показана в меньшем разрешении. Также будут отключены некоторые функции.</string>
     <string name="map_find_hero">Найти героя</string>
     <string name="map_find_place">Найти город</string>

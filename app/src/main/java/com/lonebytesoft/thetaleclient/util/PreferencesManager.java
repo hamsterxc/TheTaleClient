@@ -14,9 +14,8 @@ import com.lonebytesoft.thetaleclient.api.dictionary.MapStyle;
  */
 public class PreferencesManager {
 
-    private static final String KEY_LOGIN = "KEY_LOGIN";
-    private static final String KEY_PASSWORD = "KEY_PASSWORD";
     private static final String KEY_MAP_STYLE = "KEY_MAP_STYLE";
+    private static final String KEY_SESSION = "KEY_SESSION";
 
     private static SharedPreferences sharedPreferences =
             PreferenceManager.getDefaultSharedPreferences(TheTaleClientApplication.getContext());
@@ -41,21 +40,6 @@ public class PreferencesManager {
         } catch (NumberFormatException e) {
             return intDefault;
         }
-    }
-
-    public static String getLogin() {
-        return sharedPreferences.getString(KEY_LOGIN, null);
-    }
-
-    public static String getPassword() {
-        return sharedPreferences.getString(KEY_PASSWORD, null);
-    }
-
-    public static boolean setCredentials(final String login, final String password) {
-        return sharedPreferences.edit()
-                .putString(KEY_LOGIN, login)
-                .putString(KEY_PASSWORD, password)
-                .commit();
     }
 
     public static boolean shouldNotifyDeath() {
@@ -201,6 +185,16 @@ public class PreferencesManager {
     public static void setMapStyle(final MapStyle mapStyle) {
         sharedPreferences.edit()
                 .putInt(KEY_MAP_STYLE, mapStyle.ordinal())
+                .commit();
+    }
+
+    public static String getSession() {
+        return sharedPreferences.getString(KEY_SESSION, "");
+    }
+
+    public static void setSession(final String session) {
+        sharedPreferences.edit()
+                .putString(KEY_SESSION, session)
                 .commit();
     }
 

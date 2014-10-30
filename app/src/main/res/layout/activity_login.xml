@@ -39,64 +39,125 @@
             android:textColor="@color/common_error"
             android:visibility="gone"/>
 
-        <TextView
-            android:id="@+id/login_error_login"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
-            android:textColor="@color/common_error"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:visibility="gone"/>
-
-        <EditText
-            android:id="@+id/login_text_login"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:hint="@string/login_text_login"/>
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:id="@+id/login_content_start"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <Button
+                    android:id="@+id/login_action_authorization_site"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:text="@string/login_action_authorization_site"/>
+
+                <Button
+                    android:id="@+id/login_action_authorization_login_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/login_action_authorization_login_password"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/login_content_login_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/login_error_login"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
+                    android:textColor="@color/common_error"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:visibility="gone"/>
+
+                <EditText
+                    android:id="@+id/login_text_login"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:hint="@string/login_text_login"/>
+
+                <TextView
+                    android:id="@+id/login_error_password"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
+                    android:textColor="@color/common_error"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:visibility="gone"/>
+
+                <EditText
+                    android:id="@+id/login_text_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:hint="@string/login_text_password"
+                    android:inputType="textPassword"/>
+
+                <Button
+                    android:id="@+id/login_action_login"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/login_action_login"/>
+
+                <TextView
+                    android:id="@+id/login_action_registration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:layout_gravity="center_horizontal"
+                    style="?android:attr/textAppearanceMedium"
+                    android:textColor="@color/common_link"
+                    android:text="@string/login_action_registration"/>
+
+                <TextView
+                    android:id="@+id/login_action_password_remind"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:layout_gravity="center_horizontal"
+                    style="?android:attr/textAppearanceMedium"
+                    android:textColor="@color/common_link"
+                    android:text="@string/login_action_password_remind"/>
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/login_error_global"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <TextView
-            android:id="@+id/login_error_password"
+            android:id="@+id/login_error_global_text"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
-            android:textColor="@color/common_error"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:visibility="gone"/>
-
-        <EditText
-            android:id="@+id/login_text_password"
-            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:hint="@string/login_text_password"
-            android:inputType="textPassword"/>
+            android:gravity="center_horizontal"
+            style="?android:attr/textAppearanceLarge"/>
 
         <Button
-            android:id="@+id/login_action_login"
+            android:id="@+id/login_error_global_retry"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/login_action_login"/>
-
-        <TextView
-            android:id="@+id/login_action_registration"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:layout_gravity="center_horizontal"
-            style="?android:attr/textAppearanceMedium"
-            android:textColor="@color/common_link"
-            android:text="@string/login_action_registration"/>
-
-        <TextView
-            android:id="@+id/login_action_password_remind"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:layout_gravity="center_horizontal"
-            style="?android:attr/textAppearanceMedium"
-            android:textColor="@color/common_link"
-            android:text="@string/login_action_password_remind"/>
+            android:text="@string/action_retry"/>
 
     </LinearLayout>
 

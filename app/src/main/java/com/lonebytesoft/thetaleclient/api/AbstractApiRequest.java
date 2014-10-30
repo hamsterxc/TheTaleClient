@@ -8,6 +8,8 @@ import com.lonebytesoft.thetaleclient.BuildConfig;
 import com.lonebytesoft.thetaleclient.TheTaleClientApplication;
 import com.lonebytesoft.thetaleclient.api.cache.Request;
 import com.lonebytesoft.thetaleclient.api.cache.RequestCacheManager;
+import com.lonebytesoft.thetaleclient.util.PreferencesManager;
+import com.lonebytesoft.thetaleclient.util.RequestUtils;
 
 import org.apache.http.HttpRequest;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -36,7 +38,6 @@ public abstract class AbstractApiRequest<T extends AbstractApiResponse> {
     private static final String URL = "http://the-tale.org/%s";
     private static final long RETRY_TIMEOUT_MILLIS = 1000; // 1 s
 
-    private static final String COOKIE_SESSION_ID = "sessionid";
     private static final String COOKIE_CSRF_TOKEN = "csrftoken";
     private static final String PARAM_CSRF_TOKEN = "csrfmiddlewaretoken";
     private static final String PARAM_API_VERSION = "api_version";
@@ -139,6 +140,10 @@ public abstract class AbstractApiRequest<T extends AbstractApiResponse> {
                         ((CookieManager) CookieHandler.getDefault()).getCookieStore().add(
                                 URI.create(cookie.getDomain() + cookie.getPath()),
                                 httpCookie);
+
+                        if(cookie.getName().equals(RequestUtils.COOKIE_SESSION_ID)) {
+                            PreferencesManager.setSession(cookie.getValue());
+                        }
                     }
 
                     return new String[]{outputStream.toString(), null};

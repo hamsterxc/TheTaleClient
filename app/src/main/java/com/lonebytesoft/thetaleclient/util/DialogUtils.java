@@ -78,4 +78,13 @@ public class DialogUtils {
         MessageDialog.newInstance(caption, message).show(getFragmentTransaction(fragmentManager), DIALOG_MESSAGE_TAG);
     }
 
+    public static void showMessageDialog(final FragmentManager fragmentManager,
+                                         final String caption, final String message,
+                                         final Runnable onOkClickListener, final Runnable onDismissListener) {
+        final MessageDialog dialog = MessageDialog.newInstance(caption, message);
+        dialog.setOnOkClickListener(onOkClickListener);
+        dialog.setOnDismissListener(onDismissListener);
+        dialog.show(getFragmentTransaction(fragmentManager), DIALOG_MESSAGE_TAG);
+    }
+
 }
