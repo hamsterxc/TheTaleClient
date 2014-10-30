@@ -178,7 +178,7 @@ public class LoginActivity extends FragmentActivity {
             @Override
             public void processResponse(InfoResponse response) {
                 RequestUtils.setSession(PreferencesManager.getSession());
-                new GameInfoRequest().execute(new ApiResponseCallback<GameInfoResponse>() {
+                new GameInfoRequest(false).execute(new ApiResponseCallback<GameInfoResponse>() {
                     @Override
                     public void processResponse(GameInfoResponse response) {
                         if(response.account == null) {

@@ -55,7 +55,7 @@ public class QuestActorDialog extends BaseDialog {
                         getInfoItem(R.string.quest_actor_profession, questActorInfo.personInfo.profession.getName()));
                 UiUtils.setText(view.findViewById(R.id.dialog_quest_actor_person_mastery),
                         getInfoItem(R.string.quest_actor_mastery, questActorInfo.personInfo.mastery));
-                new GameInfoRequest().execute(new ApiResponseCallback<GameInfoResponse>() {
+                new GameInfoRequest(true).execute(new ApiResponseCallback<GameInfoResponse>() {
                     @Override
                     public void processResponse(GameInfoResponse response) {
                         new MapRequest(response.mapVersion).execute(new CommonResponseCallback<MapResponse, String>() {
@@ -85,7 +85,7 @@ public class QuestActorDialog extends BaseDialog {
                 view = inflater.inflate(R.layout.dialog_content_quest_actor_place, container, false);
                 UiUtils.setText(view.findViewById(R.id.dialog_quest_actor_place_name),
                         getString(R.string.map_tile_place_name, questActorInfo.placeInfo.name));
-                new GameInfoRequest().execute(new ApiResponseCallback<GameInfoResponse>() {
+                new GameInfoRequest(true).execute(new ApiResponseCallback<GameInfoResponse>() {
                     @Override
                     public void processResponse(GameInfoResponse response) {
                         new MapRequest(response.mapVersion).execute(new CommonResponseCallback<MapResponse, String>() {

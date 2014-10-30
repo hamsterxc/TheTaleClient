@@ -36,7 +36,7 @@ public class WatcherService extends Service {
     private final Runnable refreshRunnable = new Runnable() {
         @Override
         public void run() {
-            new GameInfoRequest().execute(new ApiResponseCallback<GameInfoResponse>() {
+            new GameInfoRequest(false).execute(new ApiResponseCallback<GameInfoResponse>() {
                 @Override
                 public void processResponse(GameInfoResponse response) {
                     if(response.account == null) {

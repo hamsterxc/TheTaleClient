@@ -51,6 +51,7 @@ public class ChatFragment extends WrapperFragment {
     private ScrollView scroll;
     private View outerContainer;
     private ViewGroup container;
+    private View sendContainer;
     private TextView message;
     private View errorSend;
 
@@ -62,6 +63,7 @@ public class ChatFragment extends WrapperFragment {
         scroll = (ScrollView) rootView.findViewById(R.id.chat_scroll);
         outerContainer = rootView.findViewById(R.id.chat_outer_container);
         this.container = (ViewGroup) rootView.findViewById(R.id.chat_container);
+        sendContainer = rootView.findViewById(R.id.chat_send_container);
         errorSend = rootView.findViewById(R.id.chat_error_send);
         message = (TextView) rootView.findViewById(R.id.chat_message);
         rootView.findViewById(R.id.chat_send).setOnClickListener(new View.OnClickListener() {
@@ -116,18 +118,25 @@ public class ChatFragment extends WrapperFragment {
             new InfoRequest().execute(new ApiResponseCallback<InfoResponse>() {
                 @Override
                 public void processResponse(InfoResponse response) {
-                    ChatManager.init(response.accountName, new ChatManager.ChatCallback() {
-                        @Override
-                        public void onSuccess() {
-                            loadMessages(isGlobal);
-                            mainHandler.postDelayed(refreshRunnable, REFRESH_TIMEOUT_MILLIS);
-                        }
+                    if(response.accountName == null) {
+                        sendContainer.setVisibility(View.GONE);
+                        loadMessages(isGlobal);
+                        mainHandler.postDelayed(refreshRunnable, REFRESH_TIMEOUT_MILLIS);
+                    } else {
+                        sendContainer.setVisibility(View.VISIBLE);
+                        ChatManager.init(response.accountName, new ChatManager.ChatCallback() {
+                            @Override
+                            public void onSuccess() {
+                                loadMessages(isGlobal);
+                                mainHandler.postDelayed(refreshRunnable, REFRESH_TIMEOUT_MILLIS);
+                            }
 
-                        @Override
-                        public void onError() {
-                            setError();
-                        }
-                    });
+                            @Override
+                            public void onError() {
+                                setError();
+                            }
+                        });
+                    }
                 }
 
                 @Override

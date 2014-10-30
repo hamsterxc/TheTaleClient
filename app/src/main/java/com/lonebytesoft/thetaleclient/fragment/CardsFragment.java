@@ -60,14 +60,10 @@ public class CardsFragment extends WrapperFragment {
     public void refresh(final boolean isGlobal) {
         super.refresh(isGlobal);
 
-        new GameInfoRequest().execute(new ApiResponseCallback<GameInfoResponse>() {
+        new GameInfoRequest(true).execute(new ApiResponseCallback<GameInfoResponse>() {
             @Override
             public void processResponse(final GameInfoResponse response) {
                 if(!isAdded()) {
-                    return;
-                }
-
-                if(response.account == null) {
                     return;
                 }
 

@@ -1,9 +1,12 @@
 package com.lonebytesoft.thetaleclient.api.request;
 
+import com.lonebytesoft.thetaleclient.R;
+import com.lonebytesoft.thetaleclient.TheTaleClientApplication;
 import com.lonebytesoft.thetaleclient.api.AbstractApiRequest;
 import com.lonebytesoft.thetaleclient.api.ApiResponseCallback;
 import com.lonebytesoft.thetaleclient.api.HttpMethod;
 import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;
+import com.lonebytesoft.thetaleclient.util.RequestUtils;
 
 import org.json.JSONException;
 
@@ -16,8 +19,11 @@ import java.util.Map;
  */
 public class GameInfoRequest extends AbstractApiRequest<GameInfoResponse> {
 
-    public GameInfoRequest() {
+    private final boolean needAuthorization;
+
+    public GameInfoRequest(final boolean needAuthorization) {
         super(HttpMethod.GET, "game/api/info", "1.1", true);
+        this.needAuthorization = needAuthorization;
     }
 
     public void execute(final int accountId, final ApiResponseCallback<GameInfoResponse> callback,
@@ -32,7 +38,13 @@ public class GameInfoRequest extends AbstractApiRequest<GameInfoResponse> {
     }
 
     protected GameInfoResponse getResponse(final String response) throws JSONException {
-        return new GameInfoResponse(response);
+        final GameInfoResponse gameInfoResponse = new GameInfoResponse(response);
+        if((gameInfoResponse.account == null) && needAuthorization) {
+            return new GameInfoResponse(RequestUtils.getGenericErrorResponse(
+                    TheTaleClientApplication.getContext().getString(R.string.game_not_authorized)));
+        } else {
+            return gameInfoResponse;
+        }
     }
 
     @Override

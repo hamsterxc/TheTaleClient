@@ -158,14 +158,10 @@ public class GameInfoFragment extends WrapperFragment {
             lastKnownHealth = 0;
         }
 
-        new GameInfoRequest().execute(new ApiResponseCallback<GameInfoResponse>() {
+        new GameInfoRequest(true).execute(new ApiResponseCallback<GameInfoResponse>() {
             @Override
             public void processResponse(final GameInfoResponse gameInfoResponse) {
                 if(!isAdded()) {
-                    return;
-                }
-
-                if(gameInfoResponse.account == null) {
                     return;
                 }
 

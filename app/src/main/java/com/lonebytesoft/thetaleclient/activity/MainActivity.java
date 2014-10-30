@@ -245,7 +245,7 @@ public class MainActivity extends ActionBarActivity
             @Override
             public void processResponse(InfoResponse response) {
                 UiUtils.setText(accountNameTextView, response.accountName);
-                new GameInfoRequest().execute(new ApiResponseCallback<GameInfoResponse>() {
+                new GameInfoRequest(false).execute(new ApiResponseCallback<GameInfoResponse>() {
                     @Override
                     public void processResponse(GameInfoResponse response) {
                         UiUtils.setText(timeTextView, String.format("%s %s", response.turnInfo.verboseDate, response.turnInfo.verboseTime));

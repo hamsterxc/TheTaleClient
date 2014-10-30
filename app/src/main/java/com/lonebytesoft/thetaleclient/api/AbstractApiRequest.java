@@ -17,7 +17,6 @@ import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.cookie.BasicClientCookie;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -164,16 +163,7 @@ public abstract class AbstractApiRequest<T extends AbstractApiResponse> {
                 if(callback != null) {
                     final String responseString;
                     if(result[0] == null) {
-                        try {
-                            final JSONObject responseJson = new JSONObject();
-                            responseJson.put("status", ApiResponseStatus.GENERIC.getCode());
-                            responseJson.put("code", ApiResponseStatus.GENERIC.getCode());
-                            responseJson.put("error", result[1]);
-                            responseString = responseJson.toString();
-                        } catch(JSONException e) {
-                            callback.processError(null);
-                            return;
-                        }
+                        responseString = RequestUtils.getGenericErrorResponse(result[1]);
                     } else {
                         responseString = result[0];
                     }

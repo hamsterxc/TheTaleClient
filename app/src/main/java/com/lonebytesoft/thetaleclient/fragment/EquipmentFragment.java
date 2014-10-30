@@ -71,14 +71,10 @@ public class EquipmentFragment extends WrapperFragment {
     public void refresh(final boolean showLoading) {
         super.refresh(showLoading);
 
-        new GameInfoRequest().execute(new ApiResponseCallback<GameInfoResponse>() {
+        new GameInfoRequest(true).execute(new ApiResponseCallback<GameInfoResponse>() {
             @Override
             public void processResponse(GameInfoResponse response) {
                 if(!isAdded()) {
-                    return;
-                }
-
-                if(response.account == null) {
                     return;
                 }
 

@@ -1,5 +1,10 @@
 package com.lonebytesoft.thetaleclient.util;
 
+import com.lonebytesoft.thetaleclient.api.ApiResponseStatus;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.HttpCookie;
@@ -27,6 +32,18 @@ public class RequestUtils {
         httpCookie.setPath(path);
         ((CookieManager) CookieHandler.getDefault()).getCookieStore().add(
                 URI.create(domain + path), httpCookie);
+    }
+
+    public static String getGenericErrorResponse(final String error) {
+        try {
+            final JSONObject json = new JSONObject();
+            json.put("status", ApiResponseStatus.GENERIC.getCode());
+            json.put("code", ApiResponseStatus.GENERIC.getCode());
+            json.put("error", error);
+            return json.toString();
+        } catch(JSONException e) {
+            return "";
+        }
     }
 
 }

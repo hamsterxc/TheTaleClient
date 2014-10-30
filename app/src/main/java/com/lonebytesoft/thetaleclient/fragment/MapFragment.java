@@ -196,7 +196,7 @@ public class MapFragment extends WrapperFragment {
         new InfoRequest().execute(new ApiResponseCallback<InfoResponse>() {
             @Override
             public void processResponse(final InfoResponse infoResponse) {
-                new GameInfoRequest().execute(new ApiResponseCallback<GameInfoResponse>() {
+                new GameInfoRequest(true).execute(new ApiResponseCallback<GameInfoResponse>() {
                     @Override
                     public void processResponse(final GameInfoResponse gameInfoResponse) {
                         new MapRequest(gameInfoResponse.mapVersion).execute(new CommonResponseCallback<MapResponse, String>() {
