@@ -17,6 +17,7 @@
     <string name="chat_error_send">Произошла ошибка при отправке сообщения. Попробуйте еще раз.</string>
 
     <string name="common_dialog_attention_title">Внимание</string>
+    <string name="common_error">Произошла неизвестная ошибка. Попробуйте еще раз.</string>
 
     <string name="drawer_title_chat">Чат</string>
     <string name="drawer_title_close">Закрыть меню</string>

@@ -1,6 +1,9 @@
 package com.lonebytesoft.thetaleclient.api;
 
+import com.lonebytesoft.thetaleclient.R;
+import com.lonebytesoft.thetaleclient.TheTaleClientApplication;
 import com.lonebytesoft.thetaleclient.util.ObjectUtils;
+import com.lonebytesoft.thetaleclient.util.RequestUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,9 +32,15 @@ public abstract class AbstractApiResponse {
 
     public final String statusUrl;
 
-    public AbstractApiResponse(final String response)  throws JSONException {
+    public AbstractApiResponse(final String response) throws JSONException {
         rawResponse = response;
-        final JSONObject json = new JSONObject(response);
+        JSONObject json;
+        try {
+            json = new JSONObject(response);
+        } catch(JSONException e) {
+            json = new JSONObject(RequestUtils.getGenericErrorResponse(
+                    TheTaleClientApplication.getContext().getString(R.string.common_error)));
+        }
 
         isDeprecated = json.optBoolean("depricated");
         status = ObjectUtils.getEnumForCode(ApiResponseStatus.class, json.getString("status"));
