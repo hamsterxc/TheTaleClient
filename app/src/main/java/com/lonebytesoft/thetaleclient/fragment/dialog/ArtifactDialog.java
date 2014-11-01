@@ -44,7 +44,7 @@ public class ArtifactDialog extends BaseDialog {
             UiUtils.setText(view.findViewById(R.id.dialog_artifact_power_physical),
                     getString(R.string.artifact_power_physical, artifactInfo.powerPhysical));
             UiUtils.setText(view.findViewById(R.id.dialog_artifact_power_magical),
-                    getString(R.string.artifact_power_physical, artifactInfo.powerMagical));
+                    getString(R.string.artifact_power_magical, artifactInfo.powerMagical));
             UiUtils.setText(view.findViewById(R.id.dialog_artifact_integrity),
                     getString(R.string.artifact_integrity, 100.0 * artifactInfo.integrityCurrent / artifactInfo.integrityTotal, artifactInfo.integrityCurrent, artifactInfo.integrityTotal));
             UiUtils.setText(view.findViewById(R.id.dialog_artifact_rating),
