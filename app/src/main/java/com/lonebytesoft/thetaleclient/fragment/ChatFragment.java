@@ -1,10 +1,16 @@
 package com.lonebytesoft.thetaleclient.fragment;
 
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.Editable;
+import android.text.Html;
+import android.text.Spannable;
 import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
+import android.text.style.StrikethroughSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +25,8 @@ import com.lonebytesoft.thetaleclient.api.request.InfoRequest;
 import com.lonebytesoft.thetaleclient.api.response.InfoResponse;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
 import com.lonebytesoft.thetaleclient.util.chat.ChatManager;
+
+import org.xml.sax.XMLReader;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -193,9 +201,57 @@ public class ChatFragment extends WrapperFragment {
         ((TextView) view.findViewById(R.id.chat_item_nickname)).setText(message.nickname);
 
         final TextView textMessage = (TextView) view.findViewById(R.id.chat_item_message);
-        textMessage.setText(message.message);
         if(message.isDeleted) {
+            textMessage.setText(message.message);
             textMessage.setTypeface(textMessage.getTypeface(), Typeface.ITALIC);
+        } else {
+            if(message.message.trim().equals(getString(R.string.chat_message_hr))) {
+                textMessage.setVisibility(View.GONE);
+                view.findViewById(R.id.chat_item_hr).setVisibility(View.VISIBLE);
+            } else {
+                textMessage.setText(Html.fromHtml(message.message,
+                        new Html.ImageGetter() {
+                            @Override
+                            public Drawable getDrawable(String source) {
+                                // not implemented
+                                return null;
+                            }
+                        },
+                        new Html.TagHandler() {
+                            @Override
+                            public void handleTag(boolean opening, String tag, Editable output, XMLReader xmlReader) {
+                                if(tag.equalsIgnoreCase("del")) {
+                                    final int len = output.length();
+                                    if(opening) {
+                                        output.setSpan(new StrikethroughSpan(), len, len, Spannable.SPAN_MARK_MARK);
+                                    } else {
+                                        final Object span = getSpan(output, StrikethroughSpan.class);
+                                        final int where = output.getSpanStart(span);
+                                        output.removeSpan(span);
+                                        if (where != len) {
+                                            output.setSpan(new StrikethroughSpan(), where, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                                        }
+                                    }
+                                }
+                            }
+
+                            private Object getSpan(final Editable text, final Class<?> kind) {
+                                final Object[] spans = text.getSpans(0, text.length(), kind);
+
+                                if (spans.length == 0) {
+                                    return null;
+                                } else {
+                                    for(int i = spans.length; i > 0; i--) {
+                                        if(text.getSpanFlags(spans[i-1]) == Spannable.SPAN_MARK_MARK) {
+                                            return spans[i-1];
+                                        }
+                                    }
+                                    return null;
+                                }
+                            }
+                        }));
+                textMessage.setMovementMethod(LinkMovementMethod.getInstance());
+            }
         }
 
         final Calendar calendarCurrent = Calendar.getInstance();

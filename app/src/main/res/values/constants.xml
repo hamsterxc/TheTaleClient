@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <integer name="chat_message_width_weight">3</integer>
+
     <bool name="settings_notification_common_default">true</bool>
     <integer name="settings_notification_health_threshold_default">200</integer>
     <integer name="settings_notification_energy_threshold_default">8</integer>

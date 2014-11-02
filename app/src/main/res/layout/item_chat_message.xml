@@ -35,8 +35,17 @@
         android:id="@+id/chat_item_message"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="3"
+        android:layout_weight="@integer/chat_message_width_weight"
         android:layout_marginLeft="8dp"
         style="?android:attr/textAppearanceMedium"/>
+
+    <View
+        android:id="@+id/chat_item_hr"
+        android:layout_width="0dp"
+        android:layout_weight="@integer/chat_message_width_weight"
+        android:layout_marginLeft="8dp"
+        style="@style/Delimiter"
+        android:layout_gravity="center_vertical"
+        android:visibility="gone"/>
 
 </LinearLayout>
