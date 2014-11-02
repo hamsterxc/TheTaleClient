@@ -1,5 +1,7 @@
 package com.lonebytesoft.thetaleclient.util;
 
+import android.text.TextUtils;
+
 import com.lonebytesoft.thetaleclient.api.ApiResponseStatus;
 
 import org.json.JSONException;
@@ -32,6 +34,13 @@ public class RequestUtils {
         httpCookie.setPath(path);
         ((CookieManager) CookieHandler.getDefault()).getCookieStore().add(
                 URI.create(domain + path), httpCookie);
+    }
+
+    public static void setSession() {
+        final String session = PreferencesManager.getSession();
+        if(!TextUtils.isEmpty(session)) {
+            setSession(session);
+        }
     }
 
     public static String getGenericErrorResponse(final String error) {

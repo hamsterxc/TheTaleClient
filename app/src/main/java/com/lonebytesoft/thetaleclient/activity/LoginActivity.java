@@ -30,7 +30,6 @@ import com.lonebytesoft.thetaleclient.api.response.ThirdPartyAuthResponse;
 import com.lonebytesoft.thetaleclient.api.response.ThirdPartyAuthStateResponse;
 import com.lonebytesoft.thetaleclient.service.WatcherService;
 import com.lonebytesoft.thetaleclient.util.DialogUtils;
-import com.lonebytesoft.thetaleclient.util.PreferencesManager;
 import com.lonebytesoft.thetaleclient.util.RequestUtils;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
 
@@ -177,7 +176,7 @@ public class LoginActivity extends FragmentActivity {
         new InfoRequest().execute(new ApiResponseCallback<InfoResponse>() {
             @Override
             public void processResponse(InfoResponse response) {
-                RequestUtils.setSession(PreferencesManager.getSession());
+                RequestUtils.setSession();
                 new GameInfoRequest(false).execute(new ApiResponseCallback<GameInfoResponse>() {
                     @Override
                     public void processResponse(GameInfoResponse response) {

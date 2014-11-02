@@ -111,6 +111,7 @@ public abstract class AbstractApiRequest<T extends AbstractApiResponse> {
                 if(CookieHandler.getDefault() == null) {
                     CookieHandler.setDefault(new CookieManager());
                 }
+                RequestUtils.setSession();
 
                 for(final HttpCookie httpCookie : ((CookieManager) CookieHandler.getDefault()).getCookieStore().getCookies()) {
                     final BasicClientCookie cookie = new BasicClientCookie(httpCookie.getName(), httpCookie.getValue());
