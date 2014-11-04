@@ -6,8 +6,7 @@ package com.lonebytesoft.thetaleclient.api.dictionary;
  */
 public enum MapCellTemperature {
 
-    // codes must be lowercase (for parsing)
-    EXTREMELY_COLD("ужасно холодно"), // theoretically
+    EXTREMELY_COLD("ужасно холодно"),
     VERY_COLD("очень холодно"),
     COLD("холодно"),
     COOL("прохладно"),

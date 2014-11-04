@@ -13,7 +13,7 @@ import org.json.JSONException;
  */
 public class MapTerrainRequest extends CommonRequest {
 
-    private static final String URL = "http://devio.us/~hamster/the-tale/map_data.js";
+    private static final String URL = "http://lonebytesoft.com:15934/the-tale/map_data.js";
 
     public void execute(final CommonResponseCallback<MapTerrainResponse, String> callback) {
         execute(URL, HttpMethod.GET, null, null, new CommonResponseCallback<String, Throwable>() {

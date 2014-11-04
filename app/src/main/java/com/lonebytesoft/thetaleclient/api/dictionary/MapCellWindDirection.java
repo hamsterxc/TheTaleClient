@@ -6,7 +6,6 @@ package com.lonebytesoft.thetaleclient.api.dictionary;
  */
 public enum MapCellWindDirection {
 
-    // codes must be lowercase (for parsing)
     N("северный", 0),
     NNE("северо-северо-восточный", 22.5),
     NE("северо-восточный", 45),

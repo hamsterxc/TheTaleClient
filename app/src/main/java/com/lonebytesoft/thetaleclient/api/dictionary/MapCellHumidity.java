@@ -6,7 +6,6 @@ package com.lonebytesoft.thetaleclient.api.dictionary;
  */
 public enum MapCellHumidity {
 
-    // codes must be lowercase (for parsing)
     EXTREMELY_DRY("ужасно сухо"),
     VERY_DRY("очень сухо"),
     DRY("сухо"),
@@ -15,7 +14,8 @@ public enum MapCellHumidity {
     WETTISH("повышенная влажность"),
     WET("влажно"),
     VERY_WET("очень влажно"),
-    EXTREMELY_WET("ужасно влажно"), // theoretically
+    FOG("туман"),
+    THICK_FOG("сильный туман"),
     ;
 
     private final String code;

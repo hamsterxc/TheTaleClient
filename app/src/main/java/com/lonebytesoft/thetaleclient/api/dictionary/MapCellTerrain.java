@@ -6,7 +6,6 @@ package com.lonebytesoft.thetaleclient.api.dictionary;
  */
 public enum MapCellTerrain {
 
-    // codes must be lowercase (for parsing)
     SWAMP("болото"),
     HIGH_MOUNTAIN("высокие горы"),
     DRY_CRACKED_EARTH("высохшая растрескавшаяся земля"),

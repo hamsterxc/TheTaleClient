@@ -6,7 +6,6 @@ package com.lonebytesoft.thetaleclient.api.dictionary;
  */
 public enum MapCellWindSpeed {
 
-    // codes must be lowercase (for parsing)
     CALM("штиль"),
     LIGHT_AIR("тихий ветер"),
     LIGHT_BREEZE("лёгкий ветер"),
@@ -16,6 +15,10 @@ public enum MapCellWindSpeed {
     STRONG_BREEZE("сильный ветер"),
     MODERATE_GALE("крепкий ветер"),
     FRESH_GALE("очень крепкий ветер"),
+    STRONG_GALE("шторм"),
+    WHOLE_GALE("сильный шторм"),
+    STORM("жестокий шторм"),
+    HURRICANE("ураган"),
     ;
 
     private final String code;
