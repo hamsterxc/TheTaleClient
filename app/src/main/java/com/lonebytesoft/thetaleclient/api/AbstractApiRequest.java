@@ -80,7 +80,7 @@ public abstract class AbstractApiRequest<T extends AbstractApiResponse> {
                         final T responseObject = getResponse(response);
                         processFinishedResponse(responseObject, callback);
                     } catch (JSONException e) {
-                        callback.processError(null);
+                        RequestUtils.processResultInMainThread(callback, true, null, null);
                     }
                 }
 
@@ -182,7 +182,7 @@ public abstract class AbstractApiRequest<T extends AbstractApiResponse> {
                             }, RETRY_TIMEOUT_MILLIS);
                         }
                     } catch (JSONException e) {
-                        callback.processError(null);
+                        RequestUtils.processResultInMainThread(callback, true, null, null);
                     }
                 }
             }
@@ -194,9 +194,9 @@ public abstract class AbstractApiRequest<T extends AbstractApiResponse> {
 
     protected void processFinishedResponse(final T response, final ApiResponseCallback<T> callback) {
         if (isError(response)) {
-            callback.processError(response);
+            RequestUtils.processResultInMainThread(callback, true, null, response);
         } else {
-            callback.processResponse(response);
+            RequestUtils.processResultInMainThread(callback, false, response, null);
         }
     }
 

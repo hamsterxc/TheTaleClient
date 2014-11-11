@@ -1,6 +1,8 @@
 package com.lonebytesoft.thetaleclient.util.chat;
 
 import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Looper;
 
 import com.lonebytesoft.thetaleclient.api.CommonRequest;
 import com.lonebytesoft.thetaleclient.api.CommonResponseCallback;
@@ -42,6 +44,8 @@ public class ChatManager {
     private static final String HEADER_CSRF_TOKEN = "X-CSRF-Token";
     private static final String COOKIE_SESSION = "_tlkio_session";
 
+    private static final Handler handler = new Handler(Looper.getMainLooper());
+
     private static String csrfToken = null;
     private static String session = null;
 
@@ -61,7 +65,7 @@ public class ChatManager {
                 try {
                     httpClient.execute(httpRequestMain).getEntity().writeTo(outputStreamMain);
                 } catch (IOException e) {
-                    callback.onError();
+                    callCallbackError(callback);
                     return null;
                 }
 
@@ -74,7 +78,7 @@ public class ChatManager {
                 if(matcher.find()) {
                     csrfToken = matcher.group(1);
                 } else {
-                    callback.onError();
+                    callCallbackError(callback);
                     return null;
                 }
 
@@ -89,20 +93,20 @@ public class ChatManager {
                 try {
                     httpRequestLogin.setEntity(new UrlEncodedFormEntity(httpRequestLoginParams, "UTF-8"));
                 } catch(UnsupportedEncodingException e) {
-                    callback.onError();
+                    callCallbackError(callback);
                     return null;
                 }
 
                 try {
                     httpClient.execute(httpRequestLogin);
                 } catch (IOException e) {
-                    callback.onError();
+                    callCallbackError(callback);
                     return null;
                 }
 
                 session = getSession(httpClient);
 
-                callback.onSuccess();
+                callCallbackSuccess(callback);
 
                 return null;
             }
@@ -125,7 +129,7 @@ public class ChatManager {
                 try {
                     httpRequest.setEntity(new UrlEncodedFormEntity(httpRequestParams, "UTF-8"));
                 } catch(UnsupportedEncodingException e) {
-                    callback.onError();
+                    callCallbackError(callback);
                 }
 
                 final OutputStream outputStream = new ByteArrayOutputStream();
@@ -133,11 +137,11 @@ public class ChatManager {
                     httpClient.execute(httpRequest).getEntity().writeTo(outputStream);
                     final JSONObject json = new JSONObject(outputStream.toString());
                     if(json.has("error")) {
-                        callback.onError();
+                        callCallbackError(callback);
                         return null;
                     }
                 } catch (IOException|JSONException e) {
-                    callback.onError();
+                    callCallbackError(callback);
                     return null;
                 } finally {
                     try {
@@ -148,7 +152,7 @@ public class ChatManager {
 
                 session = getSession(httpClient);
 
-                callback.onSuccess();
+                callCallbackSuccess(callback);
 
                 return null;
             }
@@ -174,15 +178,15 @@ public class ChatManager {
                             lastId = message.id;
                         }
                     }
-                    callback.onSuccess(messages);
+                    callCallbackSuccess(callback, messages);
                 } catch(JSONException e) {
-                    callback.onError();
+                    callCallbackError(callback);
                 }
             }
 
             @Override
             public void processError(Throwable error) {
-                callback.onError();
+                callCallbackError(callback);
             }
         });
     }
@@ -201,18 +205,18 @@ public class ChatManager {
                         }
                     }
                     if(position < count) {
-                        callback.onSuccess(messages.subList(position, count));
+                        callCallbackSuccess(callback, messages.subList(position, count));
                     } else {
-                        callback.onSuccess(new ArrayList<ChatMessage>(0));
+                        callCallbackSuccess(callback, new ArrayList<ChatMessage>(0));
                     }
                 } else {
-                    callback.onSuccess(new ArrayList<ChatMessage>(0));
+                    callCallbackSuccess(callback, new ArrayList<ChatMessage>(0));
                 }
             }
 
             @Override
             public void onError() {
-                callback.onError();
+                callCallbackError(callback);
             }
         });
     }
@@ -240,6 +244,42 @@ public class ChatManager {
     public interface ChatMessagesCallback {
         void onSuccess(List<ChatMessage> messages);
         void onError();
+    }
+
+    private static void callCallbackSuccess(final ChatCallback callback) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                callback.onSuccess();
+            }
+        });
+    }
+
+    private static void callCallbackSuccess(final ChatMessagesCallback callback, final List<ChatMessage> messages) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                callback.onSuccess(messages);
+            }
+        });
+    }
+
+    private static void callCallbackError(final ChatCallback callback) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                callback.onError();
+            }
+        });
+    }
+
+    private static void callCallbackError(final ChatMessagesCallback callback) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                callback.onError();
+            }
+        });
     }
 
 }

@@ -26,6 +26,7 @@ import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;
 import com.lonebytesoft.thetaleclient.api.response.InfoResponse;
 import com.lonebytesoft.thetaleclient.util.DialogUtils;
 import com.lonebytesoft.thetaleclient.util.GameInfoUtils;
+import com.lonebytesoft.thetaleclient.util.RequestUtils;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
 import com.lonebytesoft.thetaleclient.widget.RequestActionView;
 
@@ -123,7 +124,7 @@ public class GameInfoFragment extends WrapperFragment {
         actionHelp.setActionClickListener(new Runnable() {
             @Override
             public void run() {
-                new AbilityUseRequest(Action.HELP).execute(0, new ApiResponseCallback<CommonResponse>() {
+                new AbilityUseRequest(Action.HELP).execute(0, RequestUtils.wrapCallback(new ApiResponseCallback<CommonResponse>() {
                     @Override
                     public void processResponse(CommonResponse response) {
                         actionHelp.setMode(RequestActionView.Mode.ACTION);
@@ -134,7 +135,7 @@ public class GameInfoFragment extends WrapperFragment {
                     public void processError(CommonResponse response) {
                         actionHelp.setErrorText(response.errorMessage);
                     }
-                });
+                }, GameInfoFragment.this));
             }
         });
 
@@ -158,13 +159,9 @@ public class GameInfoFragment extends WrapperFragment {
             lastKnownHealth = 0;
         }
 
-        new GameInfoRequest(true).execute(new ApiResponseCallback<GameInfoResponse>() {
+        new GameInfoRequest(true).execute(RequestUtils.wrapCallback(new ApiResponseCallback<GameInfoResponse>() {
             @Override
             public void processResponse(final GameInfoResponse gameInfoResponse) {
-                if(!isAdded()) {
-                    return;
-                }
-
                 if(lastKnownHealth == 0) {
                     lastKnownHealth = (int) Math.round((450.0 + 50.0 * gameInfoResponse.account.hero.basicInfo.level) / 4.0);
                 }
@@ -275,7 +272,7 @@ public class GameInfoFragment extends WrapperFragment {
                 }
 
                 actionHelp.setVisibility(View.GONE);
-                new InfoRequest().execute(new ApiResponseCallback<InfoResponse>() {
+                new InfoRequest().execute(RequestUtils.wrapCallback(new ApiResponseCallback<InfoResponse>() {
                     @Override
                     public void processResponse(final InfoResponse infoResponse) {
                         if(GameInfoUtils.isEnoughEnergy(gameInfoResponse.account.hero.energy, infoResponse.abilitiesCost.get(Action.HELP))) {
@@ -289,7 +286,7 @@ public class GameInfoFragment extends WrapperFragment {
                         actionHelp.setMode(RequestActionView.Mode.ERROR);
                         actionHelp.setVisibility(View.VISIBLE);
                     }
-                });
+                }, GameInfoFragment.this));
 
                 setMode(DataViewMode.DATA);
             }
@@ -298,7 +295,7 @@ public class GameInfoFragment extends WrapperFragment {
             public void processError(GameInfoResponse response) {
                 setError(response.errorMessage);
             }
-        }, false);
+        }, this), false);
     }
 
 }

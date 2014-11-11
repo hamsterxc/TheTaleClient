@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 
 import com.lonebytesoft.thetaleclient.api.cache.Request;
 import com.lonebytesoft.thetaleclient.api.cache.RequestCacheManager;
+import com.lonebytesoft.thetaleclient.util.RequestUtils;
 
 import org.apache.http.HttpRequest;
 import org.apache.http.client.HttpClient;
@@ -31,7 +32,7 @@ public abstract class CommonRequest {
             RequestCacheManager.addListener(request, new CommonResponseCallback<String, Void>() {
                 @Override
                 public void processResponse(String response) {
-                    callback.processResponse(response);
+                    RequestUtils.processResultInMainThread(callback, false, response, null);
                 }
 
                 @Override
@@ -62,14 +63,14 @@ public abstract class CommonRequest {
                     if(staleTime > 0) {
                         RequestCacheManager.onRequestFinished(request, (String) result);
                     }
-                    callback.processResponse((String) result);
+                    RequestUtils.processResultInMainThread(callback, false, (String) result, null);
                 } else if(result instanceof Throwable) {
                     if(staleTime > 0) {
                         RequestCacheManager.onRequestFinishError(request);
                     }
-                    callback.processError((Throwable) result);
+                    RequestUtils.processResultInMainThread(callback, true, null, (Throwable) result);
                 } else {
-                    callback.processError(null);
+                    RequestUtils.processResultInMainThread(callback, true, null, null);
                 }
             }
 

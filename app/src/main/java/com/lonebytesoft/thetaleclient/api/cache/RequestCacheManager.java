@@ -1,6 +1,7 @@
 package com.lonebytesoft.thetaleclient.api.cache;
 
 import com.lonebytesoft.thetaleclient.api.CommonResponseCallback;
+import com.lonebytesoft.thetaleclient.util.RequestUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -55,7 +56,7 @@ public class RequestCacheManager {
             pending.add(new PendingRequest(request, callback, time, staleTimeout));
 //            Log.d(LOG_TAG, "addListener: no request result or stale");
         } else {
-            callback.processResponse(requestResult.getResult());
+            RequestUtils.processResultInMainThread(callback, false, requestResult.getResult(), null);
 //            Log.d(LOG_TAG, "addListener: fresh request result exists");
         }
     }
@@ -71,10 +72,10 @@ public class RequestCacheManager {
             if(!pendingRequest.isFinished() && pendingRequest.getRequest().equals(request)) {
                 // got in time
                 if(pendingRequest.getTime() + pendingRequest.getStaleTimeout() >= time) {
-                    pendingRequest.getCallback().processResponse(response);
+                    RequestUtils.processResultInMainThread(pendingRequest.getCallback(), false, response, null);
 //                    Log.d(LOG_TAG, "onRequestFinished: processResponse");
                 } else { // late
-                    pendingRequest.getCallback().processError(null);
+                    RequestUtils.processResultInMainThread(pendingRequest.getCallback(), true, null, null);
 //                    Log.d(LOG_TAG, "onRequestFinished: processError");
                 }
                 pendingRequest.setFinished();
@@ -89,7 +90,7 @@ public class RequestCacheManager {
 
         for(final PendingRequest pendingRequest : pending) {
             if(!pendingRequest.isFinished() && pendingRequest.getRequest().equals(request)) {
-                pendingRequest.getCallback().processError(null);
+                RequestUtils.processResultInMainThread(pendingRequest.getCallback(), true, null, null);
 //                Log.d(LOG_TAG, "onRequestFinishError: processError");
                 pendingRequest.setFinished();
             }

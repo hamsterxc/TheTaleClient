@@ -4,6 +4,7 @@ import com.lonebytesoft.thetaleclient.api.CommonRequest;
 import com.lonebytesoft.thetaleclient.api.CommonResponseCallback;
 import com.lonebytesoft.thetaleclient.api.HttpMethod;
 import com.lonebytesoft.thetaleclient.api.response.MapCellResponse;
+import com.lonebytesoft.thetaleclient.util.RequestUtils;
 
 import org.json.JSONException;
 
@@ -26,15 +27,15 @@ public class MapCellRequest extends CommonRequest {
             @Override
             public void processResponse(String response) {
                 try {
-                    callback.processResponse(new MapCellResponse(response));
+                    RequestUtils.processResultInMainThread(callback, false, new MapCellResponse(response), null);
                 } catch (JSONException e) {
-                    callback.processError(e.getLocalizedMessage());
+                    RequestUtils.processResultInMainThread(callback, true, null, e.getLocalizedMessage());
                 }
             }
 
             @Override
             public void processError(Throwable error) {
-                callback.processError(error.getLocalizedMessage());
+                RequestUtils.processResultInMainThread(callback, true, null, error.getLocalizedMessage());
             }
         });
     }

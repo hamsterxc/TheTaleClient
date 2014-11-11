@@ -5,8 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Handler;
-import android.os.Looper;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,24 +18,17 @@ import android.widget.TextView;
  */
 public class UiUtils {
 
-    private static final Handler mainHandler = new Handler(Looper.getMainLooper());
-
     public static void setText(final TextView textView, final CharSequence text) {
         if(textView == null) {
             return;
         }
 
-        mainHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                if(TextUtils.isEmpty(text)) {
-                    textView.setVisibility(View.GONE);
-                } else {
-                    textView.setVisibility(View.VISIBLE);
-                    textView.setText(text);
-                }
-            }
-        });
+        if(TextUtils.isEmpty(text)) {
+            textView.setVisibility(View.GONE);
+        } else {
+            textView.setVisibility(View.VISIBLE);
+            textView.setText(text);
+        }
     }
 
     public static void setText(final View view, final CharSequence text) {

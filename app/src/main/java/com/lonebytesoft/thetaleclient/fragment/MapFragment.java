@@ -37,6 +37,7 @@ import com.lonebytesoft.thetaleclient.fragment.dialog.TabbedDialog;
 import com.lonebytesoft.thetaleclient.util.DialogUtils;
 import com.lonebytesoft.thetaleclient.util.ObjectUtils;
 import com.lonebytesoft.thetaleclient.util.PreferencesManager;
+import com.lonebytesoft.thetaleclient.util.RequestUtils;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
 import com.lonebytesoft.thetaleclient.util.map.MapManager;
 import com.lonebytesoft.thetaleclient.util.map.MapModification;
@@ -193,18 +194,22 @@ public class MapFragment extends WrapperFragment {
 
         UiUtils.setText(actionMapModification, getString(R.string.map_modification, mapModification.getName()));
 
-        new InfoRequest().execute(new ApiResponseCallback<InfoResponse>() {
+        new InfoRequest().execute(RequestUtils.wrapCallback(new ApiResponseCallback<InfoResponse>() {
             @Override
             public void processResponse(final InfoResponse infoResponse) {
-                new GameInfoRequest(true).execute(new ApiResponseCallback<GameInfoResponse>() {
+                new GameInfoRequest(true).execute(RequestUtils.wrapCallback(new ApiResponseCallback<GameInfoResponse>() {
                     @Override
                     public void processResponse(final GameInfoResponse gameInfoResponse) {
-                        new MapRequest(gameInfoResponse.mapVersion).execute(new CommonResponseCallback<MapResponse, String>() {
+                        new MapRequest(gameInfoResponse.mapVersion).execute(RequestUtils.wrapCallback(new CommonResponseCallback<MapResponse, String>() {
                             @Override
                             public void processResponse(final MapResponse mapResponse) {
                                 MapManager.getMapSprite(mapStyle, infoResponse, new MapManager.MapBitmapCallback() {
                                     @Override
                                     public void onBitmapBuilt(final Bitmap sprite) {
+                                        if(!isAdded()) {
+                                            return;
+                                        }
+
                                         heroPosition = gameInfoResponse.account.hero.position;
 
                                         final Bitmap map = MapManager.getMapBitmap(mapResponse);
@@ -225,7 +230,7 @@ public class MapFragment extends WrapperFragment {
                                             MapManager.drawHeroLayer(canvas, gameInfoResponse.account.hero, sprite);
                                             setMap(map, mapResponse);
                                         } else {
-                                            new MapTerrainRequest().execute(new CommonResponseCallback<MapTerrainResponse, String>() {
+                                            new MapTerrainRequest().execute(RequestUtils.wrapCallback(new CommonResponseCallback<MapTerrainResponse, String>() {
                                                 @Override
                                                 public void processResponse(final MapTerrainResponse mapTerrainResponse) {
                                                     switch(mapModification) {
@@ -248,12 +253,16 @@ public class MapFragment extends WrapperFragment {
                                                     setError(getString(R.string.map_error));
                                                     mapModification = MapModification.NONE;
                                                 }
-                                            });
+                                            }, MapFragment.this));
                                         }
                                     }
 
                                     @Override
                                     public void onError() {
+                                        if(!isAdded()) {
+                                            return;
+                                        }
+
                                         setError(getString(R.string.map_error));
                                     }
                                 });
@@ -263,21 +272,21 @@ public class MapFragment extends WrapperFragment {
                             public void processError(String error) {
                                 setError(getString(R.string.map_error));
                             }
-                        });
+                        }, MapFragment.this));
                     }
 
                     @Override
                     public void processError(GameInfoResponse response) {
                         setError(getString(R.string.map_error));
                     }
-                }, true);
+                }, MapFragment.this), true);
             }
 
             @Override
             public void processError(InfoResponse response) {
                 setError(getString(R.string.map_error));
             }
-        });
+        }, this));
     }
 
     private void moveToTile(final int tileX, final int tileY) {
@@ -372,7 +381,7 @@ public class MapFragment extends WrapperFragment {
                         }
 
                         final PlaceInfo placeInfoFinal = placeInfo;
-                        new MapCellRequest().execute(tileX, tileY, new CommonResponseCallback<MapCellResponse, String>() {
+                        new MapCellRequest().execute(tileX, tileY, RequestUtils.wrapCallback(new CommonResponseCallback<MapCellResponse, String>() {
                             @Override
                             public void processResponse(final MapCellResponse response) {
                                 // request may be completed before fragment is instantiated, we'll wait for it
@@ -408,7 +417,7 @@ public class MapFragment extends WrapperFragment {
                                 });
                                 setError(getString(R.string.map_error));
                             }
-                        });
+                        }, MapFragment.this));
                     }
                 });
 

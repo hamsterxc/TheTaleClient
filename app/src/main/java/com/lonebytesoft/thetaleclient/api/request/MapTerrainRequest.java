@@ -4,6 +4,7 @@ import com.lonebytesoft.thetaleclient.api.CommonRequest;
 import com.lonebytesoft.thetaleclient.api.CommonResponseCallback;
 import com.lonebytesoft.thetaleclient.api.HttpMethod;
 import com.lonebytesoft.thetaleclient.api.response.MapTerrainResponse;
+import com.lonebytesoft.thetaleclient.util.RequestUtils;
 
 import org.json.JSONException;
 
@@ -20,15 +21,15 @@ public class MapTerrainRequest extends CommonRequest {
             @Override
             public void processResponse(String response) {
                 try {
-                    callback.processResponse(new MapTerrainResponse(response));
-                } catch(JSONException e) {
-                    callback.processError(e.getLocalizedMessage());
+                    RequestUtils.processResultInMainThread(callback, false, new MapTerrainResponse(response), null);
+                } catch (JSONException e) {
+                    RequestUtils.processResultInMainThread(callback, true, null, e.getLocalizedMessage());
                 }
             }
 
             @Override
             public void processError(Throwable error) {
-                callback.processError(error.getLocalizedMessage());
+                RequestUtils.processResultInMainThread(callback, true, null, error.getLocalizedMessage());
             }
         });
     }

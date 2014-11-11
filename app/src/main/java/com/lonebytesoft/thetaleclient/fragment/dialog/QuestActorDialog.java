@@ -19,6 +19,7 @@ import com.lonebytesoft.thetaleclient.api.request.GameInfoRequest;
 import com.lonebytesoft.thetaleclient.api.request.MapRequest;
 import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;
 import com.lonebytesoft.thetaleclient.api.response.MapResponse;
+import com.lonebytesoft.thetaleclient.util.RequestUtils;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
 
 /**
@@ -55,16 +56,12 @@ public class QuestActorDialog extends BaseDialog {
                         getInfoItem(R.string.quest_actor_profession, questActorInfo.personInfo.profession.getName()));
                 UiUtils.setText(view.findViewById(R.id.dialog_quest_actor_person_mastery),
                         getInfoItem(R.string.quest_actor_mastery, questActorInfo.personInfo.mastery));
-                new GameInfoRequest(true).execute(new ApiResponseCallback<GameInfoResponse>() {
+                new GameInfoRequest(true).execute(RequestUtils.wrapCallback(new ApiResponseCallback<GameInfoResponse>() {
                     @Override
                     public void processResponse(GameInfoResponse response) {
-                        new MapRequest(response.mapVersion).execute(new CommonResponseCallback<MapResponse, String>() {
+                        new MapRequest(response.mapVersion).execute(RequestUtils.wrapCallback(new CommonResponseCallback<MapResponse, String>() {
                             @Override
                             public void processResponse(MapResponse response) {
-                                if(!isAdded()) {
-                                    return;
-                                }
-
                                 UiUtils.setText(view.findViewById(R.id.dialog_quest_actor_person_place),
                                         getInfoItem(R.string.quest_actor_place, response.places.get(questActorInfo.personInfo.placeId).name));
                             }
@@ -72,29 +69,25 @@ public class QuestActorDialog extends BaseDialog {
                             @Override
                             public void processError(String error) {
                             }
-                        });
+                        }, QuestActorDialog.this));
                     }
 
                     @Override
                     public void processError(GameInfoResponse response) {
                     }
-                }, true);
+                }, this), true);
                 break;
 
             case PLACE:
                 view = inflater.inflate(R.layout.dialog_content_quest_actor_place, container, false);
                 UiUtils.setText(view.findViewById(R.id.dialog_quest_actor_place_name),
                         getString(R.string.map_tile_place_name, questActorInfo.placeInfo.name));
-                new GameInfoRequest(true).execute(new ApiResponseCallback<GameInfoResponse>() {
+                new GameInfoRequest(true).execute(RequestUtils.wrapCallback(new ApiResponseCallback<GameInfoResponse>() {
                     @Override
                     public void processResponse(GameInfoResponse response) {
-                        new MapRequest(response.mapVersion).execute(new CommonResponseCallback<MapResponse, String>() {
+                        new MapRequest(response.mapVersion).execute(RequestUtils.wrapCallback(new CommonResponseCallback<MapResponse, String>() {
                             @Override
                             public void processResponse(MapResponse response) {
-                                if(!isAdded()) {
-                                    return;
-                                }
-
                                 UiUtils.setText(view.findViewById(R.id.dialog_quest_actor_place_size),
                                         getString(R.string.map_tile_place_size, response.places.get(questActorInfo.placeInfo.id).size));
                             }
@@ -102,13 +95,13 @@ public class QuestActorDialog extends BaseDialog {
                             @Override
                             public void processError(String error) {
                             }
-                        });
+                        }, QuestActorDialog.this));
                     }
 
                     @Override
                     public void processError(GameInfoResponse response) {
                     }
-                }, true);
+                }, this), true);
                 break;
 
             case SPENDING:

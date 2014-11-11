@@ -23,6 +23,7 @@ import com.lonebytesoft.thetaleclient.api.ApiResponseCallback;
 import com.lonebytesoft.thetaleclient.api.model.ChatMessage;
 import com.lonebytesoft.thetaleclient.api.request.InfoRequest;
 import com.lonebytesoft.thetaleclient.api.response.InfoResponse;
+import com.lonebytesoft.thetaleclient.util.RequestUtils;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
 import com.lonebytesoft.thetaleclient.util.chat.ChatManager;
 
@@ -84,23 +85,21 @@ public class ChatFragment extends WrapperFragment {
                     ChatManager.post(text, new ChatManager.ChatCallback() {
                         @Override
                         public void onSuccess() {
-                            mainHandler.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    message.setText(null);
-                                }
-                            });
+                            if(!isAdded()) {
+                                return;
+                            }
+
+                            message.setText(null);
                             refresh(false);
                         }
 
                         @Override
                         public void onError() {
-                            mainHandler.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    errorSend.setVisibility(View.VISIBLE);
-                                }
-                            });
+                            if(!isAdded()) {
+                                return;
+                            }
+
+                            errorSend.setVisibility(View.VISIBLE);
                         }
                     });
                 }
@@ -123,7 +122,7 @@ public class ChatFragment extends WrapperFragment {
 
         if(isGlobal) {
             mainHandler.removeCallbacks(refreshRunnable);
-            new InfoRequest().execute(new ApiResponseCallback<InfoResponse>() {
+            new InfoRequest().execute(RequestUtils.wrapCallback(new ApiResponseCallback<InfoResponse>() {
                 @Override
                 public void processResponse(InfoResponse response) {
                     if(response.accountName == null) {
@@ -135,13 +134,21 @@ public class ChatFragment extends WrapperFragment {
                         ChatManager.init(response.accountName, new ChatManager.ChatCallback() {
                             @Override
                             public void onSuccess() {
+                                if(!isAdded()) {
+                                    return;
+                                }
+
                                 loadMessages(isGlobal);
                                 mainHandler.postDelayed(refreshRunnable, REFRESH_TIMEOUT_MILLIS);
                             }
 
                             @Override
                             public void onError() {
-                                setError();
+                                if(!isAdded()) {
+                                    return;
+                                }
+
+                                setError(getString(R.string.chat_error));
                             }
                         });
                     }
@@ -149,9 +156,9 @@ public class ChatFragment extends WrapperFragment {
 
                 @Override
                 public void processError(InfoResponse response) {
-                    setError();
+                    setError(getString(R.string.chat_error));
                 }
-            });
+            }, this));
         } else {
             loadMessages(isGlobal);
         }
@@ -161,6 +168,10 @@ public class ChatFragment extends WrapperFragment {
         final ChatManager.ChatMessagesCallback callback = new ChatManager.ChatMessagesCallback() {
             @Override
             public void onSuccess(List<ChatMessage> messages) {
+                if(!isAdded()) {
+                    return;
+                }
+
                 if(isGlobal) {
                     container.removeAllViews();
                 }
@@ -182,8 +193,12 @@ public class ChatFragment extends WrapperFragment {
 
             @Override
             public void onError() {
+                if(!isAdded()) {
+                    return;
+                }
+
                 if(isGlobal) {
-                    setError();
+                    setError(getString(R.string.chat_error));
                 }
             }
         };
@@ -265,15 +280,6 @@ public class ChatFragment extends WrapperFragment {
         }
 
         return view;
-    }
-
-    private void setError() {
-        mainHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                setError(getString(R.string.chat_error));
-            }
-        });
     }
 
 }

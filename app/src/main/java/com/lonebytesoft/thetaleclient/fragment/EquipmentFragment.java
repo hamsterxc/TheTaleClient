@@ -29,6 +29,7 @@ import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;
 import com.lonebytesoft.thetaleclient.api.response.InfoResponse;
 import com.lonebytesoft.thetaleclient.util.DialogUtils;
 import com.lonebytesoft.thetaleclient.util.GameInfoUtils;
+import com.lonebytesoft.thetaleclient.util.RequestUtils;
 import com.lonebytesoft.thetaleclient.widget.RequestActionView;
 
 import java.util.ArrayList;
@@ -71,13 +72,9 @@ public class EquipmentFragment extends WrapperFragment {
     public void refresh(final boolean showLoading) {
         super.refresh(showLoading);
 
-        new GameInfoRequest(true).execute(new ApiResponseCallback<GameInfoResponse>() {
+        new GameInfoRequest(true).execute(RequestUtils.wrapCallback(new ApiResponseCallback<GameInfoResponse>() {
             @Override
             public void processResponse(GameInfoResponse response) {
-                if(!isAdded()) {
-                    return;
-                }
-
                 equipmentContainer.removeAllViews();
                 for(final EquipmentType equipmentType : EquipmentType.values()) {
                     final View equipmentEntryView = layoutInflater.inflate(R.layout.item_equipment, equipmentContainer, false);
@@ -118,7 +115,7 @@ public class EquipmentFragment extends WrapperFragment {
                 final RequestActionView dropActionView = (RequestActionView) dropView.findViewById(R.id.bag_drop);
                 if(response.account.hero.basicInfo.bagItemsCount > 0) {
                     final GameInfoResponse gameInfoResponse = response;
-                    new InfoRequest().execute(new ApiResponseCallback<InfoResponse>() {
+                    new InfoRequest().execute(RequestUtils.wrapCallback(new ApiResponseCallback<InfoResponse>() {
                         @Override
                         public void processResponse(InfoResponse response) {
                             if(GameInfoUtils.isEnoughEnergy(gameInfoResponse.account.hero.energy, response.abilitiesCost.get(Action.DROP_ITEM))) {
@@ -126,7 +123,7 @@ public class EquipmentFragment extends WrapperFragment {
                                 dropActionView.setActionClickListener(new Runnable() {
                                     @Override
                                     public void run() {
-                                        new AbilityUseRequest(Action.DROP_ITEM).execute(0, new ApiResponseCallback<CommonResponse>() {
+                                        new AbilityUseRequest(Action.DROP_ITEM).execute(0, RequestUtils.wrapCallback(new ApiResponseCallback<CommonResponse>() {
                                             @Override
                                             public void processResponse(CommonResponse response) {
                                                 refresh(false);
@@ -136,7 +133,7 @@ public class EquipmentFragment extends WrapperFragment {
                                             public void processError(CommonResponse response) {
                                                 dropActionView.setErrorText(response.errorMessage);
                                             }
-                                        });
+                                        }, EquipmentFragment.this));
                                     }
                                 });
                             } else {
@@ -148,7 +145,7 @@ public class EquipmentFragment extends WrapperFragment {
                         public void processError(InfoResponse response) {
                             dropActionView.setErrorText(response.errorMessage);
                         }
-                    });
+                    }, EquipmentFragment.this));
                 } else {
                     dropActionView.setEnabled(false);
                 }
@@ -213,7 +210,7 @@ public class EquipmentFragment extends WrapperFragment {
             public void processError(GameInfoResponse response) {
                 setError(response.errorMessage);
             }
-        }, true);
+        }, this), true);
     }
 
     private Spanned[] getArtifactString(final ArtifactInfo artifactInfo, final boolean isEquipped, final int count) {

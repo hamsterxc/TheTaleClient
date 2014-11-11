@@ -21,6 +21,7 @@ import com.lonebytesoft.thetaleclient.api.request.GameInfoRequest;
 import com.lonebytesoft.thetaleclient.api.request.TakeCardRequest;
 import com.lonebytesoft.thetaleclient.api.response.CommonResponse;
 import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;
+import com.lonebytesoft.thetaleclient.util.RequestUtils;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
 import com.lonebytesoft.thetaleclient.widget.RequestActionView;
 
@@ -60,13 +61,9 @@ public class CardsFragment extends WrapperFragment {
     public void refresh(final boolean isGlobal) {
         super.refresh(isGlobal);
 
-        new GameInfoRequest(true).execute(new ApiResponseCallback<GameInfoResponse>() {
+        new GameInfoRequest(true).execute(RequestUtils.wrapCallback(new ApiResponseCallback<GameInfoResponse>() {
             @Override
             public void processResponse(final GameInfoResponse response) {
-                if(!isAdded()) {
-                    return;
-                }
-
                 if(response.account.hero.basicInfo.cardHelpCurrent >= response.account.hero.basicInfo.cardHelpTotal) {
                     helpCounterContainer.setVisibility(View.GONE);
                     helpTakeCardWidget.setMode(RequestActionView.Mode.ACTION);
@@ -75,7 +72,7 @@ public class CardsFragment extends WrapperFragment {
                     helpTakeCardWidget.setActionClickListener(new Runnable() {
                         @Override
                         public void run() {
-                            new TakeCardRequest(response.account.accountId).execute(new ApiResponseCallback<CommonResponse>() {
+                            new TakeCardRequest(response.account.accountId).execute(RequestUtils.wrapCallback(new ApiResponseCallback<CommonResponse>() {
                                 @Override
                                 public void processResponse(CommonResponse response) {
                                     refresh(false);
@@ -85,7 +82,7 @@ public class CardsFragment extends WrapperFragment {
                                 public void processError(CommonResponse response) {
                                     helpTakeCardWidget.setErrorText(response.errorMessage);
                                 }
-                            });
+                            }, CardsFragment.this));
                         }
                     });
                 } else {
@@ -133,7 +130,7 @@ public class CardsFragment extends WrapperFragment {
             public void processError(GameInfoResponse response) {
                 setError(response.errorMessage);
             }
-        }, true);
+        }, this), true);
     }
 
 }

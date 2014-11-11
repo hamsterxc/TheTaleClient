@@ -29,6 +29,7 @@ import com.lonebytesoft.thetaleclient.api.response.CommonResponse;
 import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;
 import com.lonebytesoft.thetaleclient.api.response.MapResponse;
 import com.lonebytesoft.thetaleclient.util.DialogUtils;
+import com.lonebytesoft.thetaleclient.util.RequestUtils;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
 
 import java.util.HashMap;
@@ -66,13 +67,9 @@ public class QuestsFragment extends WrapperFragment {
     public void refresh(final boolean isGlobal) {
         super.refresh(isGlobal);
 
-        new GameInfoRequest(true).execute(new ApiResponseCallback<GameInfoResponse>() {
+        new GameInfoRequest(true).execute(RequestUtils.wrapCallback(new ApiResponseCallback<GameInfoResponse>() {
             @Override
             public void processResponse(GameInfoResponse response) {
-                if(!isAdded()) {
-                    return;
-                }
-
                 container.removeAllViews();
                 actorNames.clear();
                 final int questLinesCount = response.account.hero.quests.size();
@@ -165,7 +162,7 @@ public class QuestsFragment extends WrapperFragment {
                                 public void onClick(View v) {
                                     choicesContainer.setVisibility(View.GONE);
                                     choiceProgress.setVisibility(View.VISIBLE);
-                                    new QuestChoiceRequest().execute(choice.id, new ApiResponseCallback<CommonResponse>() {
+                                    new QuestChoiceRequest().execute(choice.id, RequestUtils.wrapCallback(new ApiResponseCallback<CommonResponse>() {
                                         @Override
                                         public void processResponse(CommonResponse response) {
                                             refresh(false);
@@ -177,7 +174,7 @@ public class QuestsFragment extends WrapperFragment {
                                             choiceProgress.setVisibility(View.GONE);
                                             UiUtils.setText(choiceError, response.errorMessage);
                                         }
-                                    });
+                                    }, QuestsFragment.this));
                                 }
                             });
 
@@ -194,13 +191,9 @@ public class QuestsFragment extends WrapperFragment {
 
                 // add town name to quest person actors
                 if(actorNames.size() > 0) {
-                    new MapRequest(response.mapVersion).execute(new CommonResponseCallback<MapResponse, String>() {
+                    new MapRequest(response.mapVersion).execute(RequestUtils.wrapCallback(new CommonResponseCallback<MapResponse, String>() {
                         @Override
                         public void processResponse(MapResponse response) {
-                            if(!isAdded()) {
-                                return;
-                            }
-
                             for (final Map.Entry<TextView, Integer> actorNameEntry : actorNames.entrySet()) {
                                 final Spannable placeText = new SpannableString(String.format(" (%s)", response.places.get(actorNameEntry.getValue()).name));
                                 placeText.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.game_additional_info)),
@@ -215,7 +208,7 @@ public class QuestsFragment extends WrapperFragment {
                         public void processError(String error) {
                             // do nothing
                         }
-                    });
+                    }, QuestsFragment.this));
                 }
 
                 setMode(DataViewMode.DATA);
@@ -225,7 +218,7 @@ public class QuestsFragment extends WrapperFragment {
             public void processError(GameInfoResponse response) {
                 setError(response.errorMessage);
             }
-        }, true);
+        }, this), true);
     }
 
 }

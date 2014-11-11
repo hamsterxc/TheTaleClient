@@ -12,6 +12,7 @@ import com.lonebytesoft.thetaleclient.api.ApiResponseCallback;
 import com.lonebytesoft.thetaleclient.api.model.DiaryEntry;
 import com.lonebytesoft.thetaleclient.api.request.GameInfoRequest;
 import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;
+import com.lonebytesoft.thetaleclient.util.RequestUtils;
 
 /**
  * @author Hamster
@@ -39,13 +40,9 @@ public class DiaryFragment extends WrapperFragment {
     public void refresh(final boolean isGlobal) {
         super.refresh(isGlobal);
 
-        new GameInfoRequest(true).execute(new ApiResponseCallback<GameInfoResponse>() {
+        new GameInfoRequest(true).execute(RequestUtils.wrapCallback(new ApiResponseCallback<GameInfoResponse>() {
             @Override
             public void processResponse(GameInfoResponse response) {
-                if(!isAdded()) {
-                    return;
-                }
-
                 diaryContainer.removeAllViews();
                 for(int i = response.account.hero.diary.size() - 1; i > 0; i--) {
                     final DiaryEntry diaryEntry = response.account.hero.diary.get(i);
@@ -62,7 +59,7 @@ public class DiaryFragment extends WrapperFragment {
             public void processError(GameInfoResponse response) {
                 setError(response.errorMessage);
             }
-        }, true);
+        }, this), true);
     }
 
 }
