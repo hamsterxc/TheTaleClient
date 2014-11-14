@@ -29,6 +29,7 @@ import com.lonebytesoft.thetaleclient.fragment.GameFragment;
 import com.lonebytesoft.thetaleclient.fragment.NavigationDrawerFragment;
 import com.lonebytesoft.thetaleclient.fragment.Refreshable;
 import com.lonebytesoft.thetaleclient.fragment.WrapperFragment;
+import com.lonebytesoft.thetaleclient.util.DialogUtils;
 import com.lonebytesoft.thetaleclient.util.HistoryStack;
 import com.lonebytesoft.thetaleclient.util.PreferencesManager;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
@@ -154,6 +155,10 @@ public class MainActivity extends ActionBarActivity
                             }
                         }
                     });
+                    break;
+
+                case ABOUT:
+                    DialogUtils.showAboutDialog(getSupportFragmentManager());
                     break;
 
                 default:

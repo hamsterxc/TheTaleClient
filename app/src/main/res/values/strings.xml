@@ -3,6 +3,8 @@
 
     <string name="app_name">The Tale Client</string>
     <string name="app_description">The Tale Client by Hamster</string>
+    <string name="app_about">Android-клиент для многопользовательской zero-player RPG &lt;a href=\"http://the-tale.org\"&gt;Сказка&lt;/a&gt;.
+        &lt;br&gt;&lt;br&gt;Версия: %1$s&lt;br&gt;&lt;br&gt;Автор: &lt;a href=\"http://the-tale.org/accounts/9297\"&gt;Hamster&lt;/a&gt;</string>
 
     <string name="action_refresh">Обновить</string>
     <string name="action_retry">Повторить попытку</string>
@@ -20,6 +22,7 @@
     <string name="common_dialog_attention_title">Внимание</string>
     <string name="common_error">Произошла неизвестная ошибка. Попробуйте еще раз.</string>
 
+    <string name="drawer_title_about">О приложении</string>
     <string name="drawer_title_chat">Чат</string>
     <string name="drawer_title_close">Закрыть меню</string>
     <string name="drawer_title_game">Игра</string>

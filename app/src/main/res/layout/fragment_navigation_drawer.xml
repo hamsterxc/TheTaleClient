@@ -120,4 +120,19 @@
 
     </LinearLayout>
 
+    <View style="@style/Delimiter"/>
+
+    <LinearLayout
+        android:id="@+id/drawer_item_about"
+        style="@style/DrawerItem"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="?android:attr/textAppearanceMedium"
+            android:text="@string/drawer_title_about"/>
+
+    </LinearLayout>
+
 </LinearLayout>

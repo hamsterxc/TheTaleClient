@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentTransaction;
 import com.lonebytesoft.thetaleclient.api.model.ArtifactInfo;
 import com.lonebytesoft.thetaleclient.api.model.MightInfo;
 import com.lonebytesoft.thetaleclient.api.model.QuestActorInfo;
+import com.lonebytesoft.thetaleclient.fragment.dialog.AboutDialog;
 import com.lonebytesoft.thetaleclient.fragment.dialog.ArtifactDialog;
 import com.lonebytesoft.thetaleclient.fragment.dialog.ChoiceDialog;
 import com.lonebytesoft.thetaleclient.fragment.dialog.MessageDialog;
@@ -26,6 +27,7 @@ public class DialogUtils {
     public static final String DIALOG_CHOICE_TAG = "DIALOG_CHOICE_TAG";
     public static final String DIALOG_TABBED_TAG = "DIALOG_TABBED_TAG";
     public static final String DIALOG_MESSAGE_TAG = "DIALOG_MESSAGE_TAG";
+    public static final String DIALOG_ABOUT_TAG = "DIALOG_ABOUT_TAG";
 
     private static FragmentTransaction getFragmentTransaction(final FragmentManager fragmentManager) {
         final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -85,6 +87,10 @@ public class DialogUtils {
         dialog.setOnOkClickListener(onOkClickListener);
         dialog.setOnDismissListener(onDismissListener);
         dialog.show(getFragmentTransaction(fragmentManager), DIALOG_MESSAGE_TAG);
+    }
+
+    public static void showAboutDialog(final FragmentManager fragmentManager) {
+        new AboutDialog().show(getFragmentTransaction(fragmentManager), DIALOG_ABOUT_TAG);
     }
 
 }

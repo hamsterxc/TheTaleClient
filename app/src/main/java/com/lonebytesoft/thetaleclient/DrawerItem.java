@@ -19,6 +19,7 @@ public enum DrawerItem {
     SITE(R.id.drawer_item_site, 0, null),
     SETTINGS(R.id.drawer_item_settings, R.string.drawer_title_settings, SettingsFragment.class),
     LOGOUT(R.id.drawer_item_logout, 0, null),
+    ABOUT(R.id.drawer_item_about, 0, null),
     ;
 
     private final int viewResId;
