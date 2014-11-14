@@ -1,138 +1,144 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:clickable="true"
     android:background="@color/drawer_background"
     tools:context=".NavigationDrawerFragment">
 
-    <TextView
-        android:id="@+id/drawer_account_name"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginRight="8dp"
-        style="?android:attr/textAppearanceMedium"
-        android:visibility="gone"/>
-
-    <TextView
-        android:id="@+id/drawer_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
-        style="?android:attr/textAppearanceSmall"
-        android:textColor="@color/game_additional_info"
-        android:visibility="gone"/>
-
-    <View style="@style/Delimiter"/>
-
-    <LinearLayout
-        android:id="@+id/drawer_item_game"
-        style="@style/DrawerItem"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
         <TextView
+            android:id="@+id/drawer_account_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="8dp"
             style="?android:attr/textAppearanceMedium"
-            android:text="@string/drawer_title_game"/>
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/drawer_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="8dp"
+            style="?android:attr/textAppearanceSmall"
+            android:textColor="@color/game_additional_info"
+            android:visibility="gone"/>
+
+        <View style="@style/Delimiter"/>
+
+        <LinearLayout
+            android:id="@+id/drawer_item_game"
+            style="@style/DrawerItem"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="?android:attr/textAppearanceMedium"
+                android:text="@string/drawer_title_game"/>
+
+        </LinearLayout>
+
+        <View style="@style/Delimiter"/>
+
+        <LinearLayout
+            android:id="@+id/drawer_item_map"
+            style="@style/DrawerItem"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="?android:attr/textAppearanceMedium"
+                android:text="@string/drawer_title_map"/>
+
+        </LinearLayout>
+
+        <View style="@style/Delimiter"/>
+
+        <LinearLayout
+            android:id="@+id/drawer_item_chat"
+            style="@style/DrawerItem"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="?android:attr/textAppearanceMedium"
+                android:text="@string/drawer_title_chat"/>
+
+        </LinearLayout>
+
+        <View style="@style/Delimiter"/>
+
+        <LinearLayout
+            android:id="@+id/drawer_item_site"
+            style="@style/DrawerItem"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="?android:attr/textAppearanceMedium"
+                android:text="@string/drawer_title_site"/>
+
+        </LinearLayout>
+
+        <View style="@style/Delimiter"/>
+
+        <LinearLayout
+            android:id="@+id/drawer_item_settings"
+            style="@style/DrawerItem"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="?android:attr/textAppearanceMedium"
+                android:text="@string/drawer_title_settings"/>
+
+        </LinearLayout>
+
+        <View style="@style/Delimiter"/>
+
+        <LinearLayout
+            android:id="@+id/drawer_item_logout"
+            style="@style/DrawerItem"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="?android:attr/textAppearanceMedium"
+                android:text="@string/drawer_title_logout"/>
+
+        </LinearLayout>
+
+        <View style="@style/Delimiter"/>
+
+        <LinearLayout
+            android:id="@+id/drawer_item_about"
+            style="@style/DrawerItem"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="?android:attr/textAppearanceMedium"
+                android:text="@string/drawer_title_about"/>
+
+        </LinearLayout>
 
     </LinearLayout>
 
-    <View style="@style/Delimiter"/>
-
-    <LinearLayout
-        android:id="@+id/drawer_item_map"
-        style="@style/DrawerItem"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="?android:attr/textAppearanceMedium"
-            android:text="@string/drawer_title_map"/>
-
-    </LinearLayout>
-
-    <View style="@style/Delimiter"/>
-
-    <LinearLayout
-        android:id="@+id/drawer_item_chat"
-        style="@style/DrawerItem"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="?android:attr/textAppearanceMedium"
-            android:text="@string/drawer_title_chat"/>
-
-    </LinearLayout>
-
-    <View style="@style/Delimiter"/>
-
-    <LinearLayout
-        android:id="@+id/drawer_item_site"
-        style="@style/DrawerItem"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="?android:attr/textAppearanceMedium"
-            android:text="@string/drawer_title_site"/>
-
-    </LinearLayout>
-
-    <View style="@style/Delimiter"/>
-
-    <LinearLayout
-        android:id="@+id/drawer_item_settings"
-        style="@style/DrawerItem"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="?android:attr/textAppearanceMedium"
-            android:text="@string/drawer_title_settings"/>
-
-    </LinearLayout>
-
-    <View style="@style/Delimiter"/>
-
-    <LinearLayout
-        android:id="@+id/drawer_item_logout"
-        style="@style/DrawerItem"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="?android:attr/textAppearanceMedium"
-            android:text="@string/drawer_title_logout"/>
-
-    </LinearLayout>
-
-    <View style="@style/Delimiter"/>
-
-    <LinearLayout
-        android:id="@+id/drawer_item_about"
-        style="@style/DrawerItem"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="?android:attr/textAppearanceMedium"
-            android:text="@string/drawer_title_about"/>
-
-    </LinearLayout>
-
-</LinearLayout>
+</ScrollView>
