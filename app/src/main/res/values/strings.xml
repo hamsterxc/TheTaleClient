@@ -161,4 +161,8 @@
     <string name="settings_title_autohelp_energy_religious">Во время обряда</string>
     <string name="settings_title_autohelp_energy_travel">В пути</string>
 
+    <string name="settings_autoaction">Автоматические действия</string>
+    <string name="settings_key_autoaction_cardtake">KEY_SETTINGS_AUTOACTION_CARDTAKE</string>
+    <string name="settings_title_autoaction_cardtake">Брать карты судьбы</string>
+
 </resources>

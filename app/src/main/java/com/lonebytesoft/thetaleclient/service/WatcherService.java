@@ -81,6 +81,7 @@ public class WatcherService extends Service {
         watchers.add(new HealthNotifier());
         watchers.add(new EnergyNotifier());
         watchers.add(new NewMessagesNotifier());
+        watchers.add(new CardTaker());
 
         autohelpers = new ArrayList<>();
         autohelpers.add(new DeathAutohelper());

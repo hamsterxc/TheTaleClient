@@ -176,4 +176,14 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory
+        android:title="@string/settings_autoaction">
+
+        <CheckBoxPreference
+            android:key="@string/settings_key_autoaction_cardtake"
+            android:title="@string/settings_title_autoaction_cardtake"
+            android:defaultValue="@bool/settings_autoaction_common_default"/>
+
+    </PreferenceCategory>
+
 </PreferenceScreen>
