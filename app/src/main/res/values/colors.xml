@@ -20,8 +20,6 @@
     <color name="common_link">#0088cc</color>
     <color name="common_list_item_background_pressed">#660099cc</color>
 
-    <color name="drawer_background">@android:color/white</color>
-
     <color name="game_additional_info">#999999</color>
 
     <color name="game_info_level_background">#bbbbbb</color>
