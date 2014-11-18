@@ -1,43 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    android:persistent="true">
 
     <PreferenceCategory
         android:title="@string/settings_notification">
 
         <CheckBoxPreference
+            android:layout="@layout/widget_preference_container"
             android:key="@string/settings_key_notification_death"
             android:title="@string/settings_title_notification_death"
             android:defaultValue="@bool/settings_notification_common_default"/>
 
         <CheckBoxPreference
+            android:layout="@layout/widget_preference_container"
             android:key="@string/settings_key_notification_idleness"
             android:title="@string/settings_title_notification_idleness"
             android:defaultValue="@bool/settings_notification_common_default"/>
 
         <CheckBoxPreference
+            android:layout="@layout/widget_preference_container"
             android:key="@string/settings_key_notification_health"
             android:title="@string/settings_title_notification_health"
             android:defaultValue="@bool/settings_notification_common_default"/>
 
         <EditTextPreference
+            android:layout="@layout/widget_preference_container"
             android:key="@string/settings_key_notification_health_threshold"
             android:title="@string/settings_title_notification_health_threshold"
             android:defaultValue="@integer/settings_notification_health_threshold_default"
             android:numeric="integer"/>
 
         <CheckBoxPreference
+            android:layout="@layout/widget_preference_container"
             android:key="@string/settings_key_notification_energy"
             android:title="@string/settings_title_notification_energy"
             android:defaultValue="@bool/settings_notification_common_default"/>
 
         <EditTextPreference
+            android:layout="@layout/widget_preference_container"
             android:key="@string/settings_key_notification_energy_threshold"
             android:title="@string/settings_title_notification_energy_threshold"
             android:defaultValue="@integer/settings_notification_energy_threshold_default"
             android:numeric="integer"/>
 
         <CheckBoxPreference
+            android:layout="@layout/widget_preference_container"
             android:key="@string/settings_key_notification_new_messages"
             android:title="@string/settings_title_notification_new_messages"
             android:defaultValue="@bool/settings_notification_common_default"/>
@@ -45,9 +54,23 @@
     </PreferenceCategory>
 
     <PreferenceCategory
+        android:title="@string/settings_notification_settings">
+
+        <com.lonebytesoft.thetaleclient.widget.TimeIntervalPreference
+            android:key="@string/settings_key_notification_settings_nighttime"
+            custom:key_enabled="@string/settings_key_notification_settings_nighttime"
+            custom:key_from_hour="@string/settings_key_notification_settings_nighttime_from_hour"
+            custom:key_from_minute="@string/settings_key_notification_settings_nighttime_from_minute"
+            custom:key_to_hour="@string/settings_key_notification_settings_nighttime_to_hour"
+            custom:key_to_minute="@string/settings_key_notification_settings_nighttime_to_minute"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
         android:title="@string/settings_autohelp">
 
         <CheckBoxPreference
+            android:layout="@layout/widget_preference_container"
             android:key="@string/settings_key_autohelp_death"
             android:title="@string/settings_title_autohelp_death"
             android:defaultValue="@bool/settings_autohelp_common_default"/>
@@ -57,17 +80,20 @@
             android:title="@string/settings_title_autohelp_death_details">
 
             <EditTextPreference
+                android:layout="@layout/widget_preference_container"
                 android:key="@string/settings_key_autohelp_death_energy_threshold"
                 android:title="@string/settings_title_autohelp_common_energy_threshold"
                 android:defaultValue="@integer/settings_autohelp_death_energy_threshold_default"
                 android:numeric="integer"/>
 
             <CheckBoxPreference
+                android:layout="@layout/widget_preference_container"
                 android:key="@string/settings_key_autohelp_death_bonus_energy"
                 android:title="@string/settings_title_autohelp_common_bonus_energy"
                 android:defaultValue="@bool/settings_autohelp_common_bonus_energy_default"/>
 
             <EditTextPreference
+                android:layout="@layout/widget_preference_container"
                 android:key="@string/settings_key_autohelp_death_bonus_energy_threshold"
                 android:title="@string/settings_title_autohelp_common_bonus_energy_threshold"
                 android:defaultValue="@integer/settings_autohelp_common_bonus_energy_threshold_default"
@@ -76,6 +102,7 @@
         </PreferenceScreen>
 
         <CheckBoxPreference
+            android:layout="@layout/widget_preference_container"
             android:key="@string/settings_key_autohelp_idle"
             android:title="@string/settings_title_autohelp_idle"
             android:defaultValue="@bool/settings_autohelp_common_default"/>
@@ -85,17 +112,20 @@
             android:title="@string/settings_title_autohelp_idle_details">
 
             <EditTextPreference
+                android:layout="@layout/widget_preference_container"
                 android:key="@string/settings_key_autohelp_idle_energy_threshold"
                 android:title="@string/settings_title_autohelp_common_energy_threshold"
                 android:defaultValue="@integer/settings_autohelp_idle_energy_threshold_default"
                 android:numeric="integer"/>
 
             <CheckBoxPreference
+                android:layout="@layout/widget_preference_container"
                 android:key="@string/settings_key_autohelp_idle_bonus_energy"
                 android:title="@string/settings_title_autohelp_common_bonus_energy"
                 android:defaultValue="@bool/settings_autohelp_common_bonus_energy_default"/>
 
             <EditTextPreference
+                android:layout="@layout/widget_preference_container"
                 android:key="@string/settings_key_autohelp_idle_bonus_energy_threshold"
                 android:title="@string/settings_title_autohelp_common_bonus_energy_threshold"
                 android:defaultValue="@integer/settings_autohelp_common_bonus_energy_threshold_default"
@@ -104,6 +134,7 @@
         </PreferenceScreen>
 
         <CheckBoxPreference
+            android:layout="@layout/widget_preference_container"
             android:key="@string/settings_key_autohelp_health"
             android:title="@string/settings_title_autohelp_health"
             android:defaultValue="@bool/settings_autohelp_common_default"/>
@@ -113,29 +144,34 @@
             android:title="@string/settings_title_autohelp_health_details">
 
             <EditTextPreference
+                android:layout="@layout/widget_preference_container"
                 android:key="@string/settings_key_autohelp_health_amount_threshold"
                 android:title="@string/settings_title_autohelp_health_amount_threshold"
                 android:defaultValue="@integer/settings_autohelp_health_amount_threshold_default"
                 android:numeric="integer"/>
 
             <EditTextPreference
+                android:layout="@layout/widget_preference_container"
                 android:key="@string/settings_key_autohelp_health_energy_threshold"
                 android:title="@string/settings_title_autohelp_common_energy_threshold"
                 android:defaultValue="@integer/settings_autohelp_health_energy_threshold_default"
                 android:numeric="integer"/>
 
             <CheckBoxPreference
+                android:layout="@layout/widget_preference_container"
                 android:key="@string/settings_key_autohelp_health_bonus_energy"
                 android:title="@string/settings_title_autohelp_common_bonus_energy"
                 android:defaultValue="@bool/settings_autohelp_common_bonus_energy_default"/>
 
             <EditTextPreference
+                android:layout="@layout/widget_preference_container"
                 android:key="@string/settings_key_autohelp_health_bonus_energy_threshold"
                 android:title="@string/settings_title_autohelp_common_bonus_energy_threshold"
                 android:defaultValue="@integer/settings_autohelp_common_bonus_energy_threshold_default"
                 android:numeric="integer"/>
 
             <CheckBoxPreference
+                android:layout="@layout/widget_preference_container"
                 android:key="@string/settings_key_autohelp_health_boss"
                 android:title="@string/settings_title_autohelp_health_boss"
                 android:defaultValue="@bool/settings_autohelp_health_boss_default"/>
@@ -143,6 +179,7 @@
         </PreferenceScreen>
 
         <CheckBoxPreference
+            android:layout="@layout/widget_preference_container"
             android:key="@string/settings_key_autohelp_energy"
             android:title="@string/settings_title_autohelp_energy"
             android:defaultValue="@bool/settings_autohelp_common_default"/>
@@ -152,22 +189,26 @@
             android:title="@string/settings_title_autohelp_energy_details">
 
             <EditTextPreference
+                android:layout="@layout/widget_preference_container"
                 android:key="@string/settings_key_autohelp_energy_energy_threshold"
                 android:title="@string/settings_title_autohelp_common_energy_threshold"
                 android:defaultValue="@integer/settings_autohelp_energy_energy_threshold_default"
                 android:numeric="integer"/>
 
             <CheckBoxPreference
+                android:layout="@layout/widget_preference_container"
                 android:key="@string/settings_key_autohelp_energy_battle"
                 android:title="@string/settings_title_autohelp_energy_battle"
                 android:defaultValue="@bool/settings_autohelp_common_default"/>
 
             <CheckBoxPreference
+                android:layout="@layout/widget_preference_container"
                 android:key="@string/settings_key_autohelp_energy_travel"
                 android:title="@string/settings_title_autohelp_energy_travel"
                 android:defaultValue="@bool/settings_autohelp_common_default"/>
 
             <CheckBoxPreference
+                android:layout="@layout/widget_preference_container"
                 android:key="@string/settings_key_autohelp_energy_religious"
                 android:title="@string/settings_title_autohelp_energy_religious"
                 android:defaultValue="@bool/settings_autohelp_common_default"/>
@@ -180,6 +221,7 @@
         android:title="@string/settings_autoaction">
 
         <CheckBoxPreference
+            android:layout="@layout/widget_preference_container"
             android:key="@string/settings_key_autoaction_cardtake"
             android:title="@string/settings_title_autoaction_cardtake"
             android:defaultValue="@bool/settings_autoaction_common_default"/>

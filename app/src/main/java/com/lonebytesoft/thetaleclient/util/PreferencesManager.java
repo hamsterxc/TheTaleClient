@@ -80,6 +80,28 @@ public class PreferencesManager {
                 getBoolean(R.bool.settings_notification_common_default));
     }
 
+    public static boolean isNotificationNighttimeEnabled() {
+        return sharedPreferences.getBoolean(
+                getString(R.string.settings_key_notification_settings_nighttime),
+                false);
+    }
+
+    public static int getNotificationNighttimeFromHour() {
+        return sharedPreferences.getInt(getString(R.string.settings_key_notification_settings_nighttime_from_hour), 0);
+    }
+
+    public static int getNotificationNighttimeFromMinute() {
+        return sharedPreferences.getInt(getString(R.string.settings_key_notification_settings_nighttime_from_minute), 0);
+    }
+
+    public static int getNotificationNighttimeToHour() {
+        return sharedPreferences.getInt(getString(R.string.settings_key_notification_settings_nighttime_to_hour), 0);
+    }
+
+    public static int getNotificationNighttimeToMinute() {
+        return sharedPreferences.getInt(getString(R.string.settings_key_notification_settings_nighttime_to_minute), 0);
+    }
+
     public static boolean shouldAutohelpDeath() {
         return sharedPreferences.getBoolean(
                 getString(R.string.settings_key_autohelp_death),

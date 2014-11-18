@@ -13,6 +13,8 @@ import com.lonebytesoft.thetaleclient.TheTaleClientApplication;
 import com.lonebytesoft.thetaleclient.activity.MainActivity;
 import com.lonebytesoft.thetaleclient.fragment.GameFragment;
 
+import java.util.Calendar;
+
 /**
  * @author Hamster
  * @since 10.10.2014
@@ -50,6 +52,15 @@ public class NotificationUtils {
     }
 
     private static void notify(final PendingIntent intent, final String message) {
+        if(PreferencesManager.isNotificationNighttimeEnabled()) {
+            final Calendar calendar = Calendar.getInstance();
+            if(!isTimeAcceptable(calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE),
+                    PreferencesManager.getNotificationNighttimeFromHour(), PreferencesManager.getNotificationNighttimeFromMinute(),
+                    PreferencesManager.getNotificationNighttimeToHour(), PreferencesManager.getNotificationNighttimeToMinute())) {
+                return;
+            }
+        }
+
         final Notification notification = new NotificationCompat.Builder(context)
                 .setSmallIcon(R.drawable.ic_push)
                 .setContentTitle(context.getString(R.string.app_name))
@@ -75,6 +86,22 @@ public class NotificationUtils {
 
     public static void clearNotifications() {
         ((NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE)).cancelAll();
+    }
+
+    private static boolean isTimeAcceptable(final int timeHours, final int timeMinutes,
+                                            final int startHours, final int startMinutes,
+                                            final int endHours, final int endMinutes) {
+        if((endHours < startHours) || (endHours == startHours) && (endMinutes  < startMinutes)) {
+            return isTimeAcceptable(timeHours, timeMinutes, startHours, startMinutes, 24, 0)
+                    && isTimeAcceptable(timeHours, timeMinutes, 0, 0, endHours, endMinutes);
+        } else {
+            if(startHours < endHours) {
+                return (timeHours < startHours) || (timeHours == startHours) && (timeMinutes < startMinutes)
+                        || (timeHours > endHours) || (timeHours == endHours) && (timeMinutes > endMinutes);
+            } else {
+                return (timeHours != startHours) || (timeMinutes < startMinutes) || (timeMinutes > endMinutes);
+            }
+        }
     }
 
 }

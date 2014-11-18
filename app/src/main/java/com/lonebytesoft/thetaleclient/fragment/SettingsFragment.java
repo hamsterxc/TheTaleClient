@@ -7,6 +7,7 @@ import android.support.v4.preference.PreferenceFragment;
 
 import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.util.PreferencesManager;
+import com.lonebytesoft.thetaleclient.widget.TimeIntervalPreference;
 
 /**
  * @author Hamster
@@ -35,6 +36,11 @@ public class SettingsFragment extends PreferenceFragment {
         setupDependentFields(energy, energyThreshold);
         setupValueField(energyThreshold, R.string.settings_summary_notification_energy,
                 String.valueOf(PreferencesManager.getNotificationThresholdEnergy()));
+
+        // notification settings
+        final TimeIntervalPreference nighttimeInterval = (TimeIntervalPreference) findPreference(getString(R.string.settings_key_notification_settings_nighttime));
+        nighttimeInterval.setTitle(R.string.settings_title_notification_settings_nighttime);
+        nighttimeInterval.setActivity(getActivity());
 
         // autohelp: death
         setupDependentFields(

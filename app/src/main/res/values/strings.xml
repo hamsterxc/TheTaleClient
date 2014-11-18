@@ -113,6 +113,16 @@
     <string name="settings_title_notification_energy_threshold">Уровень энергии</string>
     <string name="settings_title_notification_new_messages">Новые сообщения</string>
 
+    <string name="settings_notification_settings">Настройки уведомлений</string>
+    <string name="settings_key_notification_settings_nighttime">KEY_SETTINGS_NOTIFICATION_SETTINGS_NIGHTTIME</string>
+    <string name="settings_key_notification_settings_nighttime_from_hour">KEY_SETTINGS_NOTIFICATION_SETTINGS_NIGHTTIME_FROM_HOUR</string>
+    <string name="settings_key_notification_settings_nighttime_from_minute">KEY_SETTINGS_NOTIFICATION_SETTINGS_NIGHTTIME_FROM_MINUTE</string>
+    <string name="settings_key_notification_settings_nighttime_to_hour">KEY_SETTINGS_NOTIFICATION_SETTINGS_NIGHTTIME_TO_HOUR</string>
+    <string name="settings_key_notification_settings_nighttime_to_minute">KEY_SETTINGS_NOTIFICATION_SETTINGS_NIGHTTIME_TO_MINUTE</string>
+    <string name="settings_title_notification_settings_nighttime">Не принимать уведомления</string>
+    <string name="settings_title_notification_settings_nighttime_from">с</string>
+    <string name="settings_title_notification_settings_nighttime_to">по</string>
+
     <string name="settings_autohelp">Автоматическая помощь</string>
     <string name="settings_summary_autohelp_common_bonus_energy_threshold">Помогать при дополнительной энергии не ниже %s</string>
     <string name="settings_summary_autohelp_common_energy_threshold">Помогать при энергии не ниже %s</string>

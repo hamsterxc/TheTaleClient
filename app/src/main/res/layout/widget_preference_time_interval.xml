@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="@dimen/preference_padding_bottom"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/preference_time_interval_container_main"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/preference_padding_left"
+        android:paddingTop="@dimen/preference_padding_top"
+        android:paddingRight="@dimen/preference_padding_right"
+        android:paddingBottom="4dp"
+        android:gravity="center_vertical"
+        android:background="@drawable/common_list_item_background"
+        android:clickable="true"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/preference_time_interval_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:singleLine="true"
+            android:fadingEdge="horizontal"/>
+
+        <CheckBox
+            android:id="@+id/preference_time_interval_enabled"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/preference_time_interval_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/preference_padding_left"
+        android:layout_marginRight="@dimen/preference_padding_right"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/settings_title_notification_settings_nighttime_from"/>
+
+        <EditText
+            android:id="@+id/preference_time_interval_from"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="80dp"
+            android:layout_marginLeft="4dp"
+            android:gravity="center"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:focusable="false"
+            android:clickable="true"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="4dp"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/settings_title_notification_settings_nighttime_to"/>
+
+        <EditText
+            android:id="@+id/preference_time_interval_to"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="80dp"
+            android:layout_marginLeft="4dp"
+            android:gravity="center"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:focusable="false"
+            android:clickable="true"/>
+
+    </LinearLayout>
+
+</LinearLayout>

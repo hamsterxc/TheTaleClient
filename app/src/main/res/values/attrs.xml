@@ -12,4 +12,12 @@
         <attr name="auto_switch_mode" format="boolean"/>
     </declare-styleable>
 
+    <declare-styleable name="PreferenceTimeInterval">
+        <attr name="key_enabled" format="string"/>
+        <attr name="key_from_minute" format="string"/>
+        <attr name="key_from_hour" format="string"/>
+        <attr name="key_to_minute" format="string"/>
+        <attr name="key_to_hour" format="string"/>
+    </declare-styleable>
+
 </resources>
