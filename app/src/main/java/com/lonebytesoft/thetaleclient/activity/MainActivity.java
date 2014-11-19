@@ -273,11 +273,15 @@ public class MainActivity extends ActionBarActivity
 
     @Override
     public void onBackPressed() {
-        final DrawerItem drawerItem = history.pop();
-        if(drawerItem == null) {
-            super.onBackPressed();
+        if(mNavigationDrawerFragment.isDrawerOpen()) {
+            mNavigationDrawerFragment.closeDrawer();
         } else {
-            onNavigationDrawerItemSelected(drawerItem);
+            final DrawerItem drawerItem = history.pop();
+            if(drawerItem == null) {
+                super.onBackPressed();
+            } else {
+                onNavigationDrawerItemSelected(drawerItem);
+            }
         }
     }
 
