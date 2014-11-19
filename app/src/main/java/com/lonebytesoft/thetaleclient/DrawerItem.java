@@ -13,25 +13,35 @@ import com.lonebytesoft.thetaleclient.fragment.SettingsFragment;
 */
 public enum DrawerItem {
 
-    GAME(R.id.drawer_item_game, R.string.drawer_title_game, GameFragment.class),
-    MAP(R.id.drawer_item_map, R.string.drawer_title_map, MapFragment.class),
-    CHAT(R.id.drawer_item_chat, R.string.drawer_title_chat, ChatFragment.class),
-    SITE(R.id.drawer_item_site, 0, null),
-    SETTINGS(R.id.drawer_item_settings, R.string.drawer_title_settings, SettingsFragment.class),
-    LOGOUT(R.id.drawer_item_logout, 0, null),
-    ABOUT(R.id.drawer_item_about, 0, null),
+    GAME(R.id.drawer_item_game, R.string.drawer_title_game, GameFragment.class, R.menu.main),
+    MAP(R.id.drawer_item_map, R.string.drawer_title_map, MapFragment.class, R.menu.main),
+    CHAT(R.id.drawer_item_chat, R.string.drawer_title_chat, ChatFragment.class, R.menu.main),
+    SITE(R.id.drawer_item_site),
+    SETTINGS(R.id.drawer_item_settings, R.string.drawer_title_settings, SettingsFragment.class, R.menu.empty),
+    LOGOUT(R.id.drawer_item_logout),
+    ABOUT(R.id.drawer_item_about),
     ;
 
     private final int viewResId;
     private final int titleResId;
     private final Class<? extends Fragment> fragmentClass;
     private final String fragmentTag;
+    private final int menuResId;
 
-    DrawerItem(final int viewResId, final int titleResId, final Class<? extends Fragment> fragmentClass) {
+    private DrawerItem(final int viewResId, final int titleResId, final Class<? extends Fragment> fragmentClass, final int menuResId) {
         this.viewResId = viewResId;
         this.titleResId = titleResId;
         this.fragmentClass = fragmentClass;
         this.fragmentTag = "DRAWER_FRAGMENT_TAG_" + name();
+        this.menuResId = menuResId;
+    }
+
+    private DrawerItem(final int viewResId) {
+        this.viewResId = viewResId;
+        this.titleResId = 0;
+        this.fragmentClass = null;
+        this.fragmentTag = null;
+        this.menuResId = 0;
     }
 
     public int getViewResId() {
@@ -52,6 +62,10 @@ public enum DrawerItem {
 
     public String getFragmentTag() {
         return fragmentTag;
+    }
+
+    public int getMenuResId() {
+        return menuResId;
     }
 
 }
