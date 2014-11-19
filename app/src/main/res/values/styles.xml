@@ -1,6 +1,37 @@
 <resources>
 
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="android:windowBackground">@color/common_background_window</item>
+
+        <item name="android:actionBarStyle">@style/ActionBar</item>
+        <item name="actionBarStyle">@style/ActionBar</item>
+
+        <item name="android:textColorPrimary">@color/common_text</item>
+        <item name="android:textColorSecondary">@color/common_text</item>
+        <item name="android:textColorTertiary">@color/common_text</item>
+        <item name="android:textColorHint">@color/common_disabled</item>
+
+        <item name="android:childDivider">@color/common_delimiter</item>
+    </style>
+    
+    <style name="ActionBar" parent="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="android:titleTextStyle">@style/ActionBarTitle</item>
+        <item name="titleTextStyle">@style/ActionBarTitle</item>
+
+        <item name="android:background">@color/common_text</item>
+        <item name="background">@color/common_text</item>
+    </style>
+
+    <style name="ActionBarTitle" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="Dialog" parent="@android:style/Theme.Dialog">
+        <item name="android:windowBackground">@color/common_background_window</item>
+        <item name="android:textColorPrimary">@color/common_text</item>
+        <item name="android:textColorSecondary">@color/common_text</item>
+        <item name="android:textColorTertiary">@color/common_text</item>
+        <item name="android:textColorHint">@color/common_disabled</item>
     </style>
 
     <style name="DrawerItem">

@@ -46,7 +46,7 @@ public abstract class BaseDialog extends DialogFragment {
     @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         setCancelable(true);
-        setStyle(DialogFragment.STYLE_NO_TITLE, 0);
+        setStyle(DialogFragment.STYLE_NO_TITLE, R.style.Dialog);
         return super.onCreateDialog(savedInstanceState);
     }
 
