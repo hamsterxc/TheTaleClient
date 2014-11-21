@@ -58,6 +58,7 @@ public class LoginActivity extends FragmentActivity {
     private View contentStart;
     private View contentLoginPassword;
     private View actionRetry;
+    private TextView textErrorGlobal;
 
     private boolean wasError = false;
     private boolean isStartLoginContainerVisible = true;
@@ -121,6 +122,7 @@ public class LoginActivity extends FragmentActivity {
         contentLoginPassword = findViewById(R.id.login_content_login_password);
 
         actionRetry = findViewById(R.id.login_error_global_retry);
+        textErrorGlobal = (TextView) findViewById(R.id.login_error_global_text);
 
         findViewById(R.id.login_action_authorization_site).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -196,7 +198,7 @@ public class LoginActivity extends FragmentActivity {
                                 startRequestInit();
                             }
                         });
-                        setMode(DataViewMode.ERROR);
+                        setError(response.errorMessage);
                     }
                 }, false);
             }
@@ -209,7 +211,7 @@ public class LoginActivity extends FragmentActivity {
                         startRequestInit();
                     }
                 });
-                setMode(DataViewMode.ERROR);
+                setError(response.errorMessage);
             }
         });
     }
@@ -248,7 +250,7 @@ public class LoginActivity extends FragmentActivity {
                         startRequestAuthSite();
                     }
                 });
-                setMode(DataViewMode.ERROR);
+                setError(response.errorMessage);
             }
         });
     }
@@ -314,6 +316,11 @@ public class LoginActivity extends FragmentActivity {
         isStartLoginContainerVisible = isStartContainer;
         contentStart.setVisibility(isStartContainer ? View.VISIBLE : View.GONE);
         contentLoginPassword.setVisibility(isStartContainer ? View.GONE : View.VISIBLE);
+    }
+
+    private void setError(final String error) {
+        textErrorGlobal.setText(error);
+        setMode(DataViewMode.ERROR);
     }
 
     private void processError(final String error, final String login, final String password) {
