@@ -271,12 +271,12 @@ public class GameInfoFragment extends WrapperFragment {
                     UiUtils.setHeight(progressAction, (int) getResources().getDimension(R.dimen.game_info_bar_height));
                 }
 
-                actionHelp.setVisibility(View.GONE);
+                actionHelp.setEnabled(false);
                 new InfoRequest().execute(RequestUtils.wrapCallback(new ApiResponseCallback<InfoResponse>() {
                     @Override
                     public void processResponse(final InfoResponse infoResponse) {
                         if(GameInfoUtils.isEnoughEnergy(gameInfoResponse.account.hero.energy, infoResponse.abilitiesCost.get(Action.HELP))) {
-                            actionHelp.setVisibility(View.VISIBLE);
+                            actionHelp.setEnabled(true);
                         }
                     }
 
@@ -284,7 +284,6 @@ public class GameInfoFragment extends WrapperFragment {
                     public void processError(InfoResponse response) {
                         actionHelp.setErrorText(response.errorMessage);
                         actionHelp.setMode(RequestActionView.Mode.ERROR);
-                        actionHelp.setVisibility(View.VISIBLE);
                     }
                 }, GameInfoFragment.this));
 
