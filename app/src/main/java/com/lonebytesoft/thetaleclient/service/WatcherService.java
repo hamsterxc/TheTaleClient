@@ -20,6 +20,8 @@ import com.lonebytesoft.thetaleclient.service.notifier.EnergyNotifier;
 import com.lonebytesoft.thetaleclient.service.notifier.HealthNotifier;
 import com.lonebytesoft.thetaleclient.service.notifier.IdlenessNotifier;
 import com.lonebytesoft.thetaleclient.service.notifier.NewMessagesNotifier;
+import com.lonebytesoft.thetaleclient.util.NotificationUtils;
+import com.lonebytesoft.thetaleclient.util.PreferencesManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,39 +38,49 @@ public class WatcherService extends Service {
     private final Runnable refreshRunnable = new Runnable() {
         @Override
         public void run() {
-            new GameInfoRequest(false).execute(new ApiResponseCallback<GameInfoResponse>() {
-                @Override
-                public void processResponse(GameInfoResponse response) {
-                    if(response.account == null) {
-                        stopSelf();
-                        return;
-                    }
-
-                    for(final GameStateWatcher watcher : watchers) {
-                        watcher.processGameState(response);
-                    }
-
-                    boolean shouldHelp = false;
-                    for(final Autohelper autohelper : autohelpers) {
-                        shouldHelp |= autohelper.shouldHelp(response);
-                        if(shouldHelp) {
-                            break;
+            if(PreferencesManager.isWatcherEnabled()) {
+                new GameInfoRequest(false).execute(new ApiResponseCallback<GameInfoResponse>() {
+                    @Override
+                    public void processResponse(GameInfoResponse response) {
+                        if (response.account == null) {
+                            stopSelf();
+                            return;
                         }
-                    }
-                    if(shouldHelp) {
-                        new AbilityUseRequest(Action.HELP).execute(0, null);
+
+                        NotificationUtils.notifyDeath();
+
+                        for (final GameStateWatcher watcher : watchers) {
+                            watcher.processGameState(response);
+                        }
+
+                        boolean shouldHelp = false;
+                        for (final Autohelper autohelper : autohelpers) {
+                            shouldHelp |= autohelper.shouldHelp(response);
+                            if (shouldHelp) {
+                                break;
+                            }
+                        }
+                        if (shouldHelp) {
+                            new AbilityUseRequest(Action.HELP).execute(0, null);
+                        }
+
+                        postRefresh();
                     }
 
-                    handler.postDelayed(refreshRunnable, REQUEST_TIMEOUT_MILLIS);
-                }
-
-                @Override
-                public void processError(GameInfoResponse response) {
-                    handler.postDelayed(refreshRunnable, REQUEST_TIMEOUT_MILLIS);
-                }
-            }, false);
+                    @Override
+                    public void processError(GameInfoResponse response) {
+                        postRefresh();
+                    }
+                }, false);
+            } else {
+                postRefresh();
+            }
         }
     };
+
+    private void postRefresh() {
+        handler.postDelayed(refreshRunnable, REQUEST_TIMEOUT_MILLIS);
+    }
 
     private List<GameStateWatcher> watchers;
     private List<Autohelper> autohelpers;

@@ -226,4 +226,17 @@ public class PreferencesManager {
                 .commit();
     }
 
+    public static boolean isWatcherEnabled() {
+        return shouldNotifyDeath()
+                || shouldNotifyIdleness()
+                || shouldNotifyHealth()
+                || shouldNotifyEnergy()
+                || shouldNotifyNewMessages()
+                || shouldAutoactionCardTake()
+                || shouldAutohelpDeath()
+                || shouldAutohelpIdle()
+                || shouldAutohelpHealth()
+                || shouldAutohelpEnergy();
+    }
+
 }
