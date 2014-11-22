@@ -20,7 +20,6 @@ import com.lonebytesoft.thetaleclient.service.notifier.EnergyNotifier;
 import com.lonebytesoft.thetaleclient.service.notifier.HealthNotifier;
 import com.lonebytesoft.thetaleclient.service.notifier.IdlenessNotifier;
 import com.lonebytesoft.thetaleclient.service.notifier.NewMessagesNotifier;
-import com.lonebytesoft.thetaleclient.util.NotificationUtils;
 import com.lonebytesoft.thetaleclient.util.PreferencesManager;
 
 import java.util.ArrayList;
@@ -46,8 +45,6 @@ public class WatcherService extends Service {
                             stopSelf();
                             return;
                         }
-
-                        NotificationUtils.notifyDeath();
 
                         for (final GameStateWatcher watcher : watchers) {
                             watcher.processGameState(response);
