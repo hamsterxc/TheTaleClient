@@ -97,8 +97,10 @@ public class CardsFragment extends WrapperFragment {
                     helpCounter.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                         @Override
                         public void onGlobalLayout() {
-                            UiUtils.setHeight(helpCounterProgress,
-                                    (int) (helpCounter.getHeight() + 2 * getResources().getDimension(R.dimen.game_info_bar_padding)));
+                            if(isAdded()) {
+                                UiUtils.setHeight(helpCounterProgress,
+                                        (int) (helpCounter.getHeight() + 2 * getResources().getDimension(R.dimen.game_info_bar_padding)));
+                            }
                             UiUtils.removeGlobalLayoutListener(helpCounter, this);
                         }
                     });

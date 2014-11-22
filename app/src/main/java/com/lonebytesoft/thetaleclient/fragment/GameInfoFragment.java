@@ -260,8 +260,10 @@ public class GameInfoFragment extends WrapperFragment {
                         public void onGlobalLayout() {
                             final int height = progressActionHealth.getHeight();
                             if(height > 0) {
-                                UiUtils.setHeight(progressAction,
-                                        height + 2 * (int) getResources().getDimension(R.dimen.game_info_bar_padding));
+                                if(isAdded()) {
+                                    UiUtils.setHeight(progressAction,
+                                            height + 2 * (int) getResources().getDimension(R.dimen.game_info_bar_padding));
+                                }
                                 UiUtils.removeGlobalLayoutListener(progressActionHealth, this);
                             }
                         }
