@@ -3,9 +3,14 @@ package com.lonebytesoft.thetaleclient.util;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.StyleSpan;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -68,6 +73,12 @@ public class UiUtils {
         final ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
         layoutParams.height = height;
         view.setLayoutParams(layoutParams);
+    }
+
+    public static Spanned getInfoItem(final String caption, final String info) {
+        final Spannable captionSpanned = new SpannableString(caption);
+        captionSpanned.setSpan(new StyleSpan(Typeface.BOLD), 0, captionSpanned.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        return (Spanned) TextUtils.concat(captionSpanned, ": ", info);
     }
 
 }

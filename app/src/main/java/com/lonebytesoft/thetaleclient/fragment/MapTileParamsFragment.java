@@ -37,9 +37,9 @@ public class MapTileParamsFragment extends Fragment {
 
         final PlaceInfo placeInfo = getArguments().getParcelable(PARAM_PLACE_INFO);
         UiUtils.setText(view.findViewById(R.id.map_tile_tab_params_size),
-                getString(R.string.map_tile_place_size, placeInfo.size));
+                UiUtils.getInfoItem(getString(R.string.map_place_size), String.valueOf(placeInfo.size)));
         UiUtils.setText(view.findViewById(R.id.map_tile_tab_params_race),
-                getString(R.string.map_tile_place_race, placeInfo.race.getNamePlural()));
+                UiUtils.getInfoItem(getString(R.string.map_place_race), placeInfo.race.getNamePlural()));
 
         return view;
     }

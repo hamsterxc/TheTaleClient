@@ -7,6 +7,13 @@
     android:orientation="vertical">
 
     <TextView
+        android:id="@+id/dialog_quest_actor_person_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="?android:attr/textAppearanceMedium"
+        android:visibility="gone"/>
+
+    <TextView
         android:id="@+id/dialog_quest_actor_person_race"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
