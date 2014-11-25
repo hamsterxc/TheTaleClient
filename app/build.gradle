@@ -58,7 +58,7 @@ android {
 
 dependencies {
     compile 'com.crashlytics.android:crashlytics:1.+'
-    compile 'com.android.support:appcompat-v7:21.0.0'
+    compile 'com.android.support:appcompat-v7:21.0.2'
     compile 'com.astuetz:pagerslidingtabstrip:1.0.1' // https://github.com/astuetz/PagerSlidingTabStrip
     compile project(':android-support-v4-preferencefragment') // https://github.com/kolavar/android-support-v4-preferencefragment
     compile 'com.github.chrisbanes.photoview:library:1.2.3' // https://github.com/chrisbanes/PhotoView
