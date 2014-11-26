@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.lonebytesoft.thetaleclient.DataViewMode;
 import com.lonebytesoft.thetaleclient.R;
+import com.lonebytesoft.thetaleclient.TheTaleClientApplication;
 import com.lonebytesoft.thetaleclient.api.ApiResponseCallback;
 import com.lonebytesoft.thetaleclient.api.model.ChatMessage;
 import com.lonebytesoft.thetaleclient.api.request.InfoRequest;
@@ -29,7 +30,7 @@ import com.lonebytesoft.thetaleclient.util.chat.ChatManager;
 
 import org.xml.sax.XMLReader;
 
-import java.text.SimpleDateFormat;
+import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -40,8 +41,8 @@ import java.util.List;
  */
 public class ChatFragment extends WrapperFragment {
 
-    private static final SimpleDateFormat dateFormatTime = new SimpleDateFormat("HH:mm");
-    private static final SimpleDateFormat dateFormatDate = new SimpleDateFormat("dd.MM.yy");
+    private static final DateFormat dateFormatTime = android.text.format.DateFormat.getTimeFormat(TheTaleClientApplication.getContext());
+    private static final DateFormat dateFormatDate = android.text.format.DateFormat.getDateFormat(TheTaleClientApplication.getContext());
 
     private static final long REFRESH_TIMEOUT_MILLIS = 5000; // 5 s
 
