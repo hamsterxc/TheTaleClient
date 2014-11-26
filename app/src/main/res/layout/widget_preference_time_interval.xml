@@ -24,9 +24,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:singleLine="true"
-            android:fadingEdge="horizontal"/>
+            android:textAppearance="?android:attr/textAppearanceMedium"/>
 
         <CheckBox
             android:id="@+id/preference_time_interval_enabled"
