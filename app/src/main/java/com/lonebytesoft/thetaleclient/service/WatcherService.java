@@ -101,6 +101,7 @@ public class WatcherService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        handler.removeCallbacks(refreshRunnable);
         refreshRunnable.run();
         return START_STICKY;
     }
