@@ -228,4 +228,15 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory
+        android:title="@string/settings_service">
+
+        <CheckBoxPreference
+            android:layout="@layout/widget_preference_container"
+            android:key="@string/settings_key_service_start_boot"
+            android:title="@string/settings_title_service_start_boot"
+            android:defaultValue="@bool/settings_service_start_boot_default"/>
+
+    </PreferenceCategory>
+
 </PreferenceScreen>

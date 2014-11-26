@@ -206,6 +206,12 @@ public class PreferencesManager {
                 getBoolean(R.bool.settings_autoaction_common_default));
     }
 
+    public static boolean shouldServiceStartBoot() {
+        return sharedPreferences.getBoolean(
+                getString(R.string.settings_key_service_start_boot),
+                getBoolean(R.bool.settings_service_start_boot_default));
+    }
+
     public static MapStyle getMapStyle() {
         return MapStyle.values()[sharedPreferences.getInt(KEY_MAP_STYLE, 0)];
     }
