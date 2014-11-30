@@ -4,6 +4,7 @@ import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.TheTaleClientApplication;
 import com.lonebytesoft.thetaleclient.api.AbstractApiRequest;
 import com.lonebytesoft.thetaleclient.api.ApiResponseCallback;
+import com.lonebytesoft.thetaleclient.api.ApiResponseStatus;
 import com.lonebytesoft.thetaleclient.api.HttpMethod;
 import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;
 import com.lonebytesoft.thetaleclient.util.RequestUtils;
@@ -39,7 +40,7 @@ public class GameInfoRequest extends AbstractApiRequest<GameInfoResponse> {
 
     protected GameInfoResponse getResponse(final String response) throws JSONException {
         final GameInfoResponse gameInfoResponse = new GameInfoResponse(response);
-        if((gameInfoResponse.account == null) && needAuthorization) {
+        if((gameInfoResponse.status == ApiResponseStatus.OK) && (gameInfoResponse.account == null) && needAuthorization) {
             return new GameInfoResponse(RequestUtils.getGenericErrorResponse(
                     TheTaleClientApplication.getContext().getString(R.string.game_not_authorized)));
         } else {
