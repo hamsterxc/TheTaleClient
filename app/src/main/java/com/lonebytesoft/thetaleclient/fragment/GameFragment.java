@@ -1,5 +1,6 @@
 package com.lonebytesoft.thetaleclient.fragment;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -7,12 +8,17 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.lonebytesoft.thetaleclient.R;
+import com.lonebytesoft.thetaleclient.activity.MainActivity;
 import com.lonebytesoft.thetaleclient.fragment.onscreen.OnscreenStateListener;
+import com.lonebytesoft.thetaleclient.util.PreferencesManager;
+import com.lonebytesoft.thetaleclient.util.TextToSpeechUtils;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
 
 import java.util.HashMap;
@@ -34,6 +40,12 @@ public class GameFragment extends Fragment implements Refreshable, OnscreenState
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_game, container, false);
 
@@ -48,6 +60,11 @@ public class GameFragment extends Fragment implements Refreshable, OnscreenState
                 UiUtils.callOnscreenStateChange(getPageFragment(currentPageIndex), false);
                 UiUtils.callOnscreenStateChange(getPageFragment(position), true);
                 currentPageIndex = position;
+
+                final MenuItem readAloudMenuItem = getMenuItem(R.id.action_read_aloud);
+                if(readAloudMenuItem != null) {
+                    readAloudMenuItem.setVisible(position == GamePage.GAME_INFO.ordinal());
+                }
             }
         });
 
@@ -66,15 +83,54 @@ public class GameFragment extends Fragment implements Refreshable, OnscreenState
     }
 
     @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        updateMenu();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.action_read_aloud:
+                final boolean isJournalReadAloudEnabled = PreferencesManager.isJournalReadAloudEnabled();
+                PreferencesManager.setJournalReadAloudEnabled(!isJournalReadAloudEnabled);
+                if(isJournalReadAloudEnabled) {
+                    TextToSpeechUtils.pause();
+                }
+                updateMenu();
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private MenuItem getMenuItem(final int menuItemResId) {
+        final Activity activity = getActivity();
+        if(activity instanceof MainActivity) {
+            final Menu menu = ((MainActivity) activity).getMenu();
+            if(menu != null) {
+                return menu.findItem(menuItemResId);
+            }
+        }
+        return null;
+    }
+
+    private void updateMenu() {
+        final MenuItem readAloudMenuItem = getMenuItem(R.id.action_read_aloud);
+        if(readAloudMenuItem != null) {
+            readAloudMenuItem.setIcon(PreferencesManager.isJournalReadAloudEnabled() ?
+                    R.drawable.ic_volume_small :
+                    R.drawable.ic_volume_off_small);
+        }
+    }
+
+    @Override
     public void refresh(final boolean isGlobal) {
         final Fragment fragment = getPageFragment(viewPager.getCurrentItem());
         if(fragment instanceof WrapperFragment) {
             ((WrapperFragment) fragment).refresh(isGlobal);
         }
-    }
-
-    public GamePage getCurrentPage() {
-        return GamePage.values()[viewPager.getCurrentItem()];
     }
 
     public void setCurrentPage(final GamePage page) {

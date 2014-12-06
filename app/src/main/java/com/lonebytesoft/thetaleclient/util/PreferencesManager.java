@@ -208,8 +208,20 @@ public class PreferencesManager {
 
     public static boolean shouldServiceStartBoot() {
         return sharedPreferences.getBoolean(
-                getString(R.string.settings_key_service_start_boot),
-                getBoolean(R.bool.settings_service_start_boot_default));
+                getString(R.string.settings_key_misc_service_start_boot),
+                getBoolean(R.bool.settings_misc_service_start_boot_default));
+    }
+
+    public static boolean isJournalReadAloudEnabled() {
+        return sharedPreferences.getBoolean(
+                getString(R.string.settings_key_misc_journal_read_aloud),
+                getBoolean(R.bool.settings_misc_journal_read_aloud_default));
+    }
+
+    public static void setJournalReadAloudEnabled(final boolean isEnabled) {
+        sharedPreferences.edit()
+                .putBoolean(getString(R.string.settings_key_misc_journal_read_aloud), isEnabled)
+                .commit();
     }
 
     public static MapStyle getMapStyle() {

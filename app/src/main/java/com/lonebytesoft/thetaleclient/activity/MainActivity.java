@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.lonebytesoft.thetaleclient.DataViewMode;
 import com.lonebytesoft.thetaleclient.DrawerItem;
 import com.lonebytesoft.thetaleclient.R;
+import com.lonebytesoft.thetaleclient.TheTaleClientApplication;
 import com.lonebytesoft.thetaleclient.api.ApiResponseCallback;
 import com.lonebytesoft.thetaleclient.api.cache.RequestCacheManager;
 import com.lonebytesoft.thetaleclient.api.request.GameInfoRequest;
@@ -30,6 +31,7 @@ import com.lonebytesoft.thetaleclient.fragment.WrapperFragment;
 import com.lonebytesoft.thetaleclient.util.DialogUtils;
 import com.lonebytesoft.thetaleclient.util.HistoryStack;
 import com.lonebytesoft.thetaleclient.util.PreferencesManager;
+import com.lonebytesoft.thetaleclient.util.TextToSpeechUtils;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
 
 public class MainActivity extends ActionBarActivity
@@ -83,6 +85,13 @@ public class MainActivity extends ActionBarActivity
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+
+        TextToSpeechUtils.init(TheTaleClientApplication.getContext());
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
 
@@ -105,6 +114,7 @@ public class MainActivity extends ActionBarActivity
     protected void onPause() {
         super.onPause();
 
+        TextToSpeechUtils.pause();
         RequestCacheManager.invalidate();
         UiUtils.callOnscreenStateChange(getSupportFragmentManager().findFragmentByTag(currentItem.getFragmentTag()), false);
     }
@@ -114,6 +124,13 @@ public class MainActivity extends ActionBarActivity
         super.onSaveInstanceState(outState);
 
         outState.putInt(KEY_DRAWER_TAB_INDEX, currentItem.ordinal());
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        TextToSpeechUtils.destroy();
     }
 
     @Override
@@ -196,7 +213,7 @@ public class MainActivity extends ActionBarActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (!mNavigationDrawerFragment.isDrawerOpen()) {
+        if (!mNavigationDrawerFragment.isDrawerOpen() && (currentItem.getMenuResId() != 0)) {
             // Only show items in the action bar relevant to this screen
             // if the drawer is not showing. Otherwise, let the drawer
             // decide what to show in the action bar.
@@ -284,6 +301,10 @@ public class MainActivity extends ActionBarActivity
                 onNavigationDrawerItemSelected(drawerItem);
             }
         }
+    }
+
+    public Menu getMenu() {
+        return menu;
     }
 
 }

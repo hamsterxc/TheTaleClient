@@ -6,6 +6,7 @@
     <string name="app_about">Android-клиент для многопользовательской zero-player RPG &lt;a href=\"http://the-tale.org\"&gt;Сказка&lt;/a&gt;.
         &lt;br&gt;&lt;br&gt;Версия: %1$s&lt;br&gt;&lt;br&gt;Автор: &lt;a href=\"http://the-tale.org/accounts/9297\"&gt;Hamster&lt;/a&gt;</string>
 
+    <string name="action_read_aloud">Читать журнал</string>
     <string name="action_refresh">Обновить</string>
     <string name="action_retry">Повторить попытку</string>
 
@@ -176,8 +177,10 @@
     <string name="settings_key_autoaction_cardtake">KEY_SETTINGS_AUTOACTION_CARDTAKE</string>
     <string name="settings_title_autoaction_cardtake">Брать карты судьбы</string>
 
-    <string name="settings_service">Настройки сервиса</string>
-    <string name="settings_key_service_start_boot">KEY_SETTINGS_SERVICE_START_BOOT</string>
-    <string name="settings_title_service_start_boot">Запускать сервис при включении устройства</string>
+    <string name="settings_misc">Разное</string>
+    <string name="settings_key_misc_journal_read_aloud">KEY_SETTINGS_MISC_JOURNAL_READ_ALOUD</string>
+    <string name="settings_key_misc_service_start_boot">KEY_SETTINGS_MISC_SERVICE_START_BOOT</string>
+    <string name="settings_title_misc_journal_read_aloud">Читать журнал вслух</string>
+    <string name="settings_title_misc_service_start_boot">Запускать сервис при включении устройства</string>
 
 </resources>

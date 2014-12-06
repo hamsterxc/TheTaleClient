@@ -29,7 +29,9 @@ import com.lonebytesoft.thetaleclient.fragment.onscreen.OnscreenPart;
 import com.lonebytesoft.thetaleclient.util.DialogUtils;
 import com.lonebytesoft.thetaleclient.util.GameInfoUtils;
 import com.lonebytesoft.thetaleclient.util.NotificationUtils;
+import com.lonebytesoft.thetaleclient.util.PreferencesManager;
 import com.lonebytesoft.thetaleclient.util.RequestUtils;
+import com.lonebytesoft.thetaleclient.util.TextToSpeechUtils;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
 import com.lonebytesoft.thetaleclient.widget.RequestActionView;
 
@@ -218,8 +220,9 @@ public class GameInfoFragment extends WrapperFragment {
                 textAction.setText(currentAction);
 
                 final List<JournalEntry> journal = gameInfoResponse.account.hero.journal;
+                final int journalSize = journal.size();
                 journalContainer.removeAllViews();
-                for(int i = journal.size() - 1; i >= 0; i--) {
+                for(int i = journalSize - 1; i >= 0; i--) {
                     final JournalEntry journalEntry = journal.get(i);
                     final View journalEntryView = layoutInflater.inflate(R.layout.item_journal, journalContainer, false);
                     ((TextView) journalEntryView.findViewById(R.id.journal_time)).setText(journalEntry.time);
@@ -227,11 +230,21 @@ public class GameInfoFragment extends WrapperFragment {
                     journalContainer.addView(journalEntryView);
                 }
 
-                final int size = journal.size();
-                if(size > 0) {
-                    if((size > 1) && (journal.get(size - 2).timestamp == lastJournalTimestamp) && (action.type == HeroAction.BATTLE)) {
+                if(!isGlobal
+                        && TheTaleClientApplication.getOnscreenStateWatcher().isOnscreen(OnscreenPart.GAME_INFO)
+                        && PreferencesManager.isJournalReadAloudEnabled()) {
+                    for(int i = 0; i < journalSize; i++) {
+                        final JournalEntry journalEntry = journal.get(i);
+                        if(journalEntry.timestamp > lastJournalTimestamp) {
+                            TextToSpeechUtils.speak(journalEntry.text);
+                        }
+                    }
+                }
+
+                if(journalSize > 0) {
+                    if((journalSize > 1) && (journal.get(journalSize - 2).timestamp == lastJournalTimestamp) && (action.type == HeroAction.BATTLE)) {
                         final Pattern pattern = Pattern.compile("(\\d+)");
-                        final Matcher matcher = pattern.matcher(journal.get(size - 1).text);
+                        final Matcher matcher = pattern.matcher(journal.get(journalSize - 1).text);
                         if(matcher.find()) {
                             final String number = matcher.group(1);
                             if(!matcher.find()) {
@@ -244,7 +257,7 @@ public class GameInfoFragment extends WrapperFragment {
                         }
                     }
 
-                    lastJournalTimestamp = journal.get(size - 1).timestamp;
+                    lastJournalTimestamp = journal.get(journalSize - 1).timestamp;
                     if(action.type == HeroAction.BATTLE) {
                         lastFightProgress = action.completion;
                     } else {
@@ -306,6 +319,8 @@ public class GameInfoFragment extends WrapperFragment {
     public void onOffscreen() {
         super.onOffscreen();
         TheTaleClientApplication.getOnscreenStateWatcher().onscreenStateChange(OnscreenPart.GAME_INFO, false);
+
+        TextToSpeechUtils.pause();
     }
 
     @Override

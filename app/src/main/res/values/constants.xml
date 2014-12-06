@@ -23,6 +23,7 @@
 
     <bool name="settings_autoaction_common_default">false</bool>
 
-    <bool name="settings_service_start_boot_default">false</bool>
+    <bool name="settings_misc_service_start_boot_default">false</bool>
+    <bool name="settings_misc_journal_read_aloud_default">false</bool>
 
 </resources>
