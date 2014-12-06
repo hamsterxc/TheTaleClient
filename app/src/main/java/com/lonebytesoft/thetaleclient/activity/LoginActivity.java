@@ -10,11 +10,9 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.crashlytics.android.Crashlytics;
-import com.lonebytesoft.thetaleclient.ApplicationPart;
 import com.lonebytesoft.thetaleclient.BuildConfig;
 import com.lonebytesoft.thetaleclient.DataViewMode;
 import com.lonebytesoft.thetaleclient.R;
-import com.lonebytesoft.thetaleclient.TheTaleClientApplication;
 import com.lonebytesoft.thetaleclient.api.ApiResponseCallback;
 import com.lonebytesoft.thetaleclient.api.ApiResponseStatus;
 import com.lonebytesoft.thetaleclient.api.cache.RequestCacheManager;
@@ -343,7 +341,6 @@ public class LoginActivity extends FragmentActivity {
     }
 
     private void startMainActivity() {
-        TheTaleClientApplication.onApplicationPartSelected(ApplicationPart.GAME_INFO);
         final Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
         finish();

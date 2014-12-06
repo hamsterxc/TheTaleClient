@@ -4,7 +4,7 @@ import android.app.Application;
 import android.content.Context;
 
 import com.lonebytesoft.thetaleclient.api.cache.RequestCacheManager;
-import com.lonebytesoft.thetaleclient.util.NotificationUtils;
+import com.lonebytesoft.thetaleclient.fragment.onscreen.OnscreenStateWatcher;
 import com.lonebytesoft.thetaleclient.util.map.MapManager;
 
 /**
@@ -14,14 +14,14 @@ import com.lonebytesoft.thetaleclient.util.map.MapManager;
 public class TheTaleClientApplication extends Application {
 
     private static Context context;
-    private static ApplicationPart applicationPart;
+    private static OnscreenStateWatcher onscreenStateWatcher;
 
     @Override
     public void onCreate() {
         super.onCreate();
 
         context = getApplicationContext();
-        applicationPart = ApplicationPart.INSIGNIFICANT;
+        onscreenStateWatcher = new OnscreenStateWatcher();
     }
 
     @Override
@@ -38,19 +38,12 @@ public class TheTaleClientApplication extends Application {
         return context;
     }
 
-    public static void onApplicationPartSelected(final ApplicationPart applicationPart) {
-        TheTaleClientApplication.applicationPart = applicationPart;
-        if(applicationPart == ApplicationPart.GAME_INFO) {
-            NotificationUtils.clearNotifications();
-        }
-    }
-
-    public static ApplicationPart getSelectedApplicationPart() {
-        return applicationPart;
-    }
-
     public static long getFreeMemory() {
         return Runtime.getRuntime().maxMemory() - Runtime.getRuntime().totalMemory() + Runtime.getRuntime().freeMemory();
+    }
+
+    public static OnscreenStateWatcher getOnscreenStateWatcher() {
+        return onscreenStateWatcher;
     }
 
 }

@@ -7,11 +7,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 
-import com.lonebytesoft.thetaleclient.ApplicationPart;
 import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.TheTaleClientApplication;
 import com.lonebytesoft.thetaleclient.activity.MainActivity;
 import com.lonebytesoft.thetaleclient.fragment.GameFragment;
+import com.lonebytesoft.thetaleclient.fragment.onscreen.OnscreenPart;
 
 import java.util.Calendar;
 
@@ -24,25 +24,25 @@ public class NotificationUtils {
     private static final Context context = TheTaleClientApplication.getContext();
 
     public static void notifyDeath() {
-        if(TheTaleClientApplication.getSelectedApplicationPart() != ApplicationPart.GAME_INFO) {
+        if(!TheTaleClientApplication.getOnscreenStateWatcher().isOnscreen(OnscreenPart.GAME_INFO)) {
             notify(getMainActivityIntent(), context.getString(R.string.notification_death));
         }
     }
 
     public static void notifyIdleness() {
-        if(TheTaleClientApplication.getSelectedApplicationPart() != ApplicationPart.GAME_INFO) {
+        if(!TheTaleClientApplication.getOnscreenStateWatcher().isOnscreen(OnscreenPart.GAME_INFO)) {
             notify(getMainActivityIntent(), context.getString(R.string.notification_idle));
         }
     }
 
     public static void notifyLowHealth(final int health) {
-        if(TheTaleClientApplication.getSelectedApplicationPart() != ApplicationPart.GAME_INFO) {
+        if(!TheTaleClientApplication.getOnscreenStateWatcher().isOnscreen(OnscreenPart.GAME_INFO)) {
             notify(getMainActivityIntent(), context.getString(R.string.notification_low_health, health));
         }
     }
 
     public static void notifyHighEnergy(final int energy) {
-        if(TheTaleClientApplication.getSelectedApplicationPart() != ApplicationPart.GAME_INFO) {
+        if(!TheTaleClientApplication.getOnscreenStateWatcher().isOnscreen(OnscreenPart.GAME_INFO)) {
             notify(getMainActivityIntent(), context.getString(R.string.notification_high_energy, energy));
         }
     }

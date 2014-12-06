@@ -11,9 +11,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.astuetz.PagerSlidingTabStrip;
-import com.lonebytesoft.thetaleclient.ApplicationPart;
 import com.lonebytesoft.thetaleclient.R;
-import com.lonebytesoft.thetaleclient.TheTaleClientApplication;
+import com.lonebytesoft.thetaleclient.fragment.onscreen.OnscreenStateListener;
+import com.lonebytesoft.thetaleclient.util.UiUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,11 +22,13 @@ import java.util.Map;
  * @author Hamster
  * @since 05.10.2014
  */
-public class GameFragment extends Fragment implements Refreshable {
+public class GameFragment extends Fragment implements Refreshable, OnscreenStateListener {
 
     private static final String KEY_PAGE_INDEX = "KEY_PAGE_INDEX";
 
     private ViewPager viewPager;
+    private int currentPageIndex;
+    private boolean shouldCallOnscreen = false;
 
     public GameFragment() {
     }
@@ -43,8 +45,9 @@ public class GameFragment extends Fragment implements Refreshable {
         tabStrip.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
-                TheTaleClientApplication.onApplicationPartSelected(
-                        position == GamePage.GAME_INFO.ordinal() ? ApplicationPart.GAME_INFO : ApplicationPart.INSIGNIFICANT);
+                UiUtils.callOnscreenStateChange(getPageFragment(currentPageIndex), false);
+                UiUtils.callOnscreenStateChange(getPageFragment(position), true);
+                currentPageIndex = position;
             }
         });
 
@@ -64,12 +67,9 @@ public class GameFragment extends Fragment implements Refreshable {
 
     @Override
     public void refresh(final boolean isGlobal) {
-        final PagerAdapter pagerAdapter = viewPager.getAdapter();
-        if(pagerAdapter instanceof GamePagerAdapter) {
-            final Fragment fragment = ((GamePagerAdapter) pagerAdapter).getFragment(viewPager.getCurrentItem());
-            if(fragment instanceof WrapperFragment) {
-                ((WrapperFragment) fragment).refresh(isGlobal);
-            }
+        final Fragment fragment = getPageFragment(viewPager.getCurrentItem());
+        if(fragment instanceof WrapperFragment) {
+            ((WrapperFragment) fragment).refresh(isGlobal);
         }
     }
 
@@ -79,6 +79,35 @@ public class GameFragment extends Fragment implements Refreshable {
 
     public void setCurrentPage(final GamePage page) {
         viewPager.setCurrentItem(page.ordinal());
+    }
+
+    private Fragment getPageFragment(final int position) {
+        if(viewPager == null) {
+            return null;
+        }
+
+        final PagerAdapter pagerAdapter = viewPager.getAdapter();
+        if(pagerAdapter instanceof GamePagerAdapter) {
+            return ((GamePagerAdapter) pagerAdapter).getFragment(position);
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public void onOffscreen() {
+        UiUtils.callOnscreenStateChange(getPageFragment(currentPageIndex), false);
+    }
+
+    @Override
+    public void onOnscreen() {
+        final Fragment fragment = getPageFragment(currentPageIndex);
+        if(fragment == null) {
+            shouldCallOnscreen = true;
+        } else {
+            UiUtils.callOnscreenStateChange(fragment, true);
+            shouldCallOnscreen = false;
+        }
     }
 
     public enum GamePage {
@@ -151,6 +180,10 @@ public class GameFragment extends Fragment implements Refreshable {
         public Object instantiateItem(ViewGroup container, int position) {
             final Fragment fragment = (Fragment) super.instantiateItem(container, position);
             fragments.put(position, fragment);
+            if(shouldCallOnscreen) {
+                UiUtils.callOnscreenStateChange(fragment, true);
+                shouldCallOnscreen = false;
+            }
             return fragment;
         }
 

@@ -12,11 +12,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-import com.lonebytesoft.thetaleclient.ApplicationPart;
 import com.lonebytesoft.thetaleclient.DataViewMode;
 import com.lonebytesoft.thetaleclient.DrawerItem;
 import com.lonebytesoft.thetaleclient.R;
-import com.lonebytesoft.thetaleclient.TheTaleClientApplication;
 import com.lonebytesoft.thetaleclient.api.ApiResponseCallback;
 import com.lonebytesoft.thetaleclient.api.cache.RequestCacheManager;
 import com.lonebytesoft.thetaleclient.api.request.GameInfoRequest;
@@ -99,9 +97,8 @@ public class MainActivity extends ActionBarActivity
             if(tabIndex != -1) {
                 ((GameFragment) fragment).setCurrentPage(GameFragment.GamePage.values()[tabIndex]);
             }
-            TheTaleClientApplication.onApplicationPartSelected(
-                    ((GameFragment) fragment).getCurrentPage() == GameFragment.GamePage.GAME_INFO ? ApplicationPart.GAME_INFO : ApplicationPart.INSIGNIFICANT);
         }
+        UiUtils.callOnscreenStateChange(fragment, true);
     }
 
     @Override
@@ -109,7 +106,7 @@ public class MainActivity extends ActionBarActivity
         super.onPause();
 
         RequestCacheManager.invalidate();
-        TheTaleClientApplication.onApplicationPartSelected(ApplicationPart.INSIGNIFICANT);
+        UiUtils.callOnscreenStateChange(getSupportFragmentManager().findFragmentByTag(currentItem.getFragmentTag()), false);
     }
 
     @Override
@@ -163,10 +160,11 @@ public class MainActivity extends ActionBarActivity
 
                 default:
                     FragmentManager fragmentManager = getSupportFragmentManager();
-                    final Fragment oldFragment = fragmentManager.findFragmentByTag(item.getFragmentTag());
+                    Fragment oldFragment = fragmentManager.findFragmentByTag(item.getFragmentTag());
                     if(oldFragment == null) {
+                        oldFragment = item.getFragment();
                         fragmentManager.beginTransaction()
-                                .replace(R.id.container, item.getFragment(), item.getFragmentTag())
+                                .replace(R.id.container, oldFragment, item.getFragmentTag())
                                 .commit();
                     } else if(oldFragment.isDetached()) {
                         fragmentManager.beginTransaction()
@@ -174,10 +172,13 @@ public class MainActivity extends ActionBarActivity
                                 .commit();
                     }
 
+                    if(currentItem != null) {
+                        UiUtils.callOnscreenStateChange(getSupportFragmentManager().findFragmentByTag(currentItem.getFragmentTag()), false);
+                    }
+                    UiUtils.callOnscreenStateChange(oldFragment, true);
+
                     currentItem = item;
                     mTitle = getString(currentItem.getTitleResId());
-                    TheTaleClientApplication.onApplicationPartSelected(
-                            currentItem == DrawerItem.GAME ? ApplicationPart.GAME_INFO : ApplicationPart.INSIGNIFICANT);
                     history.set(currentItem);
                     supportInvalidateOptionsMenu();
 

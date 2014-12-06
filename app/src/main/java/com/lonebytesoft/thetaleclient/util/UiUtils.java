@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
+import android.support.v4.app.Fragment;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -16,6 +17,8 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
+
+import com.lonebytesoft.thetaleclient.fragment.onscreen.OnscreenStateListener;
 
 /**
  * @author Hamster
@@ -79,6 +82,16 @@ public class UiUtils {
         final Spannable captionSpanned = new SpannableString(caption);
         captionSpanned.setSpan(new StyleSpan(Typeface.BOLD), 0, captionSpanned.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         return (Spanned) TextUtils.concat(captionSpanned, ": ", info);
+    }
+
+    public static void callOnscreenStateChange(final Fragment fragment, final boolean isOnscreen) {
+        if(fragment instanceof OnscreenStateListener) {
+            if(isOnscreen) {
+                ((OnscreenStateListener) fragment).onOnscreen();
+            } else {
+                ((OnscreenStateListener) fragment).onOffscreen();
+            }
+        }
     }
 
 }
