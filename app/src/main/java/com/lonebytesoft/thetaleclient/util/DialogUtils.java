@@ -10,6 +10,7 @@ import com.lonebytesoft.thetaleclient.api.model.QuestActorInfo;
 import com.lonebytesoft.thetaleclient.fragment.dialog.AboutDialog;
 import com.lonebytesoft.thetaleclient.fragment.dialog.ArtifactDialog;
 import com.lonebytesoft.thetaleclient.fragment.dialog.ChoiceDialog;
+import com.lonebytesoft.thetaleclient.fragment.dialog.ConfirmationDialog;
 import com.lonebytesoft.thetaleclient.fragment.dialog.MessageDialog;
 import com.lonebytesoft.thetaleclient.fragment.dialog.MightDialog;
 import com.lonebytesoft.thetaleclient.fragment.dialog.QuestActorDialog;
@@ -28,6 +29,7 @@ public class DialogUtils {
     public static final String DIALOG_TABBED_TAG = "DIALOG_TABBED_TAG";
     public static final String DIALOG_MESSAGE_TAG = "DIALOG_MESSAGE_TAG";
     public static final String DIALOG_ABOUT_TAG = "DIALOG_ABOUT_TAG";
+    public static final String DIALOG_CONFIRMATION_TAG = "DIALOG_CONFIRMATION_TAG";
 
     private static FragmentTransaction getFragmentTransaction(final FragmentManager fragmentManager) {
         final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -91,6 +93,24 @@ public class DialogUtils {
 
     public static void showAboutDialog(final FragmentManager fragmentManager) {
         new AboutDialog().show(getFragmentTransaction(fragmentManager), DIALOG_ABOUT_TAG);
+    }
+
+    public static void showConfirmationDialog(final FragmentManager fragmentManager,
+                                              final String caption, final String message,
+                                              final String okCaption, final Runnable onOkListener,
+                                              final String cancelCaption, final Runnable onCancelListener,
+                                              final Runnable onDismissListener) {
+        final ConfirmationDialog dialog = ConfirmationDialog.newInstance(caption, message);
+        dialog.setupPositiveButton(okCaption, onOkListener);
+        dialog.setupNegativeButton(cancelCaption, onCancelListener);
+        dialog.setOnDismissListener(onDismissListener);
+        dialog.show(getFragmentTransaction(fragmentManager), DIALOG_CONFIRMATION_TAG);
+    }
+
+    public static void showConfirmationDialog(final FragmentManager fragmentManager,
+                                              final String caption, final String message,
+                                              final Runnable onOkListener) {
+        showConfirmationDialog(fragmentManager, caption, message, null, onOkListener, null, null, null);
     }
 
 }

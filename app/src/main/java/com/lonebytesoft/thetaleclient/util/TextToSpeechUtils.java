@@ -22,7 +22,7 @@ public class TextToSpeechUtils {
     private static List<String> queue = new ArrayList<>();
 
     public static void init(final Context context) {
-        if(!isInitialized) {
+        if(!isInitialized || (textToSpeech == null)) {
             textToSpeech = new TextToSpeech(context, new TextToSpeech.OnInitListener() {
                 @Override
                 public void onInit(int status) {
@@ -56,12 +56,16 @@ public class TextToSpeechUtils {
     }
 
     private static void speakText(final String text) {
-        textToSpeech.speak(text, TextToSpeech.QUEUE_ADD, null);
-        textToSpeech.playSilence(PAUSE, TextToSpeech.QUEUE_ADD, null);
+        if(textToSpeech != null) {
+            textToSpeech.speak(text, TextToSpeech.QUEUE_ADD, null);
+            textToSpeech.playSilence(PAUSE, TextToSpeech.QUEUE_ADD, null);
+        }
     }
 
     public static void pause() {
-        textToSpeech.stop();
+        if(textToSpeech != null) {
+            textToSpeech.stop();
+        }
         queue.clear();
     }
 

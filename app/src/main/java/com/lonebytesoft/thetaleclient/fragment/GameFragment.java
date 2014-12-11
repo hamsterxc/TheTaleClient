@@ -61,10 +61,7 @@ public class GameFragment extends Fragment implements Refreshable, OnscreenState
                 UiUtils.callOnscreenStateChange(getPageFragment(position), true);
                 currentPageIndex = position;
 
-                final MenuItem readAloudMenuItem = getMenuItem(R.id.action_read_aloud);
-                if(readAloudMenuItem != null) {
-                    readAloudMenuItem.setVisible(position == GamePage.GAME_INFO.ordinal());
-                }
+                updateMenu();
             }
         });
 
@@ -119,9 +116,14 @@ public class GameFragment extends Fragment implements Refreshable, OnscreenState
     private void updateMenu() {
         final MenuItem readAloudMenuItem = getMenuItem(R.id.action_read_aloud);
         if(readAloudMenuItem != null) {
-            readAloudMenuItem.setIcon(PreferencesManager.isJournalReadAloudEnabled() ?
-                    R.drawable.ic_volume_small :
-                    R.drawable.ic_volume_off_small);
+            final boolean isVisible = PreferencesManager.isJournalReadAloudConfirmed()
+                    && currentPageIndex == GamePage.GAME_INFO.ordinal();
+            readAloudMenuItem.setVisible(isVisible);
+            if(isVisible) {
+                readAloudMenuItem.setIcon(PreferencesManager.isJournalReadAloudEnabled() ?
+                        R.drawable.ic_volume_small :
+                        R.drawable.ic_volume_off_small);
+            }
         }
     }
 

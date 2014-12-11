@@ -18,6 +18,8 @@ public class PreferencesManager {
 
     private static final String KEY_MAP_STYLE = "KEY_MAP_STYLE";
     private static final String KEY_SESSION = "KEY_SESSION";
+    private static final String KEY_JOURNAL_READ_ALOUD_CONFIRMED = "KEY_JOURNAL_READ_ALOUD_CONFIRMED";
+
     private static final String KEY_NOTIFICATION_LAST = "%s_LAST";
     private static final String KEY_NOTIFICATION_SHOULD_SHOW = "%s_SHOULD_SHOW";
     private static final String KEY_NOTIFICATION_SHOWN = "%s_SHOWN";
@@ -372,6 +374,16 @@ public class PreferencesManager {
     public static void setJournalReadAloudEnabled(final boolean isEnabled) {
         sharedPreferences.edit()
                 .putBoolean(getString(R.string.settings_key_misc_journal_read_aloud), isEnabled)
+                .commit();
+    }
+
+    public static boolean isJournalReadAloudConfirmed() {
+        return sharedPreferences.getBoolean(KEY_JOURNAL_READ_ALOUD_CONFIRMED, false);
+    }
+
+    public static void setJournalReadAloudConfirmed(final boolean isJournalReadAloudConfirmed) {
+        sharedPreferences.edit()
+                .putBoolean(KEY_JOURNAL_READ_ALOUD_CONFIRMED, isJournalReadAloudConfirmed)
                 .commit();
     }
 

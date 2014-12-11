@@ -6,7 +6,10 @@ import android.preference.Preference;
 import android.support.v4.preference.PreferenceFragment;
 
 import com.lonebytesoft.thetaleclient.R;
+import com.lonebytesoft.thetaleclient.TheTaleClientApplication;
+import com.lonebytesoft.thetaleclient.util.DialogUtils;
 import com.lonebytesoft.thetaleclient.util.PreferencesManager;
+import com.lonebytesoft.thetaleclient.util.TextToSpeechUtils;
 import com.lonebytesoft.thetaleclient.widget.TimeIntervalPreference;
 
 /**
@@ -99,6 +102,30 @@ public class SettingsFragment extends PreferenceFragment {
                 findPreference(getString(R.string.settings_key_autohelp_energy_energy_threshold)),
                 R.string.settings_summary_autohelp_common_energy_threshold,
                 String.valueOf(PreferencesManager.getAutohelpEnergyEnergyThreshold()));
+
+        // journal reading aloud
+        final CheckBoxPreference journalReadAloud = (CheckBoxPreference) findPreference(getString(R.string.settings_key_misc_journal_read_aloud));
+        journalReadAloud.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                if(PreferencesManager.isJournalReadAloudConfirmed()) {
+                    return true;
+                } else {
+                    DialogUtils.showConfirmationDialog(getFragmentManager(),
+                            getString(R.string.common_dialog_attention_title),
+                            getString(R.string.game_journal_read_aloud_confirmation),
+                            new Runnable() {
+                                @Override
+                                public void run() {
+                                    PreferencesManager.setJournalReadAloudConfirmed(true);
+                                    journalReadAloud.setChecked(true);
+                                    TextToSpeechUtils.init(TheTaleClientApplication.getContext());
+                                }
+                            });
+                    return false;
+                }
+            }
+        });
     }
 
     private void setupDependentFields(final CheckBoxPreference checkbox, final Preference value) {

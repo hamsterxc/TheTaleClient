@@ -88,7 +88,9 @@ public class MainActivity extends ActionBarActivity
     protected void onStart() {
         super.onStart();
 
-        TextToSpeechUtils.init(TheTaleClientApplication.getContext());
+        if(PreferencesManager.isJournalReadAloudConfirmed()) {
+            TextToSpeechUtils.init(TheTaleClientApplication.getContext());
+        }
     }
 
     @Override
