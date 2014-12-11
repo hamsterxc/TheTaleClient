@@ -211,6 +211,26 @@ public class PreferencesManager {
                 .commit();
     }
 
+    public static boolean shouldNotifyQuestChoice() {
+        return sharedPreferences.getBoolean(
+                getString(R.string.settings_key_notification_quest_choice),
+                getBoolean(R.bool.settings_notification_common_default));
+    }
+
+    public static boolean shouldShowNotificationQuestChoice() {
+        return sharedPreferences.getBoolean(
+                String.format(KEY_NOTIFICATION_SHOULD_SHOW, getString(R.string.settings_key_notification_quest_choice)),
+                true);
+    }
+
+    public static void setShouldShowNotificationQuestChoice(final boolean shouldShowNotificationQuestChoice) {
+        sharedPreferences.edit()
+                .putBoolean(
+                        String.format(KEY_NOTIFICATION_SHOULD_SHOW, getString(R.string.settings_key_notification_quest_choice)),
+                        shouldShowNotificationQuestChoice)
+                .commit();
+    }
+
     public static boolean isNotificationNighttimeEnabled() {
         return sharedPreferences.getBoolean(
                 getString(R.string.settings_key_notification_settings_nighttime),

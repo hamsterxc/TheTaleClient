@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.lonebytesoft.thetaleclient.DataViewMode;
 import com.lonebytesoft.thetaleclient.R;
+import com.lonebytesoft.thetaleclient.TheTaleClientApplication;
 import com.lonebytesoft.thetaleclient.api.ApiResponseCallback;
 import com.lonebytesoft.thetaleclient.api.CommonResponseCallback;
 import com.lonebytesoft.thetaleclient.api.dictionary.QuestType;
@@ -28,6 +29,7 @@ import com.lonebytesoft.thetaleclient.api.request.QuestChoiceRequest;
 import com.lonebytesoft.thetaleclient.api.response.CommonResponse;
 import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;
 import com.lonebytesoft.thetaleclient.api.response.MapResponse;
+import com.lonebytesoft.thetaleclient.fragment.onscreen.OnscreenPart;
 import com.lonebytesoft.thetaleclient.util.DialogUtils;
 import com.lonebytesoft.thetaleclient.util.RequestUtils;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
@@ -219,6 +221,20 @@ public class QuestsFragment extends WrapperFragment {
                 setError(response.errorMessage);
             }
         }, this), true);
+    }
+
+    @Override
+    public void onOffscreen() {
+        super.onOffscreen();
+        TheTaleClientApplication.getOnscreenStateWatcher().onscreenStateChange(OnscreenPart.QUESTS, false);
+    }
+
+    @Override
+    public void onOnscreen() {
+        super.onOnscreen();
+        TheTaleClientApplication.getOnscreenStateWatcher().onscreenStateChange(OnscreenPart.QUESTS, true);
+
+        TheTaleClientApplication.getNotificationManager().clearNotifications();
     }
 
 }

@@ -51,6 +51,12 @@
             android:title="@string/settings_title_notification_new_messages"
             android:defaultValue="@bool/settings_notification_common_default"/>
 
+        <CheckBoxPreference
+            android:layout="@layout/widget_preference_container"
+            android:key="@string/settings_key_notification_quest_choice"
+            android:title="@string/settings_title_notification_quest_choice"
+            android:defaultValue="@bool/settings_notification_common_default"/>
+
     </PreferenceCategory>
 
     <PreferenceCategory

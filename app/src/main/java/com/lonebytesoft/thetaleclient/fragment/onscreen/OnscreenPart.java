@@ -7,6 +7,7 @@ package com.lonebytesoft.thetaleclient.fragment.onscreen;
 public enum OnscreenPart {
 
     GAME_INFO,
+    QUESTS,
     ;
 
 }

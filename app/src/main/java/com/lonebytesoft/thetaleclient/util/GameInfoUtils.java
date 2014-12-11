@@ -2,7 +2,10 @@ package com.lonebytesoft.thetaleclient.util;
 
 import com.lonebytesoft.thetaleclient.api.dictionary.QuestType;
 import com.lonebytesoft.thetaleclient.api.model.EnergyInfo;
+import com.lonebytesoft.thetaleclient.api.model.QuestStepInfo;
 import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;
+
+import java.util.List;
 
 /**
  * @author Hamster
@@ -22,6 +25,19 @@ public class GameInfoUtils {
 
     public static boolean isHeroIdle(final GameInfoResponse gameInfoResponse) {
         return gameInfoResponse.account.hero.quests.get(gameInfoResponse.account.hero.quests.size() - 1).get(0).type == QuestType.NO_QUEST;
+    }
+
+    public static boolean isQuestChoiceAvailable(final GameInfoResponse gameInfoResponse) {
+        final int questLinesCount = gameInfoResponse.account.hero.quests.size();
+        if(questLinesCount > 0) {
+            final List<QuestStepInfo> lastQuestLine = gameInfoResponse.account.hero.quests.get(questLinesCount - 1);
+            final int questStepsCount = lastQuestLine.size();
+            if(questStepsCount > 0) {
+                final QuestStepInfo lastQuestStep = lastQuestLine.get(questStepsCount - 1);
+                return lastQuestStep.choices.size() > 0;
+            }
+        }
+        return false;
     }
 
 }

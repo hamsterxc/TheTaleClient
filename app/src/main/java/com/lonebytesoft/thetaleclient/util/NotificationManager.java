@@ -15,6 +15,7 @@ import com.lonebytesoft.thetaleclient.service.notifier.HealthNotifier;
 import com.lonebytesoft.thetaleclient.service.notifier.IdlenessNotifier;
 import com.lonebytesoft.thetaleclient.service.notifier.NewMessagesNotifier;
 import com.lonebytesoft.thetaleclient.service.notifier.Notifier;
+import com.lonebytesoft.thetaleclient.service.notifier.QuestChoiceNotifier;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -45,6 +46,7 @@ public class NotificationManager {
         notifiers.add(new HealthNotifier());
         notifiers.add(new EnergyNotifier());
         notifiers.add(new NewMessagesNotifier());
+        notifiers.add(new QuestChoiceNotifier());
 
         lastNotification = new ArrayList<>();
     }

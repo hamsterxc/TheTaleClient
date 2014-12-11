@@ -85,6 +85,7 @@
     <string name="notification_idle">Герой бездействует</string>
     <string name="notification_low_health">Низкое здоровье: %d HP</string>
     <string name="notification_new_messages">Новых сообщений: %d</string>
+    <string name="notification_quest_choice">Доступен выбор в квесте</string>
 
     <!--<plurals name="notification_lines">-->
         <!--<item quantity="one">%d событие</item>-->
@@ -114,6 +115,7 @@
     <string name="settings_key_notification_energy">KEY_SETTINGS_NOTIFICATION_ENERGY</string>
     <string name="settings_key_notification_energy_threshold">KEY_SETTINGS_NOTIFICATION_ENERGY_THRESHOLD</string>
     <string name="settings_key_notification_new_messages">KEY_SETTINGS_NOTIFICATION_NEW_MESSAGES</string>
+    <string name="settings_key_notification_quest_choice">KEY_SETTINGS_NOTIFICATION_QUEST_CHOICE</string>
     <string name="settings_summary_notification_energy">Уведомление при энергии не ниже %s</string>
     <string name="settings_summary_notification_health">Уведомление, если здоровье ниже %s</string>
     <string name="settings_title_notification_death">Смерть героя</string>
@@ -123,6 +125,7 @@
     <string name="settings_title_notification_energy">Накопившаяся энергия</string>
     <string name="settings_title_notification_energy_threshold">Уровень энергии</string>
     <string name="settings_title_notification_new_messages">Новые сообщения</string>
+    <string name="settings_title_notification_quest_choice">Доступный выбор в квесте</string>
 
     <string name="settings_notification_settings">Настройки уведомлений</string>
     <string name="settings_key_notification_settings_nighttime">KEY_SETTINGS_NOTIFICATION_SETTINGS_NIGHTTIME</string>
