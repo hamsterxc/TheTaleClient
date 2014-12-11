@@ -35,6 +35,7 @@ public class NotificationManager {
     private final android.app.NotificationManager notificationManager;
     private final List<Notifier> notifiers;
     private final List<String> lastNotification;
+    private final List<Notifier> lastNotifiers;
 
     public NotificationManager(final Context context) {
         this.context = context;
@@ -49,6 +50,7 @@ public class NotificationManager {
         notifiers.add(new QuestChoiceNotifier());
 
         lastNotification = new ArrayList<>();
+        lastNotifiers = new ArrayList<>();
     }
 
     public void notify(final GameInfoResponse gameInfoResponse) {
@@ -63,10 +65,12 @@ public class NotificationManager {
 
         final List<String> notificationLines = new ArrayList<>();
         PendingIntent pendingIntent = null;
+        lastNotifiers.clear();
         for(final Notifier notifier : notifiers) {
             notifier.setInfo(gameInfoResponse);
             if(notifier.isNotifying()) {
                 notificationLines.add(notifier.getNotification(context));
+                lastNotifiers.add(notifier);
                 if(pendingIntent == null) {
                     pendingIntent = notifier.getPendingIntent(context);
                 }
@@ -111,7 +115,7 @@ public class NotificationManager {
     }
 
     public void onNotificationDelete() {
-        for(final Notifier notifier : notifiers) {
+        for(final Notifier notifier : lastNotifiers) {
             notifier.onNotificationDelete();
         }
     }
