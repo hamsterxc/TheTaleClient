@@ -1,4 +1,4 @@
-package com.lonebytesoft.thetaleclient.service;
+package com.lonebytesoft.thetaleclient.service.watcher;
 
 import com.lonebytesoft.thetaleclient.api.request.TakeCardRequest;
 import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;

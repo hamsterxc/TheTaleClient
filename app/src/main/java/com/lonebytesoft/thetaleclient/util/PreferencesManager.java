@@ -1,5 +1,6 @@
 package com.lonebytesoft.thetaleclient.util;
 
+import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
@@ -12,10 +13,14 @@ import com.lonebytesoft.thetaleclient.api.dictionary.MapStyle;
  * @author Hamster
  * @since 08.10.2014
  */
+@SuppressLint("CommitPrefEdits")
 public class PreferencesManager {
 
     private static final String KEY_MAP_STYLE = "KEY_MAP_STYLE";
     private static final String KEY_SESSION = "KEY_SESSION";
+    private static final String KEY_NOTIFICATION_LAST = "%s_LAST";
+    private static final String KEY_NOTIFICATION_SHOULD_SHOW = "%s_SHOULD_SHOW";
+    private static final String KEY_NOTIFICATION_SHOWN = "%s_SHOWN";
 
     private static SharedPreferences sharedPreferences =
             PreferenceManager.getDefaultSharedPreferences(TheTaleClientApplication.getContext());
@@ -48,10 +53,38 @@ public class PreferencesManager {
                 getBoolean(R.bool.settings_notification_common_default));
     }
 
+    public static boolean shouldShowNotificationDeath() {
+        return sharedPreferences.getBoolean(
+                String.format(KEY_NOTIFICATION_SHOULD_SHOW, getString(R.string.settings_key_notification_death)),
+                true);
+    }
+
+    public static void setShouldShowNotificationDeath(final boolean shouldShowNotificationDeath) {
+        sharedPreferences.edit()
+                .putBoolean(
+                        String.format(KEY_NOTIFICATION_SHOULD_SHOW, getString(R.string.settings_key_notification_death)),
+                        shouldShowNotificationDeath)
+                .commit();
+    }
+
     public static boolean shouldNotifyIdleness() {
         return sharedPreferences.getBoolean(
                 getString(R.string.settings_key_notification_idleness),
                 getBoolean(R.bool.settings_notification_common_default));
+    }
+
+    public static boolean shouldShowNotificationIdleness() {
+        return sharedPreferences.getBoolean(
+                String.format(KEY_NOTIFICATION_SHOULD_SHOW, getString(R.string.settings_key_notification_idleness)),
+                true);
+    }
+
+    public static void setShouldShowNotificationIdleness(final boolean shouldShowNotificationIdleness) {
+        sharedPreferences.edit()
+                .putBoolean(
+                        String.format(KEY_NOTIFICATION_SHOULD_SHOW, getString(R.string.settings_key_notification_idleness)),
+                        shouldShowNotificationIdleness)
+                .commit();
     }
 
     public static boolean shouldNotifyHealth() {
@@ -64,6 +97,20 @@ public class PreferencesManager {
         return getIntegerIfExist(R.string.settings_key_notification_health_threshold, R.integer.settings_notification_health_threshold_default);
     }
 
+    public static boolean shouldShowNotificationHealth() {
+        return sharedPreferences.getBoolean(
+                String.format(KEY_NOTIFICATION_SHOULD_SHOW, getString(R.string.settings_key_notification_health)),
+                true);
+    }
+
+    public static void setShouldShowNotificationHealth(final boolean shouldShowNotificationHealth) {
+        sharedPreferences.edit()
+                .putBoolean(
+                        String.format(KEY_NOTIFICATION_SHOULD_SHOW, getString(R.string.settings_key_notification_health)),
+                        shouldShowNotificationHealth)
+                .commit();
+    }
+
     public static boolean shouldNotifyEnergy() {
         return sharedPreferences.getBoolean(
                 getString(R.string.settings_key_notification_energy),
@@ -74,10 +121,94 @@ public class PreferencesManager {
         return getIntegerIfExist(R.string.settings_key_notification_energy_threshold, R.integer.settings_notification_energy_threshold_default);
     }
 
+    public static boolean shouldShowNotificationEnergy() {
+        return sharedPreferences.getBoolean(
+                String.format(KEY_NOTIFICATION_SHOULD_SHOW, getString(R.string.settings_key_notification_energy)),
+                true);
+    }
+
+    public static void setShouldShowNotificationEnergy(final boolean shouldShowNotificationEnergy) {
+        sharedPreferences.edit()
+                .putBoolean(
+                        String.format(KEY_NOTIFICATION_SHOULD_SHOW, getString(R.string.settings_key_notification_energy)),
+                        shouldShowNotificationEnergy)
+                .commit();
+    }
+
+    public static int getLastNotificationEnergy() {
+        return sharedPreferences.getInt(
+                String.format(KEY_NOTIFICATION_LAST, getString(R.string.settings_key_notification_energy)),
+                -1);
+    }
+
+    public static void setLastNotificationEnergy(final int lastNotificationEnergy) {
+        sharedPreferences.edit()
+                .putInt(
+                        String.format(KEY_NOTIFICATION_LAST, getString(R.string.settings_key_notification_energy)),
+                        lastNotificationEnergy)
+                .commit();
+    }
+
+    public static int getLastShownNotificationEnergy() {
+        return sharedPreferences.getInt(
+                String.format(KEY_NOTIFICATION_SHOWN, getString(R.string.settings_key_notification_energy)),
+                -1);
+    }
+
+    public static void setLastShownNotificationEnergy(final int lastShownNotificationEnergy) {
+        sharedPreferences.edit()
+                .putInt(
+                        String.format(KEY_NOTIFICATION_SHOWN, getString(R.string.settings_key_notification_energy)),
+                        lastShownNotificationEnergy)
+                .commit();
+    }
+
     public static boolean shouldNotifyNewMessages() {
         return sharedPreferences.getBoolean(
                 getString(R.string.settings_key_notification_new_messages),
                 getBoolean(R.bool.settings_notification_common_default));
+    }
+
+    public static boolean shouldShowNotificationNewMessages() {
+        return sharedPreferences.getBoolean(
+                String.format(KEY_NOTIFICATION_SHOULD_SHOW, getString(R.string.settings_key_notification_new_messages)),
+                true);
+    }
+
+    public static void setShouldShowNotificationNewMessages(final boolean shouldShowNotificationNewMessages) {
+        sharedPreferences.edit()
+                .putBoolean(
+                        String.format(KEY_NOTIFICATION_SHOULD_SHOW, getString(R.string.settings_key_notification_new_messages)),
+                        shouldShowNotificationNewMessages)
+                .commit();
+    }
+
+    public static int getLastNotificationNewMessages() {
+        return sharedPreferences.getInt(
+                String.format(KEY_NOTIFICATION_LAST, getString(R.string.settings_key_notification_new_messages)),
+                -1);
+    }
+
+    public static void setLastNotificationNewMessages(final int lastNotificationNewMessages) {
+        sharedPreferences.edit()
+                .putInt(
+                        String.format(KEY_NOTIFICATION_LAST, getString(R.string.settings_key_notification_new_messages)),
+                        lastNotificationNewMessages)
+                .commit();
+    }
+
+    public static int getLastShownNotificationNewMessages() {
+        return sharedPreferences.getInt(
+                String.format(KEY_NOTIFICATION_SHOWN, getString(R.string.settings_key_notification_new_messages)),
+                -1);
+    }
+
+    public static void setLastShownNotificationNewMessages(final int lastShownNotificationNewMessages) {
+        sharedPreferences.edit()
+                .putInt(
+                        String.format(KEY_NOTIFICATION_SHOWN, getString(R.string.settings_key_notification_new_messages)),
+                        lastShownNotificationNewMessages)
+                .commit();
     }
 
     public static boolean isNotificationNighttimeEnabled() {

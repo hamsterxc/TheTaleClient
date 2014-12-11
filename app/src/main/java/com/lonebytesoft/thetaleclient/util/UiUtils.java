@@ -1,6 +1,7 @@
 package com.lonebytesoft.thetaleclient.util;
 
 import android.app.Activity;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -18,6 +19,8 @@ import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
+import com.lonebytesoft.thetaleclient.activity.MainActivity;
+import com.lonebytesoft.thetaleclient.fragment.GameFragment;
 import com.lonebytesoft.thetaleclient.fragment.onscreen.OnscreenStateListener;
 
 /**
@@ -92,6 +95,17 @@ public class UiUtils {
                 ((OnscreenStateListener) fragment).onOffscreen();
             }
         }
+    }
+
+    public static PendingIntent getMainActivityIntent(final Context context, final GameFragment.GamePage gamePage) {
+        final Intent intent = new Intent(context, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        intent.putExtra(MainActivity.KEY_GAME_TAB_INDEX, gamePage.ordinal());
+        return PendingIntent.getActivity(
+                context,
+                (int) System.currentTimeMillis(),
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
 }

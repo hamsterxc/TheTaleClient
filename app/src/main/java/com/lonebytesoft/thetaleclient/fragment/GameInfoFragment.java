@@ -28,7 +28,6 @@ import com.lonebytesoft.thetaleclient.api.response.InfoResponse;
 import com.lonebytesoft.thetaleclient.fragment.onscreen.OnscreenPart;
 import com.lonebytesoft.thetaleclient.util.DialogUtils;
 import com.lonebytesoft.thetaleclient.util.GameInfoUtils;
-import com.lonebytesoft.thetaleclient.util.NotificationUtils;
 import com.lonebytesoft.thetaleclient.util.PreferencesManager;
 import com.lonebytesoft.thetaleclient.util.RequestUtils;
 import com.lonebytesoft.thetaleclient.util.TextToSpeechUtils;
@@ -328,7 +327,7 @@ public class GameInfoFragment extends WrapperFragment {
         super.onOnscreen();
         TheTaleClientApplication.getOnscreenStateWatcher().onscreenStateChange(OnscreenPart.GAME_INFO, true);
 
-        NotificationUtils.clearNotifications();
+        TheTaleClientApplication.getNotificationManager().clearNotifications();
     }
 
 }

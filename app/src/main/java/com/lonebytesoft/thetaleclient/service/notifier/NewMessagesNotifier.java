@@ -1,27 +1,64 @@
 package com.lonebytesoft.thetaleclient.service.notifier;
 
+import android.app.PendingIntent;
+import android.content.Context;
+
+import com.lonebytesoft.thetaleclient.R;
+import com.lonebytesoft.thetaleclient.TheTaleClientApplication;
 import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;
-import com.lonebytesoft.thetaleclient.service.GameStateWatcher;
-import com.lonebytesoft.thetaleclient.util.NotificationUtils;
+import com.lonebytesoft.thetaleclient.fragment.GameFragment;
+import com.lonebytesoft.thetaleclient.fragment.onscreen.OnscreenPart;
 import com.lonebytesoft.thetaleclient.util.PreferencesManager;
+import com.lonebytesoft.thetaleclient.util.UiUtils;
 
 /**
  * @author Hamster
- * @since 21.10.2014
+ * @since 08.12.2014
  */
-public class NewMessagesNotifier implements GameStateWatcher {
+public class NewMessagesNotifier implements Notifier {
 
-    private int lastNotify = 0;
+    private GameInfoResponse gameInfoResponse;
 
     @Override
-    public void processGameState(GameInfoResponse gameInfoResponse) {
-        if(PreferencesManager.shouldNotifyNewMessages()) {
-            final int newMessages = gameInfoResponse.account.newMessagesCount;
-            if ((newMessages > 0) && (newMessages != lastNotify)) {
-                NotificationUtils.notifyNewMessages(newMessages);
+    public void setInfo(GameInfoResponse gameInfoResponse) {
+        this.gameInfoResponse = gameInfoResponse;
+    }
+
+    @Override
+    public boolean isNotifying() {
+        final int value = getValue();
+        PreferencesManager.setLastNotificationNewMessages(value);
+        if((value > 0) && (value != PreferencesManager.getLastShownNotificationNewMessages())) {
+            if(PreferencesManager.shouldNotifyNewMessages()
+                    && PreferencesManager.shouldShowNotificationNewMessages()
+                    && !TheTaleClientApplication.getOnscreenStateWatcher().isOnscreen(OnscreenPart.GAME_INFO)) {
+                return true;
             }
-            lastNotify = newMessages;
+            PreferencesManager.setShouldShowNotificationNewMessages(false);
+        } else {
+            PreferencesManager.setShouldShowNotificationNewMessages(true);
         }
+        return false;
+    }
+
+    @Override
+    public String getNotification(Context context) {
+        return context.getString(R.string.notification_new_messages, getValue());
+    }
+
+    private int getValue() {
+        return gameInfoResponse.account.newMessagesCount;
+    }
+
+    @Override
+    public PendingIntent getPendingIntent(Context context) {
+        return UiUtils.getMainActivityIntent(context, GameFragment.GamePage.GAME_INFO);
+    }
+
+    @Override
+    public void onNotificationDelete() {
+        PreferencesManager.setShouldShowNotificationNewMessages(false);
+        PreferencesManager.setLastShownNotificationNewMessages(PreferencesManager.getLastNotificationNewMessages());
     }
 
 }

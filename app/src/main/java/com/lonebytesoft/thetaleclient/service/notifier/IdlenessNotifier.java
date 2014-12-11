@@ -1,31 +1,58 @@
 package com.lonebytesoft.thetaleclient.service.notifier;
 
+import android.app.PendingIntent;
+import android.content.Context;
+
+import com.lonebytesoft.thetaleclient.R;
+import com.lonebytesoft.thetaleclient.TheTaleClientApplication;
 import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;
-import com.lonebytesoft.thetaleclient.service.GameStateWatcher;
+import com.lonebytesoft.thetaleclient.fragment.GameFragment;
+import com.lonebytesoft.thetaleclient.fragment.onscreen.OnscreenPart;
 import com.lonebytesoft.thetaleclient.util.GameInfoUtils;
-import com.lonebytesoft.thetaleclient.util.NotificationUtils;
 import com.lonebytesoft.thetaleclient.util.PreferencesManager;
+import com.lonebytesoft.thetaleclient.util.UiUtils;
 
 /**
-* @author Hamster
-* @since 10.10.2014
-*/
-public class IdlenessNotifier implements GameStateWatcher {
+ * @author Hamster
+ * @since 08.12.2014
+ */
+public class IdlenessNotifier implements Notifier {
 
-    private boolean isNotified = false;
+    private GameInfoResponse gameInfoResponse;
 
     @Override
-    public void processGameState(GameInfoResponse gameInfoResponse) {
-        if(PreferencesManager.shouldNotifyIdleness()) {
-            if (GameInfoUtils.isHeroIdle(gameInfoResponse)) {
-                if (!isNotified) {
-                    isNotified = true;
-                    NotificationUtils.notifyIdleness();
-                }
-            } else {
-                isNotified = false;
+    public void setInfo(GameInfoResponse gameInfoResponse) {
+        this.gameInfoResponse = gameInfoResponse;
+    }
+
+    @Override
+    public boolean isNotifying() {
+        if(GameInfoUtils.isHeroIdle(gameInfoResponse)) {
+            if(PreferencesManager.shouldNotifyIdleness()
+                    && PreferencesManager.shouldShowNotificationIdleness()
+                    && !TheTaleClientApplication.getOnscreenStateWatcher().isOnscreen(OnscreenPart.GAME_INFO)) {
+                return true;
             }
+            PreferencesManager.setShouldShowNotificationIdleness(false);
+        } else {
+            PreferencesManager.setShouldShowNotificationIdleness(true);
         }
+        return false;
+    }
+
+    @Override
+    public String getNotification(Context context) {
+        return context.getString(R.string.notification_idle);
+    }
+
+    @Override
+    public PendingIntent getPendingIntent(Context context) {
+        return UiUtils.getMainActivityIntent(context, GameFragment.GamePage.GAME_INFO);
+    }
+
+    @Override
+    public void onNotificationDelete() {
+        PreferencesManager.setShouldShowNotificationIdleness(false);
     }
 
 }

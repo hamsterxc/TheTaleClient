@@ -5,6 +5,7 @@ import android.content.Context;
 
 import com.lonebytesoft.thetaleclient.api.cache.RequestCacheManager;
 import com.lonebytesoft.thetaleclient.fragment.onscreen.OnscreenStateWatcher;
+import com.lonebytesoft.thetaleclient.util.NotificationManager;
 import com.lonebytesoft.thetaleclient.util.map.MapManager;
 
 /**
@@ -15,6 +16,7 @@ public class TheTaleClientApplication extends Application {
 
     private static Context context;
     private static OnscreenStateWatcher onscreenStateWatcher;
+    private static NotificationManager notificationManager;
 
     @Override
     public void onCreate() {
@@ -22,6 +24,7 @@ public class TheTaleClientApplication extends Application {
 
         context = getApplicationContext();
         onscreenStateWatcher = new OnscreenStateWatcher();
+        notificationManager = new NotificationManager(context);
     }
 
     @Override
@@ -44,6 +47,10 @@ public class TheTaleClientApplication extends Application {
 
     public static OnscreenStateWatcher getOnscreenStateWatcher() {
         return onscreenStateWatcher;
+    }
+
+    public static NotificationManager getNotificationManager() {
+        return notificationManager;
     }
 
 }

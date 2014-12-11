@@ -1,4 +1,4 @@
-package com.lonebytesoft.thetaleclient.service;
+package com.lonebytesoft.thetaleclient.service.watcher;
 
 import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;
 
@@ -7,5 +7,7 @@ import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;
  * @since 17.10.2014
  */
 public interface GameStateWatcher {
+
     void processGameState(GameInfoResponse gameInfoResponse);
+
 }

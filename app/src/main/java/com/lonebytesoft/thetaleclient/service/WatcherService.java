@@ -1,10 +1,14 @@
 package com.lonebytesoft.thetaleclient.service;
 
 import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.IBinder;
 
+import com.lonebytesoft.thetaleclient.TheTaleClientApplication;
 import com.lonebytesoft.thetaleclient.api.ApiResponseCallback;
 import com.lonebytesoft.thetaleclient.api.dictionary.Action;
 import com.lonebytesoft.thetaleclient.api.request.AbilityUseRequest;
@@ -15,11 +19,9 @@ import com.lonebytesoft.thetaleclient.service.autohelper.DeathAutohelper;
 import com.lonebytesoft.thetaleclient.service.autohelper.EnergyAutohelper;
 import com.lonebytesoft.thetaleclient.service.autohelper.HealthAutohelper;
 import com.lonebytesoft.thetaleclient.service.autohelper.IdlenessAutohelper;
-import com.lonebytesoft.thetaleclient.service.notifier.DeathNotifier;
-import com.lonebytesoft.thetaleclient.service.notifier.EnergyNotifier;
-import com.lonebytesoft.thetaleclient.service.notifier.HealthNotifier;
-import com.lonebytesoft.thetaleclient.service.notifier.IdlenessNotifier;
-import com.lonebytesoft.thetaleclient.service.notifier.NewMessagesNotifier;
+import com.lonebytesoft.thetaleclient.service.watcher.CardTaker;
+import com.lonebytesoft.thetaleclient.service.watcher.GameStateWatcher;
+import com.lonebytesoft.thetaleclient.util.NotificationManager;
 import com.lonebytesoft.thetaleclient.util.PreferencesManager;
 
 import java.util.ArrayList;
@@ -45,6 +47,8 @@ public class WatcherService extends Service {
                             stopSelf();
                             return;
                         }
+
+                        TheTaleClientApplication.getNotificationManager().notify(response);
 
                         for (final GameStateWatcher watcher : watchers) {
                             watcher.processGameState(response);
@@ -74,6 +78,14 @@ public class WatcherService extends Service {
             }
         }
     };
+    private final BroadcastReceiver notificationDeleteReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(NotificationManager.BROADCAST_NOTIFICATION_DELETE_ACTION.equals(intent.getAction())) {
+                TheTaleClientApplication.getNotificationManager().onNotificationDelete();
+            }
+        }
+    };
 
     private void postRefresh() {
         handler.postDelayed(refreshRunnable, REQUEST_TIMEOUT_MILLIS);
@@ -85,11 +97,6 @@ public class WatcherService extends Service {
     @Override
     public void onCreate() {
         watchers = new ArrayList<>();
-        watchers.add(new DeathNotifier());
-        watchers.add(new IdlenessNotifier());
-        watchers.add(new HealthNotifier());
-        watchers.add(new EnergyNotifier());
-        watchers.add(new NewMessagesNotifier());
         watchers.add(new CardTaker());
 
         autohelpers = new ArrayList<>();
@@ -97,6 +104,8 @@ public class WatcherService extends Service {
         autohelpers.add(new IdlenessAutohelper());
         autohelpers.add(new HealthAutohelper());
         autohelpers.add(new EnergyAutohelper());
+
+        registerReceiver(notificationDeleteReceiver, new IntentFilter(NotificationManager.BROADCAST_NOTIFICATION_DELETE_ACTION));
     }
 
     @Override
