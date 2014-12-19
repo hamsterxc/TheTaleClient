@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.lonebytesoft.thetaleclient.R;
+import com.lonebytesoft.thetaleclient.api.dictionary.ArtifactEffect;
 import com.lonebytesoft.thetaleclient.api.dictionary.ArtifactType;
 import com.lonebytesoft.thetaleclient.api.model.ArtifactInfo;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
@@ -49,8 +50,19 @@ public class ArtifactDialog extends BaseDialog {
                     getString(R.string.artifact_integrity, 100.0 * artifactInfo.integrityCurrent / artifactInfo.integrityTotal, artifactInfo.integrityCurrent, artifactInfo.integrityTotal));
             UiUtils.setText(view.findViewById(R.id.dialog_artifact_rating),
                     getString(R.string.artifact_rating, artifactInfo.rating));
-            UiUtils.setText(view.findViewById(R.id.dialog_artifact_effect),
-                    artifactInfo.effect.getDescription());
+        }
+
+        boolean showNoEffect = true;
+        if(artifactInfo.effect != ArtifactEffect.NO_EFFECT) {
+            UiUtils.setText(view.findViewById(R.id.dialog_artifact_effect), artifactInfo.effect.getDescription());
+            showNoEffect = false;
+        }
+        if(artifactInfo.effectSpecial != ArtifactEffect.NO_EFFECT) {
+            UiUtils.setText(view.findViewById(R.id.dialog_artifact_effect_special), artifactInfo.effectSpecial.getDescription());
+            showNoEffect = false;
+        }
+        if(showNoEffect && (artifactInfo.type != ArtifactType.JUNK)) {
+            UiUtils.setText(view.findViewById(R.id.dialog_artifact_effect), ArtifactEffect.NO_EFFECT.getDescription());
         }
 
         return wrapView(inflater, view, artifactInfo.name);

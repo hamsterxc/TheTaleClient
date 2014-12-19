@@ -26,6 +26,7 @@ public class ArtifactInfo implements Parcelable {
     public final int integrityTotal;
     public final ArtifactRarity rarity;
     public final ArtifactEffect effect;
+    public final ArtifactEffect effectSpecial;
     public final double rating;
     public final boolean isEquippable;
 
@@ -38,7 +39,6 @@ public class ArtifactInfo implements Parcelable {
             integrityCurrent = 0;
             integrityTotal = 0;
             rarity = ArtifactRarity.COMMON;
-            effect = ArtifactEffect.NO_EFFECT;
             rating = 0;
         } else {
             powerPhysical = json.getJSONArray("power").getInt(0);
@@ -46,9 +46,10 @@ public class ArtifactInfo implements Parcelable {
             integrityCurrent = json.getJSONArray("integrity").getInt(0);
             integrityTotal = json.getJSONArray("integrity").getInt(1);
             rarity = ObjectUtils.getEnumForCode(ArtifactRarity.class, json.getInt("rarity"));
-            effect = ObjectUtils.getEnumForCode(ArtifactEffect.class, json.getInt("effect"));
             rating = json.getDouble("preference_rating");
         }
+        effect = ObjectUtils.getEnumForCode(ArtifactEffect.class, json.getInt("effect"));
+        effectSpecial = ObjectUtils.getEnumForCode(ArtifactEffect.class, json.getInt("special_effect"));
         isEquippable = json.getBoolean("equipped");
         id = json.getInt("id");
     }
@@ -65,6 +66,7 @@ public class ArtifactInfo implements Parcelable {
         integrityTotal = in.readInt();
         rarity = ArtifactRarity.values()[in.readInt()];
         effect = ArtifactEffect.values()[in.readInt()];
+        effectSpecial = ArtifactEffect.values()[in.readInt()];
         rating = in.readDouble();
         isEquippable = in.readInt() == 1;
     }
@@ -84,6 +86,7 @@ public class ArtifactInfo implements Parcelable {
         out.writeInt(integrityTotal);
         out.writeInt(rarity.ordinal());
         out.writeInt(effect.ordinal());
+        out.writeInt(effectSpecial.ordinal());
         out.writeDouble(rating);
         out.writeInt(isEquippable ? 1 : 0);
     }

@@ -56,4 +56,12 @@
         android:textStyle="italic"
         android:visibility="gone"/>
 
+    <TextView
+        android:id="@+id/dialog_artifact_effect_special"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="?android:attr/textAppearanceMedium"
+        android:textStyle="italic"
+        android:visibility="gone"/>
+
 </LinearLayout>
