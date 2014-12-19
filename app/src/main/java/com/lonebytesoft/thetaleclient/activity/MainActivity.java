@@ -40,7 +40,7 @@ public class MainActivity extends ActionBarActivity
     public static final String KEY_GAME_TAB_INDEX = "KEY_GAME_TAB_INDEX";
     private static final String KEY_DRAWER_TAB_INDEX = "KEY_DRAWER_TAB_INDEX";
 
-    private static final String URL_GAME = "http://the-tale.org/game/";
+    private static final String URL_GAME = "http://the-tale.org/game/?action=the-tale-client";
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.

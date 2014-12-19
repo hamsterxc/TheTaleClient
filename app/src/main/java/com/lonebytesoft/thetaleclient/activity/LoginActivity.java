@@ -37,8 +37,8 @@ import com.lonebytesoft.thetaleclient.util.UiUtils;
  */
 public class LoginActivity extends FragmentActivity {
 
-    private static final String URL_REGISTRATION = "http://the-tale.org/accounts/registration/fast";
-    private static final String URL_PASSWORD_REMIND = "http://the-tale.org/accounts/profile/reset-password";
+    private static final String URL_REGISTRATION = "http://the-tale.org/accounts/registration/fast?action=the-tale-client";
+    private static final String URL_PASSWORD_REMIND = "http://the-tale.org/accounts/profile/reset-password?action=the-tale-client";
     private static final long THIRD_PARTY_AUTH_STATE_TIMEOUT = 10000;
 
     private final Handler handler = new Handler(Looper.getMainLooper());
