@@ -19,6 +19,7 @@ import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.TheTaleClientApplication;
 import com.lonebytesoft.thetaleclient.api.ApiResponseCallback;
 import com.lonebytesoft.thetaleclient.api.CommonResponseCallback;
+import com.lonebytesoft.thetaleclient.api.dictionary.MapCellType;
 import com.lonebytesoft.thetaleclient.api.dictionary.MapStyle;
 import com.lonebytesoft.thetaleclient.api.model.PlaceInfo;
 import com.lonebytesoft.thetaleclient.api.model.PositionInfo;
@@ -45,7 +46,9 @@ import com.lonebytesoft.thetaleclient.util.map.MapModification;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import uk.co.senab.photoview.PhotoViewAttacher;
 
@@ -372,15 +375,6 @@ public class MapFragment extends WrapperFragment {
 
                         DialogUtils.showTabbedDialog(getChildFragmentManager(), getString(R.string.drawer_title_map), null);
 
-                        PlaceInfo placeInfo = null;
-                        for(final PlaceInfo currentPlaceInfo : mapResponse.places.values()) {
-                            if((currentPlaceInfo.x == tileX) && (currentPlaceInfo.y == tileY)) {
-                                placeInfo = currentPlaceInfo;
-                                break;
-                            }
-                        }
-
-                        final PlaceInfo placeInfoFinal = placeInfo;
                         new MapCellRequest().execute(tileX, tileY, RequestUtils.wrapCallback(new CommonResponseCallback<MapCellResponse, String>() {
                             @Override
                             public void processResponse(final MapCellResponse response) {
@@ -393,8 +387,8 @@ public class MapFragment extends WrapperFragment {
                                         if (dialog == null) {
                                             handler.post(this);
                                         } else {
-                                            dialog.setCaption(placeInfoFinal == null ? getString(R.string.map_tile_caption, tileX, tileY) : placeInfoFinal.name);
-                                            dialog.setTabsAdapter(new TileTabsAdapter(response, placeInfoFinal));
+                                            dialog.setCaption(response.title == null ? getString(R.string.map_tile_caption, tileX, tileY) : response.title);
+                                            dialog.setTabsAdapter(new TileTabsAdapter(response));
                                             dialog.setMode(DataViewMode.DATA);
                                         }
                                     }
@@ -439,11 +433,9 @@ public class MapFragment extends WrapperFragment {
     private class TileTabsAdapter extends TabbedDialog.TabbedDialogTabsAdapter {
 
         private final MapCellResponse cellInfo;
-        private final PlaceInfo placeInfo;
 
-        public TileTabsAdapter(final MapCellResponse cellInfo, final PlaceInfo placeInfo) {
+        public TileTabsAdapter(final MapCellResponse cellInfo) {
             this.cellInfo = cellInfo;
-            this.placeInfo = placeInfo;
         }
 
         @Override
@@ -453,56 +445,76 @@ public class MapFragment extends WrapperFragment {
 
         @Override
         public Fragment getItem(int i) {
-            switch(getTileTab(i)) {
-                case PARAMETERS:
-                    return MapTileParamsFragment.newInstance(placeInfo);
-
-                case TERRAIN:
-                    return MapTileTerrainFragment.newInstance(cellInfo);
-
-                default:
-                    return new Fragment();
-            }
+            return getTileTab(i).getFragment(cellInfo);
         }
 
         @Override
         public int getCount() {
-            return placeInfo == null ? 1 : 2;
+            return TileTab.getTabs(cellInfo.type).size();
         }
 
         private TileTab getTileTab(final int position) {
-            if(placeInfo == null) {
-                return position == 0 ? TileTab.TERRAIN : null;
-            } else {
-                switch(position) {
-                    case 0:
-                        return TileTab.PARAMETERS;
-
-                    case 1:
-                        return TileTab.TERRAIN;
-
-                    default:
-                        return null;
-                }
-            }
+            return TileTab.getTabs(cellInfo.type).get(position);
         }
 
     }
 
     private enum TileTab {
 
-        PARAMETERS(R.string.map_tile_tab_params),
-        TERRAIN(R.string.map_tile_tab_terrain),
+        PARAMETERS(R.string.map_tile_tab_params, new MapCellType[]{MapCellType.PLACE, MapCellType.BUILDING}) {
+            @Override
+            public Fragment getFragment(MapCellResponse cellInfo) {
+                return MapTileParamsFragment.newInstance(cellInfo);
+            }
+        },
+        DESCRIPTION(R.string.map_tile_tab_description, new MapCellType[]{MapCellType.PLACE}) {
+            @Override
+            public Fragment getFragment(MapCellResponse cellInfo) {
+                return MapTileDescriptionFragment.newInstance(cellInfo);
+            }
+        },
+        TERRAIN(R.string.map_tile_tab_terrain, new MapCellType[]{MapCellType.PLACE, MapCellType.BUILDING, MapCellType.TERRAIN}) {
+            @Override
+            public Fragment getFragment(MapCellResponse cellInfo) {
+                return MapTileTerrainFragment.newInstance(cellInfo);
+            }
+        },
         ;
 
         private final int titleResId;
+        private final MapCellType[] cellTypes;
 
-        private TileTab(final int titleResId) {
+        private TileTab(final int titleResId, final MapCellType[] cellTypes) {
             this.titleResId = titleResId;
+            this.cellTypes = cellTypes;
         }
 
         public String getTitle() {
             return TheTaleClientApplication.getContext().getString(titleResId);
+        }
+
+        public abstract Fragment getFragment(final MapCellResponse cellInfo);
+
+        private static final Map<MapCellType, List<TileTab>> tabs;
+
+        static {
+            tabs = new HashMap<>(MapCellType.values().length);
+            for(final TileTab tileTab : values()) {
+                for(final MapCellType cellType : tileTab.cellTypes) {
+                    List<TileTab> tileTabs = tabs.get(cellType);
+                    if(tileTabs == null) {
+                        tileTabs = new ArrayList<>();
+                        tileTabs.add(tileTab);
+                        tabs.put(cellType, tileTabs);
+                    } else {
+                        tileTabs.add(tileTab);
+                    }
+                }
+            }
+        }
+
+        public static List<TileTab> getTabs(final MapCellType cellType) {
+            return tabs.get(cellType);
         }
 
     }

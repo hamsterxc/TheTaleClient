@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
 
     <dimen name="drawer_item_height">48dp</dimen>
@@ -6,6 +7,7 @@
 
     <dimen name="dialog_padding">8dp</dimen>
     <dimen name="dialog_padding_big">16dp</dimen>
+    <dimen name="dialog_caption_height">64dp</dimen>
 
     <dimen name="game_info_bar_height">@dimen/game_info_icon_size</dimen>
     <dimen name="game_info_bar_padding">2dp</dimen>

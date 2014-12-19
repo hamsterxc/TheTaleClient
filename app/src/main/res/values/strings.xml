@@ -78,6 +78,7 @@
     <string name="map_place_race">Основное население</string>
     <string name="map_place_size">Размер</string>
     <string name="map_tile_caption">Квадрат %1$dx%2$d</string>
+    <string name="map_tile_tab_description">Описание</string>
     <string name="map_tile_tab_params">Параметры</string>
     <string name="map_tile_tab_terrain">Местность</string>
     <string name="map_style">Карта: %s</string>
