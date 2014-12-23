@@ -1,11 +1,18 @@
 package com.lonebytesoft.thetaleclient.fragment.dialog;
 
+import android.app.Activity;
 import android.os.Bundle;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.lonebytesoft.thetaleclient.DrawerItem;
 import com.lonebytesoft.thetaleclient.R;
+import com.lonebytesoft.thetaleclient.activity.MainActivity;
 import com.lonebytesoft.thetaleclient.api.ApiResponseCallback;
 import com.lonebytesoft.thetaleclient.api.CommonResponseCallback;
 import com.lonebytesoft.thetaleclient.api.model.QuestActorInfo;
@@ -13,6 +20,7 @@ import com.lonebytesoft.thetaleclient.api.request.GameInfoRequest;
 import com.lonebytesoft.thetaleclient.api.request.MapRequest;
 import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;
 import com.lonebytesoft.thetaleclient.api.response.MapResponse;
+import com.lonebytesoft.thetaleclient.util.PreferencesManager;
 import com.lonebytesoft.thetaleclient.util.RequestUtils;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
 
@@ -58,8 +66,11 @@ public class QuestActorDialog extends BaseDialog {
                         new MapRequest(response.mapVersion).execute(RequestUtils.wrapCallback(new CommonResponseCallback<MapResponse, String>() {
                             @Override
                             public void processResponse(MapResponse response) {
-                                UiUtils.setText(view.findViewById(R.id.dialog_quest_actor_person_place),
-                                        UiUtils.getInfoItem(getString(R.string.quest_actor_place), response.places.get(questActorInfo.personInfo.placeId).name));
+                                setPlaceLink(
+                                        view.findViewById(R.id.dialog_quest_actor_person_place),
+                                        getString(R.string.quest_actor_place),
+                                        response.places.get(questActorInfo.personInfo.placeId).name,
+                                        questActorInfo.personInfo.placeId);
                             }
 
                             @Override
@@ -84,8 +95,11 @@ public class QuestActorDialog extends BaseDialog {
                         new MapRequest(response.mapVersion).execute(RequestUtils.wrapCallback(new CommonResponseCallback<MapResponse, String>() {
                             @Override
                             public void processResponse(MapResponse response) {
-                                UiUtils.setText(view.findViewById(R.id.dialog_quest_actor_place_size),
-                                        UiUtils.getInfoItem(getString(R.string.map_place_size), String.valueOf(response.places.get(questActorInfo.placeInfo.id).size)));
+                                setPlaceLink(
+                                        view.findViewById(R.id.dialog_quest_actor_place_size),
+                                        getString(R.string.map_place_size),
+                                        String.valueOf(response.places.get(questActorInfo.placeInfo.id).size),
+                                        questActorInfo.placeInfo.id);
                             }
 
                             @Override
@@ -112,6 +126,26 @@ public class QuestActorDialog extends BaseDialog {
         }
 
         return wrapView(inflater, view, questActorInfo.type.getName());
+    }
+
+    private void setPlaceLink(final View view, final CharSequence caption, final CharSequence info, final int placeId) {
+        final Activity activity = getActivity();
+        if(!(activity instanceof MainActivity)) {
+            return;
+        }
+
+        final Spannable linkText = new SpannableString(info);
+        linkText.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.common_link)),
+                0, linkText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        UiUtils.setText(view, UiUtils.getInfoItem(caption, linkText));
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PreferencesManager.setMapCenterPlaceId(placeId);
+                dismiss();
+                ((MainActivity) activity).onNavigationDrawerItemSelected(DrawerItem.MAP);
+            }
+        });
     }
 
 }

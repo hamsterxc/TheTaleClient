@@ -17,6 +17,7 @@ import com.lonebytesoft.thetaleclient.api.dictionary.MapStyle;
 public class PreferencesManager {
 
     private static final String KEY_MAP_STYLE = "KEY_MAP_STYLE";
+    private static final String KEY_MAP_CENTER_PLACE_ID = "KEY_MAP_CENTER_PLACE_ID";
     private static final String KEY_SESSION = "KEY_SESSION";
     private static final String KEY_JOURNAL_READ_ALOUD_CONFIRMED = "KEY_JOURNAL_READ_ALOUD_CONFIRMED";
 
@@ -394,6 +395,16 @@ public class PreferencesManager {
     public static void setMapStyle(final MapStyle mapStyle) {
         sharedPreferences.edit()
                 .putInt(KEY_MAP_STYLE, mapStyle.ordinal())
+                .commit();
+    }
+
+    public static int getMapCenterPlaceId() {
+        return sharedPreferences.getInt(KEY_MAP_CENTER_PLACE_ID, -1);
+    }
+
+    public static void setMapCenterPlaceId(final int placeId) {
+        sharedPreferences.edit()
+                .putInt(KEY_MAP_CENTER_PLACE_ID, placeId)
                 .commit();
     }
 

@@ -355,11 +355,17 @@ public class MapFragment extends WrapperFragment {
 
                             if (isMapInitialPosition) {
                                 isMapInitialPosition = false;
-                                mapViewHelper.setMaximumScale(ZOOM_MAX * currentSizeDenominator);
-                                mapViewHelper.setMediumScale((ZOOM_MAX * currentSizeDenominator + minimumScale) / 2.0f);
-                                mapViewHelper.setMinimumScale(minimumScale);
-                                mapViewHelper.setScale(mapViewHelper.getMediumScale());
-                                mapViewHelper.onDrag(mapShiftX, mapShiftY);
+                                final PlaceInfo placeInfo = mapResponse.places.get(PreferencesManager.getMapCenterPlaceId());
+                                if(placeInfo == null) {
+                                    mapViewHelper.setMaximumScale(ZOOM_MAX * currentSizeDenominator);
+                                    mapViewHelper.setMediumScale((ZOOM_MAX * currentSizeDenominator + minimumScale) / 2.0f);
+                                    mapViewHelper.setMinimumScale(minimumScale);
+                                    mapViewHelper.setScale(mapViewHelper.getMediumScale());
+                                    mapViewHelper.onDrag(mapShiftX, mapShiftY);
+                                } else {
+                                    PreferencesManager.setMapCenterPlaceId(-1);
+                                    moveToTile(placeInfo.x, placeInfo.y);
+                                }
                             }
 
                             UiUtils.removeGlobalLayoutListener(mapView, this);

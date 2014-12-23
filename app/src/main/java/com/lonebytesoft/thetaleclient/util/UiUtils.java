@@ -81,7 +81,7 @@ public class UiUtils {
         view.setLayoutParams(layoutParams);
     }
 
-    public static Spanned getInfoItem(final String caption, final String info) {
+    public static Spanned getInfoItem(final CharSequence caption, final CharSequence info) {
         final Spannable captionSpanned = new SpannableString(caption);
         captionSpanned.setSpan(new StyleSpan(Typeface.BOLD), 0, captionSpanned.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         return (Spanned) TextUtils.concat(captionSpanned, ": ", info);
