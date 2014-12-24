@@ -64,14 +64,24 @@ public class TextToSpeechUtils {
 
     public static void pause() {
         if(textToSpeech != null) {
-            textToSpeech.stop();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    textToSpeech.stop();
+                }
+            }).start();
         }
         queue.clear();
     }
 
     public static void destroy() {
         if(textToSpeech != null) {
-            textToSpeech.shutdown();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    textToSpeech.shutdown();
+                }
+            }).start();
         }
         queue.clear();
         isInitialized = false;
