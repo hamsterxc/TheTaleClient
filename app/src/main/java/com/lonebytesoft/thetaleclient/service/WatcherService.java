@@ -11,6 +11,7 @@ import android.os.IBinder;
 import com.lonebytesoft.thetaleclient.TheTaleClientApplication;
 import com.lonebytesoft.thetaleclient.api.ApiResponseCallback;
 import com.lonebytesoft.thetaleclient.api.dictionary.Action;
+import com.lonebytesoft.thetaleclient.api.model.DiaryEntry;
 import com.lonebytesoft.thetaleclient.api.request.AbilityUseRequest;
 import com.lonebytesoft.thetaleclient.api.request.GameInfoRequest;
 import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;
@@ -23,6 +24,8 @@ import com.lonebytesoft.thetaleclient.service.watcher.CardTaker;
 import com.lonebytesoft.thetaleclient.service.watcher.GameStateWatcher;
 import com.lonebytesoft.thetaleclient.util.NotificationManager;
 import com.lonebytesoft.thetaleclient.util.PreferencesManager;
+import com.lonebytesoft.thetaleclient.util.TextToSpeechUtils;
+import com.lonebytesoft.thetaleclient.util.onscreen.OnscreenPart;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,6 +68,21 @@ public class WatcherService extends Service {
                             new AbilityUseRequest(Action.HELP).execute(0, null);
                         }
 
+                        final int diarySize = response.account.hero.diary.size();
+                        final int lastDiaryTimestamp = PreferencesManager.getLastDiaryEntryRead();
+                        if(PreferencesManager.isDiaryReadAloudEnabled()
+                                && TheTaleClientApplication.getOnscreenStateWatcher().isOnscreen(OnscreenPart.MAIN)
+                                && (lastDiaryTimestamp > 0)) {
+                            for(int i = 0; i < diarySize; i++) {
+                                final DiaryEntry diaryEntry = response.account.hero.diary.get(i);
+                                if(diaryEntry.timestamp > lastDiaryTimestamp) {
+                                    TextToSpeechUtils.speak(String.format("%s, %s.\n%s",
+                                            diaryEntry.date, diaryEntry.time, diaryEntry.text));
+                                }
+                            }
+                        }
+                        PreferencesManager.setLastDiaryEntryRead(response.account.hero.diary.get(diarySize - 1).timestamp);
+
                         postRefresh();
                     }
 
@@ -86,10 +104,6 @@ public class WatcherService extends Service {
             }
         }
     };
-
-    private void postRefresh() {
-        handler.postDelayed(refreshRunnable, REQUEST_TIMEOUT_MILLIS);
-    }
 
     private List<GameStateWatcher> watchers;
     private List<Autohelper> autohelpers;
@@ -113,6 +127,10 @@ public class WatcherService extends Service {
         handler.removeCallbacks(refreshRunnable);
         refreshRunnable.run();
         return START_STICKY;
+    }
+
+    private void postRefresh() {
+        handler.postDelayed(refreshRunnable, REQUEST_TIMEOUT_MILLIS);
     }
 
     @Override

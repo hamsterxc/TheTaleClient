@@ -19,7 +19,8 @@ public class PreferencesManager {
     private static final String KEY_MAP_STYLE = "KEY_MAP_STYLE";
     private static final String KEY_MAP_CENTER_PLACE_ID = "KEY_MAP_CENTER_PLACE_ID";
     private static final String KEY_SESSION = "KEY_SESSION";
-    private static final String KEY_JOURNAL_READ_ALOUD_CONFIRMED = "KEY_JOURNAL_READ_ALOUD_CONFIRMED";
+    private static final String KEY_READ_ALOUD_CONFIRMED = "KEY_READ_ALOUD_CONFIRMED";
+    private static final String KEY_LAST_DIARY_ENTRY_READ = "KEY_LAST_DIARY_ENTRY_READ";
 
     private static final String KEY_NOTIFICATION_LAST = "%s_LAST";
     private static final String KEY_NOTIFICATION_SHOULD_SHOW = "%s_SHOULD_SHOW";
@@ -369,7 +370,7 @@ public class PreferencesManager {
     public static boolean isJournalReadAloudEnabled() {
         return sharedPreferences.getBoolean(
                 getString(R.string.settings_key_misc_journal_read_aloud),
-                getBoolean(R.bool.settings_misc_journal_read_aloud_default));
+                getBoolean(R.bool.settings_misc_read_aloud_default));
     }
 
     public static void setJournalReadAloudEnabled(final boolean isEnabled) {
@@ -378,13 +379,35 @@ public class PreferencesManager {
                 .commit();
     }
 
-    public static boolean isJournalReadAloudConfirmed() {
-        return sharedPreferences.getBoolean(KEY_JOURNAL_READ_ALOUD_CONFIRMED, false);
+    public static boolean isDiaryReadAloudEnabled() {
+        return sharedPreferences.getBoolean(
+                getString(R.string.settings_key_misc_diary_read_aloud),
+                getBoolean(R.bool.settings_misc_read_aloud_default));
     }
 
-    public static void setJournalReadAloudConfirmed(final boolean isJournalReadAloudConfirmed) {
+    public static void setDiaryReadAloudEnabled(final boolean isEnabled) {
         sharedPreferences.edit()
-                .putBoolean(KEY_JOURNAL_READ_ALOUD_CONFIRMED, isJournalReadAloudConfirmed)
+                .putBoolean(getString(R.string.settings_key_misc_diary_read_aloud), isEnabled)
+                .commit();
+    }
+
+    public static boolean isReadAloudConfirmed() {
+        return sharedPreferences.getBoolean(KEY_READ_ALOUD_CONFIRMED, false);
+    }
+
+    public static void setReadAloudConfirmed(final boolean isReadAloudConfirmed) {
+        sharedPreferences.edit()
+                .putBoolean(KEY_READ_ALOUD_CONFIRMED, isReadAloudConfirmed)
+                .commit();
+    }
+
+    public static int getLastDiaryEntryRead() {
+        return sharedPreferences.getInt(KEY_LAST_DIARY_ENTRY_READ, 0);
+    }
+
+    public static void setLastDiaryEntryRead(final int timestamp) {
+        sharedPreferences.edit()
+                .putInt(KEY_LAST_DIARY_ENTRY_READ, timestamp)
                 .commit();
     }
 

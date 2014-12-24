@@ -6,6 +6,7 @@ package com.lonebytesoft.thetaleclient.util.onscreen;
  */
 public enum OnscreenPart {
 
+    MAIN,
     GAME_INFO,
     QUESTS,
     ;

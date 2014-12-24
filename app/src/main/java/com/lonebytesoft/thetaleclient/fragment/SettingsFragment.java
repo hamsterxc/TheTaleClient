@@ -21,6 +21,7 @@ public class SettingsFragment extends PreferenceFragment {
     public SettingsFragment() {
     }
 
+    @Override
     public void onCreate(Bundle paramBundle) {
         super.onCreate(paramBundle);
 
@@ -103,22 +104,45 @@ public class SettingsFragment extends PreferenceFragment {
                 R.string.settings_summary_autohelp_common_energy_threshold,
                 String.valueOf(PreferencesManager.getAutohelpEnergyEnergyThreshold()));
 
-        // journal reading aloud
+        // reading aloud
         final CheckBoxPreference journalReadAloud = (CheckBoxPreference) findPreference(getString(R.string.settings_key_misc_journal_read_aloud));
         journalReadAloud.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
-                if(PreferencesManager.isJournalReadAloudConfirmed()) {
+                if(PreferencesManager.isReadAloudConfirmed()) {
                     return true;
                 } else {
                     DialogUtils.showConfirmationDialog(getFragmentManager(),
                             getString(R.string.common_dialog_attention_title),
-                            getString(R.string.game_journal_read_aloud_confirmation),
+                            getString(R.string.game_read_aloud_confirmation),
                             new Runnable() {
                                 @Override
                                 public void run() {
-                                    PreferencesManager.setJournalReadAloudConfirmed(true);
+                                    PreferencesManager.setReadAloudConfirmed(true);
                                     journalReadAloud.setChecked(true);
+                                    TextToSpeechUtils.init(TheTaleClientApplication.getContext());
+                                }
+                            });
+                    return false;
+                }
+            }
+        });
+
+        final CheckBoxPreference diaryReadAloud = (CheckBoxPreference) findPreference(getString(R.string.settings_key_misc_diary_read_aloud));
+        diaryReadAloud.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                if(PreferencesManager.isReadAloudConfirmed()) {
+                    return true;
+                } else {
+                    DialogUtils.showConfirmationDialog(getFragmentManager(),
+                            getString(R.string.common_dialog_attention_title),
+                            getString(R.string.game_read_aloud_confirmation),
+                            new Runnable() {
+                                @Override
+                                public void run() {
+                                    PreferencesManager.setReadAloudConfirmed(true);
+                                    diaryReadAloud.setChecked(true);
                                     TextToSpeechUtils.init(TheTaleClientApplication.getContext());
                                 }
                             });

@@ -89,13 +89,31 @@ public class GameFragment extends Fragment implements Refreshable, OnscreenState
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case R.id.action_read_aloud:
-                final boolean isJournalReadAloudEnabled = PreferencesManager.isJournalReadAloudEnabled();
-                PreferencesManager.setJournalReadAloudEnabled(!isJournalReadAloudEnabled);
-                if(isJournalReadAloudEnabled) {
-                    TextToSpeechUtils.pause();
+                if(PreferencesManager.isReadAloudConfirmed()) {
+                    final boolean wasReadAloudEnabled;
+                    switch(GamePage.values()[currentPageIndex]) {
+                        case GAME_INFO:
+                            wasReadAloudEnabled = PreferencesManager.isJournalReadAloudEnabled();
+                            PreferencesManager.setJournalReadAloudEnabled(!wasReadAloudEnabled);
+                            break;
+
+                        case DIARY:
+                            wasReadAloudEnabled = PreferencesManager.isDiaryReadAloudEnabled();
+                            PreferencesManager.setDiaryReadAloudEnabled(!wasReadAloudEnabled);
+                            break;
+
+                        default:
+                            return super.onOptionsItemSelected(item);
+                    }
+
+                    if(wasReadAloudEnabled) {
+                        TextToSpeechUtils.pause();
+                    }
+                    updateMenu();
+                    return true;
+                } else {
+                    return super.onOptionsItemSelected(item);
                 }
-                updateMenu();
-                return true;
 
             default:
                 return super.onOptionsItemSelected(item);
@@ -116,13 +134,27 @@ public class GameFragment extends Fragment implements Refreshable, OnscreenState
     private void updateMenu() {
         final MenuItem readAloudMenuItem = getMenuItem(R.id.action_read_aloud);
         if(readAloudMenuItem != null) {
-            final boolean isVisible = PreferencesManager.isJournalReadAloudConfirmed()
-                    && currentPageIndex == GamePage.GAME_INFO.ordinal();
+            boolean isVisible = false;
+            boolean isOn = false;
+            switch(GamePage.values()[currentPageIndex]) {
+                case GAME_INFO:
+                    isVisible = PreferencesManager.isReadAloudConfirmed();
+                    if(isVisible) {
+                        isOn = PreferencesManager.isJournalReadAloudEnabled();
+                    }
+                    break;
+
+                case DIARY:
+                    isVisible = PreferencesManager.isReadAloudConfirmed();
+                    if(isVisible) {
+                        isOn = PreferencesManager.isDiaryReadAloudEnabled();
+                    }
+                    break;
+            }
+
             readAloudMenuItem.setVisible(isVisible);
             if(isVisible) {
-                readAloudMenuItem.setIcon(PreferencesManager.isJournalReadAloudEnabled() ?
-                        R.drawable.ic_volume_small :
-                        R.drawable.ic_volume_off_small);
+                readAloudMenuItem.setIcon(isOn ? R.drawable.ic_volume_small : R.drawable.ic_volume_off_small);
             }
         }
     }

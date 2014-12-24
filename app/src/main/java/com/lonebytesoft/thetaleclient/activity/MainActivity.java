@@ -33,6 +33,7 @@ import com.lonebytesoft.thetaleclient.util.HistoryStack;
 import com.lonebytesoft.thetaleclient.util.PreferencesManager;
 import com.lonebytesoft.thetaleclient.util.TextToSpeechUtils;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
+import com.lonebytesoft.thetaleclient.util.onscreen.OnscreenPart;
 
 public class MainActivity extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
@@ -88,7 +89,7 @@ public class MainActivity extends ActionBarActivity
     protected void onStart() {
         super.onStart();
 
-        if(PreferencesManager.isJournalReadAloudConfirmed()) {
+        if(PreferencesManager.isReadAloudConfirmed()) {
             TextToSpeechUtils.init(TheTaleClientApplication.getContext());
         }
     }
@@ -110,12 +111,15 @@ public class MainActivity extends ActionBarActivity
             }
         }
         UiUtils.callOnscreenStateChange(fragment, true);
+
+        TheTaleClientApplication.getOnscreenStateWatcher().onscreenStateChange(OnscreenPart.MAIN, true);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
 
+        TheTaleClientApplication.getOnscreenStateWatcher().onscreenStateChange(OnscreenPart.MAIN, false);
         TextToSpeechUtils.pause();
         RequestCacheManager.invalidate();
         UiUtils.callOnscreenStateChange(getSupportFragmentManager().findFragmentByTag(currentItem.getFragmentTag()), false);

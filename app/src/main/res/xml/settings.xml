@@ -251,7 +251,15 @@
             android:layout="@layout/widget_preference_container"
             android:key="@string/settings_key_misc_journal_read_aloud"
             android:title="@string/settings_title_misc_journal_read_aloud"
-            android:defaultValue="@bool/settings_misc_journal_read_aloud_default"/>
+            android:summary="@string/settings_summary_misc_journal_read_aloud"
+            android:defaultValue="@bool/settings_misc_read_aloud_default"/>
+
+        <CheckBoxPreference
+            android:layout="@layout/widget_preference_container"
+            android:key="@string/settings_key_misc_diary_read_aloud"
+            android:title="@string/settings_title_misc_diary_read_aloud"
+            android:summary="@string/settings_summary_misc_diary_read_aloud"
+            android:defaultValue="@bool/settings_misc_read_aloud_default"/>
 
     </PreferenceCategory>
 
