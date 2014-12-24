@@ -87,19 +87,20 @@ public class QuestActorDialog extends BaseDialog {
 
             case PLACE:
                 view = inflater.inflate(R.layout.dialog_content_quest_actor_place, container, false);
-                UiUtils.setText(view.findViewById(R.id.dialog_quest_actor_place_name),
-                        UiUtils.getInfoItem(getString(R.string.map_place_name), questActorInfo.placeInfo.name));
+                setPlaceLink(
+                        view.findViewById(R.id.dialog_quest_actor_place_name),
+                        getString(R.string.map_place_name),
+                        questActorInfo.placeInfo.name,
+                        questActorInfo.placeInfo.id);
                 new GameInfoRequest(true).execute(RequestUtils.wrapCallback(new ApiResponseCallback<GameInfoResponse>() {
                     @Override
                     public void processResponse(GameInfoResponse response) {
                         new MapRequest(response.mapVersion).execute(RequestUtils.wrapCallback(new CommonResponseCallback<MapResponse, String>() {
                             @Override
                             public void processResponse(MapResponse response) {
-                                setPlaceLink(
-                                        view.findViewById(R.id.dialog_quest_actor_place_size),
+                                UiUtils.setText(view.findViewById(R.id.dialog_quest_actor_place_size), UiUtils.getInfoItem(
                                         getString(R.string.map_place_size),
-                                        String.valueOf(response.places.get(questActorInfo.placeInfo.id).size),
-                                        questActorInfo.placeInfo.id);
+                                        String.valueOf(response.places.get(questActorInfo.placeInfo.id).size)));
                             }
 
                             @Override
