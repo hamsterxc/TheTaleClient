@@ -24,9 +24,9 @@ import com.lonebytesoft.thetaleclient.api.ApiResponseCallback;
 import com.lonebytesoft.thetaleclient.api.model.ChatMessage;
 import com.lonebytesoft.thetaleclient.api.request.InfoRequest;
 import com.lonebytesoft.thetaleclient.api.response.InfoResponse;
+import com.lonebytesoft.thetaleclient.util.ChatManager;
 import com.lonebytesoft.thetaleclient.util.RequestUtils;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
-import com.lonebytesoft.thetaleclient.util.chat.ChatManager;
 
 import org.xml.sax.XMLReader;
 

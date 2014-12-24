@@ -9,8 +9,8 @@ import android.widget.FrameLayout;
 import com.lonebytesoft.thetaleclient.DataViewMode;
 import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.activity.MainActivity;
-import com.lonebytesoft.thetaleclient.fragment.onscreen.OnscreenStateListener;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
+import com.lonebytesoft.thetaleclient.util.onscreen.OnscreenStateListener;
 
 /**
  * @author Hamster

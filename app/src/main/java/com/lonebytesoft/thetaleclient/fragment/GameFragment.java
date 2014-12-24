@@ -16,10 +16,10 @@ import android.view.ViewGroup;
 import com.astuetz.PagerSlidingTabStrip;
 import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.activity.MainActivity;
-import com.lonebytesoft.thetaleclient.fragment.onscreen.OnscreenStateListener;
 import com.lonebytesoft.thetaleclient.util.PreferencesManager;
 import com.lonebytesoft.thetaleclient.util.TextToSpeechUtils;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
+import com.lonebytesoft.thetaleclient.util.onscreen.OnscreenStateListener;
 
 import java.util.HashMap;
 import java.util.Map;

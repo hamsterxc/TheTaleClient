@@ -21,7 +21,7 @@ import android.widget.TextView;
 
 import com.lonebytesoft.thetaleclient.activity.MainActivity;
 import com.lonebytesoft.thetaleclient.fragment.GameFragment;
-import com.lonebytesoft.thetaleclient.fragment.onscreen.OnscreenStateListener;
+import com.lonebytesoft.thetaleclient.util.onscreen.OnscreenStateListener;
 
 /**
  * @author Hamster

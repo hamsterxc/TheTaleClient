@@ -40,8 +40,8 @@ import com.lonebytesoft.thetaleclient.util.ObjectUtils;
 import com.lonebytesoft.thetaleclient.util.PreferencesManager;
 import com.lonebytesoft.thetaleclient.util.RequestUtils;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
-import com.lonebytesoft.thetaleclient.util.map.MapManager;
 import com.lonebytesoft.thetaleclient.util.map.MapModification;
+import com.lonebytesoft.thetaleclient.util.map.MapUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -206,7 +206,7 @@ public class MapFragment extends WrapperFragment {
                         new MapRequest(gameInfoResponse.mapVersion).execute(RequestUtils.wrapCallback(new CommonResponseCallback<MapResponse, String>() {
                             @Override
                             public void processResponse(final MapResponse mapResponse) {
-                                MapManager.getMapSprite(mapStyle, infoResponse, new MapManager.MapBitmapCallback() {
+                                MapUtils.getMapSprite(mapStyle, infoResponse, new MapUtils.MapBitmapCallback() {
                                     @Override
                                     public void onBitmapBuilt(final Bitmap sprite) {
                                         if(!isAdded()) {
@@ -215,10 +215,10 @@ public class MapFragment extends WrapperFragment {
 
                                         heroPosition = gameInfoResponse.account.hero.position;
 
-                                        final Bitmap map = MapManager.getMapBitmap(mapResponse);
+                                        final Bitmap map = MapUtils.getMapBitmap(mapResponse);
                                         final Canvas canvas = new Canvas(map);
 
-                                        if(MapManager.getCurrentSizeDenominator() == 1) {
+                                        if(MapUtils.getCurrentSizeDenominator() == 1) {
                                             actionMapModificationContainer.setVisibility(View.VISIBLE);
                                         } else {
                                             actionMapModificationContainer.setVisibility(View.GONE);
@@ -228,9 +228,9 @@ public class MapFragment extends WrapperFragment {
                                         }
 
                                         if(mapModification == MapModification.NONE) {
-                                            MapManager.drawBaseLayer(canvas, mapResponse, sprite);
-                                            MapManager.drawPlaceNamesLayer(canvas, mapResponse);
-                                            MapManager.drawHeroLayer(canvas, gameInfoResponse.account.hero, sprite);
+                                            MapUtils.drawBaseLayer(canvas, mapResponse, sprite);
+                                            MapUtils.drawPlaceNamesLayer(canvas, mapResponse);
+                                            MapUtils.drawHeroLayer(canvas, gameInfoResponse.account.hero, sprite);
                                             setMap(map, mapResponse);
                                         } else {
                                             new MapTerrainRequest().execute(RequestUtils.wrapCallback(new CommonResponseCallback<MapTerrainResponse, String>() {
@@ -238,14 +238,14 @@ public class MapFragment extends WrapperFragment {
                                                 public void processResponse(final MapTerrainResponse mapTerrainResponse) {
                                                     switch(mapModification) {
                                                         case WIND:
-                                                            MapManager.drawModificationLayer(canvas, mapResponse, mapTerrainResponse, mapModification);
+                                                            MapUtils.drawModificationLayer(canvas, mapResponse, mapTerrainResponse, mapModification);
                                                             break;
 
                                                         case INFLUENCE:
-                                                            MapManager.drawBaseLayer(canvas, mapResponse, sprite);
-                                                            MapManager.drawModificationLayer(canvas, mapResponse, mapTerrainResponse, mapModification);
-                                                            MapManager.drawPlaceNamesLayer(canvas, mapResponse);
-                                                            MapManager.drawHeroLayer(canvas, gameInfoResponse.account.hero, sprite);
+                                                            MapUtils.drawBaseLayer(canvas, mapResponse, sprite);
+                                                            MapUtils.drawModificationLayer(canvas, mapResponse, mapTerrainResponse, mapModification);
+                                                            MapUtils.drawPlaceNamesLayer(canvas, mapResponse);
+                                                            MapUtils.drawHeroLayer(canvas, gameInfoResponse.account.hero, sprite);
                                                             break;
                                                     }
                                                     setMap(map, mapResponse);
@@ -293,10 +293,10 @@ public class MapFragment extends WrapperFragment {
     }
 
     private void moveToTile(final int tileX, final int tileY) {
-        mapViewHelper.setScale(ZOOM_MAX * MapManager.getCurrentSizeDenominator());
+        mapViewHelper.setScale(ZOOM_MAX * MapUtils.getCurrentSizeDenominator());
         final float scale = mapViewHelper.getScale();
-        final float newCenterX = (tileX + 0.5f) * MapManager.MAP_TILE_SIZE / MapManager.getCurrentSizeDenominator() * scale;
-        final float newCenterY = (tileY + 0.5f) * MapManager.MAP_TILE_SIZE / MapManager.getCurrentSizeDenominator() * scale;
+        final float newCenterX = (tileX + 0.5f) * MapUtils.MAP_TILE_SIZE / MapUtils.getCurrentSizeDenominator() * scale;
+        final float newCenterY = (tileY + 0.5f) * MapUtils.MAP_TILE_SIZE / MapUtils.getCurrentSizeDenominator() * scale;
         final float newRectLeft = mapView.getWidth() / 2.0f - newCenterX;
         final float newRectTop = mapView.getHeight() / 2.0f - newCenterY;
         final RectF currentRect = mapViewHelper.getDisplayRect();
@@ -345,7 +345,7 @@ public class MapFragment extends WrapperFragment {
                         final int viewWidth = mapView.getWidth();
                         final int viewHeight = mapView.getHeight();
                         if ((viewWidth != 0) && (viewHeight != 0)) {
-                            final int currentSizeDenominator = MapManager.getCurrentSizeDenominator();
+                            final int currentSizeDenominator = MapUtils.getCurrentSizeDenominator();
                             final float minimumScale;
                             if (viewWidth < viewHeight) {
                                 minimumScale = (float) viewWidth / width;
@@ -376,8 +376,8 @@ public class MapFragment extends WrapperFragment {
                 mapViewHelper.setOnPhotoTapListener(new PhotoViewAttacher.OnPhotoTapListener() {
                     @Override
                     public void onPhotoTap(View view, float x, float y) {
-                        final int tileX = (int) Math.floor(x * width * MapManager.getCurrentSizeDenominator() / MapManager.MAP_TILE_SIZE);
-                        final int tileY = (int) Math.floor(y * height * MapManager.getCurrentSizeDenominator() / MapManager.MAP_TILE_SIZE);
+                        final int tileX = (int) Math.floor(x * width * MapUtils.getCurrentSizeDenominator() / MapUtils.MAP_TILE_SIZE);
+                        final int tileY = (int) Math.floor(y * height * MapUtils.getCurrentSizeDenominator() / MapUtils.MAP_TILE_SIZE);
 
                         DialogUtils.showTabbedDialog(getChildFragmentManager(), getString(R.string.drawer_title_map), null);
 

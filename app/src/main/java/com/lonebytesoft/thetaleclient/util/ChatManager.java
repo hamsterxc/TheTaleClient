@@ -1,4 +1,4 @@
-package com.lonebytesoft.thetaleclient.util.chat;
+package com.lonebytesoft.thetaleclient.util;
 
 import android.os.AsyncTask;
 import android.os.Handler;
@@ -8,7 +8,6 @@ import com.lonebytesoft.thetaleclient.api.CommonRequest;
 import com.lonebytesoft.thetaleclient.api.CommonResponseCallback;
 import com.lonebytesoft.thetaleclient.api.HttpMethod;
 import com.lonebytesoft.thetaleclient.api.model.ChatMessage;
-import com.lonebytesoft.thetaleclient.util.ObjectUtils;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -34,6 +33,7 @@ import java.util.regex.Pattern;
 /**
  * @author Hamster
  * @since 24.10.2014
+ * todo refactor to use object, not class with static fields/methods
  */
 public class ChatManager {
 

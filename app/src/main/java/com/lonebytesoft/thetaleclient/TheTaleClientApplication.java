@@ -4,9 +4,9 @@ import android.app.Application;
 import android.content.Context;
 
 import com.lonebytesoft.thetaleclient.api.cache.RequestCacheManager;
-import com.lonebytesoft.thetaleclient.fragment.onscreen.OnscreenStateWatcher;
 import com.lonebytesoft.thetaleclient.util.NotificationManager;
-import com.lonebytesoft.thetaleclient.util.map.MapManager;
+import com.lonebytesoft.thetaleclient.util.map.MapUtils;
+import com.lonebytesoft.thetaleclient.util.onscreen.OnscreenStateWatcher;
 
 /**
  * @author Hamster
@@ -32,7 +32,7 @@ public class TheTaleClientApplication extends Application {
         super.onLowMemory();
 
         RequestCacheManager.invalidate();
-        MapManager.cleanup();
+        MapUtils.cleanup();
 
         System.gc();
     }

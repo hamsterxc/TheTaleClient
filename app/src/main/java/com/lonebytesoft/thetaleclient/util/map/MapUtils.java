@@ -30,7 +30,7 @@ import java.util.Map;
  * @author Hamster
  * @since 13.10.2014
  */
-public class MapManager {
+public class MapUtils {
 
     private static final String MAP_SPRITE_URL = "http:%s%s";
     public static final int MAP_TILE_SIZE = 32;

@@ -1,4 +1,4 @@
-package com.lonebytesoft.thetaleclient.fragment.onscreen;
+package com.lonebytesoft.thetaleclient.util.onscreen;
 
 /**
  * @author Hamster

@@ -4,7 +4,7 @@ import com.lonebytesoft.thetaleclient.api.model.PlaceInfo;
 import com.lonebytesoft.thetaleclient.api.model.RoadInfo;
 import com.lonebytesoft.thetaleclient.api.model.SpriteTileInfo;
 import com.lonebytesoft.thetaleclient.util.ObjectUtils;
-import com.lonebytesoft.thetaleclient.util.map.MapManager;
+import com.lonebytesoft.thetaleclient.util.map.MapUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -62,7 +62,7 @@ public class MapResponse {
                 final List<SpriteTileInfo> cell = new ArrayList<>(tilesCount);
                 for(int k = 0; k < tilesCount; k++) {
                     final JSONArray tileJson = cellJson.getJSONArray(k);
-                    cell.add(MapManager.getSpriteTile(tileJson.getInt(0), tileJson.getInt(1)));
+                    cell.add(MapUtils.getSpriteTile(tileJson.getInt(0), tileJson.getInt(1)));
                 }
                 row.add(cell);
             }

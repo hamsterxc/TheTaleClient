@@ -25,7 +25,7 @@ public enum MapModification {
     WIND("Ветер") {
         @Override
         public void modifyCell(final Canvas canvas, final int tileX, final int tileY, final MapCellTerrainInfo cellInfo) {
-            final float size = MapManager.MAP_TILE_SIZE;
+            final float size = MapUtils.MAP_TILE_SIZE;
             final float x = tileX * size;
             final float y = tileY * size;
 
@@ -58,9 +58,9 @@ public enum MapModification {
     INFLUENCE("Влияние") {
         @Override
         public void modifyCell(final Canvas canvas, final int tileX, final int tileY, final MapCellTerrainInfo cellInfo) {
-            final float x = tileX * MapManager.MAP_TILE_SIZE;
-            final float y = tileY * MapManager.MAP_TILE_SIZE;
-            canvas.drawRect(x, y, x + MapManager.MAP_TILE_SIZE, y + MapManager.MAP_TILE_SIZE,
+            final float x = tileX * MapUtils.MAP_TILE_SIZE;
+            final float y = tileY * MapUtils.MAP_TILE_SIZE;
+            canvas.drawRect(x, y, x + MapUtils.MAP_TILE_SIZE, y + MapUtils.MAP_TILE_SIZE,
                     influencePaint.get(cellInfo.isWilderness ? 0 : cellInfo.neighborPlaceId));
         }
     }
