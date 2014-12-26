@@ -108,4 +108,17 @@ public class UiUtils {
                 PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
+    // TODO plurals in "values" folder are treated as English, not Russian
+    public static String getQuantityString(final Context context,
+                                     final int oneResId, final int fewResId, final int manyResId,
+                                     final int quantity) {
+        if((quantity % 100 >= 11) && (quantity % 100 <= 14) || (quantity % 10 == 0) || (quantity % 10 >= 5)) {
+            return context.getString(manyResId, quantity);
+        } else if(quantity % 10 == 1) {
+            return context.getString(oneResId, quantity);
+        } else {
+            return context.getString(fewResId, quantity);
+        }
+    }
+
 }

@@ -20,6 +20,8 @@
     <color name="common_error">#ff0000</color>
     <color name="common_link">#0088cc</color>
     <color name="common_list_item_background_pressed">#660099cc</color>
+    <color name="common_negative">#ff0000</color>
+    <color name="common_positive">#008000</color>
     <color name="common_text">#303030</color>
 
     <color name="drawer_background">@android:color/white</color>

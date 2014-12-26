@@ -94,7 +94,9 @@ public class NotificationManager {
                 notificationBuilder.setContentText(notificationLines.get(0));
             } else {
 //                final String linesQuantity = context.getResources().getQuantityString(R.plurals.notification_lines, linesCount, linesCount);
-                final String linesQuantity = getLinesQuantityString(linesCount);
+                final String linesQuantity = UiUtils.getQuantityString(context,
+                        R.string.notification_lines_one, R.string.notification_lines_few, R.string.notification_lines_many,
+                        linesCount);
                 final NotificationCompat.InboxStyle notificationStyle = new NotificationCompat.InboxStyle()
                         .setBigContentTitle(context.getString(R.string.app_name))
                         .setSummaryText(linesQuantity);
@@ -123,17 +125,6 @@ public class NotificationManager {
     public void clearNotifications() {
         notificationManager.cancel(context.getPackageName(), NOTIFICATION_ID);
         onNotificationDelete();
-    }
-
-    // TODO plurals in "values" folder are treated as English, not Russian
-    private String getLinesQuantityString(final int quantity) {
-        if((quantity % 100 >= 11) && (quantity % 100 <= 14) || (quantity % 10 == 0) || (quantity % 10 >= 5)) {
-            return context.getString(R.string.notification_lines_many, quantity);
-        } else if(quantity % 10 == 1) {
-            return context.getString(R.string.notification_lines_one, quantity);
-        } else {
-            return context.getString(R.string.notification_lines_few, quantity);
-        }
     }
 
     private static boolean isTimeAcceptable(final int timeHours, final int timeMinutes,

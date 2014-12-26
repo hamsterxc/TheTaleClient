@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.widget.TextView;
 
 import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.api.response.MapCellResponse;
@@ -33,16 +32,16 @@ public abstract class MapTileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_map_tile_tab, container, false);
 
-        final TextView text = (TextView) view.findViewById(R.id.map_tile_tab_text);
-        setupText(text);
+        final ViewGroup content = (ViewGroup) view.findViewById(R.id.map_tile_tab_content);
+        setupContent(inflater, content);
 
         final View contentContainer = view.findViewById(R.id.map_tile_tab_container);
         view.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                final int textHeight = text.getHeight();
-                if(textHeight > 0) {
-                    UiUtils.setHeight(contentContainer, getContentHeight(textHeight));
+                final int contentHeight = content.getHeight();
+                if(contentHeight > 0) {
+                    UiUtils.setHeight(contentContainer, getContentHeight(contentHeight));
                     UiUtils.removeGlobalLayoutListener(view, this);
                 }
             }
@@ -51,7 +50,7 @@ public abstract class MapTileFragment extends Fragment {
         return view;
     }
 
-    protected abstract void setupText(final TextView text);
+    protected abstract void setupContent(final LayoutInflater layoutInflater, final ViewGroup container);
 
     private int getContentHeight(final int contentHeight) {
         final DisplayMetrics displayMetrics = new DisplayMetrics();

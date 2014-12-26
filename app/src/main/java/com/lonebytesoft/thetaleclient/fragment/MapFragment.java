@@ -473,6 +473,12 @@ public class MapFragment extends WrapperFragment {
                 return MapTileParamsFragment.newInstance(cellInfo);
             }
         },
+        COUNCIL(R.string.map_tile_tab_council, new MapCellType[]{MapCellType.PLACE}) {
+            @Override
+            public Fragment getFragment(MapCellResponse cellInfo) {
+                return MapTileCouncilFragment.newInstance(cellInfo);
+            }
+        },
         DESCRIPTION(R.string.map_tile_tab_description, new MapCellType[]{MapCellType.PLACE}) {
             @Override
             public Fragment getFragment(MapCellResponse cellInfo) {

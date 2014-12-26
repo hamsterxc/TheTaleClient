@@ -67,6 +67,7 @@
     <string name="login_text_login">Email</string>
     <string name="login_text_password">Пароль</string>
 
+    <string name="map_council_member_power">Влиятельность</string>
     <string name="map_decreased_quality">Из-за нехватки памяти на устройстве карта будет показана в меньшем разрешении. Также будут отключены некоторые функции.</string>
     <string name="map_find_hero">Найти героя</string>
     <string name="map_find_place">Найти город</string>
@@ -78,11 +79,29 @@
     <string name="map_place_race">Основное население</string>
     <string name="map_place_size">Размер</string>
     <string name="map_tile_caption">Квадрат %1$dx%2$d</string>
+    <string name="map_tile_tab_council">Городской совет</string>
     <string name="map_tile_tab_description">Описание</string>
     <string name="map_tile_tab_params">Параметры</string>
     <string name="map_tile_tab_terrain">Местность</string>
     <string name="map_style">Карта: %s</string>
     <string name="map_style_caption">Карта</string>
+
+    <!--<plurals name="map_council_member_friends">-->
+        <!--<item quantity="one">%d соратник</item>-->
+        <!--<item quantity="few">%d соратника</item>-->
+        <!--<item quantity="many">%d соратников</item>-->
+    <!--</plurals>-->
+    <string name="map_council_member_friends_one">%d соратник</string>
+    <string name="map_council_member_friends_few">%d соратника</string>
+    <string name="map_council_member_friends_many">%d соратников</string>
+    <!--<plurals name="map_council_member_enemies">-->
+        <!--<item quantity="one">%d противник</item>-->
+        <!--<item quantity="few">%d противника</item>-->
+        <!--<item quantity="many">%d противников</item>-->
+    <!--</plurals>-->
+    <string name="map_council_member_enemies_one">%d противник</string>
+    <string name="map_council_member_enemies_few">%d противника</string>
+    <string name="map_council_member_enemies_many">%d противников</string>
 
     <string name="notification_death">Герой мертв</string>
     <string name="notification_high_energy">Энергия накопилась: %d</string>
