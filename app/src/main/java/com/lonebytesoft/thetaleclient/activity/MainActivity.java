@@ -102,6 +102,7 @@ public class MainActivity extends ActionBarActivity
         if((getIntent() != null) && getIntent().hasExtra(KEY_GAME_TAB_INDEX)) {
             onNavigationDrawerItemSelected(DrawerItem.GAME);
             tabIndex = getIntent().getIntExtra(KEY_GAME_TAB_INDEX, GameFragment.GamePage.GAME_INFO.ordinal());
+            getIntent().removeExtra(KEY_GAME_TAB_INDEX);
         }
 
         final Fragment fragment = getSupportFragmentManager().findFragmentByTag(currentItem.getFragmentTag());
