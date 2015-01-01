@@ -13,6 +13,7 @@ import com.lonebytesoft.thetaleclient.fragment.SettingsFragment;
 */
 public enum DrawerItem {
 
+    PROFILE(R.id.drawer_item_info),
     GAME(R.id.drawer_item_game, R.string.drawer_title_game, GameFragment.class, R.menu.game),
     MAP(R.id.drawer_item_map, R.string.drawer_title_map, MapFragment.class, R.menu.main),
     CHAT(R.id.drawer_item_chat, R.string.drawer_title_chat, ChatFragment.class, R.menu.main),

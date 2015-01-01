@@ -67,6 +67,7 @@ public class MainActivity extends ActionBarActivity
 
     private TextView accountNameTextView;
     private TextView timeTextView;
+    private View drawerItemInfoView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,50 +85,7 @@ public class MainActivity extends ActionBarActivity
 
         accountNameTextView = (TextView) findViewById(R.id.drawer_account_name);
         timeTextView = (TextView) findViewById(R.id.drawer_time);
-        findViewById(R.id.drawer_block_info).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mNavigationDrawerFragment.closeDrawer();
-                DialogUtils.showChoiceDialog(getSupportFragmentManager(), getString(R.string.drawer_title_site),
-                        new String[]{
-                                getString(R.string.drawer_dialog_profile_item_keeper),
-                                getString(R.string.drawer_dialog_profile_item_hero)
-                        },
-                        new ChoiceDialog.ItemChooseListener() {
-                            @Override
-                            public void onItemSelected(final int position) {
-                                new InfoPrerequisiteRequest(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        final int accountId = PreferencesManager.getAccountId();
-                                        if(accountId == 0) {
-                                            DialogUtils.showCommonErrorDialog(getSupportFragmentManager(), MainActivity.this);
-                                        } else {
-                                            switch(position) {
-                                                case 0:
-                                                    startActivity(UiUtils.getOpenLinkIntent(String.format(URL_PROFILE_KEEPER, accountId)));
-                                                    break;
-
-                                                case 1:
-                                                    startActivity(UiUtils.getOpenLinkIntent(String.format(URL_PROFILE_HERO, accountId)));
-                                                    break;
-
-                                                default:
-                                                    DialogUtils.showCommonErrorDialog(getSupportFragmentManager(), MainActivity.this);
-                                                    break;
-                                            }
-                                        }
-                                    }
-                                }, new PrerequisiteRequest.ErrorCallback<InfoResponse>() {
-                                    @Override
-                                    public void processError(InfoResponse response) {
-                                        DialogUtils.showCommonErrorDialog(getSupportFragmentManager(), MainActivity.this);
-                                    }
-                                }, null).execute();
-                            }
-                        });
-            }
-        });
+        drawerItemInfoView = findViewById(DrawerItem.PROFILE.getViewResId());
 
         history = new HistoryStack<>(DrawerItem.values().length);
         int tabIndex = DrawerItem.GAME.ordinal();
@@ -202,6 +160,47 @@ public class MainActivity extends ActionBarActivity
     public void onNavigationDrawerItemSelected(DrawerItem item) {
         if(item != currentItem) {
             switch(item) {
+                case PROFILE:
+                    DialogUtils.showChoiceDialog(getSupportFragmentManager(), getString(R.string.drawer_title_site),
+                            new String[]{
+                                    getString(R.string.drawer_dialog_profile_item_keeper),
+                                    getString(R.string.drawer_dialog_profile_item_hero)
+                            },
+                            new ChoiceDialog.ItemChooseListener() {
+                                @Override
+                                public void onItemSelected(final int position) {
+                                    new InfoPrerequisiteRequest(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            final int accountId = PreferencesManager.getAccountId();
+                                            if(accountId == 0) {
+                                                DialogUtils.showCommonErrorDialog(getSupportFragmentManager(), MainActivity.this);
+                                            } else {
+                                                switch(position) {
+                                                    case 0:
+                                                        startActivity(UiUtils.getOpenLinkIntent(String.format(URL_PROFILE_KEEPER, accountId)));
+                                                        break;
+
+                                                    case 1:
+                                                        startActivity(UiUtils.getOpenLinkIntent(String.format(URL_PROFILE_HERO, accountId)));
+                                                        break;
+
+                                                    default:
+                                                        DialogUtils.showCommonErrorDialog(getSupportFragmentManager(), MainActivity.this);
+                                                        break;
+                                                }
+                                            }
+                                        }
+                                    }, new PrerequisiteRequest.ErrorCallback<InfoResponse>() {
+                                        @Override
+                                        public void processError(InfoResponse response) {
+                                            DialogUtils.showCommonErrorDialog(getSupportFragmentManager(), MainActivity.this);
+                                        }
+                                    }, null).execute();
+                                }
+                            });
+                    break;
+
                 case SITE:
                     startActivity(UiUtils.getOpenLinkIntent(URL_GAME));
                     break;
@@ -326,6 +325,7 @@ public class MainActivity extends ActionBarActivity
         new InfoPrerequisiteRequest(new Runnable() {
             @Override
             public void run() {
+                drawerItemInfoView.setVisibility(View.VISIBLE);
                 UiUtils.setText(accountNameTextView, PreferencesManager.getAccountName());
                 new GameInfoRequest(false).execute(new ApiResponseCallback<GameInfoResponse>() {
                     @Override
@@ -342,6 +342,7 @@ public class MainActivity extends ActionBarActivity
         }, new PrerequisiteRequest.ErrorCallback<InfoResponse>() {
             @Override
             public void processError(InfoResponse response) {
+                drawerItemInfoView.setVisibility(View.GONE);
                 UiUtils.setText(accountNameTextView, null);
                 UiUtils.setText(timeTextView, null);
             }

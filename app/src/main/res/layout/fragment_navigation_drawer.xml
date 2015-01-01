@@ -14,10 +14,11 @@
         android:orientation="vertical">
 
         <LinearLayout
-            android:id="@+id/drawer_block_info"
+            android:id="@+id/drawer_item_info"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            style="@style/DrawerItem">
+            style="@style/DrawerItem"
+            android:visibility="gone">
 
             <TextView
                 android:id="@+id/drawer_account_name"
