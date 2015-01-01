@@ -3,7 +3,9 @@ package com.lonebytesoft.thetaleclient.api.request;
 import com.lonebytesoft.thetaleclient.api.AbstractApiRequest;
 import com.lonebytesoft.thetaleclient.api.ApiResponseCallback;
 import com.lonebytesoft.thetaleclient.api.HttpMethod;
+import com.lonebytesoft.thetaleclient.api.dictionary.ThirdPartyAuthState;
 import com.lonebytesoft.thetaleclient.api.response.ThirdPartyAuthStateResponse;
+import com.lonebytesoft.thetaleclient.util.PreferencesManager;
 
 import org.json.JSONException;
 
@@ -23,7 +25,17 @@ public class ThirdPartyAuthStateRequest extends AbstractApiRequest<ThirdPartyAut
 
     @Override
     protected ThirdPartyAuthStateResponse getResponse(final String response) throws JSONException {
-        return new ThirdPartyAuthStateResponse(response);
+        final ThirdPartyAuthStateResponse thirdPartyAuthStateResponse = new ThirdPartyAuthStateResponse(response);
+
+        if(thirdPartyAuthStateResponse.authState == ThirdPartyAuthState.SUCCESS) {
+            PreferencesManager.setAccountId(thirdPartyAuthStateResponse.accountId);
+            PreferencesManager.setAccountName(thirdPartyAuthStateResponse.accountName);
+        } else {
+            PreferencesManager.setAccountId(0);
+            PreferencesManager.setAccountName(null);
+        }
+
+        return thirdPartyAuthStateResponse;
     }
 
     @Override

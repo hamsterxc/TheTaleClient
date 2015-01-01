@@ -42,9 +42,13 @@ public class GameInfoRequest extends AbstractApiRequest<GameInfoResponse> {
     protected GameInfoResponse getResponse(final String response) throws JSONException {
         final GameInfoResponse gameInfoResponse = new GameInfoResponse(response);
 
-        if(gameInfoResponse.account != null) {
+        if(gameInfoResponse.account == null) {
+            PreferencesManager.setAccountId(0);
+            PreferencesManager.setAccountName(null);
+        } else {
             PreferencesManager.setAccountId(gameInfoResponse.account.accountId);
         }
+        PreferencesManager.setMapVersion(gameInfoResponse.mapVersion);
 
         if((gameInfoResponse.status == ApiResponseStatus.OK) && (gameInfoResponse.account == null) && needAuthorization) {
             return new GameInfoResponse(RequestUtils.getGenericErrorResponse(

@@ -20,12 +20,12 @@ import android.widget.TextView;
 import com.lonebytesoft.thetaleclient.DataViewMode;
 import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.TheTaleClientApplication;
-import com.lonebytesoft.thetaleclient.api.ApiResponseCallback;
+import com.lonebytesoft.thetaleclient.api.cache.prerequisite.InfoPrerequisiteRequest;
+import com.lonebytesoft.thetaleclient.api.cache.prerequisite.PrerequisiteRequest;
 import com.lonebytesoft.thetaleclient.api.model.ChatMessage;
-import com.lonebytesoft.thetaleclient.api.request.InfoRequest;
 import com.lonebytesoft.thetaleclient.api.response.InfoResponse;
 import com.lonebytesoft.thetaleclient.util.ChatManager;
-import com.lonebytesoft.thetaleclient.util.RequestUtils;
+import com.lonebytesoft.thetaleclient.util.PreferencesManager;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
 
 import org.xml.sax.XMLReader;
@@ -123,43 +123,39 @@ public class ChatFragment extends WrapperFragment {
 
         if(isGlobal) {
             mainHandler.removeCallbacks(refreshRunnable);
-            new InfoRequest().execute(RequestUtils.wrapCallback(new ApiResponseCallback<InfoResponse>() {
+            new InfoPrerequisiteRequest(new Runnable() {
                 @Override
-                public void processResponse(InfoResponse response) {
-                    if(response.accountName == null) {
-                        sendContainer.setVisibility(View.GONE);
-                        loadMessages(isGlobal);
-                        mainHandler.postDelayed(refreshRunnable, REFRESH_TIMEOUT_MILLIS);
-                    } else {
-                        sendContainer.setVisibility(View.VISIBLE);
-                        ChatManager.init(response.accountName, new ChatManager.ChatCallback() {
-                            @Override
-                            public void onSuccess() {
-                                if(!isAdded()) {
-                                    return;
-                                }
-
-                                loadMessages(isGlobal);
-                                mainHandler.postDelayed(refreshRunnable, REFRESH_TIMEOUT_MILLIS);
+                public void run() {
+                    sendContainer.setVisibility(View.VISIBLE);
+                    ChatManager.init(PreferencesManager.getAccountName(), new ChatManager.ChatCallback() {
+                        @Override
+                        public void onSuccess() {
+                            if(!isAdded()) {
+                                return;
                             }
 
-                            @Override
-                            public void onError() {
-                                if(!isAdded()) {
-                                    return;
-                                }
+                            loadMessages(isGlobal);
+                            mainHandler.postDelayed(refreshRunnable, REFRESH_TIMEOUT_MILLIS);
+                        }
 
-                                setError(getString(R.string.chat_error));
+                        @Override
+                        public void onError() {
+                            if(!isAdded()) {
+                                return;
                             }
-                        });
-                    }
+
+                            setError(getString(R.string.chat_error));
+                        }
+                    });
                 }
-
+            }, new PrerequisiteRequest.ErrorCallback<InfoResponse>() {
                 @Override
                 public void processError(InfoResponse response) {
-                    setError(getString(R.string.chat_error));
+                    sendContainer.setVisibility(View.GONE);
+                    loadMessages(isGlobal);
+                    mainHandler.postDelayed(refreshRunnable, REFRESH_TIMEOUT_MILLIS);
                 }
-            }, this));
+            }, this).execute();
         } else {
             loadMessages(isGlobal);
         }

@@ -14,6 +14,8 @@ import com.lonebytesoft.thetaleclient.DataViewMode;
 import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.TheTaleClientApplication;
 import com.lonebytesoft.thetaleclient.api.ApiResponseCallback;
+import com.lonebytesoft.thetaleclient.api.cache.prerequisite.InfoPrerequisiteRequest;
+import com.lonebytesoft.thetaleclient.api.cache.prerequisite.PrerequisiteRequest;
 import com.lonebytesoft.thetaleclient.api.dictionary.Action;
 import com.lonebytesoft.thetaleclient.api.dictionary.HeroAction;
 import com.lonebytesoft.thetaleclient.api.model.HeroActionInfo;
@@ -21,7 +23,6 @@ import com.lonebytesoft.thetaleclient.api.model.JournalEntry;
 import com.lonebytesoft.thetaleclient.api.model.MightInfo;
 import com.lonebytesoft.thetaleclient.api.request.AbilityUseRequest;
 import com.lonebytesoft.thetaleclient.api.request.GameInfoRequest;
-import com.lonebytesoft.thetaleclient.api.request.InfoRequest;
 import com.lonebytesoft.thetaleclient.api.response.CommonResponse;
 import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;
 import com.lonebytesoft.thetaleclient.api.response.InfoResponse;
@@ -289,20 +290,20 @@ public class GameInfoFragment extends WrapperFragment {
                 }
 
                 actionHelp.setEnabled(false);
-                new InfoRequest().execute(RequestUtils.wrapCallback(new ApiResponseCallback<InfoResponse>() {
+                new InfoPrerequisiteRequest(new Runnable() {
                     @Override
-                    public void processResponse(final InfoResponse infoResponse) {
-                        if(GameInfoUtils.isEnoughEnergy(gameInfoResponse.account.hero.energy, infoResponse.abilitiesCost.get(Action.HELP))) {
+                    public void run() {
+                        if(GameInfoUtils.isEnoughEnergy(gameInfoResponse.account.hero.energy, PreferencesManager.getAbilityCost(Action.HELP))) {
                             actionHelp.setEnabled(true);
                         }
                     }
-
+                }, new PrerequisiteRequest.ErrorCallback<InfoResponse>() {
                     @Override
                     public void processError(InfoResponse response) {
                         actionHelp.setErrorText(response.errorMessage);
                         actionHelp.setMode(RequestActionView.Mode.ERROR);
                     }
-                }, GameInfoFragment.this));
+                }, GameInfoFragment.this).execute();
 
                 setMode(DataViewMode.DATA);
             }

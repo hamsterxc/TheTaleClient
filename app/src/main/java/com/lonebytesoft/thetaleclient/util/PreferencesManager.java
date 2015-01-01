@@ -7,7 +7,10 @@ import android.text.TextUtils;
 
 import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.TheTaleClientApplication;
+import com.lonebytesoft.thetaleclient.api.dictionary.Action;
 import com.lonebytesoft.thetaleclient.api.dictionary.MapStyle;
+
+import java.util.Map;
 
 /**
  * @author Hamster
@@ -21,7 +24,11 @@ public class PreferencesManager {
     private static final String KEY_SESSION = "KEY_SESSION";
     private static final String KEY_READ_ALOUD_CONFIRMED = "KEY_READ_ALOUD_CONFIRMED";
     private static final String KEY_LAST_DIARY_ENTRY_READ = "KEY_LAST_DIARY_ENTRY_READ";
+
     private static final String KEY_ACCOUNT_ID = "KEY_ACCOUNT_ID";
+    private static final String KEY_ACCOUNT_NAME = "KEY_ACCOUNT_NAME";
+    private static final String KEY_MAP_VERSION = "KEY_MAP_VERSION";
+    private static final String KEY_ABILITY_COST = "KEY_ABILITY_COST_%s";
 
     private static final String KEY_NOTIFICATION_LAST = "%s_LAST";
     private static final String KEY_NOTIFICATION_SHOULD_SHOW = "%s_SHOULD_SHOW";
@@ -450,6 +457,40 @@ public class PreferencesManager {
 
     public static int getAccountId() {
         return sharedPreferences.getInt(KEY_ACCOUNT_ID, 0);
+    }
+
+    public static void setAccountName(final String accountName) {
+        sharedPreferences.edit()
+                .putString(KEY_ACCOUNT_NAME, accountName)
+                .commit();
+    }
+
+    public static String getAccountName() {
+        return sharedPreferences.getString(KEY_ACCOUNT_NAME, null);
+    }
+
+    public static void setMapVersion(final String mapVersion) {
+        sharedPreferences.edit()
+                .putString(KEY_MAP_VERSION, mapVersion)
+                .commit();
+    }
+
+    public static String getMapVersion() {
+        return sharedPreferences.getString(KEY_MAP_VERSION, null);
+    }
+
+    public static void setAbilitiesCost(final Map<Action, Integer> abilitiesCost) {
+        final SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        for(final Map.Entry<Action, Integer> entry : abilitiesCost.entrySet()) {
+            editor.putInt(String.format(KEY_ABILITY_COST, entry.getKey().name()), entry.getValue());
+        }
+
+        editor.commit();
+    }
+
+    public static int getAbilityCost(final Action action) {
+        return sharedPreferences.getInt(String.format(KEY_ABILITY_COST, action.name()), -1);
     }
 
     public static boolean isWatcherEnabled() {

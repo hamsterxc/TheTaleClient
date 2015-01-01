@@ -17,18 +17,20 @@ import android.widget.TextView;
 import com.lonebytesoft.thetaleclient.DataViewMode;
 import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.api.ApiResponseCallback;
+import com.lonebytesoft.thetaleclient.api.cache.prerequisite.InfoPrerequisiteRequest;
+import com.lonebytesoft.thetaleclient.api.cache.prerequisite.PrerequisiteRequest;
 import com.lonebytesoft.thetaleclient.api.dictionary.Action;
 import com.lonebytesoft.thetaleclient.api.dictionary.ArtifactType;
 import com.lonebytesoft.thetaleclient.api.dictionary.EquipmentType;
 import com.lonebytesoft.thetaleclient.api.model.ArtifactInfo;
 import com.lonebytesoft.thetaleclient.api.request.AbilityUseRequest;
 import com.lonebytesoft.thetaleclient.api.request.GameInfoRequest;
-import com.lonebytesoft.thetaleclient.api.request.InfoRequest;
 import com.lonebytesoft.thetaleclient.api.response.CommonResponse;
 import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;
 import com.lonebytesoft.thetaleclient.api.response.InfoResponse;
 import com.lonebytesoft.thetaleclient.util.DialogUtils;
 import com.lonebytesoft.thetaleclient.util.GameInfoUtils;
+import com.lonebytesoft.thetaleclient.util.PreferencesManager;
 import com.lonebytesoft.thetaleclient.util.RequestUtils;
 import com.lonebytesoft.thetaleclient.widget.RequestActionView;
 
@@ -115,10 +117,10 @@ public class EquipmentFragment extends WrapperFragment {
                 final RequestActionView dropActionView = (RequestActionView) dropView.findViewById(R.id.bag_drop);
                 if(response.account.hero.basicInfo.bagItemsCount > 0) {
                     final GameInfoResponse gameInfoResponse = response;
-                    new InfoRequest().execute(RequestUtils.wrapCallback(new ApiResponseCallback<InfoResponse>() {
+                    new InfoPrerequisiteRequest(new Runnable() {
                         @Override
-                        public void processResponse(InfoResponse response) {
-                            if(GameInfoUtils.isEnoughEnergy(gameInfoResponse.account.hero.energy, response.abilitiesCost.get(Action.DROP_ITEM))) {
+                        public void run() {
+                            if(GameInfoUtils.isEnoughEnergy(gameInfoResponse.account.hero.energy, PreferencesManager.getAbilityCost(Action.DROP_ITEM))) {
                                 dropActionView.setEnabled(true);
                                 dropActionView.setActionClickListener(new Runnable() {
                                     @Override
@@ -140,12 +142,12 @@ public class EquipmentFragment extends WrapperFragment {
                                 dropActionView.setEnabled(false);
                             }
                         }
-
+                    }, new PrerequisiteRequest.ErrorCallback<InfoResponse>() {
                         @Override
                         public void processError(InfoResponse response) {
                             dropActionView.setErrorText(response.errorMessage);
                         }
-                    }, EquipmentFragment.this));
+                    }, EquipmentFragment.this).execute();
                 } else {
                     dropActionView.setEnabled(false);
                 }

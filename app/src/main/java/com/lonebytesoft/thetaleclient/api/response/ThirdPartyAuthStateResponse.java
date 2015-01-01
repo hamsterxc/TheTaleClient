@@ -13,6 +13,8 @@ import org.json.JSONObject;
  */
 public class ThirdPartyAuthStateResponse extends AbstractApiResponse {
 
+    public int accountId;
+    public String accountName;
     public ThirdPartyAuthState authState;
 
     public ThirdPartyAuthStateResponse(final String response) throws JSONException {
@@ -21,6 +23,8 @@ public class ThirdPartyAuthStateResponse extends AbstractApiResponse {
 
     @Override
     protected void parseData(final JSONObject data) throws JSONException {
+        accountId = data.getInt("account_id");
+        accountName = data.getString("account_name");
         authState = ObjectUtils.getEnumForCode(ThirdPartyAuthState.class, data.getInt("state"));
     }
 

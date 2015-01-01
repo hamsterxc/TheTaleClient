@@ -13,12 +13,10 @@ import android.view.ViewGroup;
 import com.lonebytesoft.thetaleclient.DrawerItem;
 import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.activity.MainActivity;
-import com.lonebytesoft.thetaleclient.api.ApiResponseCallback;
 import com.lonebytesoft.thetaleclient.api.CommonResponseCallback;
+import com.lonebytesoft.thetaleclient.api.cache.prerequisite.GameInfoPrerequisiteRequest;
 import com.lonebytesoft.thetaleclient.api.model.QuestActorInfo;
-import com.lonebytesoft.thetaleclient.api.request.GameInfoRequest;
 import com.lonebytesoft.thetaleclient.api.request.MapRequest;
-import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;
 import com.lonebytesoft.thetaleclient.api.response.MapResponse;
 import com.lonebytesoft.thetaleclient.util.PreferencesManager;
 import com.lonebytesoft.thetaleclient.util.RequestUtils;
@@ -60,10 +58,10 @@ public class QuestActorDialog extends BaseDialog {
                         UiUtils.getInfoItem(getString(R.string.quest_actor_profession), questActorInfo.personInfo.profession.getName()));
                 UiUtils.setText(view.findViewById(R.id.dialog_quest_actor_person_mastery),
                         UiUtils.getInfoItem(getString(R.string.quest_actor_mastery), questActorInfo.personInfo.mastery));
-                new GameInfoRequest(true).execute(RequestUtils.wrapCallback(new ApiResponseCallback<GameInfoResponse>() {
+                new GameInfoPrerequisiteRequest(new Runnable() {
                     @Override
-                    public void processResponse(GameInfoResponse response) {
-                        new MapRequest(response.mapVersion).execute(RequestUtils.wrapCallback(new CommonResponseCallback<MapResponse, String>() {
+                    public void run() {
+                        new MapRequest(PreferencesManager.getMapVersion()).execute(RequestUtils.wrapCallback(new CommonResponseCallback<MapResponse, String>() {
                             @Override
                             public void processResponse(MapResponse response) {
                                 setPlaceLink(
@@ -78,11 +76,7 @@ public class QuestActorDialog extends BaseDialog {
                             }
                         }, QuestActorDialog.this));
                     }
-
-                    @Override
-                    public void processError(GameInfoResponse response) {
-                    }
-                }, this), true);
+                }, null, this).execute();
                 break;
 
             case PLACE:
@@ -92,10 +86,10 @@ public class QuestActorDialog extends BaseDialog {
                         getString(R.string.map_place_name),
                         questActorInfo.placeInfo.name,
                         questActorInfo.placeInfo.id);
-                new GameInfoRequest(true).execute(RequestUtils.wrapCallback(new ApiResponseCallback<GameInfoResponse>() {
+                new GameInfoPrerequisiteRequest(new Runnable() {
                     @Override
-                    public void processResponse(GameInfoResponse response) {
-                        new MapRequest(response.mapVersion).execute(RequestUtils.wrapCallback(new CommonResponseCallback<MapResponse, String>() {
+                    public void run() {
+                        new MapRequest(PreferencesManager.getMapVersion()).execute(RequestUtils.wrapCallback(new CommonResponseCallback<MapResponse, String>() {
                             @Override
                             public void processResponse(MapResponse response) {
                                 UiUtils.setText(view.findViewById(R.id.dialog_quest_actor_place_size), UiUtils.getInfoItem(
@@ -108,11 +102,7 @@ public class QuestActorDialog extends BaseDialog {
                             }
                         }, QuestActorDialog.this));
                     }
-
-                    @Override
-                    public void processError(GameInfoResponse response) {
-                    }
-                }, this), true);
+                }, null, this).execute();
                 break;
 
             case SPENDING:

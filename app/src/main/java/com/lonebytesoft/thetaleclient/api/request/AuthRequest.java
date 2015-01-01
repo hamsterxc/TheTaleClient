@@ -5,6 +5,7 @@ import com.lonebytesoft.thetaleclient.api.ApiResponseCallback;
 import com.lonebytesoft.thetaleclient.api.HttpMethod;
 import com.lonebytesoft.thetaleclient.api.cache.RequestCacheManager;
 import com.lonebytesoft.thetaleclient.api.response.AuthResponse;
+import com.lonebytesoft.thetaleclient.util.PreferencesManager;
 
 import org.json.JSONException;
 
@@ -32,7 +33,18 @@ public class AuthRequest extends AbstractApiRequest<AuthResponse> {
 
     protected AuthResponse getResponse(final String response) throws JSONException {
         RequestCacheManager.invalidate();
-        return new AuthResponse(response);
+
+        final AuthResponse authResponse = new AuthResponse(response);
+
+        if((authResponse.errorsLogin == null) && (authResponse.errorsPassword == null)) {
+            PreferencesManager.setAccountId(authResponse.accountId);
+            PreferencesManager.setAccountName(authResponse.accountName);
+        } else {
+            PreferencesManager.setAccountId(0);
+            PreferencesManager.setAccountName(null);
+        }
+
+        return authResponse;
     }
 
     @Override

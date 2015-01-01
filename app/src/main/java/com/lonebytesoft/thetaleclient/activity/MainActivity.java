@@ -19,8 +19,9 @@ import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.TheTaleClientApplication;
 import com.lonebytesoft.thetaleclient.api.ApiResponseCallback;
 import com.lonebytesoft.thetaleclient.api.cache.RequestCacheManager;
+import com.lonebytesoft.thetaleclient.api.cache.prerequisite.InfoPrerequisiteRequest;
+import com.lonebytesoft.thetaleclient.api.cache.prerequisite.PrerequisiteRequest;
 import com.lonebytesoft.thetaleclient.api.request.GameInfoRequest;
-import com.lonebytesoft.thetaleclient.api.request.InfoRequest;
 import com.lonebytesoft.thetaleclient.api.request.LogoutRequest;
 import com.lonebytesoft.thetaleclient.api.response.CommonResponse;
 import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;
@@ -95,21 +96,34 @@ public class MainActivity extends ActionBarActivity
                         new ChoiceDialog.ItemChooseListener() {
                             @Override
                             public void onItemSelected(final int position) {
-                                if(PreferencesManager.getAccountId() == 0) {
-                                    new InfoRequest().execute(new ApiResponseCallback<InfoResponse>() {
-                                        @Override
-                                        public void processResponse(InfoResponse response) {
-                                            openProfile(position, response.accountId);
-                                        }
-
-                                        @Override
-                                        public void processError(InfoResponse response) {
+                                new InfoPrerequisiteRequest(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        final int accountId = PreferencesManager.getAccountId();
+                                        if(accountId == 0) {
                                             DialogUtils.showCommonErrorDialog(getSupportFragmentManager(), MainActivity.this);
+                                        } else {
+                                            switch(position) {
+                                                case 0:
+                                                    startActivity(UiUtils.getOpenLinkIntent(String.format(URL_PROFILE_KEEPER, accountId)));
+                                                    break;
+
+                                                case 1:
+                                                    startActivity(UiUtils.getOpenLinkIntent(String.format(URL_PROFILE_HERO, accountId)));
+                                                    break;
+
+                                                default:
+                                                    DialogUtils.showCommonErrorDialog(getSupportFragmentManager(), MainActivity.this);
+                                                    break;
+                                            }
                                         }
-                                    });
-                                } else {
-                                    openProfile(position, PreferencesManager.getAccountId());
-                                }
+                                    }
+                                }, new PrerequisiteRequest.ErrorCallback<InfoResponse>() {
+                                    @Override
+                                    public void processError(InfoResponse response) {
+                                        DialogUtils.showCommonErrorDialog(getSupportFragmentManager(), MainActivity.this);
+                                    }
+                                }, null).execute();
                             }
                         });
             }
@@ -309,10 +323,10 @@ public class MainActivity extends ActionBarActivity
     }
 
     public void onDataRefresh() {
-        new InfoRequest().execute(new ApiResponseCallback<InfoResponse>() {
+        new InfoPrerequisiteRequest(new Runnable() {
             @Override
-            public void processResponse(InfoResponse response) {
-                UiUtils.setText(accountNameTextView, response.accountName);
+            public void run() {
+                UiUtils.setText(accountNameTextView, PreferencesManager.getAccountName());
                 new GameInfoRequest(false).execute(new ApiResponseCallback<GameInfoResponse>() {
                     @Override
                     public void processResponse(GameInfoResponse response) {
@@ -325,13 +339,13 @@ public class MainActivity extends ActionBarActivity
                     }
                 }, true);
             }
-
+        }, new PrerequisiteRequest.ErrorCallback<InfoResponse>() {
             @Override
             public void processError(InfoResponse response) {
                 UiUtils.setText(accountNameTextView, null);
                 UiUtils.setText(timeTextView, null);
             }
-        });
+        }, null).execute();
     }
 
     @Override
@@ -350,26 +364,6 @@ public class MainActivity extends ActionBarActivity
 
     public Menu getMenu() {
         return menu;
-    }
-
-    public void openProfile(final int position, final int accountId) {
-        if(accountId == 0) {
-            DialogUtils.showCommonErrorDialog(getSupportFragmentManager(), MainActivity.this);
-        } else {
-            switch(position) {
-                case 0:
-                    startActivity(UiUtils.getOpenLinkIntent(String.format(URL_PROFILE_KEEPER, accountId)));
-                    break;
-
-                case 1:
-                    startActivity(UiUtils.getOpenLinkIntent(String.format(URL_PROFILE_HERO, accountId)));
-                    break;
-
-                default:
-                    DialogUtils.showCommonErrorDialog(getSupportFragmentManager(), MainActivity.this);
-                    break;
-            }
-        }
     }
 
 }

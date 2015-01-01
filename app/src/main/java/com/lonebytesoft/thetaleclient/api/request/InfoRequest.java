@@ -26,6 +26,10 @@ public class InfoRequest extends AbstractApiRequest<InfoResponse> {
         final InfoResponse infoResponse = new InfoResponse(response);
 
         PreferencesManager.setAccountId(infoResponse.accountId);
+        PreferencesManager.setAccountName(infoResponse.accountName);
+        if(infoResponse.abilitiesCost != null) {
+            PreferencesManager.setAbilitiesCost(infoResponse.abilitiesCost);
+        }
 
         return infoResponse;
     }
