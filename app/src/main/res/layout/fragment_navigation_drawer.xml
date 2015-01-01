@@ -13,26 +13,28 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/drawer_account_name"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/drawer_block_info"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginRight="8dp"
-            style="?android:attr/textAppearanceMedium"
-            android:visibility="gone"/>
+            android:orientation="vertical"
+            style="@style/DrawerItem">
 
-        <TextView
-            android:id="@+id/drawer_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginBottom="8dp"
-            style="?android:attr/textAppearanceSmall"
-            android:textColor="@color/game_additional_info"
-            android:visibility="gone"/>
+            <TextView
+                android:id="@+id/drawer_account_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="?android:attr/textAppearanceMedium"
+                android:visibility="gone"/>
+
+            <TextView
+                android:id="@+id/drawer_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="?android:attr/textAppearanceSmall"
+                android:textColor="@color/game_additional_info"
+                android:visibility="gone"/>
+
+        </LinearLayout>
 
         <View style="@style/Delimiter"/>
 

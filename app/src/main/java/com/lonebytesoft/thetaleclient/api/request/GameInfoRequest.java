@@ -7,6 +7,7 @@ import com.lonebytesoft.thetaleclient.api.ApiResponseCallback;
 import com.lonebytesoft.thetaleclient.api.ApiResponseStatus;
 import com.lonebytesoft.thetaleclient.api.HttpMethod;
 import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;
+import com.lonebytesoft.thetaleclient.util.PreferencesManager;
 import com.lonebytesoft.thetaleclient.util.RequestUtils;
 
 import org.json.JSONException;
@@ -40,6 +41,11 @@ public class GameInfoRequest extends AbstractApiRequest<GameInfoResponse> {
 
     protected GameInfoResponse getResponse(final String response) throws JSONException {
         final GameInfoResponse gameInfoResponse = new GameInfoResponse(response);
+
+        if(gameInfoResponse.account != null) {
+            PreferencesManager.setAccountId(gameInfoResponse.account.accountId);
+        }
+
         if((gameInfoResponse.status == ApiResponseStatus.OK) && (gameInfoResponse.account == null) && needAuthorization) {
             return new GameInfoResponse(RequestUtils.getGenericErrorResponse(
                     TheTaleClientApplication.getContext().getString(R.string.game_not_authorized)));

@@ -4,6 +4,7 @@ import com.lonebytesoft.thetaleclient.api.AbstractApiRequest;
 import com.lonebytesoft.thetaleclient.api.ApiResponseCallback;
 import com.lonebytesoft.thetaleclient.api.HttpMethod;
 import com.lonebytesoft.thetaleclient.api.response.InfoResponse;
+import com.lonebytesoft.thetaleclient.util.PreferencesManager;
 
 import org.json.JSONException;
 
@@ -22,7 +23,11 @@ public class InfoRequest extends AbstractApiRequest<InfoResponse> {
     }
 
     protected InfoResponse getResponse(final String response) throws JSONException {
-        return new InfoResponse(response);
+        final InfoResponse infoResponse = new InfoResponse(response);
+
+        PreferencesManager.setAccountId(infoResponse.accountId);
+
+        return infoResponse;
     }
 
     @Override

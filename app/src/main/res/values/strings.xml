@@ -23,6 +23,8 @@
     <string name="common_dialog_attention_title">Внимание</string>
     <string name="common_error">Произошла неизвестная ошибка. Попробуйте еще раз.</string>
 
+    <string name="drawer_dialog_profile_item_keeper">Профиль хранителя</string>
+    <string name="drawer_dialog_profile_item_hero">Профиль героя</string>
     <string name="drawer_title_about">О приложении</string>
     <string name="drawer_title_chat">Чат</string>
     <string name="drawer_title_close">Закрыть меню</string>

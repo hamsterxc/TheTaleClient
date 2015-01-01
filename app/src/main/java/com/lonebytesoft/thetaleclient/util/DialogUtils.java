@@ -1,9 +1,11 @@
 package com.lonebytesoft.thetaleclient.util;
 
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
+import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.api.model.ArtifactInfo;
 import com.lonebytesoft.thetaleclient.api.model.MightInfo;
 import com.lonebytesoft.thetaleclient.api.model.QuestActorInfo;
@@ -111,6 +113,12 @@ public class DialogUtils {
                                               final String caption, final String message,
                                               final Runnable onOkListener) {
         showConfirmationDialog(fragmentManager, caption, message, null, onOkListener, null, null, null);
+    }
+
+    public static void showCommonErrorDialog(final FragmentManager fragmentManager, final Context context) {
+        showMessageDialog(fragmentManager,
+                context.getString(R.string.common_dialog_attention_title),
+                context.getString(R.string.common_error));
     }
 
 }

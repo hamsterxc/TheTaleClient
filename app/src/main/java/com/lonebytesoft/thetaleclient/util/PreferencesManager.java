@@ -21,6 +21,7 @@ public class PreferencesManager {
     private static final String KEY_SESSION = "KEY_SESSION";
     private static final String KEY_READ_ALOUD_CONFIRMED = "KEY_READ_ALOUD_CONFIRMED";
     private static final String KEY_LAST_DIARY_ENTRY_READ = "KEY_LAST_DIARY_ENTRY_READ";
+    private static final String KEY_ACCOUNT_ID = "KEY_ACCOUNT_ID";
 
     private static final String KEY_NOTIFICATION_LAST = "%s_LAST";
     private static final String KEY_NOTIFICATION_SHOULD_SHOW = "%s_SHOULD_SHOW";
@@ -439,6 +440,16 @@ public class PreferencesManager {
         sharedPreferences.edit()
                 .putString(KEY_SESSION, session)
                 .commit();
+    }
+
+    public static void setAccountId(final int accountId) {
+        sharedPreferences.edit()
+                .putInt(KEY_ACCOUNT_ID, accountId)
+                .commit();
+    }
+
+    public static int getAccountId() {
+        return sharedPreferences.getInt(KEY_ACCOUNT_ID, 0);
     }
 
     public static boolean isWatcherEnabled() {

@@ -10,6 +10,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
 import com.lonebytesoft.thetaleclient.DataViewMode;
@@ -28,6 +29,7 @@ import com.lonebytesoft.thetaleclient.fragment.GameFragment;
 import com.lonebytesoft.thetaleclient.fragment.NavigationDrawerFragment;
 import com.lonebytesoft.thetaleclient.fragment.Refreshable;
 import com.lonebytesoft.thetaleclient.fragment.WrapperFragment;
+import com.lonebytesoft.thetaleclient.fragment.dialog.ChoiceDialog;
 import com.lonebytesoft.thetaleclient.util.DialogUtils;
 import com.lonebytesoft.thetaleclient.util.HistoryStack;
 import com.lonebytesoft.thetaleclient.util.PreferencesManager;
@@ -35,6 +37,9 @@ import com.lonebytesoft.thetaleclient.util.TextToSpeechUtils;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
 import com.lonebytesoft.thetaleclient.util.onscreen.OnscreenPart;
 
+/**
+ * todo rework urls: use RequestUtils.URL_BASE, possibly move urls to a separate static class
+ */
 public class MainActivity extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
@@ -42,6 +47,8 @@ public class MainActivity extends ActionBarActivity
     private static final String KEY_DRAWER_TAB_INDEX = "KEY_DRAWER_TAB_INDEX";
 
     private static final String URL_GAME = "http://the-tale.org/game/?action=the-tale-client";
+    private static final String URL_PROFILE_KEEPER = "http://the-tale.org/accounts/%d?action=the-tale-client";
+    private static final String URL_PROFILE_HERO = "http://the-tale.org/game/heroes/%d?action=the-tale-client";
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -76,6 +83,37 @@ public class MainActivity extends ActionBarActivity
 
         accountNameTextView = (TextView) findViewById(R.id.drawer_account_name);
         timeTextView = (TextView) findViewById(R.id.drawer_time);
+        findViewById(R.id.drawer_block_info).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mNavigationDrawerFragment.closeDrawer();
+                DialogUtils.showChoiceDialog(getSupportFragmentManager(), getString(R.string.drawer_title_site),
+                        new String[]{
+                                getString(R.string.drawer_dialog_profile_item_keeper),
+                                getString(R.string.drawer_dialog_profile_item_hero)
+                        },
+                        new ChoiceDialog.ItemChooseListener() {
+                            @Override
+                            public void onItemSelected(final int position) {
+                                if(PreferencesManager.getAccountId() == 0) {
+                                    new InfoRequest().execute(new ApiResponseCallback<InfoResponse>() {
+                                        @Override
+                                        public void processResponse(InfoResponse response) {
+                                            openProfile(position, response.accountId);
+                                        }
+
+                                        @Override
+                                        public void processError(InfoResponse response) {
+                                            DialogUtils.showCommonErrorDialog(getSupportFragmentManager(), MainActivity.this);
+                                        }
+                                    });
+                                } else {
+                                    openProfile(position, PreferencesManager.getAccountId());
+                                }
+                            }
+                        });
+            }
+        });
 
         history = new HistoryStack<>(DrawerItem.values().length);
         int tabIndex = DrawerItem.GAME.ordinal();
@@ -312,6 +350,26 @@ public class MainActivity extends ActionBarActivity
 
     public Menu getMenu() {
         return menu;
+    }
+
+    public void openProfile(final int position, final int accountId) {
+        if(accountId == 0) {
+            DialogUtils.showCommonErrorDialog(getSupportFragmentManager(), MainActivity.this);
+        } else {
+            switch(position) {
+                case 0:
+                    startActivity(UiUtils.getOpenLinkIntent(String.format(URL_PROFILE_KEEPER, accountId)));
+                    break;
+
+                case 1:
+                    startActivity(UiUtils.getOpenLinkIntent(String.format(URL_PROFILE_HERO, accountId)));
+                    break;
+
+                default:
+                    DialogUtils.showCommonErrorDialog(getSupportFragmentManager(), MainActivity.this);
+                    break;
+            }
+        }
     }
 
 }
