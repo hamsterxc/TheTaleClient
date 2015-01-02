@@ -80,7 +80,7 @@ public class DialogUtils {
         dialog.show(getFragmentTransaction(fragmentManager), DIALOG_TABBED_TAG);
     }
 
-    public static void showMessageDialog(final FragmentManager fragmentManager, final String caption, final String message) {
+    public static void showMessageDialog(final FragmentManager fragmentManager, final String caption, final CharSequence message) {
         MessageDialog.newInstance(caption, message).show(getFragmentTransaction(fragmentManager), DIALOG_MESSAGE_TAG);
     }
 

@@ -23,12 +23,12 @@ public class MessageDialog extends BaseDialog {
 
     private boolean isOkClicked;
 
-    public static MessageDialog newInstance(final String title, final String message) {
+    public static MessageDialog newInstance(final String title, final CharSequence message) {
         final MessageDialog dialog = new MessageDialog();
 
         Bundle args = new Bundle();
         args.putString(PARAM_TITLE, title);
-        args.putString(PARAM_MESSAGE, message);
+        args.putCharSequence(PARAM_MESSAGE, message);
 
         dialog.setArguments(args);
         return dialog;
@@ -48,7 +48,7 @@ public class MessageDialog extends BaseDialog {
 
         isOkClicked = false;
 
-        ((TextView) view.findViewById(R.id.dialog_message_message)).setText(getArguments().getString(PARAM_MESSAGE));
+        ((TextView) view.findViewById(R.id.dialog_message_message)).setText(getArguments().getCharSequence(PARAM_MESSAGE));
         view.findViewById(R.id.dialog_message_ok).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

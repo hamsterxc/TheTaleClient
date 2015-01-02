@@ -6,7 +6,13 @@ import org.json.JSONObject;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -105,6 +111,24 @@ public class ObjectUtils {
             }
         }
         return names;
+    }
+
+    public static <T> Map<T, Integer> getItemsCountList(final Collection<T> items, final Comparator<T> comparator) {
+        final List<T> list = new ArrayList<>(items);
+        Collections.sort(list, comparator);
+
+        T previous = null;
+        final Map<T, Integer> countList = new LinkedHashMap<>();
+        for(final T item : list) {
+            if((previous == null) || (comparator.compare(previous, item) != 0)) {
+                previous = item;
+                countList.put(item, 1);
+            } else {
+                countList.put(previous, countList.get(previous) + 1);
+            }
+        }
+
+        return countList;
     }
 
 }

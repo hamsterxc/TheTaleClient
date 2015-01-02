@@ -4,6 +4,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.Spannable;
 import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
@@ -20,6 +21,7 @@ import com.lonebytesoft.thetaleclient.api.ApiResponseCallback;
 import com.lonebytesoft.thetaleclient.api.cache.prerequisite.InfoPrerequisiteRequest;
 import com.lonebytesoft.thetaleclient.api.cache.prerequisite.PrerequisiteRequest;
 import com.lonebytesoft.thetaleclient.api.dictionary.Action;
+import com.lonebytesoft.thetaleclient.api.dictionary.ArtifactEffect;
 import com.lonebytesoft.thetaleclient.api.dictionary.ArtifactType;
 import com.lonebytesoft.thetaleclient.api.dictionary.EquipmentType;
 import com.lonebytesoft.thetaleclient.api.model.ArtifactInfo;
@@ -30,14 +32,14 @@ import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;
 import com.lonebytesoft.thetaleclient.api.response.InfoResponse;
 import com.lonebytesoft.thetaleclient.util.DialogUtils;
 import com.lonebytesoft.thetaleclient.util.GameInfoUtils;
+import com.lonebytesoft.thetaleclient.util.ObjectUtils;
 import com.lonebytesoft.thetaleclient.util.PreferencesManager;
 import com.lonebytesoft.thetaleclient.util.RequestUtils;
+import com.lonebytesoft.thetaleclient.util.UiUtils;
 import com.lonebytesoft.thetaleclient.widget.RequestActionView;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -51,6 +53,7 @@ public class EquipmentFragment extends WrapperFragment {
 
     private View rootView;
 
+    private View equipmentEffects;
     private ViewGroup equipmentContainer;
     private TextView bagCaption;
     private ViewGroup bagContainer;
@@ -63,6 +66,7 @@ public class EquipmentFragment extends WrapperFragment {
         layoutInflater = inflater;
         rootView = layoutInflater.inflate(R.layout.fragment_equipment, container, false);
 
+        equipmentEffects = rootView.findViewById(R.id.equipment_effects);
         equipmentContainer = (ViewGroup) rootView.findViewById(R.id.equipment_container);
         bagCaption = (TextView) rootView.findViewById(R.id.bag_caption);
         bagContainer = (ViewGroup) rootView.findViewById(R.id.bag_container);
@@ -78,6 +82,7 @@ public class EquipmentFragment extends WrapperFragment {
             @Override
             public void processResponse(GameInfoResponse response) {
                 equipmentContainer.removeAllViews();
+                final List<ArtifactEffect> equipmentEffectsList = new ArrayList<>();
                 for(final EquipmentType equipmentType : EquipmentType.values()) {
                     final View equipmentEntryView = layoutInflater.inflate(R.layout.item_equipment, equipmentContainer, false);
                     final ArtifactInfo artifactInfo = response.account.hero.equipment.get(equipmentType);
@@ -96,6 +101,13 @@ public class EquipmentFragment extends WrapperFragment {
                         textName.setText(artifactStrings[0]);
                         textPower.setText(artifactStrings[1]);
 
+                        if(artifactInfo.effect != ArtifactEffect.NO_EFFECT) {
+                            equipmentEffectsList.add(artifactInfo.effect);
+                        }
+                        if(artifactInfo.effectSpecial != ArtifactEffect.NO_EFFECT) {
+                            equipmentEffectsList.add(artifactInfo.effectSpecial);
+                        }
+
                         equipmentEntryView.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -105,6 +117,41 @@ public class EquipmentFragment extends WrapperFragment {
                     }
 
                     equipmentContainer.addView(equipmentEntryView);
+                }
+
+                if(equipmentEffectsList.size() == 0) {
+                    equipmentEffects.setVisibility(View.GONE);
+                } else {
+                    final Map<ArtifactEffect, Integer> effects = ObjectUtils.getItemsCountList(
+                            equipmentEffectsList,
+                            new Comparator<ArtifactEffect>() {
+                                @Override
+                                public int compare(ArtifactEffect lhs, ArtifactEffect rhs) {
+                                    return lhs.getName().compareTo(rhs.getName());
+                                }
+                            });
+                    final SpannableStringBuilder effectsStringBuilder = new SpannableStringBuilder();
+                    boolean first = true;
+                    for(final Map.Entry<ArtifactEffect, Integer> entry : effects.entrySet()) {
+                        if(first) {
+                            first = false;
+                        } else {
+                            effectsStringBuilder.append("\n");
+                        }
+                        final ArtifactEffect effect = entry.getKey();
+                        effectsStringBuilder.append(UiUtils.getInfoItem(effect.getName(), effect.getDescription()));
+                        if(entry.getValue() != 1) {
+                            effectsStringBuilder.append(getString(R.string.common_item_count, entry.getValue()));
+                        }
+                    }
+                    equipmentEffects.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            DialogUtils.showMessageDialog(getFragmentManager(),
+                                    getString(R.string.game_bag_effects_title), effectsStringBuilder);
+                        }
+                    });
+                    equipmentEffects.setVisibility(View.VISIBLE);
                 }
 
                 bagCaption.setText(getString(R.string.game_title_bag,
@@ -153,43 +200,30 @@ public class EquipmentFragment extends WrapperFragment {
                 }
                 bagContainer.addView(dropView);
 
-                final Comparator<ArtifactInfo> bagArtifactComparator = new Comparator<ArtifactInfo>() {
-                    @Override
-                    public int compare(ArtifactInfo lhs, ArtifactInfo rhs) {
-                        if(lhs.name.equals(rhs.name)) {
-                            if(lhs.powerPhysical == rhs.powerPhysical) {
-                                if(lhs.powerMagical == rhs.powerMagical) {
-                                    if(lhs.type == ArtifactType.JUNK) {
-                                        return rhs.type == ArtifactType.JUNK ? 0 : 1;
+                final Map<ArtifactInfo, Integer> bagItemsList = ObjectUtils.getItemsCountList(
+                        response.account.hero.bag.values(),
+                        new Comparator<ArtifactInfo>() {
+                            @Override
+                            public int compare(ArtifactInfo lhs, ArtifactInfo rhs) {
+                                if(lhs.name.equals(rhs.name)) {
+                                    if(lhs.powerPhysical == rhs.powerPhysical) {
+                                        if(lhs.powerMagical == rhs.powerMagical) {
+                                            if(lhs.type == ArtifactType.JUNK) {
+                                                return rhs.type == ArtifactType.JUNK ? 0 : 1;
+                                            } else {
+                                                return rhs.type == ArtifactType.JUNK ? -1 : 0;
+                                            }
+                                        } else {
+                                            return lhs.powerMagical - rhs.powerMagical;
+                                        }
                                     } else {
-                                        return rhs.type == ArtifactType.JUNK ? -1 : 0;
+                                        return lhs.powerPhysical - rhs.powerPhysical;
                                     }
                                 } else {
-                                    return lhs.powerMagical - rhs.powerMagical;
+                                    return lhs.name.compareTo(rhs.name);
                                 }
-                            } else {
-                                return lhs.powerPhysical - rhs.powerPhysical;
                             }
-                        } else {
-                            return lhs.name.compareTo(rhs.name);
-                        }
-                    }
-                };
-                final List<ArtifactInfo> bagItems = new ArrayList<>();
-                bagItems.addAll(response.account.hero.bag.values());
-                Collections.sort(bagItems, bagArtifactComparator);
-
-                ArtifactInfo bagPrevious = null;
-                final Map<ArtifactInfo, Integer> bagItemsList = new LinkedHashMap<>();
-                for(final ArtifactInfo artifactInfo : bagItems) {
-                    if((bagPrevious == null) || (bagArtifactComparator.compare(bagPrevious, artifactInfo) != 0)) {
-                        bagPrevious = artifactInfo;
-                        bagItemsList.put(artifactInfo, 1);
-                    } else {
-                        bagItemsList.put(bagPrevious, bagItemsList.get(bagPrevious) + 1);
-                    }
-                }
-
+                        });
                 for(final Map.Entry<ArtifactInfo, Integer> bagEntry : bagItemsList.entrySet()) {
                     final View bagEntryView = layoutInflater.inflate(R.layout.item_bag, bagContainer, false);
                     final ArtifactInfo artifactInfo = bagEntry.getKey();
@@ -216,7 +250,7 @@ public class EquipmentFragment extends WrapperFragment {
     }
 
     private Spanned[] getArtifactString(final ArtifactInfo artifactInfo, final boolean isEquipped, final int count) {
-        final String countString = count == 1 ? "" : getString(R.string.game_bag_item_count, count);
+        final String countString = count == 1 ? "" : getString(R.string.common_item_count, count);
 
         final Spannable name = new SpannableString(artifactInfo.name);
         name.setSpan(new ForegroundColorSpan(getResources().getColor(artifactInfo.rarity.getColorResId())),
