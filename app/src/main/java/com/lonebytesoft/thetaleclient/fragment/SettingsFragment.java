@@ -3,6 +3,7 @@ package com.lonebytesoft.thetaleclient.fragment;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
+import android.preference.PreferenceScreen;
 import android.support.v4.preference.PreferenceFragment;
 
 import com.lonebytesoft.thetaleclient.R;
@@ -172,6 +173,19 @@ public class SettingsFragment extends PreferenceFragment {
                 return true;
             }
         });
+    }
+
+    // https://code.google.com/p/android/issues/detail?id=4611 (#35)
+    @Override
+    public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
+        if(preference instanceof PreferenceScreen) {
+            final PreferenceScreen newPreferenceScreen = (PreferenceScreen) preference;
+            if(newPreferenceScreen.getDialog() != null) {
+                newPreferenceScreen.getDialog().getWindow().getDecorView().setBackgroundResource(R.color.common_background_window);
+            }
+        }
+
+        return super.onPreferenceTreeClick(preferenceScreen, preference);
     }
 
 }

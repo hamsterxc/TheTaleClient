@@ -14,6 +14,7 @@ import android.text.style.StrikethroughSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -176,11 +177,16 @@ public class ChatFragment extends WrapperFragment {
                     container.addView(getChatItemView(layoutInflater, container, message));
                 }
                 if(isGlobal || (scroll.getScrollY() == outerContainer.getHeight() - scroll.getBottom())) {
-                    scroll.post(new Runnable() {
+                    scroll.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                         @Override
-                        public void run() {
-                            scroll.fullScroll(View.FOCUS_DOWN);
-//                            scroll.scrollTo(0, scroll.getBottom());
+                        public void onGlobalLayout() {
+                            scroll.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    scroll.fullScroll(View.FOCUS_DOWN);
+                                }
+                            });
+                            UiUtils.removeGlobalLayoutListener(scroll, this);
                         }
                     });
                 }

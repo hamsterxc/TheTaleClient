@@ -1,5 +1,6 @@
 package com.lonebytesoft.thetaleclient.fragment;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -191,6 +192,10 @@ public class GameInfoFragment extends WrapperFragment {
                         gameInfoResponse.account.hero.basicInfo.experienceForNextLevel));
 
                 progressEnergy.setMax(gameInfoResponse.account.hero.energy.max);
+                // https://code.google.com/p/android/issues/detail?id=12945
+                if(Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+                    progressEnergy.setProgress(0);
+                }
                 progressEnergy.setProgress(gameInfoResponse.account.hero.energy.current);
                 textEnergy.setText(String.format("%d/%d + %d",
                         gameInfoResponse.account.hero.energy.current,
