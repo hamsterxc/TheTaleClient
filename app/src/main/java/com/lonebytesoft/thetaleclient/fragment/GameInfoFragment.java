@@ -4,6 +4,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -78,7 +79,7 @@ public class GameInfoFragment extends WrapperFragment {
     private TextView textMight;
 
     private ProgressBar progressAction;
-    private TextView progressActionHealth;
+    private TextView progressActionInfo;
     private TextView textAction;
     private RequestActionView actionHelp;
 
@@ -114,7 +115,7 @@ public class GameInfoFragment extends WrapperFragment {
         textMight = (TextView) rootView.findViewById(R.id.game_info_might);
 
         progressAction = (ProgressBar) rootView.findViewById(R.id.game_info_action_progress);
-        progressActionHealth = (TextView) rootView.findViewById(R.id.game_info_action_progress_health);
+        progressActionInfo = (TextView) rootView.findViewById(R.id.game_info_action_progress_info);
         textAction = (TextView) rootView.findViewById(R.id.game_info_action_text);
         actionHelp = (RequestActionView) rootView.findViewById(R.id.game_help);
 
@@ -272,26 +273,29 @@ public class GameInfoFragment extends WrapperFragment {
                     lastJournalTimestamp = 0;
                     lastFightProgress = 0;
                 }
-                if((action.type == HeroAction.BATTLE) && (lastKnownHealth != 0)) {
-                    progressActionHealth.setText(String.format("%d / %d HP",
-                            Math.round(lastKnownHealth * (1 - action.completion)), lastKnownHealth));
-                    progressActionHealth.setVisibility(View.VISIBLE);
-                    progressActionHealth.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                        @Override
-                        public void onGlobalLayout() {
-                            final int height = progressActionHealth.getHeight();
-                            if(height > 0) {
-                                if(isAdded()) {
-                                    UiUtils.setHeight(progressAction,
-                                            height + 2 * (int) getResources().getDimension(R.dimen.game_info_bar_padding));
-                                }
-                                UiUtils.removeGlobalLayoutListener(progressActionHealth, this);
-                            }
+
+                switch(action.type) {
+                    case BATTLE:
+                        if(lastKnownHealth != 0) {
+                            setProgressActionInfo(String.format("%d / %d HP",
+                                    Math.round(lastKnownHealth * (1 - action.completion)), lastKnownHealth));
+                        } else {
+                            setProgressActionInfo(null);
                         }
-                    });
-                } else {
-                    progressActionHealth.setVisibility(View.GONE);
-                    UiUtils.setHeight(progressAction, (int) getResources().getDimension(R.dimen.game_info_bar_height));
+                        break;
+
+                    case IDLE:
+                        setProgressActionInfo(getActionTimeString((long) Math.ceil(
+                                (1 - action.completion) * gameInfoResponse.account.hero.basicInfo.level)));
+                        break;
+
+                    case RESURRECTION:
+                        setProgressActionInfo(getActionTimeString((long) Math.ceil(
+                                (1 - action.completion) * 3.0 * gameInfoResponse.account.hero.basicInfo.level)));
+                        break;
+
+                    default:
+                        setProgressActionInfo(null);
                 }
 
                 actionHelp.setEnabled(false);
@@ -318,6 +322,42 @@ public class GameInfoFragment extends WrapperFragment {
                 setError(response.errorMessage);
             }
         }, this), false);
+    }
+
+    private void setProgressActionInfo(final CharSequence info) {
+        if(TextUtils.isEmpty(info)) {
+            progressActionInfo.setVisibility(View.GONE);
+            UiUtils.setHeight(progressAction, (int) getResources().getDimension(R.dimen.game_info_bar_height));
+        } else {
+            progressActionInfo.setText(info);
+            progressActionInfo.setVisibility(View.VISIBLE);
+            progressActionInfo.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    final int height = progressActionInfo.getHeight();
+                    if(height > 0) {
+                        if(isAdded()) {
+                            UiUtils.setHeight(progressAction,
+                                    height + 2 * (int) getResources().getDimension(R.dimen.game_info_bar_padding));
+                        }
+                        UiUtils.removeGlobalLayoutListener(progressActionInfo, this);
+                    }
+                }
+            });
+        }
+    }
+
+    private String getActionTimeString(final long minutes) {
+        if(minutes < 0) {
+            return null;
+        }
+
+        final long hours = minutes / 60;
+        if(hours > 0) {
+            return getString(R.string.game_action_time, hours, minutes % 60);
+        } else {
+            return getString(R.string.game_action_time_short, minutes);
+        }
     }
 
     @Override

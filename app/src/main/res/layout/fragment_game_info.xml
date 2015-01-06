@@ -310,7 +310,7 @@
                     android:progressDrawable="@drawable/game_info_action"/>
 
                 <TextView
-                    android:id="@+id/game_info_action_progress_health"
+                    android:id="@+id/game_info_action_progress_info"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/game_info_bar_padding"
