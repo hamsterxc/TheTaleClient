@@ -65,7 +65,11 @@ public class GameFragment extends Fragment implements Refreshable, OnscreenState
             }
         });
 
-        if(savedInstanceState != null) {
+        final GamePage gamePage = PreferencesManager.getDesiredGamePage();
+        if(gamePage != null) {
+            setCurrentPage(gamePage);
+            PreferencesManager.setDesiredGamePage(null);
+        } else if(savedInstanceState != null) {
             viewPager.setCurrentItem(savedInstanceState.getInt(KEY_PAGE_INDEX, 0));
         }
 
@@ -168,7 +172,9 @@ public class GameFragment extends Fragment implements Refreshable, OnscreenState
     }
 
     public void setCurrentPage(final GamePage page) {
-        viewPager.setCurrentItem(page.ordinal());
+        if(page != null) {
+            viewPager.setCurrentItem(page.ordinal());
+        }
     }
 
     private Fragment getPageFragment(final int position) {

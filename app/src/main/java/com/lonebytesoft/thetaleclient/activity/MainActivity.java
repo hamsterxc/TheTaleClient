@@ -116,9 +116,12 @@ public class MainActivity extends ActionBarActivity
         }
 
         final Fragment fragment = getSupportFragmentManager().findFragmentByTag(currentItem.getFragmentTag());
-        if(fragment instanceof GameFragment) {
-            if(tabIndex != -1) {
-                ((GameFragment) fragment).setCurrentPage(GameFragment.GamePage.values()[tabIndex]);
+        if(tabIndex != -1) {
+            final GameFragment.GamePage gamePage = GameFragment.GamePage.values()[tabIndex];
+            if(fragment instanceof GameFragment) {
+                ((GameFragment) fragment).setCurrentPage(gamePage);
+            } else {
+                PreferencesManager.setDesiredGamePage(gamePage);
             }
         }
         UiUtils.callOnscreenStateChange(fragment, true);

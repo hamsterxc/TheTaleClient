@@ -9,6 +9,7 @@ import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.TheTaleClientApplication;
 import com.lonebytesoft.thetaleclient.api.dictionary.Action;
 import com.lonebytesoft.thetaleclient.api.dictionary.MapStyle;
+import com.lonebytesoft.thetaleclient.fragment.GameFragment;
 
 import java.util.Map;
 
@@ -24,6 +25,7 @@ public class PreferencesManager {
     private static final String KEY_SESSION = "KEY_SESSION";
     private static final String KEY_READ_ALOUD_CONFIRMED = "KEY_READ_ALOUD_CONFIRMED";
     private static final String KEY_LAST_DIARY_ENTRY_READ = "KEY_LAST_DIARY_ENTRY_READ";
+    private static final String KEY_DESIRED_GAME_PAGE = "KEY_DESIRED_GAME_PAGE";
 
     private static final String KEY_ACCOUNT_ID = "KEY_ACCOUNT_ID";
     private static final String KEY_ACCOUNT_NAME = "KEY_ACCOUNT_NAME";
@@ -436,6 +438,17 @@ public class PreferencesManager {
     public static void setMapCenterPlaceId(final int placeId) {
         sharedPreferences.edit()
                 .putInt(KEY_MAP_CENTER_PLACE_ID, placeId)
+                .commit();
+    }
+
+    public static GameFragment.GamePage getDesiredGamePage() {
+        final int index = sharedPreferences.getInt(KEY_DESIRED_GAME_PAGE, -1);
+        return index == -1 ? null : GameFragment.GamePage.values()[index];
+    }
+
+    public static void setDesiredGamePage(final GameFragment.GamePage gamePage) {
+        sharedPreferences.edit()
+                .putInt(KEY_DESIRED_GAME_PAGE, gamePage == null ? -1 : gamePage.ordinal())
                 .commit();
     }
 
