@@ -23,6 +23,7 @@
         android:visibility="gone">
 
         <ImageView
+            android:id="@+id/login_logo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="32dp"
@@ -62,6 +63,16 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/login_action_authorization_login_password"/>
+
+                <TextView
+                    android:id="@+id/login_action_registration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:layout_gravity="center_horizontal"
+                    style="?android:attr/textAppearanceMedium"
+                    android:textColor="@color/common_link"
+                    android:text="@string/login_action_registration"/>
 
             </LinearLayout>
 
@@ -112,20 +123,10 @@
                     android:text="@string/login_action_login"/>
 
                 <TextView
-                    android:id="@+id/login_action_registration"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:layout_gravity="center_horizontal"
-                    style="?android:attr/textAppearanceMedium"
-                    android:textColor="@color/common_link"
-                    android:text="@string/login_action_registration"/>
-
-                <TextView
                     android:id="@+id/login_action_password_remind"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
+                    android:layout_marginTop="24dp"
                     android:layout_gravity="center_horizontal"
                     style="?android:attr/textAppearanceMedium"
                     android:textColor="@color/common_link"

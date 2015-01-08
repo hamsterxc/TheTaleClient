@@ -37,6 +37,7 @@ import com.lonebytesoft.thetaleclient.util.UiUtils;
  */
 public class LoginActivity extends FragmentActivity {
 
+    private static final String URL_HOME = "http://the-tale.org/?action=the-tale-client";
     private static final String URL_REGISTRATION = "http://the-tale.org/accounts/registration/fast?action=the-tale-client";
     private static final String URL_PASSWORD_REMIND = "http://the-tale.org/accounts/profile/reset-password?action=the-tale-client";
     private static final long THIRD_PARTY_AUTH_STATE_TIMEOUT = 10000;
@@ -121,6 +122,13 @@ public class LoginActivity extends FragmentActivity {
 
         actionRetry = findViewById(R.id.login_error_global_retry);
         textErrorGlobal = (TextView) findViewById(R.id.login_error_global_text);
+
+        findViewById(R.id.login_logo).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(UiUtils.getOpenLinkIntent(URL_HOME));
+            }
+        });
 
         findViewById(R.id.login_action_authorization_site).setOnClickListener(new View.OnClickListener() {
             @Override
