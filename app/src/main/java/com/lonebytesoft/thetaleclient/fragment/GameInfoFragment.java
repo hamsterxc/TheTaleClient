@@ -19,7 +19,10 @@ import com.lonebytesoft.thetaleclient.api.ApiResponseCallback;
 import com.lonebytesoft.thetaleclient.api.cache.prerequisite.InfoPrerequisiteRequest;
 import com.lonebytesoft.thetaleclient.api.cache.prerequisite.PrerequisiteRequest;
 import com.lonebytesoft.thetaleclient.api.dictionary.Action;
+import com.lonebytesoft.thetaleclient.api.dictionary.ArtifactEffect;
+import com.lonebytesoft.thetaleclient.api.dictionary.EquipmentType;
 import com.lonebytesoft.thetaleclient.api.dictionary.HeroAction;
+import com.lonebytesoft.thetaleclient.api.model.ArtifactInfo;
 import com.lonebytesoft.thetaleclient.api.model.HeroActionInfo;
 import com.lonebytesoft.thetaleclient.api.model.JournalEntry;
 import com.lonebytesoft.thetaleclient.api.model.MightInfo;
@@ -38,6 +41,7 @@ import com.lonebytesoft.thetaleclient.util.onscreen.OnscreenPart;
 import com.lonebytesoft.thetaleclient.widget.RequestActionView;
 
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -285,13 +289,33 @@ public class GameInfoFragment extends WrapperFragment {
                         break;
 
                     case IDLE:
+                        double multiplierIdleness = 1.0;
+                        for(final Map.Entry<EquipmentType, ArtifactInfo> equipmentEntry : gameInfoResponse.account.hero.equipment.entrySet()) {
+                            final ArtifactInfo artifactInfo = equipmentEntry.getValue();
+                            if(artifactInfo.effect == ArtifactEffect.ACTIVENESS) {
+                                multiplierIdleness *= 0.75;
+                            }
+                            if(artifactInfo.effectSpecial == ArtifactEffect.ACTIVENESS) {
+                                multiplierIdleness *= 0.75;
+                            }
+                        }
                         setProgressActionInfo(getActionTimeString((long) Math.ceil(
-                                (1 - action.completion) * gameInfoResponse.account.hero.basicInfo.level)));
+                                (1 - action.completion) * multiplierIdleness * gameInfoResponse.account.hero.basicInfo.level)));
                         break;
 
                     case RESURRECTION:
+                        double multiplierResurrection = 3.0;
+                        for(final Map.Entry<EquipmentType, ArtifactInfo> equipmentEntry : gameInfoResponse.account.hero.equipment.entrySet()) {
+                            final ArtifactInfo artifactInfo = equipmentEntry.getValue();
+                            if(artifactInfo.effect == ArtifactEffect.SURVIVABILITY) {
+                                multiplierResurrection *= 0.75;
+                            }
+                            if(artifactInfo.effectSpecial == ArtifactEffect.SURVIVABILITY) {
+                                multiplierResurrection *= 0.75;
+                            }
+                        }
                         setProgressActionInfo(getActionTimeString((long) Math.ceil(
-                                (1 - action.completion) * 3.0 * gameInfoResponse.account.hero.basicInfo.level)));
+                                (1 - action.completion) * multiplierResurrection * gameInfoResponse.account.hero.basicInfo.level)));
                         break;
 
                     default:
