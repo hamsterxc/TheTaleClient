@@ -23,7 +23,19 @@
 
     <bool name="settings_autoaction_common_default">false</bool>
 
-    <bool name="settings_misc_service_start_boot_default">false</bool>
-    <bool name="settings_misc_read_aloud_default">false</bool>
+    <bool name="settings_service_start_boot_default">false</bool>
+    <integer name="settings_service_interval_default">10</integer>
+    <string-array name="settings_service_interval_values">
+        <item>10</item>
+        <item>30</item>
+        <item>60</item>
+        <item>300</item>
+        <item>600</item>
+        <item>1200</item>
+        <item>1800</item>
+        <item>3600</item>
+    </string-array>
+
+    <bool name="settings_read_aloud_default">false</bool>
 
 </resources>

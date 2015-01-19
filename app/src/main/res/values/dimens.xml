@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <dimen name="app_widget_margin">8dp</dimen>
+    <dimen name="app_widget_bar_text_height">12dp</dimen>
+    <dimen name="app_widget_size_1">40dp</dimen>
+    <dimen name="app_widget_size_2">110dp</dimen>
+    <dimen name="app_widget_size_3">180dp</dimen>
+    <dimen name="app_widget_size_4">250dp</dimen>
+
     <dimen name="drawer_item_height">48dp</dimen>
     <dimen name="drawer_width">240dp</dimen>
     <dimen name="tab_strip_height">48dp</dimen>

@@ -26,6 +26,8 @@ public class PreferencesManager {
     private static final String KEY_READ_ALOUD_CONFIRMED = "KEY_READ_ALOUD_CONFIRMED";
     private static final String KEY_LAST_DIARY_ENTRY_READ = "KEY_LAST_DIARY_ENTRY_READ";
     private static final String KEY_DESIRED_GAME_PAGE = "KEY_DESIRED_GAME_PAGE";
+    private static final String KEY_WIDGET_ENABLED = "KEY_WIDGET_ENABLED";
+    private static final String KEY_SHOULD_EXIT = "KEY_SHOULD_EXIT";
 
     private static final String KEY_ACCOUNT_ID = "KEY_ACCOUNT_ID";
     private static final String KEY_ACCOUNT_NAME = "KEY_ACCOUNT_NAME";
@@ -373,31 +375,43 @@ public class PreferencesManager {
 
     public static boolean shouldServiceStartBoot() {
         return sharedPreferences.getBoolean(
-                getString(R.string.settings_key_misc_service_start_boot),
-                getBoolean(R.bool.settings_misc_service_start_boot_default));
+                getString(R.string.settings_key_service_start_boot),
+                getBoolean(R.bool.settings_service_start_boot_default));
+    }
+
+    public static int getServiceInterval() {
+        final int serviceIntervalDefault = getInteger(R.integer.settings_service_interval_default);
+        final String serviceInterval = sharedPreferences.getString(
+                getString(R.string.settings_key_service_interval),
+                String.valueOf(serviceIntervalDefault));
+        try {
+            return Integer.parseInt(serviceInterval);
+        } catch(NumberFormatException ignored) {
+            return serviceIntervalDefault;
+        }
     }
 
     public static boolean isJournalReadAloudEnabled() {
         return sharedPreferences.getBoolean(
-                getString(R.string.settings_key_misc_journal_read_aloud),
-                getBoolean(R.bool.settings_misc_read_aloud_default));
+                getString(R.string.settings_key_read_aloud_journal),
+                getBoolean(R.bool.settings_read_aloud_default));
     }
 
     public static void setJournalReadAloudEnabled(final boolean isEnabled) {
         sharedPreferences.edit()
-                .putBoolean(getString(R.string.settings_key_misc_journal_read_aloud), isEnabled)
+                .putBoolean(getString(R.string.settings_key_read_aloud_journal), isEnabled)
                 .commit();
     }
 
     public static boolean isDiaryReadAloudEnabled() {
         return sharedPreferences.getBoolean(
-                getString(R.string.settings_key_misc_diary_read_aloud),
-                getBoolean(R.bool.settings_misc_read_aloud_default));
+                getString(R.string.settings_key_read_aloud_diary),
+                getBoolean(R.bool.settings_read_aloud_default));
     }
 
     public static void setDiaryReadAloudEnabled(final boolean isEnabled) {
         sharedPreferences.edit()
-                .putBoolean(getString(R.string.settings_key_misc_diary_read_aloud), isEnabled)
+                .putBoolean(getString(R.string.settings_key_read_aloud_diary), isEnabled)
                 .commit();
     }
 
@@ -506,8 +520,30 @@ public class PreferencesManager {
         return sharedPreferences.getInt(String.format(KEY_ABILITY_COST, action.name()), -1);
     }
 
+    public static void setWidgetEnabled(final boolean isEnabled) {
+        sharedPreferences.edit()
+                .putBoolean(KEY_WIDGET_ENABLED, isEnabled)
+                .commit();
+    }
+
+    public static boolean isWidgetEnabled() {
+        return sharedPreferences.getBoolean(KEY_WIDGET_ENABLED, false);
+    }
+
+    public static void setShouldExit(final boolean shouldExit) {
+        sharedPreferences.edit()
+                .putBoolean(KEY_SHOULD_EXIT, shouldExit)
+                .commit();
+    }
+
+    public static boolean shouldExit() {
+        return sharedPreferences.getBoolean(KEY_SHOULD_EXIT, false);
+    }
+
     public static boolean isWatcherEnabled() {
-        return shouldNotifyDeath()
+        return
+                isWidgetEnabled()
+                || shouldNotifyDeath()
                 || shouldNotifyIdleness()
                 || shouldNotifyHealth()
                 || shouldNotifyEnergy()
@@ -516,7 +552,8 @@ public class PreferencesManager {
                 || shouldAutohelpDeath()
                 || shouldAutohelpIdle()
                 || shouldAutohelpHealth()
-                || shouldAutohelpEnergy();
+                || shouldAutohelpEnergy()
+                ;
     }
 
 }

@@ -8,12 +8,15 @@ import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.IBinder;
 
+import com.lonebytesoft.thetaleclient.DataViewMode;
+import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.TheTaleClientApplication;
 import com.lonebytesoft.thetaleclient.api.ApiResponseCallback;
 import com.lonebytesoft.thetaleclient.api.dictionary.Action;
 import com.lonebytesoft.thetaleclient.api.model.DiaryEntry;
 import com.lonebytesoft.thetaleclient.api.request.AbilityUseRequest;
 import com.lonebytesoft.thetaleclient.api.request.GameInfoRequest;
+import com.lonebytesoft.thetaleclient.api.response.CommonResponse;
 import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;
 import com.lonebytesoft.thetaleclient.service.autohelper.Autohelper;
 import com.lonebytesoft.thetaleclient.service.autohelper.DeathAutohelper;
@@ -22,6 +25,7 @@ import com.lonebytesoft.thetaleclient.service.autohelper.HealthAutohelper;
 import com.lonebytesoft.thetaleclient.service.autohelper.IdlenessAutohelper;
 import com.lonebytesoft.thetaleclient.service.watcher.CardTaker;
 import com.lonebytesoft.thetaleclient.service.watcher.GameStateWatcher;
+import com.lonebytesoft.thetaleclient.service.widget.AppWidgetHelper;
 import com.lonebytesoft.thetaleclient.util.NotificationManager;
 import com.lonebytesoft.thetaleclient.util.PreferencesManager;
 import com.lonebytesoft.thetaleclient.util.TextToSpeechUtils;
@@ -36,7 +40,8 @@ import java.util.List;
  */
 public class WatcherService extends Service {
 
-    private static final long REQUEST_TIMEOUT_MILLIS = 10000; // 10 s
+    public static final String BROADCAST_SERVICE_RESTART_REFRESH_ACTION =
+            TheTaleClientApplication.getContext().getPackageName() + ".service.restart.refresh";
 
     private final Handler handler = new Handler();
     private final Runnable refreshRunnable = new Runnable() {
@@ -47,6 +52,7 @@ public class WatcherService extends Service {
                     @Override
                     public void processResponse(GameInfoResponse response) {
                         if (response.account == null) {
+                            AppWidgetHelper.updateWithError(WatcherService.this, getString(R.string.game_not_authorized));
                             stopSelf();
                             return;
                         }
@@ -83,11 +89,14 @@ public class WatcherService extends Service {
                         }
                         PreferencesManager.setLastDiaryEntryRead(response.account.hero.diary.get(diarySize - 1).timestamp);
 
+                        AppWidgetHelper.update(WatcherService.this, DataViewMode.DATA, response);
+
                         postRefresh();
                     }
 
                     @Override
                     public void processError(GameInfoResponse response) {
+                        AppWidgetHelper.update(WatcherService.this, DataViewMode.ERROR, response);
                         postRefresh();
                     }
                 }, false);
@@ -96,11 +105,48 @@ public class WatcherService extends Service {
             }
         }
     };
+
     private final BroadcastReceiver notificationDeleteReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             if(NotificationManager.BROADCAST_NOTIFICATION_DELETE_ACTION.equals(intent.getAction())) {
                 TheTaleClientApplication.getNotificationManager().onNotificationDelete();
+            }
+        }
+    };
+    private final BroadcastReceiver widgetHelpReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(final Context context, Intent intent) {
+            if(AppWidgetHelper.BROADCAST_WIDGET_HELP_ACTION.equals(intent.getAction())) {
+                AppWidgetHelper.update(context, DataViewMode.LOADING, null);
+                new AbilityUseRequest(Action.HELP).execute(0, new ApiResponseCallback<CommonResponse>() {
+                    @Override
+                    public void processResponse(CommonResponse response) {
+                        AppWidgetHelper.updateWithRequest(context);
+                    }
+
+                    @Override
+                    public void processError(CommonResponse response) {
+                        AppWidgetHelper.updateWithError(context, response.errorMessage);
+                    }
+                });
+            }
+        }
+    };
+    private final BroadcastReceiver restartRefreshReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(BROADCAST_SERVICE_RESTART_REFRESH_ACTION.equals(intent.getAction())) {
+                restartRefresh();
+            }
+        }
+    };
+    private final BroadcastReceiver refreshWidgetReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(AppWidgetHelper.BROADCAST_WIDGET_REFRESH_ACTION.equals(intent.getAction())) {
+                AppWidgetHelper.update(context, DataViewMode.LOADING, null);
+                restartRefresh();
             }
         }
     };
@@ -120,17 +166,24 @@ public class WatcherService extends Service {
         autohelpers.add(new EnergyAutohelper());
 
         registerReceiver(notificationDeleteReceiver, new IntentFilter(NotificationManager.BROADCAST_NOTIFICATION_DELETE_ACTION));
+        registerReceiver(widgetHelpReceiver, new IntentFilter(AppWidgetHelper.BROADCAST_WIDGET_HELP_ACTION));
+        registerReceiver(restartRefreshReceiver, new IntentFilter(BROADCAST_SERVICE_RESTART_REFRESH_ACTION));
+        registerReceiver(refreshWidgetReceiver, new IntentFilter(AppWidgetHelper.BROADCAST_WIDGET_REFRESH_ACTION));
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        handler.removeCallbacks(refreshRunnable);
-        refreshRunnable.run();
+        restartRefresh();
         return START_STICKY;
     }
 
     private void postRefresh() {
-        handler.postDelayed(refreshRunnable, REQUEST_TIMEOUT_MILLIS);
+        handler.postDelayed(refreshRunnable, PreferencesManager.getServiceInterval() * 1000);
+    }
+
+    private void restartRefresh() {
+        handler.removeCallbacks(refreshRunnable);
+        refreshRunnable.run();
     }
 
     @Override

@@ -6,6 +6,11 @@
     <string name="app_about">Android-клиент для многопользовательской zero-player RPG &lt;a href=\"http://the-tale.org\"&gt;Сказка&lt;/a&gt;.
         &lt;br&gt;&lt;br&gt;Версия: %1$s&lt;br&gt;&lt;br&gt;Автор: &lt;a href=\"http://the-tale.org/accounts/9297\"&gt;Hamster&lt;/a&gt;</string>
 
+    <string name="app_widget_small">The Tale Client: Состояние героя (1x1)</string>
+    <string name="app_widget_medium">The Tale Client: Основная информация (2x1)</string>
+    <string name="app_widget_large">The Tale Client: Герой и помощь (3x1)</string>
+    <string name="app_widget_huge">The Tale Client: Герой, помощь и действие (4x2)</string>
+
     <string name="action_read_aloud">Читать журнал</string>
     <string name="action_refresh">Обновить</string>
     <string name="action_retry">Повторить попытку</string>
@@ -22,6 +27,7 @@
 
     <string name="common_dialog_attention_title">Внимание</string>
     <string name="common_error">Произошла неизвестная ошибка. Попробуйте еще раз.</string>
+    <string name="common_error_short">Произошла неизвестная ошибка.</string>
     <string name="common_item_count">" (x%d)"</string>
 
     <string name="drawer_dialog_profile_item_keeper">Профиль хранителя</string>
@@ -47,6 +53,9 @@
     <string name="game_help">Помочь</string>
     <string name="game_help_progress_to_next_card">%1$d / %2$d</string>
     <string name="game_help_to_next_card">Помощи до новой карты</string>
+    <string name="game_info_health">Здоровье</string>
+    <string name="game_info_experience">Опыт</string>
+    <string name="game_info_energy">Энергия</string>
     <string name="game_read_aloud_confirmation">Для чтения текста вслух необходим языковой пакет русского языка.
         Если он не установлен на этом устройстве, пакет будет скачан.
         Это может использовать большое количество интернет-трафика.\nПродолжить?</string>
@@ -218,14 +227,29 @@
     <string name="settings_key_autoaction_cardtake">KEY_SETTINGS_AUTOACTION_CARDTAKE</string>
     <string name="settings_title_autoaction_cardtake">Брать карты судьбы</string>
 
-    <string name="settings_misc">Разное</string>
-    <string name="settings_key_misc_diary_read_aloud">KEY_SETTINGS_MISC_DIARY_READ_ALOUD</string>
-    <string name="settings_key_misc_journal_read_aloud">KEY_SETTINGS_MISC_JOURNAL_READ_ALOUD</string>
-    <string name="settings_key_misc_service_start_boot">KEY_SETTINGS_MISC_SERVICE_START_BOOT</string>
-    <string name="settings_summary_misc_diary_read_aloud">Чтение на любом экране открытого приложения</string>
-    <string name="settings_summary_misc_journal_read_aloud">Чтение на основном экране игры</string>
-    <string name="settings_title_misc_diary_read_aloud">Читать дневник вслух</string>
-    <string name="settings_title_misc_journal_read_aloud">Читать журнал вслух</string>
-    <string name="settings_title_misc_service_start_boot">Запускать сервис при включении устройства</string>
+    <string name="settings_service">Сервис</string>
+    <string name="settings_key_service_start_boot">KEY_SETTINGS_SERVICE_START_BOOT</string>
+    <string name="settings_key_service_interval">KEY_SETTINGS_SERVICE_INTERVAL</string>
+    <string name="settings_summary_service">Уведомления, автоматические действия, обновление виджета</string>
+    <string name="settings_title_service_start_boot">Запускать сервис при включении устройства</string>
+    <string name="settings_title_service_interval">Периодичность запросов</string>
+    <string-array name="settings_entries_service_interval">
+        <item>10 секунд</item>
+        <item>30 секунд</item>
+        <item>1 минута</item>
+        <item>5 минут</item>
+        <item>10 минут</item>
+        <item>20 минут</item>
+        <item>30 минут</item>
+        <item>1 час</item>
+    </string-array>
+
+    <string name="settings_read_aloud">Чтение вслух</string>
+    <string name="settings_key_read_aloud_diary">KEY_SETTINGS_MISC_DIARY_READ_ALOUD</string>
+    <string name="settings_key_read_aloud_journal">KEY_SETTINGS_MISC_JOURNAL_READ_ALOUD</string>
+    <string name="settings_summary_read_aloud_diary">Чтение на любом экране открытого приложения</string>
+    <string name="settings_summary_read_aloud_journal">Чтение на основном экране игры</string>
+    <string name="settings_title_read_aloud_diary">Читать дневник вслух</string>
+    <string name="settings_title_read_aloud_journal">Читать журнал вслух</string>
 
 </resources>

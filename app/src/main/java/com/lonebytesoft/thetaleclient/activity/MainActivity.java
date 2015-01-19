@@ -108,6 +108,11 @@ public class MainActivity extends ActionBarActivity
     protected void onResume() {
         super.onResume();
 
+        if(PreferencesManager.shouldExit()) {
+            PreferencesManager.setShouldExit(false);
+            finish();
+        }
+
         int tabIndex = -1;
         if((getIntent() != null) && getIntent().hasExtra(KEY_GAME_TAB_INDEX)) {
             onNavigationDrawerItemSelected(DrawerItem.GAME);
@@ -359,7 +364,8 @@ public class MainActivity extends ActionBarActivity
         } else {
             final DrawerItem drawerItem = history.pop();
             if(drawerItem == null) {
-                super.onBackPressed();
+                PreferencesManager.setShouldExit(true);
+                finish();
             } else {
                 onNavigationDrawerItemSelected(drawerItem);
             }

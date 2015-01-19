@@ -1,17 +1,22 @@
 package com.lonebytesoft.thetaleclient.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
+import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceScreen;
 import android.support.v4.preference.PreferenceFragment;
 
 import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.TheTaleClientApplication;
+import com.lonebytesoft.thetaleclient.service.WatcherService;
 import com.lonebytesoft.thetaleclient.util.DialogUtils;
 import com.lonebytesoft.thetaleclient.util.PreferencesManager;
 import com.lonebytesoft.thetaleclient.util.TextToSpeechUtils;
 import com.lonebytesoft.thetaleclient.widget.TimeIntervalPreference;
+
+import java.util.Arrays;
 
 /**
  * @author Hamster
@@ -105,8 +110,26 @@ public class SettingsFragment extends PreferenceFragment {
                 R.string.settings_summary_autohelp_common_energy_threshold,
                 String.valueOf(PreferencesManager.getAutohelpEnergyEnergyThreshold()));
 
+        // service
+        final ListPreference serviceInterval = (ListPreference) findPreference(getString(R.string.settings_key_service_interval));
+        serviceInterval.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                serviceInterval.setSummary(getEntryTitle(
+                        R.array.settings_entries_service_interval,
+                        R.array.settings_service_interval_values,
+                        (String) newValue));
+                getActivity().sendBroadcast(new Intent(WatcherService.BROADCAST_SERVICE_RESTART_REFRESH_ACTION));
+                return true;
+            }
+        });
+        serviceInterval.setSummary(getEntryTitle(
+                R.array.settings_entries_service_interval,
+                R.array.settings_service_interval_values,
+                serviceInterval.getValue()));
+
         // reading aloud
-        final CheckBoxPreference journalReadAloud = (CheckBoxPreference) findPreference(getString(R.string.settings_key_misc_journal_read_aloud));
+        final CheckBoxPreference journalReadAloud = (CheckBoxPreference) findPreference(getString(R.string.settings_key_read_aloud_journal));
         journalReadAloud.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
@@ -129,7 +152,7 @@ public class SettingsFragment extends PreferenceFragment {
             }
         });
 
-        final CheckBoxPreference diaryReadAloud = (CheckBoxPreference) findPreference(getString(R.string.settings_key_misc_diary_read_aloud));
+        final CheckBoxPreference diaryReadAloud = (CheckBoxPreference) findPreference(getString(R.string.settings_key_read_aloud_diary));
         diaryReadAloud.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
@@ -186,6 +209,15 @@ public class SettingsFragment extends PreferenceFragment {
         }
 
         return super.onPreferenceTreeClick(preferenceScreen, preference);
+    }
+
+    private String getEntryTitle(final int entriesResId, final int valuesResId, final String value) {
+        final int index = Arrays.asList(getResources().getStringArray(valuesResId)).indexOf(value);
+        if(index == -1) {
+            return null;
+        } else {
+            return getResources().getStringArray(entriesResId)[index];
+        }
     }
 
 }

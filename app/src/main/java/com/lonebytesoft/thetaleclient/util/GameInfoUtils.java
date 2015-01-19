@@ -1,7 +1,11 @@
 package com.lonebytesoft.thetaleclient.util;
 
+import android.content.Context;
+
+import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.api.dictionary.QuestType;
 import com.lonebytesoft.thetaleclient.api.model.EnergyInfo;
+import com.lonebytesoft.thetaleclient.api.model.HeroActionInfo;
 import com.lonebytesoft.thetaleclient.api.model.QuestStepInfo;
 import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;
 
@@ -38,6 +42,18 @@ public class GameInfoUtils {
             }
         }
         return false;
+    }
+
+    public static String getEnergyString(final EnergyInfo energyInfo) {
+        return String.format("%d/%d + %d", energyInfo.current, energyInfo.max, energyInfo.bonus);
+    }
+
+    public static String getActionString(final Context context, final HeroActionInfo actionInfo) {
+        String actionDescription = actionInfo.description;
+        if(actionInfo.isBossFight) {
+            actionDescription += context.getString(R.string.game_boss_fight);
+        }
+        return actionDescription;
     }
 
 }

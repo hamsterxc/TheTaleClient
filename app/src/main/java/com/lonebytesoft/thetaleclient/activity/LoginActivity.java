@@ -27,7 +27,9 @@ import com.lonebytesoft.thetaleclient.api.response.InfoResponse;
 import com.lonebytesoft.thetaleclient.api.response.ThirdPartyAuthResponse;
 import com.lonebytesoft.thetaleclient.api.response.ThirdPartyAuthStateResponse;
 import com.lonebytesoft.thetaleclient.service.WatcherService;
+import com.lonebytesoft.thetaleclient.service.widget.AppWidgetHelper;
 import com.lonebytesoft.thetaleclient.util.DialogUtils;
+import com.lonebytesoft.thetaleclient.util.PreferencesManager;
 import com.lonebytesoft.thetaleclient.util.RequestUtils;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
 
@@ -172,6 +174,8 @@ public class LoginActivity extends FragmentActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        PreferencesManager.setShouldExit(false);
+        AppWidgetHelper.update(this, DataViewMode.LOADING, null);
         if(isThirdPartyAuthInProgress) {
             thirdPartyAuthStateRequester.run();
         } else {
@@ -191,6 +195,7 @@ public class LoginActivity extends FragmentActivity {
                         if(response.account == null) {
                             setLoginContainersVisibility(true);
                             setMode(DataViewMode.DATA);
+                            AppWidgetHelper.updateWithError(LoginActivity.this, getString(R.string.game_not_authorized));
                         } else {
                             onSuccessfulLogin();
                         }
@@ -327,6 +332,7 @@ public class LoginActivity extends FragmentActivity {
     private void setError(final String error) {
         textErrorGlobal.setText(error);
         setMode(DataViewMode.ERROR);
+        AppWidgetHelper.updateWithError(this, error);
     }
 
     private void processError(final String error, final String login, final String password) {
@@ -349,6 +355,8 @@ public class LoginActivity extends FragmentActivity {
     }
 
     private void startMainActivity() {
+        AppWidgetHelper.updateWithRequest(this);
+
         final Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
         finish();
@@ -369,7 +377,8 @@ public class LoginActivity extends FragmentActivity {
             setMode(DataViewMode.DATA);
         } else {
             if (isStartLoginContainerVisible) {
-                super.onBackPressed();
+                PreferencesManager.setShouldExit(true);
+                finish();
             } else {
                 setLoginContainersVisibility(true);
             }

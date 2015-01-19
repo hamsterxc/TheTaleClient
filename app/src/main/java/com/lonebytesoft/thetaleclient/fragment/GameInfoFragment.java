@@ -23,6 +23,7 @@ import com.lonebytesoft.thetaleclient.api.dictionary.ArtifactEffect;
 import com.lonebytesoft.thetaleclient.api.dictionary.EquipmentType;
 import com.lonebytesoft.thetaleclient.api.dictionary.HeroAction;
 import com.lonebytesoft.thetaleclient.api.model.ArtifactInfo;
+import com.lonebytesoft.thetaleclient.api.model.EnergyInfo;
 import com.lonebytesoft.thetaleclient.api.model.HeroActionInfo;
 import com.lonebytesoft.thetaleclient.api.model.JournalEntry;
 import com.lonebytesoft.thetaleclient.api.model.MightInfo;
@@ -196,16 +197,14 @@ public class GameInfoFragment extends WrapperFragment {
                         gameInfoResponse.account.hero.basicInfo.experienceCurrent,
                         gameInfoResponse.account.hero.basicInfo.experienceForNextLevel));
 
-                progressEnergy.setMax(gameInfoResponse.account.hero.energy.max);
+                final EnergyInfo energy = gameInfoResponse.account.hero.energy;
+                progressEnergy.setMax(energy.max);
                 // https://code.google.com/p/android/issues/detail?id=12945
                 if(Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
                     progressEnergy.setProgress(0);
                 }
-                progressEnergy.setProgress(gameInfoResponse.account.hero.energy.current);
-                textEnergy.setText(String.format("%d/%d + %d",
-                        gameInfoResponse.account.hero.energy.current,
-                        gameInfoResponse.account.hero.energy.max,
-                        gameInfoResponse.account.hero.energy.bonus));
+                progressEnergy.setProgress(energy.current);
+                textEnergy.setText(GameInfoUtils.getEnergyString(energy));
 
                 textPowerPhysical.setText(String.valueOf(gameInfoResponse.account.hero.basicInfo.powerPhysical));
                 textPowerMagical.setText(String.valueOf(gameInfoResponse.account.hero.basicInfo.powerMagical));
@@ -223,11 +222,7 @@ public class GameInfoFragment extends WrapperFragment {
                 final HeroActionInfo action = gameInfoResponse.account.hero.action;
                 progressAction.setMax(1000);
                 progressAction.setProgress((int) (1000 * action.completion));
-                String currentAction = action.description;
-                if(action.isBossFight) {
-                    currentAction += getString(R.string.game_boss_fight);
-                }
-                textAction.setText(currentAction);
+                textAction.setText(GameInfoUtils.getActionString(getActivity(), action));
 
                 final List<JournalEntry> journal = gameInfoResponse.account.hero.journal;
                 final int journalSize = journal.size();

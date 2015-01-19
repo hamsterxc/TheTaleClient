@@ -19,6 +19,7 @@ import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
+import com.lonebytesoft.thetaleclient.activity.LoginActivity;
 import com.lonebytesoft.thetaleclient.activity.MainActivity;
 import com.lonebytesoft.thetaleclient.fragment.GameFragment;
 import com.lonebytesoft.thetaleclient.util.onscreen.OnscreenStateListener;
@@ -97,15 +98,27 @@ public class UiUtils {
         }
     }
 
-    public static PendingIntent getMainActivityIntent(final Context context, final GameFragment.GamePage gamePage) {
-        final Intent intent = new Intent(context, MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        intent.putExtra(MainActivity.KEY_GAME_TAB_INDEX, gamePage.ordinal());
+    public static PendingIntent getLoginActivityIntent(final Context context) {
+        final Intent intent = new Intent(context, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         return PendingIntent.getActivity(
                 context,
                 (int) System.currentTimeMillis(),
                 intent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent.FLAG_CANCEL_CURRENT);
+    }
+
+    public static PendingIntent getMainActivityIntent(final Context context, final GameFragment.GamePage gamePage) {
+        final Intent intent = new Intent(context, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        if(gamePage != null) {
+            intent.putExtra(MainActivity.KEY_GAME_TAB_INDEX, gamePage.ordinal());
+        }
+        return PendingIntent.getActivity(
+                context,
+                (int) System.currentTimeMillis(),
+                intent,
+                PendingIntent.FLAG_CANCEL_CURRENT);
     }
 
     // TODO plurals in "values" folder are treated as English, not Russian

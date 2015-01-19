@@ -239,27 +239,41 @@
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:title="@string/settings_misc">
+        android:title="@string/settings_service">
 
         <CheckBoxPreference
             android:layout="@layout/widget_preference_container"
-            android:key="@string/settings_key_misc_service_start_boot"
-            android:title="@string/settings_title_misc_service_start_boot"
-            android:defaultValue="@bool/settings_misc_service_start_boot_default"/>
+            android:key="@string/settings_key_service_start_boot"
+            android:title="@string/settings_title_service_start_boot"
+            android:summary="@string/settings_summary_service"
+            android:defaultValue="@bool/settings_service_start_boot_default"/>
+
+        <ListPreference
+            android:layout="@layout/widget_preference_container"
+            android:key="@string/settings_key_service_interval"
+            android:title="@string/settings_title_service_interval"
+            android:entries="@array/settings_entries_service_interval"
+            android:entryValues="@array/settings_service_interval_values"
+            android:defaultValue="@integer/settings_service_interval_default"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/settings_read_aloud">
 
         <CheckBoxPreference
             android:layout="@layout/widget_preference_container"
-            android:key="@string/settings_key_misc_journal_read_aloud"
-            android:title="@string/settings_title_misc_journal_read_aloud"
-            android:summary="@string/settings_summary_misc_journal_read_aloud"
-            android:defaultValue="@bool/settings_misc_read_aloud_default"/>
+            android:key="@string/settings_key_read_aloud_journal"
+            android:title="@string/settings_title_read_aloud_journal"
+            android:summary="@string/settings_summary_read_aloud_journal"
+            android:defaultValue="@bool/settings_read_aloud_default"/>
 
         <CheckBoxPreference
             android:layout="@layout/widget_preference_container"
-            android:key="@string/settings_key_misc_diary_read_aloud"
-            android:title="@string/settings_title_misc_diary_read_aloud"
-            android:summary="@string/settings_summary_misc_diary_read_aloud"
-            android:defaultValue="@bool/settings_misc_read_aloud_default"/>
+            android:key="@string/settings_key_read_aloud_diary"
+            android:title="@string/settings_title_read_aloud_diary"
+            android:summary="@string/settings_summary_read_aloud_diary"
+            android:defaultValue="@bool/settings_read_aloud_default"/>
 
     </PreferenceCategory>
 

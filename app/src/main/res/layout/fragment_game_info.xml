@@ -93,7 +93,8 @@
                     <ImageView
                         android:layout_width="@dimen/game_info_icon_size"
                         android:layout_height="@dimen/game_info_icon_size"
-                        android:src="@drawable/ic_health"/>
+                        android:src="@drawable/ic_health"
+                        android:contentDescription="@string/game_info_health"/>
 
                     <ProgressBar
                         android:id="@+id/game_info_health_progress"
@@ -121,7 +122,8 @@
                     <ImageView
                         android:layout_width="@dimen/game_info_icon_size"
                         android:layout_height="@dimen/game_info_icon_size"
-                        android:src="@drawable/ic_experience"/>
+                        android:src="@drawable/ic_experience"
+                        android:contentDescription="@string/game_info_experience"/>
 
                     <ProgressBar
                         android:id="@+id/game_info_experience_progress"
@@ -149,7 +151,8 @@
                     <ImageView
                         android:layout_width="@dimen/game_info_icon_size"
                         android:layout_height="@dimen/game_info_icon_size"
-                        android:src="@drawable/ic_energy"/>
+                        android:src="@drawable/ic_energy"
+                        android:contentDescription="@string/game_info_energy"/>
 
                     <ProgressBar
                         android:id="@+id/game_info_energy_progress"
