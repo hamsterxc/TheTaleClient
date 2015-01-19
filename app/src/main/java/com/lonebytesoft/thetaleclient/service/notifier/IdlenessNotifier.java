@@ -47,7 +47,7 @@ public class IdlenessNotifier implements Notifier {
 
     @Override
     public PendingIntent getPendingIntent(Context context) {
-        return UiUtils.getMainActivityIntent(context, GameFragment.GamePage.GAME_INFO);
+        return UiUtils.getApplicationIntent(context, GameFragment.GamePage.GAME_INFO);
     }
 
     @Override

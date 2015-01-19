@@ -98,18 +98,8 @@ public class UiUtils {
         }
     }
 
-    public static PendingIntent getLoginActivityIntent(final Context context) {
+    public static PendingIntent getApplicationIntent(final Context context, final GameFragment.GamePage gamePage) {
         final Intent intent = new Intent(context, LoginActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        return PendingIntent.getActivity(
-                context,
-                (int) System.currentTimeMillis(),
-                intent,
-                PendingIntent.FLAG_CANCEL_CURRENT);
-    }
-
-    public static PendingIntent getMainActivityIntent(final Context context, final GameFragment.GamePage gamePage) {
-        final Intent intent = new Intent(context, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         if(gamePage != null) {
             intent.putExtra(MainActivity.KEY_GAME_TAB_INDEX, gamePage.ordinal());
@@ -119,6 +109,10 @@ public class UiUtils {
                 (int) System.currentTimeMillis(),
                 intent,
                 PendingIntent.FLAG_CANCEL_CURRENT);
+    }
+
+    public static PendingIntent getApplicationIntent(final Context context) {
+        return getApplicationIntent(context, null);
     }
 
     // TODO plurals in "values" folder are treated as English, not Russian

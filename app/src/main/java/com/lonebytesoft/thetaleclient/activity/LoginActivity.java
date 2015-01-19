@@ -358,6 +358,7 @@ public class LoginActivity extends FragmentActivity {
         AppWidgetHelper.updateWithRequest(this);
 
         final Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtras(getIntent());
         startActivity(intent);
         finish();
     }

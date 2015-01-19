@@ -96,7 +96,7 @@ public class AppWidgetHelper {
         remoteViews.setViewVisibility(R.id.app_widget_progress, viewMode == DataViewMode.LOADING ? View.VISIBLE : View.GONE);
         remoteViews.setViewVisibility(R.id.app_widget_error, viewMode == DataViewMode.ERROR ? View.VISIBLE : View.GONE);
 
-        remoteViews.setOnClickPendingIntent(R.id.app_widget, UiUtils.getLoginActivityIntent(context));
+        remoteViews.setOnClickPendingIntent(R.id.app_widget, UiUtils.getApplicationIntent(context));
         remoteViews.setOnClickPendingIntent(R.id.app_widget_error_retry, PendingIntent.getBroadcast(
                 context,
                 (int) System.currentTimeMillis(),
