@@ -20,7 +20,10 @@ public class InfoPrerequisiteRequest extends PrerequisiteRequest<InfoResponse> {
 
     @Override
     protected boolean isPreExecuted() {
-        boolean isPreExecuted = (PreferencesManager.getAccountId() != 0) && (!TextUtils.isEmpty(PreferencesManager.getAccountName()));
+        boolean isPreExecuted =
+                (PreferencesManager.getAccountId() != 0)
+                && (!TextUtils.isEmpty(PreferencesManager.getAccountName()))
+                && (PreferencesManager.getTurnDelta() > 0);
         for(final Action action : Action.values()) {
             isPreExecuted &= PreferencesManager.getAbilityCost(action) >= 0;
         }

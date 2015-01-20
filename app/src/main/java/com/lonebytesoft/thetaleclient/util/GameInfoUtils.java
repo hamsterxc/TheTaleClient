@@ -3,13 +3,18 @@ package com.lonebytesoft.thetaleclient.util;
 import android.content.Context;
 
 import com.lonebytesoft.thetaleclient.R;
+import com.lonebytesoft.thetaleclient.api.dictionary.ArtifactEffect;
+import com.lonebytesoft.thetaleclient.api.dictionary.EquipmentType;
 import com.lonebytesoft.thetaleclient.api.dictionary.QuestType;
+import com.lonebytesoft.thetaleclient.api.model.ArtifactInfo;
 import com.lonebytesoft.thetaleclient.api.model.EnergyInfo;
 import com.lonebytesoft.thetaleclient.api.model.HeroActionInfo;
+import com.lonebytesoft.thetaleclient.api.model.HeroInfo;
 import com.lonebytesoft.thetaleclient.api.model.QuestStepInfo;
 import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Hamster
@@ -54,6 +59,20 @@ public class GameInfoUtils {
             actionDescription += context.getString(R.string.game_boss_fight);
         }
         return actionDescription;
+    }
+
+    public static int getArtifactEffectCount(final HeroInfo heroInfo, final ArtifactEffect artifactEffect) {
+        int count = 0;
+        for(final Map.Entry<EquipmentType, ArtifactInfo> equipmentEntry : heroInfo.equipment.entrySet()) {
+            final ArtifactInfo artifactInfo = equipmentEntry.getValue();
+            if(artifactInfo.effect == artifactEffect) {
+                count++;
+            }
+            if(artifactInfo.effectSpecial == artifactEffect) {
+                count++;
+            }
+        }
+        return count;
     }
 
 }

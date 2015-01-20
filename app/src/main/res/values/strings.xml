@@ -48,6 +48,8 @@
 
     <string name="game_action_time">Осталось: %1$d ч %2$d мин</string>
     <string name="game_action_time_short">Осталось: %1$d мин</string>
+    <string name="game_action_time_approximate">Осталось: примерно %1$d мин %2$d с</string>
+    <string name="game_action_time_approximate_short">Осталось: примерно %1$d с</string>
     <string name="game_boss_fight">" \u2605"</string>
     <string name="game_card_take">Взять карту!</string>
     <string name="game_help">Помочь</string>

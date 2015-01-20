@@ -17,6 +17,8 @@ import org.jsoup.select.Elements;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -29,7 +31,7 @@ import java.util.concurrent.CountDownLatch;
  */
 public class WebsiteUtils {
 
-    private static final int THREADS_COUNT = 10;
+    private static final int THREADS_COUNT = 20;
     private static final String PAGE_ACCOUNTS = "http://the-tale.org/accounts/";
 
     private static final Object lock = new Object();
@@ -60,14 +62,14 @@ public class WebsiteUtils {
                     return;
                 }
 
-                final Queue<Integer> profiles = new LinkedList<>();
+                final Collection<Integer> accounts = new ArrayList<>();
                 final Queue<Integer> pages = new LinkedList<>();
                 for(int i = 1; i <= pagesCount; i++) {
                     pages.add(i);
                 }
 
                 final CountDownLatch latch = new CountDownLatch(1);
-                getPageProfiles(pages, profiles, latch, callback);
+                getPageAccounts(pages, accounts, latch, callback);
                 try {
                     latch.await();
                 } catch(InterruptedException e) {
@@ -75,14 +77,19 @@ public class WebsiteUtils {
                     return;
                 }
 
-                for(int i = 0; i < THREADS_COUNT; i++) {
-                    getProfiles(profiles, callback);
-                }
+                enumAccounts(callback, accounts);
             }
         }).start();
     }
 
-    private static void getPageProfiles(final Queue<Integer> pages, final Queue<Integer> profiles,
+    public static void enumAccounts(final AccountCallback callback, final Collection<Integer> accounts) {
+        final Queue<Integer> accountsQueue = new LinkedList<>(accounts);
+        for(int i = 0; i < THREADS_COUNT; i++) {
+            processAccounts(accountsQueue, callback);
+        }
+    }
+
+    private static void getPageAccounts(final Queue<Integer> pages, final Collection<Integer> accounts,
                                         final CountDownLatch latch, final AccountCallback callback) {
         final Integer id;
         synchronized(lock) {
@@ -111,22 +118,22 @@ public class WebsiteUtils {
                     final Elements elements = document.select("tr.pgf-account-record");
                     for(final Element element : elements) {
                         final String link = element.children().get(0).children().get(0).attr("href");
-                        profiles.add(Integer.parseInt(link.substring(link.lastIndexOf('/') + 1)));
+                        accounts.add(Integer.parseInt(link.substring(link.lastIndexOf('/') + 1)));
                     }
                 } catch(IOException e) {
-                    callback.onError(ErrorType.PROFILES_PAGE, id, e.getMessage());
+                    callback.onError(ErrorType.ACCOUNTS_PAGE, id, e.getMessage());
                 }
-                getPageProfiles(pages, profiles, latch, callback);
+                getPageAccounts(pages, accounts, latch, callback);
             }
         }).start();
     }
 
-    private static void getProfiles(final Queue<Integer> profiles, final AccountCallback callback) {
+    private static void processAccounts(final Queue<Integer> accounts, final AccountCallback callback) {
         final Integer id;
         final Integer next;
         synchronized(lock) {
-            id = profiles.poll();
-            next = profiles.peek();
+            id = accounts.poll();
+            next = accounts.peek();
         }
         if(id == null) {
             return;
@@ -139,19 +146,19 @@ public class WebsiteUtils {
                 if(next == null) {
                     callback.onFinish();
                 } else {
-                    getProfiles(profiles, callback);
+                    processAccounts(accounts, callback);
                 }
             }
 
             @Override
             public void processError(GameInfoResponse response) {
                 if(!"game.info.account.not_found".equals(response.errorCode)) {
-                    callback.onError(ErrorType.PROFILE, id, response.errorMessage);
+                    callback.onError(ErrorType.ACCOUNT, id, response.errorMessage);
                 }
                 if(next == null) {
                     callback.onFinish();
                 } else {
-                    getProfiles(profiles, callback);
+                    processAccounts(accounts, callback);
                 }
             }
         }, false);
@@ -159,8 +166,8 @@ public class WebsiteUtils {
 
     public enum ErrorType {
         GLOBAL,
-        PROFILES_PAGE,
-        PROFILE,
+        ACCOUNTS_PAGE,
+        ACCOUNT,
         ;
     }
 
