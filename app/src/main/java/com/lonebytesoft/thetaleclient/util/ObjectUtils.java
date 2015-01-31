@@ -21,7 +21,11 @@ import java.util.Map;
  */
 public class ObjectUtils {
 
+    private static final String METHOD_GET_CODE = "getCode";
+    private static final String METHOD_GET_NAME = "getName";
+
     private static final Map<Class<?>, Map<?, ?>> codeToEnumCache = new HashMap<>();
+    private static final Map<Class<?>, Map<?, ?>> nameToEnumCache = new HashMap<>();
     private static final Map<Class<?>, String[]> enumToNamesCache = new HashMap<>();
 
     public static <T> T getModelFromJson(final Class<T> clazz, final JSONObject json) {
@@ -44,7 +48,7 @@ public class ObjectUtils {
         Map<T, E> cache = (Map<T, E>) codeToEnumCache.get(clazz);
         if(cache == null) {
             try {
-                final Method getCodeMethod = clazz.getMethod("getCode");
+                final Method getCodeMethod = clazz.getMethod(METHOD_GET_CODE);
                 cache = new HashMap<>();
                 for(final E enumEntry : clazz.getEnumConstants()) {
                     cache.put((T) getCodeMethod.invoke(enumEntry), enumEntry);
@@ -55,6 +59,27 @@ public class ObjectUtils {
             }
         }
         return cache.get(code);
+    }
+
+    public static <E extends Enum<E>, T> E getEnumForName(final Class<E> clazz, final T name) {
+        if(!clazz.isEnum()) {
+            return null;
+        }
+
+        Map<T, E> cache = (Map<T, E>) nameToEnumCache.get(clazz);
+        if(cache == null) {
+            try {
+                final Method getNameMethod = clazz.getMethod(METHOD_GET_NAME);
+                cache = new HashMap<>();
+                for(final E enumEntry : clazz.getEnumConstants()) {
+                    cache.put((T) getNameMethod.invoke(enumEntry), enumEntry);
+                }
+                nameToEnumCache.put(clazz, cache);
+            } catch(NoSuchMethodException|IllegalAccessException|InvocationTargetException e) {
+                return null;
+            }
+        }
+        return cache.get(name);
     }
 
     public static JSONObject getObjectFromArray(final JSONArray jsonArray, final String[] names) {
@@ -101,7 +126,7 @@ public class ObjectUtils {
             try {
                 final int count = clazz.getEnumConstants().length;
                 names = new String[count];
-                final Method getNameMethod = clazz.getMethod("getName");
+                final Method getNameMethod = clazz.getMethod(METHOD_GET_NAME);
                 for(int i = 0; i < count; i++) {
                     names[i] = (String) getNameMethod.invoke(clazz.getEnumConstants()[i]);
                 }
