@@ -43,6 +43,10 @@ public class WatcherService extends Service {
     public static final String BROADCAST_SERVICE_RESTART_REFRESH_ACTION =
             TheTaleClientApplication.getContext().getPackageName() + ".service.restart.refresh";
 
+    private static final double INTERVAL_MULTIPLIER = (Math.sqrt(5.0) + 1) / 2.0; // phi
+    private static final long INTERVAL_MAX = 600;
+    private double intervalMultiplierCurrent;
+
     private final Handler handler = new Handler();
     private final Runnable refreshRunnable = new Runnable() {
         @Override
@@ -91,12 +95,15 @@ public class WatcherService extends Service {
 
                         AppWidgetHelper.update(WatcherService.this, DataViewMode.DATA, response);
 
+                        intervalMultiplierCurrent = 1.0;
                         postRefresh();
                     }
 
                     @Override
                     public void processError(GameInfoResponse response) {
                         AppWidgetHelper.update(WatcherService.this, DataViewMode.ERROR, response);
+
+                        intervalMultiplierCurrent *= INTERVAL_MULTIPLIER;
                         postRefresh();
                     }
                 }, false);
@@ -169,6 +176,8 @@ public class WatcherService extends Service {
         registerReceiver(widgetHelpReceiver, new IntentFilter(AppWidgetHelper.BROADCAST_WIDGET_HELP_ACTION));
         registerReceiver(restartRefreshReceiver, new IntentFilter(BROADCAST_SERVICE_RESTART_REFRESH_ACTION));
         registerReceiver(refreshWidgetReceiver, new IntentFilter(AppWidgetHelper.BROADCAST_WIDGET_REFRESH_ACTION));
+
+        intervalMultiplierCurrent = 1.0;
     }
 
     @Override
@@ -178,7 +187,20 @@ public class WatcherService extends Service {
     }
 
     private void postRefresh() {
-        handler.postDelayed(refreshRunnable, PreferencesManager.getServiceInterval() * 1000);
+        final int intervalInitial = PreferencesManager.getServiceInterval();
+        long interval;
+        if(intervalInitial >= INTERVAL_MAX) {
+            interval = intervalInitial;
+            intervalMultiplierCurrent /= INTERVAL_MULTIPLIER;
+        } else {
+            interval = (long) Math.floor(intervalInitial * intervalMultiplierCurrent);
+            if(interval > INTERVAL_MAX) {
+                intervalMultiplierCurrent = ((double) INTERVAL_MAX) / ((double) intervalInitial);
+                interval = INTERVAL_MAX;
+            }
+        }
+
+        handler.postDelayed(refreshRunnable, interval * 1000);
     }
 
     private void restartRefresh() {
