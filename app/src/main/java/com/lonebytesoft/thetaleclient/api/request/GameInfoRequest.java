@@ -67,7 +67,7 @@ public class GameInfoRequest extends AbstractApiRequest<GameInfoResponse> {
 
     @Override
     protected long getStaleTime() {
-        return 5000;
+        return 10000; // 10 seconds
     }
 
 }

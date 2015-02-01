@@ -15,9 +15,9 @@ import com.lonebytesoft.thetaleclient.api.model.HeroInfo;
 import com.lonebytesoft.thetaleclient.api.model.MapCellTerrainInfo;
 import com.lonebytesoft.thetaleclient.api.model.PlaceInfo;
 import com.lonebytesoft.thetaleclient.api.model.SpriteTileInfo;
-import com.lonebytesoft.thetaleclient.api.response.InfoResponse;
 import com.lonebytesoft.thetaleclient.api.response.MapResponse;
 import com.lonebytesoft.thetaleclient.api.response.MapTerrainResponse;
+import com.lonebytesoft.thetaleclient.util.PreferencesManager;
 
 import java.io.IOException;
 import java.net.URL;
@@ -126,10 +126,9 @@ public class MapUtils {
     /**
      * Asynchronously gets an appropriate map sprite
      * @param mapStyle desired map style
-     * @param infoResponse result of InfoRequest
      * @param callback bitmap callback
      */
-    public static void getMapSprite(final MapStyle mapStyle, final InfoResponse infoResponse, final MapBitmapCallback callback) {
+    public static void getMapSprite(final MapStyle mapStyle, final MapBitmapCallback callback) {
         final Bitmap mapSprite = mapSpriteCache.get(mapStyle);
         if(mapSprite == null) {
             new AsyncTask<Void, Void, Void>() {
@@ -137,7 +136,8 @@ public class MapUtils {
                 protected Void doInBackground(Void... params) {
                     final Bitmap mapSprite;
                     try {
-                        final URL url = new URL(String.format(MAP_SPRITE_URL, infoResponse.staticContentUrl, mapStyle.getPath()));
+                        final URL url = new URL(String.format(MAP_SPRITE_URL,
+                                PreferencesManager.getStaticContentUrl(), mapStyle.getPath()));
                         final URLConnection urlConnection = url.openConnection();
                         urlConnection.setDoInput(true);
                         urlConnection.connect();

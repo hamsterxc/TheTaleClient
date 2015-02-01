@@ -28,6 +28,7 @@ public class InfoRequest extends AbstractApiRequest<InfoResponse> {
         PreferencesManager.setAccountId(infoResponse.accountId);
         PreferencesManager.setAccountName(infoResponse.accountName);
         PreferencesManager.setTurnDelta(infoResponse.turnDelta);
+        PreferencesManager.setStaticContentUrl(infoResponse.staticContentUrl);
         if(infoResponse.abilitiesCost != null) {
             PreferencesManager.setAbilitiesCost(infoResponse.abilitiesCost);
         }
@@ -37,7 +38,7 @@ public class InfoRequest extends AbstractApiRequest<InfoResponse> {
 
     @Override
     protected long getStaleTime() {
-        return 5000;
+        return 10000; // 10 seconds
     }
 
 }

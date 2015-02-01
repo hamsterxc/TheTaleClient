@@ -43,7 +43,7 @@ public class MapRequest extends CommonRequest {
 
     @Override
     protected long getStaleTime() {
-        return 60000;
+        return 2 * 60 * 60 * 1000; // 2 hours
     }
 
 }

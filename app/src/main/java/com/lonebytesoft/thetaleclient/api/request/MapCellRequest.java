@@ -42,7 +42,7 @@ public class MapCellRequest extends CommonRequest {
 
     @Override
     protected long getStaleTime() {
-        return 60000;
+        return 60 * 60 * 1000; // 1 hour
     }
 
 }

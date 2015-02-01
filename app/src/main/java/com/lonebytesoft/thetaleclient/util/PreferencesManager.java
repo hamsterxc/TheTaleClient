@@ -34,6 +34,7 @@ public class PreferencesManager {
     private static final String KEY_MAP_VERSION = "KEY_MAP_VERSION";
     private static final String KEY_ABILITY_COST = "KEY_ABILITY_COST_%s";
     private static final String KEY_TURN_DELTA = "KEY_TURN_DELTA";
+    private static final String KEY_STATIC_CONTENT_URL = "KEY_STATIC_CONTENT_URL";
 
     private static final String KEY_NOTIFICATION_LAST = "%s_LAST";
     private static final String KEY_NOTIFICATION_SHOULD_SHOW = "%s_SHOULD_SHOW";
@@ -529,6 +530,16 @@ public class PreferencesManager {
 
     public static int getTurnDelta() {
         return sharedPreferences.getInt(KEY_TURN_DELTA, 0);
+    }
+
+    public static void setStaticContentUrl(final String staticContentUrl) {
+        sharedPreferences.edit()
+                .putString(KEY_STATIC_CONTENT_URL, staticContentUrl)
+                .commit();
+    }
+
+    public static String getStaticContentUrl() {
+        return sharedPreferences.getString(KEY_STATIC_CONTENT_URL, null);
     }
 
     public static void setWidgetEnabled(final boolean isEnabled) {

@@ -19,12 +19,13 @@ import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.TheTaleClientApplication;
 import com.lonebytesoft.thetaleclient.api.ApiResponseCallback;
 import com.lonebytesoft.thetaleclient.api.CommonResponseCallback;
+import com.lonebytesoft.thetaleclient.api.cache.prerequisite.InfoPrerequisiteRequest;
+import com.lonebytesoft.thetaleclient.api.cache.prerequisite.PrerequisiteRequest;
 import com.lonebytesoft.thetaleclient.api.dictionary.MapCellType;
 import com.lonebytesoft.thetaleclient.api.dictionary.MapStyle;
 import com.lonebytesoft.thetaleclient.api.model.PlaceInfo;
 import com.lonebytesoft.thetaleclient.api.model.PositionInfo;
 import com.lonebytesoft.thetaleclient.api.request.GameInfoRequest;
-import com.lonebytesoft.thetaleclient.api.request.InfoRequest;
 import com.lonebytesoft.thetaleclient.api.request.MapCellRequest;
 import com.lonebytesoft.thetaleclient.api.request.MapRequest;
 import com.lonebytesoft.thetaleclient.api.request.MapTerrainRequest;
@@ -197,16 +198,16 @@ public class MapFragment extends WrapperFragment {
 
         UiUtils.setText(actionMapModification, getString(R.string.map_modification, mapModification.getName()));
 
-        new InfoRequest().execute(RequestUtils.wrapCallback(new ApiResponseCallback<InfoResponse>() {
+        new InfoPrerequisiteRequest(new Runnable() {
             @Override
-            public void processResponse(final InfoResponse infoResponse) {
+            public void run() {
                 new GameInfoRequest(true).execute(RequestUtils.wrapCallback(new ApiResponseCallback<GameInfoResponse>() {
                     @Override
                     public void processResponse(final GameInfoResponse gameInfoResponse) {
                         new MapRequest(gameInfoResponse.mapVersion).execute(RequestUtils.wrapCallback(new CommonResponseCallback<MapResponse, String>() {
                             @Override
                             public void processResponse(final MapResponse mapResponse) {
-                                MapUtils.getMapSprite(mapStyle, infoResponse, new MapUtils.MapBitmapCallback() {
+                                MapUtils.getMapSprite(mapStyle, new MapUtils.MapBitmapCallback() {
                                     @Override
                                     public void onBitmapBuilt(final Bitmap sprite) {
                                         if(!isAdded()) {
@@ -284,12 +285,12 @@ public class MapFragment extends WrapperFragment {
                     }
                 }, MapFragment.this), true);
             }
-
+        }, new PrerequisiteRequest.ErrorCallback<InfoResponse>() {
             @Override
             public void processError(InfoResponse response) {
                 setError(getString(R.string.map_error));
             }
-        }, this));
+        }, this).execute();
     }
 
     private void moveToTile(final int tileX, final int tileY) {
