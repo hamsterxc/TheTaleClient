@@ -50,6 +50,15 @@
     <string name="game_action_time_short">Осталось: %1$d мин</string>
     <string name="game_action_time_approximate">Осталось: примерно %1$d мин %2$d с</string>
     <string name="game_action_time_approximate_short">Осталось: примерно %1$d с</string>
+    <string name="game_additional_info">Дополнительная информация</string>
+    <string name="game_additional_info_account_id">ID игрока</string>
+    <string name="game_additional_info_destiny_points">Очки способностей</string>
+    <string name="game_additional_info_honor">Характер, честь</string>
+    <string name="game_additional_info_initiative">Инициатива</string>
+    <string name="game_additional_info_last_visit">Был в игре</string>
+    <string name="game_additional_info_move_speed">Скорость движения</string>
+    <string name="game_additional_info_new_messages">Новых сообщений</string>
+    <string name="game_additional_info_peacefulness">Характер, миролюбие</string>
     <string name="game_boss_fight">" \u2605"</string>
     <string name="game_card_take">Взять карту!</string>
     <string name="game_help">Помочь</string>

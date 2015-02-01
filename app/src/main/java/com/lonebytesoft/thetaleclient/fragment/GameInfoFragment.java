@@ -4,7 +4,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
+import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +22,7 @@ import com.lonebytesoft.thetaleclient.api.cache.prerequisite.InfoPrerequisiteReq
 import com.lonebytesoft.thetaleclient.api.cache.prerequisite.PrerequisiteRequest;
 import com.lonebytesoft.thetaleclient.api.dictionary.Action;
 import com.lonebytesoft.thetaleclient.api.dictionary.ArtifactEffect;
+import com.lonebytesoft.thetaleclient.api.dictionary.Habit;
 import com.lonebytesoft.thetaleclient.api.dictionary.HeroAction;
 import com.lonebytesoft.thetaleclient.api.model.EnergyInfo;
 import com.lonebytesoft.thetaleclient.api.model.HeroActionInfo;
@@ -39,6 +42,7 @@ import com.lonebytesoft.thetaleclient.util.UiUtils;
 import com.lonebytesoft.thetaleclient.util.onscreen.OnscreenPart;
 import com.lonebytesoft.thetaleclient.widget.RequestActionView;
 
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -181,6 +185,63 @@ public class GameInfoFragment extends WrapperFragment {
                 textLevel.setText(String.valueOf(gameInfoResponse.account.hero.basicInfo.level));
                 textName.setText(gameInfoResponse.account.hero.basicInfo.name);
                 textLevelUp.setVisibility(gameInfoResponse.account.hero.basicInfo.destinyPoints > 0 ? View.VISIBLE : View.GONE);
+
+                final SpannableStringBuilder additionalInfoStringBuilder = new SpannableStringBuilder();
+                final Date lastVisit = new Date((long) gameInfoResponse.account.lastVisitTime * 1000);
+                additionalInfoStringBuilder.append(UiUtils.getInfoItem(
+                        getString(R.string.game_additional_info_account_id),
+                        String.valueOf(gameInfoResponse.account.accountId)))
+                        .append("\n");
+                additionalInfoStringBuilder.append(UiUtils.getInfoItem(
+                        getString(R.string.game_additional_info_last_visit),
+                        String.format("%s %s",
+                                DateFormat.getDateFormat(TheTaleClientApplication.getContext()).format(lastVisit),
+                                DateFormat.getTimeFormat(TheTaleClientApplication.getContext()).format(lastVisit))))
+                        .append("\n");
+                additionalInfoStringBuilder.append(UiUtils.getInfoItem(
+                        getString(R.string.game_additional_info_new_messages),
+                        String.valueOf(gameInfoResponse.account.newMessagesCount)))
+                        .append("\n");
+                additionalInfoStringBuilder.append("\n");
+                additionalInfoStringBuilder.append(UiUtils.getInfoItem(
+                        getString(R.string.game_additional_info_honor),
+                        String.format("%s (%.2f)",
+                                gameInfoResponse.account.hero.habits.get(Habit.HONOR).description,
+                                gameInfoResponse.account.hero.habits.get(Habit.HONOR).value)))
+                        .append("\n");
+                additionalInfoStringBuilder.append(UiUtils.getInfoItem(
+                        getString(R.string.game_additional_info_peacefulness),
+                        String.format("%s (%.2f)",
+                                gameInfoResponse.account.hero.habits.get(Habit.PEACEFULNESS).description,
+                                gameInfoResponse.account.hero.habits.get(Habit.PEACEFULNESS).value)))
+                        .append("\n");
+                additionalInfoStringBuilder.append("\n");
+                additionalInfoStringBuilder.append(UiUtils.getInfoItem(
+                        getString(R.string.game_additional_info_destiny_points),
+                        String.valueOf(gameInfoResponse.account.hero.basicInfo.destinyPoints)))
+                        .append("\n");
+                additionalInfoStringBuilder.append(UiUtils.getInfoItem(
+                        getString(R.string.game_help_to_next_card),
+                        getString(
+                                R.string.game_help_progress_to_next_card,
+                                gameInfoResponse.account.hero.basicInfo.cardHelpCurrent,
+                                gameInfoResponse.account.hero.basicInfo.cardHelpTotal)))
+                        .append("\n");
+                additionalInfoStringBuilder.append(UiUtils.getInfoItem(
+                        getString(R.string.game_additional_info_move_speed),
+                        String.valueOf(gameInfoResponse.account.hero.basicInfo.moveSpeed)))
+                        .append("\n");
+                additionalInfoStringBuilder.append(UiUtils.getInfoItem(
+                        getString(R.string.game_additional_info_initiative),
+                        String.valueOf(gameInfoResponse.account.hero.basicInfo.initiative)));
+                textName.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        DialogUtils.showMessageDialog(getChildFragmentManager(),
+                                getString(R.string.game_additional_info),
+                                additionalInfoStringBuilder);
+                    }
+                });
 
                 progressHealth.setMax(gameInfoResponse.account.hero.basicInfo.healthMax);
                 progressHealth.setProgress(gameInfoResponse.account.hero.basicInfo.healthCurrent);
