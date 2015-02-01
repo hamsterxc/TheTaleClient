@@ -1,5 +1,6 @@
 package com.lonebytesoft.thetaleclient.fragment;
 
+import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 import com.lonebytesoft.thetaleclient.DataViewMode;
 import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.TheTaleClientApplication;
+import com.lonebytesoft.thetaleclient.activity.MainActivity;
 import com.lonebytesoft.thetaleclient.api.ApiResponseCallback;
 import com.lonebytesoft.thetaleclient.api.cache.prerequisite.InfoPrerequisiteRequest;
 import com.lonebytesoft.thetaleclient.api.cache.prerequisite.PrerequisiteRequest;
@@ -142,6 +144,11 @@ public class GameInfoFragment extends WrapperFragment {
                     public void processResponse(CommonResponse response) {
                         actionHelp.setMode(RequestActionView.Mode.ACTION);
                         refresh(false);
+
+                        final Activity activity = getActivity();
+                        if(activity instanceof MainActivity) {
+                            ((MainActivity) activity).refreshFragmentsAfterHelp();
+                        }
                     }
 
                     @Override

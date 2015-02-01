@@ -171,6 +171,13 @@ public class GameFragment extends Fragment implements Refreshable, OnscreenState
         }
     }
 
+    public void refreshFragmentsAfterHelp() {
+        final Fragment fragment = getPageFragment(GamePage.QUESTS.ordinal());
+        if(fragment instanceof WrapperFragment) {
+            ((WrapperFragment) fragment).refresh(true);
+        }
+    }
+
     public void setCurrentPage(final GamePage page) {
         if(page != null) {
             viewPager.setCurrentItem(page.ordinal());
