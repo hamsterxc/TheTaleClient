@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import com.lonebytesoft.thetaleclient.DataViewMode;
 import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.TheTaleClientApplication;
+import com.lonebytesoft.thetaleclient.activity.MainActivity;
 import com.lonebytesoft.thetaleclient.api.ApiResponseCallback;
 import com.lonebytesoft.thetaleclient.api.CommonResponseCallback;
 import com.lonebytesoft.thetaleclient.api.cache.prerequisite.InfoPrerequisiteRequest;
@@ -76,6 +77,8 @@ public class MapFragment extends WrapperFragment {
     private View actionMapStyle;
     private View actionMapModification;
     private View actionMapModificationContainer;
+
+    private View findPlayerContainer;
 
     private float mapZoom;
     private float mapShiftX;
@@ -165,6 +168,9 @@ public class MapFragment extends WrapperFragment {
             mapModification = MapModification.NONE;
         }
 
+        findPlayerContainer = rootView.findViewById(R.id.map_find_player);
+        UiUtils.setupFindPlayerContainer(findPlayerContainer, this, this, (MainActivity) getActivity());
+
         return wrapView(layoutInflater, rootView);
     }
 
@@ -181,6 +187,8 @@ public class MapFragment extends WrapperFragment {
     @Override
     public void refresh(final boolean isGlobal) {
         super.refresh(isGlobal);
+
+        UiUtils.setupFindPlayerContainer(findPlayerContainer, this, this, (MainActivity) getActivity());
 
         if(!isMapInitialPosition) {
             mapZoom = getMapZoom();
@@ -201,7 +209,7 @@ public class MapFragment extends WrapperFragment {
         new InfoPrerequisiteRequest(new Runnable() {
             @Override
             public void run() {
-                new GameInfoRequest(true).execute(RequestUtils.wrapCallback(new ApiResponseCallback<GameInfoResponse>() {
+                final ApiResponseCallback<GameInfoResponse> gameInfoCallback = RequestUtils.wrapCallback(new ApiResponseCallback<GameInfoResponse>() {
                     @Override
                     public void processResponse(final GameInfoResponse gameInfoResponse) {
                         new MapRequest(gameInfoResponse.mapVersion).execute(RequestUtils.wrapCallback(new CommonResponseCallback<MapResponse, String>() {
@@ -283,7 +291,14 @@ public class MapFragment extends WrapperFragment {
                     public void processError(GameInfoResponse response) {
                         setError(getString(R.string.map_error));
                     }
-                }, MapFragment.this), true);
+                }, MapFragment.this);
+
+                final int watchingAccountId = PreferencesManager.getWatchingAccountId();
+                if(watchingAccountId == 0) {
+                    new GameInfoRequest(true).execute(gameInfoCallback, true);
+                } else {
+                    new GameInfoRequest(true).execute(watchingAccountId, gameInfoCallback, true);
+                }
             }
         }, new PrerequisiteRequest.ErrorCallback<InfoResponse>() {
             @Override

@@ -78,7 +78,7 @@ public class EquipmentFragment extends WrapperFragment {
     public void refresh(final boolean showLoading) {
         super.refresh(showLoading);
 
-        new GameInfoRequest(true).execute(RequestUtils.wrapCallback(new ApiResponseCallback<GameInfoResponse>() {
+        final ApiResponseCallback<GameInfoResponse> callback = RequestUtils.wrapCallback(new ApiResponseCallback<GameInfoResponse>() {
             @Override
             public void processResponse(GameInfoResponse response) {
                 equipmentContainer.removeAllViews();
@@ -160,45 +160,47 @@ public class EquipmentFragment extends WrapperFragment {
 
                 bagContainer.removeAllViews();
 
-                final View dropView = layoutInflater.inflate(R.layout.item_bag_drop, bagContainer, false);
-                final RequestActionView dropActionView = (RequestActionView) dropView.findViewById(R.id.bag_drop);
-                if(response.account.hero.basicInfo.bagItemsCount > 0) {
-                    final GameInfoResponse gameInfoResponse = response;
-                    new InfoPrerequisiteRequest(new Runnable() {
-                        @Override
-                        public void run() {
-                            if(GameInfoUtils.isEnoughEnergy(gameInfoResponse.account.hero.energy, PreferencesManager.getAbilityCost(Action.DROP_ITEM))) {
-                                dropActionView.setEnabled(true);
-                                dropActionView.setActionClickListener(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        new AbilityUseRequest(Action.DROP_ITEM).execute(0, RequestUtils.wrapCallback(new ApiResponseCallback<CommonResponse>() {
-                                            @Override
-                                            public void processResponse(CommonResponse response) {
-                                                refresh(false);
-                                            }
+                if(response.account.isOwnInfo) {
+                    final View dropView = layoutInflater.inflate(R.layout.item_bag_drop, bagContainer, false);
+                    final RequestActionView dropActionView = (RequestActionView) dropView.findViewById(R.id.bag_drop);
+                    if(response.account.hero.basicInfo.bagItemsCount > 0) {
+                        final GameInfoResponse gameInfoResponse = response;
+                        new InfoPrerequisiteRequest(new Runnable() {
+                            @Override
+                            public void run() {
+                                if(GameInfoUtils.isEnoughEnergy(gameInfoResponse.account.hero.energy, PreferencesManager.getAbilityCost(Action.DROP_ITEM))) {
+                                    dropActionView.setEnabled(true);
+                                    dropActionView.setActionClickListener(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            new AbilityUseRequest(Action.DROP_ITEM).execute(0, RequestUtils.wrapCallback(new ApiResponseCallback<CommonResponse>() {
+                                                @Override
+                                                public void processResponse(CommonResponse response) {
+                                                    refresh(false);
+                                                }
 
-                                            @Override
-                                            public void processError(CommonResponse response) {
-                                                dropActionView.setErrorText(response.errorMessage);
-                                            }
-                                        }, EquipmentFragment.this));
-                                    }
-                                });
-                            } else {
-                                dropActionView.setEnabled(false);
+                                                @Override
+                                                public void processError(CommonResponse response) {
+                                                    dropActionView.setErrorText(response.errorMessage);
+                                                }
+                                            }, EquipmentFragment.this));
+                                        }
+                                    });
+                                } else {
+                                    dropActionView.setEnabled(false);
+                                }
                             }
-                        }
-                    }, new PrerequisiteRequest.ErrorCallback<InfoResponse>() {
-                        @Override
-                        public void processError(InfoResponse response) {
-                            dropActionView.setErrorText(response.errorMessage);
-                        }
-                    }, EquipmentFragment.this).execute();
-                } else {
-                    dropActionView.setEnabled(false);
+                        }, new PrerequisiteRequest.ErrorCallback<InfoResponse>() {
+                            @Override
+                            public void processError(InfoResponse response) {
+                                dropActionView.setErrorText(response.errorMessage);
+                            }
+                        }, EquipmentFragment.this).execute();
+                    } else {
+                        dropActionView.setEnabled(false);
+                    }
+                    bagContainer.addView(dropView);
                 }
-                bagContainer.addView(dropView);
 
                 final Map<ArtifactInfo, Integer> bagItemsList = ObjectUtils.getItemsCountList(
                         response.account.hero.bag.values(),
@@ -246,7 +248,14 @@ public class EquipmentFragment extends WrapperFragment {
             public void processError(GameInfoResponse response) {
                 setError(response.errorMessage);
             }
-        }, this), true);
+        }, this);
+
+        final int watchingAccountId = PreferencesManager.getWatchingAccountId();
+        if(watchingAccountId == 0) {
+            new GameInfoRequest(true).execute(callback, true);
+        } else {
+            new GameInfoRequest(true).execute(watchingAccountId, callback, true);
+        }
     }
 
     private Spanned[] getArtifactString(final ArtifactInfo artifactInfo, final boolean isEquipped, final int count) {

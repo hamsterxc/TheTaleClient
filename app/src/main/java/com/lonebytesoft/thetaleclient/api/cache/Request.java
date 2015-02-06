@@ -2,6 +2,7 @@ package com.lonebytesoft.thetaleclient.api.cache;
 
 import com.lonebytesoft.thetaleclient.api.HttpMethod;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -19,8 +20,8 @@ public class Request {
                    final Map<String, String> getParams, final Map<String, String> postParams) {
         this.url = url;
         this.httpMethod = httpMethod;
-        this.getParams = getParams;
-        this.postParams = postParams;
+        this.getParams = getParams == null ? null : new HashMap<>(getParams);
+        this.postParams = postParams == null ? null : new HashMap<>(postParams);
     }
 
     @Override

@@ -33,6 +33,8 @@ public class GameFragment extends Fragment implements Refreshable, OnscreenState
     private static final String KEY_PAGE_INDEX = "KEY_PAGE_INDEX";
 
     private ViewPager viewPager;
+    private View findPlayerContainer;
+
     private int currentPageIndex;
     private boolean shouldCallOnscreen = false;
 
@@ -72,6 +74,9 @@ public class GameFragment extends Fragment implements Refreshable, OnscreenState
         } else if(savedInstanceState != null) {
             viewPager.setCurrentItem(savedInstanceState.getInt(KEY_PAGE_INDEX, 0));
         }
+
+        findPlayerContainer = rootView.findViewById(R.id.fragment_game_find_player);
+        UiUtils.setupFindPlayerContainer(findPlayerContainer, this, this, (MainActivity) getActivity());
 
         return rootView;
     }
@@ -169,6 +174,7 @@ public class GameFragment extends Fragment implements Refreshable, OnscreenState
         if(fragment instanceof WrapperFragment) {
             ((WrapperFragment) fragment).refresh(isGlobal);
         }
+        UiUtils.setupFindPlayerContainer(findPlayerContainer, this, this, (MainActivity) getActivity());
     }
 
     public void refreshFragmentsAfterHelp() {

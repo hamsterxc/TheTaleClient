@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <LinearLayout
+        android:id="@+id/find_player_widget_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@color/common_background_window">
+
+        <TextView
+            android:id="@+id/find_player_widget_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            style="?android:attr/textAppearanceMedium"/>
+
+        <View style="@style/DelimiterVertical"/>
+
+        <ImageView
+            android:id="@+id/find_player_widget_cancel"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:padding="4dp"
+            android:src="@drawable/ic_action_cancel"
+            android:scaleType="fitXY"
+            android:clickable="true"
+            android:background="@drawable/common_list_item_background"/>
+
+        <View style="@style/DelimiterVertical"/>
+
+        <ImageView
+            android:id="@+id/find_player_widget_search"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:padding="4dp"
+            android:src="@drawable/ic_action_search"
+            android:scaleType="fitXY"
+            android:clickable="true"
+            android:background="@drawable/common_list_item_background"/>
+
+    </LinearLayout>
+
+</merge>

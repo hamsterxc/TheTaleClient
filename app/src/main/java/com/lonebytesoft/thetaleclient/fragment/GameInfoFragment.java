@@ -179,7 +179,7 @@ public class GameInfoFragment extends WrapperFragment {
             lastKnownHealth = 0;
         }
 
-        new GameInfoRequest(true).execute(RequestUtils.wrapCallback(new ApiResponseCallback<GameInfoResponse>() {
+        final ApiResponseCallback<GameInfoResponse> callback = RequestUtils.wrapCallback(new ApiResponseCallback<GameInfoResponse>() {
             @Override
             public void processResponse(final GameInfoResponse gameInfoResponse) {
                 if(lastKnownHealth == 0) {
@@ -205,10 +205,12 @@ public class GameInfoFragment extends WrapperFragment {
                                 DateFormat.getDateFormat(TheTaleClientApplication.getContext()).format(lastVisit),
                                 DateFormat.getTimeFormat(TheTaleClientApplication.getContext()).format(lastVisit))))
                         .append("\n");
-                additionalInfoStringBuilder.append(UiUtils.getInfoItem(
-                        getString(R.string.game_additional_info_new_messages),
-                        String.valueOf(gameInfoResponse.account.newMessagesCount)))
-                        .append("\n");
+                if(gameInfoResponse.account.isOwnInfo) {
+                    additionalInfoStringBuilder.append(UiUtils.getInfoItem(
+                            getString(R.string.game_additional_info_new_messages),
+                            String.valueOf(gameInfoResponse.account.newMessagesCount)))
+                            .append("\n");
+                }
                 additionalInfoStringBuilder.append("\n");
                 additionalInfoStringBuilder.append(UiUtils.getInfoItem(
                         getString(R.string.game_additional_info_honor),
@@ -377,7 +379,7 @@ public class GameInfoFragment extends WrapperFragment {
                                         * turnDelta);
                                 timeRest = Math.round(((double) timeRest) / turnDelta) * turnDelta;
                                 setProgressActionInfo(getActionTimeApproximateString(timeRest < turnDelta ? turnDelta : timeRest));
-                             }
+                            }
                         }, new PrerequisiteRequest.ErrorCallback<InfoResponse>() {
                             @Override
                             public void processError(InfoResponse response) {
@@ -390,21 +392,26 @@ public class GameInfoFragment extends WrapperFragment {
                         setProgressActionInfo(null);
                 }
 
-                actionHelp.setEnabled(false);
-                new InfoPrerequisiteRequest(new Runnable() {
-                    @Override
-                    public void run() {
-                        if(GameInfoUtils.isEnoughEnergy(gameInfoResponse.account.hero.energy, PreferencesManager.getAbilityCost(Action.HELP))) {
-                            actionHelp.setEnabled(true);
+                if(gameInfoResponse.account.isOwnInfo) {
+                    actionHelp.setVisibility(View.VISIBLE);
+                    actionHelp.setEnabled(false);
+                    new InfoPrerequisiteRequest(new Runnable() {
+                        @Override
+                        public void run() {
+                            if(GameInfoUtils.isEnoughEnergy(gameInfoResponse.account.hero.energy, PreferencesManager.getAbilityCost(Action.HELP))) {
+                                actionHelp.setEnabled(true);
+                            }
                         }
-                    }
-                }, new PrerequisiteRequest.ErrorCallback<InfoResponse>() {
-                    @Override
-                    public void processError(InfoResponse response) {
-                        actionHelp.setErrorText(response.errorMessage);
-                        actionHelp.setMode(RequestActionView.Mode.ERROR);
-                    }
-                }, GameInfoFragment.this).execute();
+                    }, new PrerequisiteRequest.ErrorCallback<InfoResponse>() {
+                        @Override
+                        public void processError(InfoResponse response) {
+                            actionHelp.setErrorText(response.errorMessage);
+                            actionHelp.setMode(RequestActionView.Mode.ERROR);
+                        }
+                    }, GameInfoFragment.this).execute();
+                } else {
+                    actionHelp.setVisibility(View.GONE);
+                }
 
                 setMode(DataViewMode.DATA);
             }
@@ -413,7 +420,14 @@ public class GameInfoFragment extends WrapperFragment {
             public void processError(GameInfoResponse response) {
                 setError(response.errorMessage);
             }
-        }, this), false);
+        }, this);
+
+        final int watchingAccountId = PreferencesManager.getWatchingAccountId();
+        if(watchingAccountId == 0) {
+            new GameInfoRequest(true).execute(callback, false);
+        } else {
+            new GameInfoRequest(true).execute(watchingAccountId, callback, false);
+        }
     }
 
     private void setProgressActionInfo(final CharSequence info) {

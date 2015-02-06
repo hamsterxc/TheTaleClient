@@ -1,5 +1,7 @@
 package com.lonebytesoft.thetaleclient.util;
 
+import com.lonebytesoft.thetaleclient.R;
+import com.lonebytesoft.thetaleclient.TheTaleClientApplication;
 import com.lonebytesoft.thetaleclient.api.ApiResponseCallback;
 import com.lonebytesoft.thetaleclient.api.HttpMethod;
 import com.lonebytesoft.thetaleclient.api.model.ArtifactBaseInfo;
@@ -27,10 +29,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Hamster
  * @since 17.01.2015
+ * TODO rewrite enumAccounts & enumMonsters using ExecutorService
  */
 public class WebsiteUtils {
 
@@ -314,6 +320,89 @@ public class WebsiteUtils {
         return Integer.parseInt(url.substring(url.lastIndexOf('/') + 1));
     }
 
+    public static void enumAccountPages(final String prefix, final AccountPageCallback callback) {
+        final String accountPrefix = prefix == null ? "" : prefix;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final int pagesCount;
+                final HttpMethod httpMethod = HttpMethod.GET;
+                final Map<String, String> getParams = new HashMap<>(1);
+                getParams.put("prefix", accountPrefix);
+                final HttpClient httpClient = new DefaultHttpClient();
+                final HttpRequest httpRequest = httpMethod.getHttpRequest(PAGE_ACCOUNTS, getParams, null);
+                try {
+                    final OutputStream outputStream = new ByteArrayOutputStream();
+                    httpClient.execute((HttpUriRequest) httpRequest).getEntity().writeTo(outputStream);
+                    outputStream.close();
+
+                    final Document document = Jsoup.parse(outputStream.toString());
+                    final Elements elements = document.select("div.pagination");
+
+                    if(elements.size() == 0) {
+                        callback.onError(ErrorType.ITEMS_LIST, 0, TheTaleClientApplication.getContext().getString(R.string.find_player_not_found));
+                        callback.onFinish();
+                        return;
+                    }
+
+                    final Elements pageLinks = elements.get(0).children().get(0).children();
+                    pagesCount = Integer.parseInt(pageLinks.get(pageLinks.size() - 1).child(0).ownText());
+                } catch(IOException e) {
+                    callback.onError(ErrorType.GLOBAL, 0, e.getMessage());
+                    return;
+                }
+
+                if(!callback.processPagesCount(pagesCount)) {
+                    callback.onFinish();
+                    return;
+                }
+
+                final ExecutorService executorService = Executors.newFixedThreadPool(THREADS_COUNT);
+                for(int i = 1; i <= pagesCount; i++) {
+                    final int id = i;
+                    executorService.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            final HttpMethod httpMethod = HttpMethod.GET;
+                            final Map<String, String> getParams = new HashMap<>(2);
+                            getParams.put("prefix", prefix);
+                            getParams.put("page", String.valueOf(id));
+                            final HttpClient httpClient = new DefaultHttpClient();
+                            final HttpRequest httpRequest = httpMethod.getHttpRequest(PAGE_ACCOUNTS, getParams, null);
+
+                            final Map<Integer, String> accounts = new HashMap<>();
+                            try {
+                                final OutputStream outputStream = new ByteArrayOutputStream();
+                                httpClient.execute((HttpUriRequest) httpRequest).getEntity().writeTo(outputStream);
+                                outputStream.close();
+
+                                final Document document = Jsoup.parse(outputStream.toString());
+                                final Elements elements = document.select("tr.pgf-account-record");
+                                for(final Element element : elements) {
+                                    final Element linkElement = element.children().get(0).children().get(0);
+                                    accounts.put(getIdFromUrl(linkElement.attr("href")), linkElement.ownText());
+                                }
+
+                                callback.processAccounts(accounts);
+                            } catch(IOException e) {
+                                callback.onError(ErrorType.ITEM, id, e.getMessage());
+                            }
+                        }
+                    });
+                }
+
+                executorService.shutdown();
+                try {
+                    executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
+                } catch (InterruptedException e) {
+                    callback.onError(ErrorType.GLOBAL, 0, e.getMessage());
+                    return;
+                }
+                callback.onFinish();
+            }
+        }).start();
+    }
+
     public enum ErrorType {
         GLOBAL,
         ITEMS_LIST,
@@ -333,6 +422,11 @@ public class WebsiteUtils {
 
     public interface MonsterCallback extends EnumCallback {
         void processMonster(MonsterBaseInfo monster);
+    }
+
+    public interface AccountPageCallback extends EnumCallback {
+        boolean processPagesCount(int count);
+        void processAccounts(Map<Integer, String> accounts);
     }
 
 }

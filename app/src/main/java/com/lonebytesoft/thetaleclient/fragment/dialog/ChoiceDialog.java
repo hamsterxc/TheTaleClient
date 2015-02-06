@@ -10,6 +10,9 @@ import android.widget.TextView;
 
 import com.lonebytesoft.thetaleclient.R;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * @author Hamster
  * @since 14.10.2014
@@ -22,7 +25,6 @@ public class ChoiceDialog extends BaseDialog {
     private int layoutResId;
     private int listViewResId;
 
-    private LayoutInflater layoutInflater;
     private ItemChooseListener listener;
 
     public static ChoiceDialog newInstance(final String caption, final String[] choices) {
@@ -48,10 +50,20 @@ public class ChoiceDialog extends BaseDialog {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        layoutInflater = inflater;
         final View view = inflater.inflate(layoutResId, container, false);
 
-        ((ListView) view.findViewById(listViewResId)).setAdapter(new ChoiceAdapter(getArguments().getStringArray(PARAM_CHOICES)));
+        ((ListView) view.findViewById(listViewResId)).setAdapter(new ChoiceAdapter(
+                inflater,
+                Arrays.asList(getArguments().getStringArray(PARAM_CHOICES)),
+                new ItemChooseListener() {
+                    @Override
+                    public void onItemSelected(int position) {
+                        dismiss();
+                        if (listener != null) {
+                            listener.onItemSelected(position);
+                        }
+                    }
+                }));
 
         return wrapView(inflater, view, getArguments().getString(PARAM_CAPTION));
     }
@@ -60,12 +72,16 @@ public class ChoiceDialog extends BaseDialog {
         this.listener = listener;
     }
 
-    private class ChoiceAdapter extends BaseAdapter {
+    public static class ChoiceAdapter extends BaseAdapter {
 
-        private final String[] choices;
+        private final LayoutInflater layoutInflater;
+        private final List<String> choices;
+        private final ItemChooseListener listener;
 
-        public ChoiceAdapter(final String[] choices) {
+        public ChoiceAdapter(final LayoutInflater layoutInflater, final List<String> choices, final ItemChooseListener listener) {
+            this.layoutInflater = layoutInflater;
             this.choices = choices;
+            this.listener = listener;
         }
 
         @Override
@@ -80,14 +96,11 @@ public class ChoiceDialog extends BaseDialog {
                 viewHolder = (ChoiceViewHolder) convertView.getTag();
             }
 
-            viewHolder.text.setText(choices[position]);
+            viewHolder.text.setText(choices.get(position));
             convertView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    dismiss();
-                    if(listener != null) {
-                        listener.onItemSelected(position);
-                    }
+                    listener.onItemSelected(position);
                 }
             });
 
@@ -96,12 +109,12 @@ public class ChoiceDialog extends BaseDialog {
 
         @Override
         public Object getItem(int position) {
-            return choices[position];
+            return choices.get(position);
         }
 
         @Override
         public int getCount() {
-            return choices.length;
+            return choices.size();
         }
 
         @Override

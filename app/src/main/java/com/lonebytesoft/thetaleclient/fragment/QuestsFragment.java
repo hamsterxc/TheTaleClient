@@ -30,6 +30,7 @@ import com.lonebytesoft.thetaleclient.api.response.CommonResponse;
 import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;
 import com.lonebytesoft.thetaleclient.api.response.MapResponse;
 import com.lonebytesoft.thetaleclient.util.DialogUtils;
+import com.lonebytesoft.thetaleclient.util.PreferencesManager;
 import com.lonebytesoft.thetaleclient.util.RequestUtils;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
 import com.lonebytesoft.thetaleclient.util.onscreen.OnscreenPart;
@@ -69,7 +70,7 @@ public class QuestsFragment extends WrapperFragment {
     public void refresh(final boolean isGlobal) {
         super.refresh(isGlobal);
 
-        new GameInfoRequest(true).execute(RequestUtils.wrapCallback(new ApiResponseCallback<GameInfoResponse>() {
+        final ApiResponseCallback<GameInfoResponse> callback = RequestUtils.wrapCallback(new ApiResponseCallback<GameInfoResponse>() {
             @Override
             public void processResponse(GameInfoResponse response) {
                 container.removeAllViews();
@@ -148,39 +149,41 @@ public class QuestsFragment extends WrapperFragment {
                             UiUtils.setText(questStepView.findViewById(R.id.quest_current_choice), questStep.currentChoice);
                         }
 
-                        final ViewGroup choicesContainer = (ViewGroup) questStepView.findViewById(R.id.quest_choices_container);
-                        final View choiceProgress = questStepView.findViewById(R.id.quest_choice_progress);
-                        final TextView choiceError = (TextView) questStepView.findViewById(R.id.quest_choice_error);
-                        for(final QuestChoiceInfo choice : questStep.choices) {
-                            final View choiceView = layoutInflater.inflate(R.layout.item_quest_choice, choicesContainer, false);
+                        if(response.account.isOwnInfo) {
+                            final ViewGroup choicesContainer = (ViewGroup) questStepView.findViewById(R.id.quest_choices_container);
+                            final View choiceProgress = questStepView.findViewById(R.id.quest_choice_progress);
+                            final TextView choiceError = (TextView) questStepView.findViewById(R.id.quest_choice_error);
+                            for(final QuestChoiceInfo choice : questStep.choices) {
+                                final View choiceView = layoutInflater.inflate(R.layout.item_quest_choice, choicesContainer, false);
 
-                            final Spannable choiceDescription = new SpannableString(choice.description);
-                            choiceDescription.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.common_link)),
-                                    0, choice.description.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                            final TextView choiceTextView = (TextView) choiceView.findViewById(R.id.quest_choice);
-                            choiceTextView.setText(TextUtils.concat(getString(R.string.quest_choice_part), choiceDescription));
-                            choiceTextView.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    choicesContainer.setVisibility(View.GONE);
-                                    choiceProgress.setVisibility(View.VISIBLE);
-                                    new QuestChoiceRequest().execute(choice.id, RequestUtils.wrapCallback(new ApiResponseCallback<CommonResponse>() {
-                                        @Override
-                                        public void processResponse(CommonResponse response) {
-                                            refresh(false);
-                                        }
+                                final Spannable choiceDescription = new SpannableString(choice.description);
+                                choiceDescription.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.common_link)),
+                                        0, choice.description.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                                final TextView choiceTextView = (TextView) choiceView.findViewById(R.id.quest_choice);
+                                choiceTextView.setText(TextUtils.concat(getString(R.string.quest_choice_part), choiceDescription));
+                                choiceTextView.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        choicesContainer.setVisibility(View.GONE);
+                                        choiceProgress.setVisibility(View.VISIBLE);
+                                        new QuestChoiceRequest().execute(choice.id, RequestUtils.wrapCallback(new ApiResponseCallback<CommonResponse>() {
+                                            @Override
+                                            public void processResponse(CommonResponse response) {
+                                                refresh(false);
+                                            }
 
-                                        @Override
-                                        public void processError(CommonResponse response) {
-                                            choicesContainer.setVisibility(View.GONE);
-                                            choiceProgress.setVisibility(View.GONE);
-                                            UiUtils.setText(choiceError, response.errorMessage);
-                                        }
-                                    }, QuestsFragment.this));
-                                }
-                            });
+                                            @Override
+                                            public void processError(CommonResponse response) {
+                                                choicesContainer.setVisibility(View.GONE);
+                                                choiceProgress.setVisibility(View.GONE);
+                                                UiUtils.setText(choiceError, response.errorMessage);
+                                            }
+                                        }, QuestsFragment.this));
+                                    }
+                                });
 
-                            choicesContainer.addView(choiceView);
+                                choicesContainer.addView(choiceView);
+                            }
                         }
 
                         container.addView(questStepView);
@@ -220,7 +223,14 @@ public class QuestsFragment extends WrapperFragment {
             public void processError(GameInfoResponse response) {
                 setError(response.errorMessage);
             }
-        }, this), true);
+        }, this);
+
+        final int watchingAccountId = PreferencesManager.getWatchingAccountId();
+        if(watchingAccountId == 0) {
+            new GameInfoRequest(true).execute(callback, true);
+        } else {
+            new GameInfoRequest(true).execute(watchingAccountId, callback, true);
+        }
     }
 
     @Override

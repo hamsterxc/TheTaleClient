@@ -8,6 +8,7 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
 import android.support.v4.app.Fragment;
+import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -19,9 +20,18 @@ import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
+import com.lonebytesoft.thetaleclient.DrawerItem;
+import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.activity.LoginActivity;
 import com.lonebytesoft.thetaleclient.activity.MainActivity;
+import com.lonebytesoft.thetaleclient.api.ApiResponseCallback;
+import com.lonebytesoft.thetaleclient.api.cache.prerequisite.InfoPrerequisiteRequest;
+import com.lonebytesoft.thetaleclient.api.cache.prerequisite.PrerequisiteRequest;
+import com.lonebytesoft.thetaleclient.api.request.GameInfoRequest;
+import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;
+import com.lonebytesoft.thetaleclient.api.response.InfoResponse;
 import com.lonebytesoft.thetaleclient.fragment.GameFragment;
+import com.lonebytesoft.thetaleclient.fragment.Refreshable;
 import com.lonebytesoft.thetaleclient.util.onscreen.OnscreenStateListener;
 
 /**
@@ -61,6 +71,14 @@ public class UiUtils {
             view.getViewTreeObserver().removeGlobalOnLayoutListener(listener);
         } else {
             view.getViewTreeObserver().removeOnGlobalLayoutListener(listener);
+        }
+    }
+
+    public static void showKeyboard(final Activity activity) {
+        final View view = activity.getCurrentFocus();
+        if(view != null) {
+            final InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputMethodManager.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
         }
     }
 
@@ -126,6 +144,55 @@ public class UiUtils {
         } else {
             return context.getString(fewResId, quantity);
         }
+    }
+
+    public static void setupFindPlayerContainer(final View container, final Refreshable refreshable, final Fragment fragment, final MainActivity activity) {
+        container.setVisibility(View.GONE);
+        new InfoPrerequisiteRequest(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        final int watchingAccountId = PreferencesManager.getWatchingAccountId();
+                        final boolean isOwnAccount = (watchingAccountId == 0) || (watchingAccountId == PreferencesManager.getAccountId());
+                        if(!isOwnAccount) {
+                            container.setVisibility(View.VISIBLE);
+
+                            final TextView findPlayerText = (TextView) container.findViewById(R.id.find_player_widget_text);
+                            findPlayerText.setText(Html.fromHtml(activity.getString(R.string.find_player_info_short, PreferencesManager.getWatchingAccountName())));
+                            new GameInfoRequest(true).execute(watchingAccountId, new ApiResponseCallback<GameInfoResponse>() {
+                                @Override
+                                public void processResponse(GameInfoResponse response) {
+                                    findPlayerText.setText(Html.fromHtml(activity.getString(R.string.find_player_info,
+                                            PreferencesManager.getWatchingAccountName(), response.account.hero.basicInfo.name)));
+                                }
+
+                                @Override
+                                public void processError(GameInfoResponse response) {
+                                    // do nothing
+                                }
+                            }, true);
+
+                            container.findViewById(R.id.find_player_widget_cancel).setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    PreferencesManager.setWatchingAccount(0, null);
+                                    refreshable.refresh(true);
+                                }
+                            });
+                            container.findViewById(R.id.find_player_widget_search).setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    activity.onNavigationDrawerItemSelected(DrawerItem.FIND_PLAYER);
+                                }
+                            });
+                        }
+                    }
+                }, new PrerequisiteRequest.ErrorCallback<InfoResponse>() {
+            @Override
+            public void processError(InfoResponse response) {
+                // do nothing
+            }
+        }, fragment).execute();
     }
 
 }

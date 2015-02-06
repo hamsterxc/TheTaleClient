@@ -45,7 +45,7 @@ public class GameInfoRequest extends AbstractApiRequest<GameInfoResponse> {
         if(gameInfoResponse.account == null) {
             PreferencesManager.setAccountId(0);
             PreferencesManager.setAccountName(null);
-        } else {
+        } else if(gameInfoResponse.account.isOwnInfo) {
             PreferencesManager.setAccountId(gameInfoResponse.account.accountId);
         }
         PreferencesManager.setMapVersion(gameInfoResponse.mapVersion);

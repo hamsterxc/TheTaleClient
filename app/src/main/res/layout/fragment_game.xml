@@ -16,4 +16,16 @@
         android:layout_height="0dp"
         android:layout_weight="1"/>
 
+    <LinearLayout
+        android:id="@+id/fragment_game_find_player"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <View style="@style/Delimiter"/>
+
+        <include layout="@layout/widget_find_player_helper"/>
+
+    </LinearLayout>
+
 </LinearLayout>

@@ -28,6 +28,9 @@ public class PreferencesManager {
     private static final String KEY_DESIRED_GAME_PAGE = "KEY_DESIRED_GAME_PAGE";
     private static final String KEY_WIDGET_ENABLED = "KEY_WIDGET_ENABLED";
     private static final String KEY_SHOULD_EXIT = "KEY_SHOULD_EXIT";
+    private static final String KEY_WATCHING_ACCOUNT_ID = "KEY_WATCHING_ACCOUNT_ID";
+    private static final String KEY_WATCHING_ACCOUNT_NAME = "KEY_WATCHING_ACCOUNT_NAME";
+    private static final String KEY_FIND_PLAYER_LAST_QUERY = "KEY_FIND_PLAYER_LAST_QUERY";
 
     private static final String KEY_ACCOUNT_ID = "KEY_ACCOUNT_ID";
     private static final String KEY_ACCOUNT_NAME = "KEY_ACCOUNT_NAME";
@@ -560,6 +563,31 @@ public class PreferencesManager {
 
     public static boolean shouldExit() {
         return sharedPreferences.getBoolean(KEY_SHOULD_EXIT, false);
+    }
+
+    public static void setWatchingAccount(final int watchingAccountId, final String watchingAccountName) {
+        sharedPreferences.edit()
+                .putInt(KEY_WATCHING_ACCOUNT_ID, watchingAccountId)
+                .putString(KEY_WATCHING_ACCOUNT_NAME, watchingAccountName)
+                .commit();
+    }
+
+    public static int getWatchingAccountId() {
+        return sharedPreferences.getInt(KEY_WATCHING_ACCOUNT_ID, 0);
+    }
+
+    public static String getWatchingAccountName() {
+        return sharedPreferences.getString(KEY_WATCHING_ACCOUNT_NAME, null);
+    }
+
+    public static void setFindPlayerLastQuery(final String query) {
+        sharedPreferences.edit()
+                .putString(KEY_FIND_PLAYER_LAST_QUERY, query)
+                .commit();
+    }
+
+    public static String getFindPlayerLastQuery() {
+        return sharedPreferences.getString(KEY_FIND_PLAYER_LAST_QUERY, null);
     }
 
     public static boolean isWatcherEnabled() {

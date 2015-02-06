@@ -11,6 +11,7 @@ import org.json.JSONObject;
  */
 public class AccountInfo {
 
+    public final boolean isOwnInfo;
     public final int newMessagesCount;
     public final int accountId;
     public final int lastVisitTime;
@@ -19,6 +20,7 @@ public class AccountInfo {
     public final HeroInfo hero;
 
     public AccountInfo(final JSONObject json) throws JSONException {
+        isOwnInfo = json.getBoolean("is_own");
         newMessagesCount = json.optInt("new_messages", 0);
         accountId = json.getInt("id");
         lastVisitTime = json.getInt("last_visit");

@@ -12,6 +12,7 @@ import com.lonebytesoft.thetaleclient.api.ApiResponseCallback;
 import com.lonebytesoft.thetaleclient.api.model.DiaryEntry;
 import com.lonebytesoft.thetaleclient.api.request.GameInfoRequest;
 import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;
+import com.lonebytesoft.thetaleclient.util.PreferencesManager;
 import com.lonebytesoft.thetaleclient.util.RequestUtils;
 
 /**
@@ -40,7 +41,7 @@ public class DiaryFragment extends WrapperFragment {
     public void refresh(final boolean isGlobal) {
         super.refresh(isGlobal);
 
-        new GameInfoRequest(true).execute(RequestUtils.wrapCallback(new ApiResponseCallback<GameInfoResponse>() {
+        final ApiResponseCallback<GameInfoResponse> callback = RequestUtils.wrapCallback(new ApiResponseCallback<GameInfoResponse>() {
             @Override
             public void processResponse(GameInfoResponse response) {
                 diaryContainer.removeAllViews();
@@ -59,7 +60,14 @@ public class DiaryFragment extends WrapperFragment {
             public void processError(GameInfoResponse response) {
                 setError(response.errorMessage);
             }
-        }, this), true);
+        }, this);
+
+        final int watchingAccountId = PreferencesManager.getWatchingAccountId();
+        if(watchingAccountId == 0) {
+            new GameInfoRequest(true).execute(callback, true);
+        } else {
+            new GameInfoRequest(true).execute(watchingAccountId, callback, true);
+        }
     }
 
 }

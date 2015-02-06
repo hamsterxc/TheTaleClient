@@ -79,4 +79,17 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/map_find_player"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical">
+
+        <View style="@style/Delimiter"/>
+
+        <include layout="@layout/widget_find_player_helper"/>
+
+    </LinearLayout>
+
 </RelativeLayout>

@@ -3,6 +3,7 @@ package com.lonebytesoft.thetaleclient;
 import android.support.v4.app.Fragment;
 
 import com.lonebytesoft.thetaleclient.fragment.ChatFragment;
+import com.lonebytesoft.thetaleclient.fragment.FindPlayerFragment;
 import com.lonebytesoft.thetaleclient.fragment.GameFragment;
 import com.lonebytesoft.thetaleclient.fragment.MapFragment;
 import com.lonebytesoft.thetaleclient.fragment.SettingsFragment;
@@ -18,6 +19,7 @@ public enum DrawerItem {
     MAP(R.id.drawer_item_map, R.string.drawer_title_map, MapFragment.class, R.menu.main),
     CHAT(R.id.drawer_item_chat, R.string.drawer_title_chat, ChatFragment.class, R.menu.main),
     SITE(R.id.drawer_item_site),
+    FIND_PLAYER(R.id.drawer_item_find_player, R.string.drawer_title_find_player, FindPlayerFragment.class, R.menu.empty),
     SETTINGS(R.id.drawer_item_settings, R.string.drawer_title_settings, SettingsFragment.class, R.menu.empty),
     LOGOUT(R.id.drawer_item_logout),
     ABOUT(R.id.drawer_item_about),

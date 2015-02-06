@@ -21,6 +21,7 @@ import com.lonebytesoft.thetaleclient.api.request.GameInfoRequest;
 import com.lonebytesoft.thetaleclient.api.request.TakeCardRequest;
 import com.lonebytesoft.thetaleclient.api.response.CommonResponse;
 import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;
+import com.lonebytesoft.thetaleclient.util.PreferencesManager;
 import com.lonebytesoft.thetaleclient.util.RequestUtils;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
 import com.lonebytesoft.thetaleclient.widget.RequestActionView;
@@ -61,10 +62,10 @@ public class CardsFragment extends WrapperFragment {
     public void refresh(final boolean isGlobal) {
         super.refresh(isGlobal);
 
-        new GameInfoRequest(true).execute(RequestUtils.wrapCallback(new ApiResponseCallback<GameInfoResponse>() {
+        final ApiResponseCallback<GameInfoResponse> callback = RequestUtils.wrapCallback(new ApiResponseCallback<GameInfoResponse>() {
             @Override
             public void processResponse(final GameInfoResponse response) {
-                if(response.account.hero.basicInfo.cardHelpCurrent >= response.account.hero.basicInfo.cardHelpTotal) {
+                if(response.account.isOwnInfo && (response.account.hero.basicInfo.cardHelpCurrent >= response.account.hero.basicInfo.cardHelpTotal)) {
                     helpCounterContainer.setVisibility(View.GONE);
                     helpTakeCardWidget.setMode(RequestActionView.Mode.ACTION);
                     helpTakeCardWidget.setVisibility(View.VISIBLE);
@@ -132,7 +133,14 @@ public class CardsFragment extends WrapperFragment {
             public void processError(GameInfoResponse response) {
                 setError(response.errorMessage);
             }
-        }, this), true);
+        }, this);
+
+        final int watchingAccountId = PreferencesManager.getWatchingAccountId();
+        if(watchingAccountId == 0) {
+            new GameInfoRequest(true).execute(callback, true);
+        } else {
+            new GameInfoRequest(true).execute(watchingAccountId, callback, true);
+        }
     }
 
 }
