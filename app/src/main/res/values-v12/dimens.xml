@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <dimen name="map_navigation_background_corner_bottom_right">0dp</dimen>
-    <dimen name="map_navigation_background_corner_bottom_left">8dp</dimen>
-</resources>

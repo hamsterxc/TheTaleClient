@@ -16,7 +16,7 @@ public enum DrawerItem {
 
     PROFILE(R.id.drawer_item_info),
     GAME(R.id.drawer_item_game, R.string.drawer_title_game, GameFragment.class, R.menu.game),
-    MAP(R.id.drawer_item_map, R.string.drawer_title_map, MapFragment.class, R.menu.main),
+    MAP(R.id.drawer_item_map, R.string.drawer_title_map, MapFragment.class, R.menu.map),
     CHAT(R.id.drawer_item_chat, R.string.drawer_title_chat, ChatFragment.class, R.menu.main),
     SITE(R.id.drawer_item_site),
     FIND_PLAYER(R.id.drawer_item_find_player, R.string.drawer_title_find_player, FindPlayerFragment.class, R.menu.empty),

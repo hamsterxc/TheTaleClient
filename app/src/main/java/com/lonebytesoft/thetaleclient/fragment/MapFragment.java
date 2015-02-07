@@ -9,6 +9,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -74,10 +76,6 @@ public class MapFragment extends WrapperFragment {
     private ImageView mapView;
     private PhotoViewAttacher mapViewHelper;
 
-    private View actionMapStyle;
-    private View actionMapModification;
-    private View actionMapModificationContainer;
-
     private View findPlayerContainer;
 
     private float mapZoom;
@@ -90,6 +88,14 @@ public class MapFragment extends WrapperFragment {
     private MapModification mapModification;
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+
+        mapModification = MapModification.NONE;
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         layoutInflater = inflater;
         rootView = inflater.inflate(R.layout.fragment_map, container, false);
@@ -97,64 +103,6 @@ public class MapFragment extends WrapperFragment {
         mapView = (ImageView) rootView.findViewById(R.id.map_content);
         mapViewHelper = new PhotoViewAttacher(mapView);
         mapViewHelper.setScaleType(ImageView.ScaleType.CENTER);
-
-        actionMapStyle = rootView.findViewById(R.id.map_style);
-        actionMapStyle.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DialogUtils.showChoiceDialog(getFragmentManager(), getString(R.string.map_style_caption),
-                        ObjectUtils.getNamesForEnum(MapStyle.class), new ChoiceDialog.ItemChooseListener() {
-                    @Override
-                    public void onItemSelected(int position) {
-                        PreferencesManager.setMapStyle(MapStyle.values()[position]);
-                        refresh(true);
-                    }
-                });
-            }
-        });
-
-        rootView.findViewById(R.id.map_find_place).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final int count = places.size();
-                final String[] choices = new String[count];
-                for(int i = 0; i < count; i++) {
-                    choices[i] = places.get(i).name;
-                }
-
-                DialogUtils.showChoiceDialog(getFragmentManager(), getString(R.string.map_find_place), choices, new ChoiceDialog.ItemChooseListener() {
-                    @Override
-                    public void onItemSelected(int position) {
-                        final PlaceInfo placeInfo = places.get(position);
-                        moveToTile(placeInfo.x, placeInfo.y);
-                    }
-                });
-            }
-        });
-
-        rootView.findViewById(R.id.map_find_hero).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                moveToTile((int) Math.round(heroPosition.x), (int) Math.round(heroPosition.y));
-            }
-        });
-
-        actionMapModificationContainer = rootView.findViewById(R.id.map_modification_container);
-        actionMapModification = rootView.findViewById(R.id.map_modification);
-        actionMapModification.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DialogUtils.showChoiceDialog(getChildFragmentManager(), getString(R.string.map_modification_caption),
-                        ObjectUtils.getNamesForEnum(MapModification.class), new ChoiceDialog.ItemChooseListener() {
-                            @Override
-                            public void onItemSelected(int position) {
-                                mapModification = MapModification.values()[position];
-                                refresh(true);
-                            }
-                        },
-                        R.layout.dialog_content_map_modification, R.id.dialog_map_modification_list);
-            }
-        });
 
         if(savedInstanceState != null) {
             mapZoom = savedInstanceState.getFloat(KEY_MAP_ZOOM, 1.0f);
@@ -174,6 +122,7 @@ public class MapFragment extends WrapperFragment {
         return wrapView(layoutInflater, rootView);
     }
 
+    @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putFloat(KEY_MAP_ZOOM, getMapZoom());
 
@@ -182,6 +131,72 @@ public class MapFragment extends WrapperFragment {
         outState.putFloat(KEY_MAP_SHIFT_Y, mapShift.y);
 
         outState.putInt(KEY_MAP_MODIFICATION, mapModification.ordinal());
+    }
+
+    private void updateMenuItemTitle(final int id, final String title) {
+        final MenuItem menuItem = UiUtils.getMenuItem(getActivity(), id);
+        if(menuItem != null) {
+            menuItem.setTitle(title);
+        }
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+
+        updateMenuItemTitle(R.id.action_map_style, getString(R.string.map_style, PreferencesManager.getMapStyle().getName()));
+        updateMenuItemTitle(R.id.action_map_modification, getString(R.string.map_modification, mapModification.getName()));
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.action_map_style:
+                DialogUtils.showChoiceDialog(getFragmentManager(), getString(R.string.map_style_caption),
+                        ObjectUtils.getNamesForEnum(MapStyle.class), new ChoiceDialog.ItemChooseListener() {
+                            @Override
+                            public void onItemSelected(int position) {
+                                PreferencesManager.setMapStyle(MapStyle.values()[position]);
+                                refresh(true);
+                            }
+                        });
+                return true;
+
+            case R.id.action_map_find_place:
+                final int count = places.size();
+                final String[] choices = new String[count];
+                for(int i = 0; i < count; i++) {
+                    choices[i] = places.get(i).name;
+                }
+
+                DialogUtils.showChoiceDialog(getFragmentManager(), getString(R.string.map_find_place), choices, new ChoiceDialog.ItemChooseListener() {
+                    @Override
+                    public void onItemSelected(int position) {
+                        final PlaceInfo placeInfo = places.get(position);
+                        moveToTile(placeInfo.x, placeInfo.y);
+                    }
+                });
+                return true;
+
+            case R.id.action_map_find_hero:
+                moveToTile((int) Math.round(heroPosition.x), (int) Math.round(heroPosition.y));
+                return true;
+
+            case R.id.action_map_modification:
+                DialogUtils.showChoiceDialog(getChildFragmentManager(), getString(R.string.map_modification_caption),
+                        ObjectUtils.getNamesForEnum(MapModification.class), new ChoiceDialog.ItemChooseListener() {
+                            @Override
+                            public void onItemSelected(int position) {
+                                mapModification = MapModification.values()[position];
+                                refresh(true);
+                            }
+                        },
+                        R.layout.dialog_content_map_modification, R.id.dialog_map_modification_list);
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
@@ -202,9 +217,9 @@ public class MapFragment extends WrapperFragment {
         System.gc();
 
         final MapStyle mapStyle = PreferencesManager.getMapStyle();
-        UiUtils.setText(actionMapStyle, getString(R.string.map_style, mapStyle.getName()));
+        updateMenuItemTitle(R.id.action_map_style, getString(R.string.map_style, mapStyle.getName()));
 
-        UiUtils.setText(actionMapModification, getString(R.string.map_modification, mapModification.getName()));
+        updateMenuItemTitle(R.id.action_map_modification, getString(R.string.map_modification, mapModification.getName()));
 
         new InfoPrerequisiteRequest(new Runnable() {
             @Override
@@ -227,13 +242,16 @@ public class MapFragment extends WrapperFragment {
                                         final Bitmap map = MapUtils.getMapBitmap(mapResponse);
                                         final Canvas canvas = new Canvas(map);
 
-                                        if(MapUtils.getCurrentSizeDenominator() == 1) {
-                                            actionMapModificationContainer.setVisibility(View.VISIBLE);
-                                        } else {
-                                            actionMapModificationContainer.setVisibility(View.GONE);
-                                            DialogUtils.showMessageDialog(getChildFragmentManager(),
-                                                    getString(R.string.common_dialog_attention_title),
-                                                    getString(R.string.map_decreased_quality));
+                                        final MenuItem actionMapModification = UiUtils.getMenuItem(getActivity(), R.id.action_map_modification);
+                                        if(actionMapModification != null) {
+                                            if(MapUtils.getCurrentSizeDenominator() == 1) {
+                                                actionMapModification.setVisible(true);
+                                            } else {
+                                                actionMapModification.setVisible(false);
+                                                DialogUtils.showMessageDialog(getChildFragmentManager(),
+                                                        getString(R.string.common_dialog_attention_title),
+                                                        getString(R.string.map_decreased_quality));
+                                            }
                                         }
 
                                         if(mapModification == MapModification.NONE) {

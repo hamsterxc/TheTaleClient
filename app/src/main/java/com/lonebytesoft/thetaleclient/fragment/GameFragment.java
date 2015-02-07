@@ -1,6 +1,5 @@
 package com.lonebytesoft.thetaleclient.fragment;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -129,19 +128,8 @@ public class GameFragment extends Fragment implements Refreshable, OnscreenState
         }
     }
 
-    private MenuItem getMenuItem(final int menuItemResId) {
-        final Activity activity = getActivity();
-        if(activity instanceof MainActivity) {
-            final Menu menu = ((MainActivity) activity).getMenu();
-            if(menu != null) {
-                return menu.findItem(menuItemResId);
-            }
-        }
-        return null;
-    }
-
     private void updateMenu() {
-        final MenuItem readAloudMenuItem = getMenuItem(R.id.action_read_aloud);
+        final MenuItem readAloudMenuItem = UiUtils.getMenuItem(getActivity(), R.id.action_read_aloud);
         if(readAloudMenuItem != null) {
             boolean isVisible = false;
             boolean isOn = false;
