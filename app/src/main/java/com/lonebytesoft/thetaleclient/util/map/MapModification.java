@@ -1,9 +1,15 @@
 package com.lonebytesoft.thetaleclient.util.map;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.RectF;
 
+import com.lonebytesoft.thetaleclient.R;
+import com.lonebytesoft.thetaleclient.TheTaleClientApplication;
 import com.lonebytesoft.thetaleclient.api.dictionary.MapCellWindSpeed;
 import com.lonebytesoft.thetaleclient.api.model.MapCellTerrainInfo;
 import com.lonebytesoft.thetaleclient.api.model.PlaceInfo;
@@ -25,34 +31,22 @@ public enum MapModification {
     WIND("Ветер") {
         @Override
         public void modifyCell(final Canvas canvas, final int tileX, final int tileY, final MapCellTerrainInfo cellInfo) {
-            final float size = MapUtils.MAP_TILE_SIZE;
-            final float x = tileX * size;
-            final float y = tileY * size;
+            final int x = tileX * MapUtils.MAP_TILE_SIZE;
+            final int y = tileY * MapUtils.MAP_TILE_SIZE;
+            final double size = 0.7 * ((cellInfo.windSpeed.ordinal() + 1.0) / MapCellWindSpeed.values().length) + 0.25;
+            final float padding = (float) (MapUtils.MAP_TILE_SIZE * (1.0 - size) / 2.0);
 
-            canvas.drawRect(x, y, x + size, y + size, windPaintRect);
+            canvas.drawRect(x, y, x + MapUtils.MAP_TILE_SIZE, y + MapUtils.MAP_TILE_SIZE, windPaintRect);
 
-            final float centerX = x + size / 2.0f;
-            final float centerY = y + size / 2.0f;
-            final float length = size * 0.95f * (((float) cellInfo.windSpeed.ordinal() + 1) / MapCellWindSpeed.values().length);
-            final double angle = cellInfo.windDirection.getDirection() / 180.0 * Math.PI;
-            final float startX = centerX + (length / 2.0f) * ((float) Math.sin(angle));
-            final float startY = centerY - (length / 2.0f) * ((float) Math.cos(angle));
-            canvas.drawLines(new float[]{
-                    centerX - (length / 2.0f) * ((float) Math.sin(angle)),
-                    centerY + (length / 2.0f) * ((float) Math.cos(angle)),
-                    startX,
-                    startY,
-
-                    startX,
-                    startY,
-                    startX + (length / 4.0f) * ((float) Math.cos(Math.PI * (11.0 / 8.0) - angle)),
-                    startY - (length / 4.0f) * ((float) Math.sin(Math.PI * (11.0 / 8.0) - angle)),
-
-                    startX,
-                    startY,
-                    startX + (length / 4.0f) * ((float) Math.cos(Math.PI * (13.0 / 8.0) - angle)),
-                    startY - (length / 4.0f) * ((float) Math.sin(Math.PI * (13.0 / 8.0) - angle)),
-            }, windPaintArrow);
+            final Matrix matrix = new Matrix();
+            matrix.setRotate((float) cellInfo.windDirection.getDirection());
+            final Bitmap arrow = Bitmap.createBitmap(arrowBitmap, 0, 0, MapUtils.MAP_TILE_SIZE, MapUtils.MAP_TILE_SIZE, matrix, true);
+            canvas.drawBitmap(arrow, null, new RectF(
+                        x + padding,
+                        y + padding,
+                        x + MapUtils.MAP_TILE_SIZE - padding,
+                        y + MapUtils.MAP_TILE_SIZE - padding),
+                    null);
         }
     },
     INFLUENCE("Влияние") {
@@ -67,7 +61,7 @@ public enum MapModification {
     ;
 
     private static Paint windPaintRect;
-    private static Paint windPaintArrow;
+    private static Bitmap arrowBitmap;
     private static Map<Integer, Paint> influencePaint;
 
     private final String name;
@@ -111,9 +105,7 @@ public enum MapModification {
                 windPaintRect = new Paint();
                 windPaintRect.setColor(Color.WHITE);
 
-                windPaintArrow = new Paint();
-                windPaintArrow.setColor(Color.BLACK);
-                windPaintArrow.setStrokeWidth(1.0f);
+                arrowBitmap = BitmapFactory.decodeResource(TheTaleClientApplication.getContext().getResources(), R.drawable.ic_arrow);
 
                 break;
 
