@@ -115,7 +115,8 @@ public class ChatManager {
 
     public static void post(final String message, final ChatCallback callback) {
         if((csrfToken == null) || (session == null)) {
-            throw new IllegalStateException("Must call init() first");
+            callCallbackError(callback);
+            return;
         }
 
         new AsyncTask<Void, Void, Void>() {

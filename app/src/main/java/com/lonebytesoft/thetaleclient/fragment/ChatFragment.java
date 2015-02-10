@@ -123,6 +123,7 @@ public class ChatFragment extends WrapperFragment {
         super.refresh(isGlobal);
 
         if(isGlobal) {
+            sendContainer.setVisibility(View.GONE);
             mainHandler.removeCallbacks(refreshRunnable);
             new InfoPrerequisiteRequest(new Runnable() {
                 @Override
