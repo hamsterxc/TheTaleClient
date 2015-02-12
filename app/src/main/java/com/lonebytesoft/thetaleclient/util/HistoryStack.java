@@ -51,6 +51,9 @@ public class HistoryStack<T> {
             stack.add(item);
         } else {
             index = itemIndex;
+            for(int i = stack.size() - 1; i > itemIndex; i--) {
+                stack.remove(i);
+            }
         }
     }
 
