@@ -8,7 +8,7 @@
     android:paddingRight="@dimen/preference_padding_right"
     android:paddingBottom="@dimen/preference_padding_bottom"
     android:gravity="center_vertical"
-    android:background="@drawable/common_list_item_background">
+    android:background="@drawable/common_clickable_background">
 
     <RelativeLayout
         android:layout_width="0dp"

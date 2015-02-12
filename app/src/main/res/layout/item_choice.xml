@@ -7,4 +7,4 @@
     android:padding="8dp"
     android:gravity="left|center_vertical"
     style="?android:attr/textAppearanceMedium"
-    android:background="@drawable/common_list_item_background"/>
+    android:background="@drawable/common_clickable_background"/>

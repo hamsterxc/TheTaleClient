@@ -15,7 +15,7 @@
         android:paddingRight="@dimen/preference_padding_right"
         android:paddingBottom="4dp"
         android:gravity="center_vertical"
-        android:background="@drawable/common_list_item_background"
+        android:background="@drawable/common_clickable_background"
         android:clickable="true"
         android:orientation="horizontal">
 

@@ -30,7 +30,7 @@
             android:src="@drawable/ic_action_cancel"
             android:scaleType="fitXY"
             android:clickable="true"
-            android:background="@drawable/common_list_item_background"/>
+            android:background="@drawable/common_clickable_background"/>
 
         <View style="@style/DelimiterVertical"/>
 
@@ -42,7 +42,7 @@
             android:src="@drawable/ic_action_search"
             android:scaleType="fitXY"
             android:clickable="true"
-            android:background="@drawable/common_list_item_background"/>
+            android:background="@drawable/common_clickable_background"/>
 
     </LinearLayout>
 
