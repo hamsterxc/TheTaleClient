@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -52,7 +53,6 @@ public class ChatFragment extends WrapperFragment {
         @Override
         public void run() {
             refresh(false);
-            mainHandler.postDelayed(this, REFRESH_TIMEOUT_MILLIS);
         }
     };
 
@@ -63,8 +63,9 @@ public class ChatFragment extends WrapperFragment {
     private View outerContainer;
     private ViewGroup container;
     private View sendContainer;
-    private TextView message;
+    private EditText textMessage;
     private View errorSend;
+    private View chatSend;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -76,13 +77,16 @@ public class ChatFragment extends WrapperFragment {
         this.container = (ViewGroup) rootView.findViewById(R.id.chat_container);
         sendContainer = rootView.findViewById(R.id.chat_send_container);
         errorSend = rootView.findViewById(R.id.chat_error_send);
-        message = (TextView) rootView.findViewById(R.id.chat_message);
-        rootView.findViewById(R.id.chat_send).setOnClickListener(new View.OnClickListener() {
+        textMessage = (EditText) rootView.findViewById(R.id.chat_message);
+        chatSend = rootView.findViewById(R.id.chat_send);
+
+        chatSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 errorSend.setVisibility(View.GONE);
-                final String text = message.getText().toString();
+                final String text = textMessage.getText().toString();
                 if(!TextUtils.isEmpty(text)) {
+                    chatSend.setEnabled(false);
                     UiUtils.hideKeyboard(getActivity());
                     ChatManager.post(text, new ChatManager.ChatCallback() {
                         @Override
@@ -91,7 +95,10 @@ public class ChatFragment extends WrapperFragment {
                                 return;
                             }
 
-                            message.setText(null);
+                            chatSend.setEnabled(true);
+                            textMessage.setText(null);
+
+                            mainHandler.removeCallbacks(refreshRunnable);
                             refresh(false);
                         }
 
@@ -101,6 +108,7 @@ public class ChatFragment extends WrapperFragment {
                                 return;
                             }
 
+                            chatSend.setEnabled(true);
                             errorSend.setVisibility(View.VISIBLE);
                         }
                     });
@@ -137,7 +145,6 @@ public class ChatFragment extends WrapperFragment {
                             }
 
                             loadMessages(isGlobal);
-                            mainHandler.postDelayed(refreshRunnable, REFRESH_TIMEOUT_MILLIS);
                         }
 
                         @Override
@@ -155,7 +162,6 @@ public class ChatFragment extends WrapperFragment {
                 public void processError(InfoResponse response) {
                     sendContainer.setVisibility(View.GONE);
                     loadMessages(isGlobal);
-                    mainHandler.postDelayed(refreshRunnable, REFRESH_TIMEOUT_MILLIS);
                 }
             }, this).execute();
         } else {
@@ -192,6 +198,8 @@ public class ChatFragment extends WrapperFragment {
                     });
                 }
 
+                mainHandler.postDelayed(refreshRunnable, REFRESH_TIMEOUT_MILLIS);
+
                 setMode(DataViewMode.DATA);
             }
 
@@ -203,6 +211,8 @@ public class ChatFragment extends WrapperFragment {
 
                 if(isGlobal) {
                     setError(getString(R.string.chat_error));
+                } else {
+                    mainHandler.postDelayed(refreshRunnable, REFRESH_TIMEOUT_MILLIS);
                 }
             }
         };
@@ -217,7 +227,22 @@ public class ChatFragment extends WrapperFragment {
     private View getChatItemView(final LayoutInflater layoutInflater, final ViewGroup container, final ChatMessage message) {
         final View view = layoutInflater.inflate(R.layout.item_chat_message, container, false);
 
-        ((TextView) view.findViewById(R.id.chat_item_nickname)).setText(message.nickname);
+        final TextView textNickname = (TextView) view.findViewById(R.id.chat_item_nickname);
+        textNickname.setText(message.nickname);
+        textNickname.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String currentMessage = textMessage.getText().toString();
+                textMessage.setText(String.format("%s%s@%s ",
+                        currentMessage,
+                        TextUtils.isEmpty(currentMessage) ? "" : " ",
+                        message.nickname));
+
+                textMessage.requestFocus();
+                textMessage.setSelection(textMessage.getText().length());
+                UiUtils.showKeyboard(getActivity());
+            }
+        });
 
         final TextView textMessage = (TextView) view.findViewById(R.id.chat_item_message);
         if(message.isDeleted) {

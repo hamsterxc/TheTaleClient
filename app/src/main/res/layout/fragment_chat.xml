@@ -47,7 +47,7 @@
         android:id="@+id/chat_send_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="8dp"
+        android:padding="4dp"
         android:orientation="horizontal"
         android:gravity="center_vertical">
 
@@ -56,6 +56,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:layout_margin="4dp"
             android:inputType="text"
             android:singleLine="true"/>
 
@@ -63,10 +64,11 @@
             android:id="@+id/chat_send"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:src="@drawable/ic_menu_send"
+            android:padding="4dp"
+            android:src="@drawable/ic_action_send"
             android:clickable="true"
-            android:background="@drawable/common_clickable_background"/>
+            android:background="@drawable/common_clickable_background"
+            android:contentDescription="@string/chat_send"/>
 
     </LinearLayout>
 
