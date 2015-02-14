@@ -1,13 +1,19 @@
 package com.lonebytesoft.thetaleclient.fragment;
 
+import android.app.ProgressDialog;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.PointF;
 import android.graphics.RectF;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -47,11 +53,19 @@ import com.lonebytesoft.thetaleclient.util.UiUtils;
 import com.lonebytesoft.thetaleclient.util.map.MapModification;
 import com.lonebytesoft.thetaleclient.util.map.MapUtils;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import uk.co.senab.photoview.PhotoViewAttacher;
@@ -194,9 +208,80 @@ public class MapFragment extends WrapperFragment {
                         R.layout.dialog_content_map_modification, R.id.dialog_map_modification_list);
                 return true;
 
+            case R.id.action_map_save:
+                final ProgressDialog progressDialog = ProgressDialog.show(getActivity(),
+                        getString(R.string.map_save), getString(R.string.map_save_progress), true, false);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        final File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+                        path.mkdirs();
+
+                        final String filenameBase = String.format("the-tale_map_%s",
+                                new SimpleDateFormat("yyyyMMddHHmmss", Locale.US).format(new Date()));
+                        File file;
+                        int counter = 0;
+                        do {
+                            final String filename = counter == 0 ?
+                                    filenameBase + ".png" :
+                                    String.format("%s_%d.png", filenameBase, counter);
+                            file = new File(path, filename);
+                            counter++;
+                        } while (file.exists());
+                        final File fileMap = file;
+
+                        OutputStream output = null;
+                        try {
+                            output = new FileOutputStream(fileMap);
+                            ((BitmapDrawable) mapView.getDrawable()).getBitmap().compress(Bitmap.CompressFormat.PNG, 90, output);
+                        } catch(FileNotFoundException e) {
+                            showMapSaveError(e.getLocalizedMessage());
+                        }
+
+                        if(output != null) {
+                            boolean success = false;
+                            try {
+                                output.close();
+                                success = true;
+                            } catch (IOException e) {
+                                showMapSaveError(e.getLocalizedMessage());
+                            }
+
+                            if(success) {
+                                DialogUtils.showConfirmationDialog(getChildFragmentManager(),
+                                        getString(R.string.map_save), getString(R.string.map_save_message, fileMap.getPath()),
+                                        null, null,
+                                        getString(R.string.map_save_open), new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                final Intent intent = new Intent();
+                                                intent.setAction(Intent.ACTION_VIEW);
+                                                intent.setDataAndType(Uri.fromFile(fileMap), "image/png");
+                                                startActivity(intent);
+                                            }
+                                        }, null);
+                            }
+                        }
+
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                progressDialog.dismiss();
+                            }
+                        });
+                    }
+                }).start();
+                return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void showMapSaveError(final String error) {
+        DialogUtils.showMessageDialog(getChildFragmentManager(),
+                getString(R.string.common_dialog_attention_title),
+                TextUtils.isEmpty(error) ? getString(R.string.map_save_error_short) : getString(R.string.map_save_error, error));
     }
 
     @Override
