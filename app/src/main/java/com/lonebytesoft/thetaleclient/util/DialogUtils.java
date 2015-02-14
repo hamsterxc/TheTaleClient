@@ -33,9 +33,9 @@ public class DialogUtils {
     public static final String DIALOG_ABOUT_TAG = "DIALOG_ABOUT_TAG";
     public static final String DIALOG_CONFIRMATION_TAG = "DIALOG_CONFIRMATION_TAG";
 
-    private static FragmentTransaction getFragmentTransaction(final FragmentManager fragmentManager) {
+    private static FragmentTransaction getFragmentTransaction(final FragmentManager fragmentManager, final String tag) {
         final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        final Fragment previous = fragmentManager.findFragmentByTag(DIALOG_MIGHT_TAG);
+        final Fragment previous = fragmentManager.findFragmentByTag(tag);
         if(previous != null) {
             fragmentTransaction.remove(previous);
         }
@@ -44,22 +44,25 @@ public class DialogUtils {
     }
 
     public static void showMightDialog(final FragmentManager fragmentManager, final MightInfo mightInfo) {
-        MightDialog.newInstance(mightInfo).show(getFragmentTransaction(fragmentManager), DIALOG_MIGHT_TAG);
+        MightDialog.newInstance(mightInfo)
+                .show(getFragmentTransaction(fragmentManager, DIALOG_MIGHT_TAG), DIALOG_MIGHT_TAG);
     }
 
     public static void showArtifactDialog(final FragmentManager fragmentManager, final ArtifactInfo artifactInfo) {
-        ArtifactDialog.newInstance(artifactInfo).show(getFragmentTransaction(fragmentManager), DIALOG_ARTIFACT_TAG);
+        ArtifactDialog.newInstance(artifactInfo)
+                .show(getFragmentTransaction(fragmentManager, DIALOG_ARTIFACT_TAG), DIALOG_ARTIFACT_TAG);
     }
 
     public static void showQuestActorDialog(final FragmentManager fragmentManager, final QuestActorInfo questActorInfo) {
-        QuestActorDialog.newInstance(questActorInfo).show(getFragmentTransaction(fragmentManager), DIALOG_QUEST_ACTOR_TAG);
+        QuestActorDialog.newInstance(questActorInfo)
+                .show(getFragmentTransaction(fragmentManager, DIALOG_QUEST_ACTOR_TAG), DIALOG_QUEST_ACTOR_TAG);
     }
 
     public static void showChoiceDialog(final FragmentManager fragmentManager, final String caption,
                                         final String[] choices, final ChoiceDialog.ItemChooseListener listener) {
         final ChoiceDialog dialog = ChoiceDialog.newInstance(caption, choices);
         dialog.setItemChooseListener(listener);
-        dialog.show(getFragmentTransaction(fragmentManager), DIALOG_CHOICE_TAG);
+        dialog.show(getFragmentTransaction(fragmentManager, DIALOG_CHOICE_TAG), DIALOG_CHOICE_TAG);
     }
 
     public static void showChoiceDialog(final FragmentManager fragmentManager, final String caption,
@@ -68,7 +71,7 @@ public class DialogUtils {
         final ChoiceDialog dialog = ChoiceDialog.newInstance(caption, choices);
         dialog.setItemChooseListener(listener);
         dialog.setLayout(layoutResId, listViewResId);
-        dialog.show(getFragmentTransaction(fragmentManager), DIALOG_CHOICE_TAG);
+        dialog.show(getFragmentTransaction(fragmentManager, DIALOG_CHOICE_TAG), DIALOG_CHOICE_TAG);
     }
 
     public static void showTabbedDialog(final FragmentManager fragmentManager,
@@ -77,11 +80,12 @@ public class DialogUtils {
         if(tabsAdapter != null) {
             dialog.setTabsAdapter(tabsAdapter);
         }
-        dialog.show(getFragmentTransaction(fragmentManager), DIALOG_TABBED_TAG);
+        dialog.show(getFragmentTransaction(fragmentManager, DIALOG_TABBED_TAG), DIALOG_TABBED_TAG);
     }
 
     public static void showMessageDialog(final FragmentManager fragmentManager, final String caption, final CharSequence message) {
-        MessageDialog.newInstance(caption, message).show(getFragmentTransaction(fragmentManager), DIALOG_MESSAGE_TAG);
+        MessageDialog.newInstance(caption, message)
+                .show(getFragmentTransaction(fragmentManager, DIALOG_MESSAGE_TAG), DIALOG_MESSAGE_TAG);
     }
 
     public static void showMessageDialog(final FragmentManager fragmentManager,
@@ -90,11 +94,11 @@ public class DialogUtils {
         final MessageDialog dialog = MessageDialog.newInstance(caption, message);
         dialog.setOnOkClickListener(onOkClickListener);
         dialog.setOnDismissListener(onDismissListener);
-        dialog.show(getFragmentTransaction(fragmentManager), DIALOG_MESSAGE_TAG);
+        dialog.show(getFragmentTransaction(fragmentManager, DIALOG_MESSAGE_TAG), DIALOG_MESSAGE_TAG);
     }
 
     public static void showAboutDialog(final FragmentManager fragmentManager) {
-        new AboutDialog().show(getFragmentTransaction(fragmentManager), DIALOG_ABOUT_TAG);
+        new AboutDialog().show(getFragmentTransaction(fragmentManager, DIALOG_ABOUT_TAG), DIALOG_ABOUT_TAG);
     }
 
     public static void showConfirmationDialog(final FragmentManager fragmentManager,
@@ -106,7 +110,7 @@ public class DialogUtils {
         dialog.setupPositiveButton(okCaption, onOkListener);
         dialog.setupNegativeButton(cancelCaption, onCancelListener);
         dialog.setOnDismissListener(onDismissListener);
-        dialog.show(getFragmentTransaction(fragmentManager), DIALOG_CONFIRMATION_TAG);
+        dialog.show(getFragmentTransaction(fragmentManager, DIALOG_CONFIRMATION_TAG), DIALOG_CONFIRMATION_TAG);
     }
 
     public static void showConfirmationDialog(final FragmentManager fragmentManager,

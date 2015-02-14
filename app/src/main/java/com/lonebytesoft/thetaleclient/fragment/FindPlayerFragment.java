@@ -150,18 +150,22 @@ public class FindPlayerFragment extends WrapperFragment {
                         };
                         final int approximate = count * ACCOUNTS_PER_PAGE;
                         if(approximate > ACCOUNTS_COUNT_THRESHOLD) {
-                            DialogUtils.showConfirmationDialog(
-                                    getChildFragmentManager(),
-                                    getString(R.string.common_dialog_attention_title),
-                                    getString(R.string.find_player_too_many,
-                                            (approximate / ACCOUNTS_COUNT_GRANULARITY) * ACCOUNTS_COUNT_GRANULARITY),
-                                    null, new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            WebsiteUtils.enumAccountPages(query, callback);
-                                        }
-                                    },
-                                    null, cancelRunnable, cancelRunnable);
+                            if(UiUtils.getMainActivity(FindPlayerFragment.this).isPaused()) {
+                                cancelRunnable.run();
+                            } else {
+                                DialogUtils.showConfirmationDialog(
+                                        getChildFragmentManager(),
+                                        getString(R.string.common_dialog_attention_title),
+                                        getString(R.string.find_player_too_many,
+                                                (approximate / ACCOUNTS_COUNT_GRANULARITY) * ACCOUNTS_COUNT_GRANULARITY),
+                                        null, new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                WebsiteUtils.enumAccountPages(query, callback);
+                                            }
+                                        },
+                                        null, cancelRunnable, cancelRunnable);
+                            }
                         } else {
                             WebsiteUtils.enumAccountPages(query, callback);
                         }

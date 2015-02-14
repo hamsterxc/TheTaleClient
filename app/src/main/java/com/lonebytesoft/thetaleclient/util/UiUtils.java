@@ -207,4 +207,13 @@ public class UiUtils {
         return null;
     }
 
+    public static MainActivity getMainActivity(final Fragment fragment) {
+        final Activity activity = fragment.getActivity();
+        if(activity instanceof MainActivity) {
+            return (MainActivity) activity;
+        } else {
+            return null;
+        }
+    }
+
 }

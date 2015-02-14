@@ -62,6 +62,7 @@ public class MainActivity extends ActionBarActivity
     private CharSequence mTitle;
     private DrawerItem currentItem;
     private HistoryStack<DrawerItem> history;
+    private boolean isPaused;
 
     private Menu menu;
 
@@ -107,6 +108,7 @@ public class MainActivity extends ActionBarActivity
     @Override
     protected void onResume() {
         super.onResume();
+        isPaused = false;
 
         if(PreferencesManager.shouldExit()) {
             PreferencesManager.setShouldExit(false);
@@ -136,16 +138,19 @@ public class MainActivity extends ActionBarActivity
 
     @Override
     protected void onPause() {
-        super.onPause();
+        isPaused = true;
 
         TheTaleClientApplication.getOnscreenStateWatcher().onscreenStateChange(OnscreenPart.MAIN, false);
         TextToSpeechUtils.pause();
         RequestCacheManager.invalidate();
         UiUtils.callOnscreenStateChange(getSupportFragmentManager().findFragmentByTag(currentItem.getFragmentTag()), false);
+
+        super.onPause();
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
+        isPaused = true;
         super.onSaveInstanceState(outState);
 
         outState.putInt(KEY_DRAWER_TAB_INDEX, currentItem.ordinal());
@@ -182,7 +187,9 @@ public class MainActivity extends ActionBarActivity
                                         public void run() {
                                             final int accountId = PreferencesManager.getAccountId();
                                             if(accountId == 0) {
-                                                DialogUtils.showCommonErrorDialog(getSupportFragmentManager(), MainActivity.this);
+                                                if(!isPaused()) {
+                                                    DialogUtils.showCommonErrorDialog(getSupportFragmentManager(), MainActivity.this);
+                                                }
                                             } else {
                                                 switch(position) {
                                                     case 0:
@@ -194,7 +201,9 @@ public class MainActivity extends ActionBarActivity
                                                         break;
 
                                                     default:
-                                                        DialogUtils.showCommonErrorDialog(getSupportFragmentManager(), MainActivity.this);
+                                                        if(!isPaused()) {
+                                                            DialogUtils.showCommonErrorDialog(getSupportFragmentManager(), MainActivity.this);
+                                                        }
                                                         break;
                                                 }
                                             }
@@ -202,7 +211,9 @@ public class MainActivity extends ActionBarActivity
                                     }, new PrerequisiteRequest.ErrorCallback<InfoResponse>() {
                                         @Override
                                         public void processError(InfoResponse response) {
-                                            DialogUtils.showCommonErrorDialog(getSupportFragmentManager(), MainActivity.this);
+                                            if(!isPaused()) {
+                                                DialogUtils.showCommonErrorDialog(getSupportFragmentManager(), MainActivity.this);
+                                            }
                                         }
                                     }, null).execute();
                                 }
@@ -392,6 +403,10 @@ public class MainActivity extends ActionBarActivity
 
     public Menu getMenu() {
         return menu;
+    }
+
+    public boolean isPaused() {
+        return isPaused;
     }
 
 }

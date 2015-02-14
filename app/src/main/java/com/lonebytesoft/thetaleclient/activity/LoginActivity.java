@@ -232,6 +232,7 @@ public class LoginActivity extends FragmentActivity {
         new ThirdPartyAuthRequest().execute(new ApiResponseCallback<ThirdPartyAuthResponse>() {
             @Override
             public void processResponse(final ThirdPartyAuthResponse response) {
+                // TODO check for isPaused if there will be crashes
                 DialogUtils.showMessageDialog(
                         getSupportFragmentManager(),
                         getString(R.string.common_dialog_attention_title),
