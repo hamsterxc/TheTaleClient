@@ -47,28 +47,38 @@ public class WrapperFragment extends Fragment implements Refreshable, OnscreenSt
             return;
         }
 
-        dataView.setVisibility(mode == DataViewMode.DATA ? View.VISIBLE : View.GONE);
-        loadingView.setVisibility(mode == DataViewMode.LOADING ? View.VISIBLE : View.GONE);
-        errorView.setVisibility(mode == DataViewMode.ERROR ? View.VISIBLE : View.GONE);
-
         final Activity activity = getActivity();
-        if(activity instanceof MainActivity) {
-            switch(mode) {
-                case DATA:
-                case ERROR:
-                    ((MainActivity) activity).onRefreshFinished();
-                    break;
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                dataView.setVisibility(mode == DataViewMode.DATA ? View.VISIBLE : View.GONE);
+                loadingView.setVisibility(mode == DataViewMode.LOADING ? View.VISIBLE : View.GONE);
+                errorView.setVisibility(mode == DataViewMode.ERROR ? View.VISIBLE : View.GONE);
 
-                case LOADING:
-                    ((MainActivity) activity).onRefreshStarted();
-                    break;
+                if(activity instanceof MainActivity) {
+                    switch(mode) {
+                        case DATA:
+                        case ERROR:
+                            ((MainActivity) activity).onRefreshFinished();
+                            break;
+
+                        case LOADING:
+                            ((MainActivity) activity).onRefreshStarted();
+                            break;
+                    }
+                }
             }
-        }
+        });
     }
 
     public void setError(final String error) {
-        setMode(DataViewMode.ERROR);
-        UiUtils.setText(errorView.findViewById(R.id.fragment_part_error_text), error);
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                setMode(DataViewMode.ERROR);
+                UiUtils.setText(errorView.findViewById(R.id.fragment_part_error_text), error);
+            }
+        });
     }
 
     @Override
