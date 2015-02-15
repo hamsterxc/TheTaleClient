@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.TextUtils;
 import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -47,8 +48,8 @@ public class FindPlayerFragment extends WrapperFragment {
     private TextView textQuery;
     private View actionSearch;
     private ListView accountsList;
-    private View actionReset;
     private TextView textError;
+    private TextView textDescription;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -56,10 +57,10 @@ public class FindPlayerFragment extends WrapperFragment {
         rootView = inflater.inflate(R.layout.fragment_find_player, container, false);
 
         textQuery = (TextView) rootView.findViewById(R.id.find_player_prefix);
-        actionSearch = rootView.findViewById(R.id.fragment_game_find_player_search);
+        actionSearch = rootView.findViewById(R.id.find_player_search);
         accountsList = (ListView) rootView.findViewById(R.id.find_player_choices);
-        actionReset = rootView.findViewById(R.id.find_player_reset);
         textError = (TextView) rootView.findViewById(R.id.find_player_error);
+        textDescription = (TextView) rootView.findViewById(R.id.find_player_description);
 
         textQuery.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -81,6 +82,7 @@ public class FindPlayerFragment extends WrapperFragment {
                 setMode(DataViewMode.LOADING);
                 accountsList.setVisibility(View.VISIBLE);
                 textError.setVisibility(View.GONE);
+                textDescription.setVisibility(View.GONE);
 
                 final String query = textQuery.getText().toString();
                 final List<Pair<Integer, String>> choices = Collections.synchronizedList(new ArrayList<Pair<Integer, String>>());
@@ -114,25 +116,10 @@ public class FindPlayerFragment extends WrapperFragment {
                             }
                         });
 
-                        final List<String> choiceValues = new ArrayList<>(choices.size());
-                        for(final Pair<Integer, String> choice : choices) {
-                            choiceValues.add(choice.second);
-                        }
-
                         handler.post(new Runnable() {
                             @Override
                             public void run() {
-                                accountsList.setAdapter(new ChoiceDialog.ChoiceAdapter(
-                                        layoutInflater,
-                                        choiceValues,
-                                        new ChoiceDialog.ItemChooseListener() {
-                                            @Override
-                                            public void onItemSelected(int position) {
-                                                final Pair<Integer, String> choice = choices.get(position);
-                                                setAccount(choice.first, choice.second);
-                                            }
-                                        }));
-
+                                setItems(choices);
                                 setMode(DataViewMode.DATA);
                             }
                         });
@@ -188,7 +175,22 @@ public class FindPlayerFragment extends WrapperFragment {
             }
         });
 
-        actionReset.setOnClickListener(new View.OnClickListener() {
+        rootView.findViewById(R.id.find_player_history).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                UiUtils.hideKeyboard(getActivity());
+
+                final List<Pair<Integer, String>> choices = PreferencesManager.getFindPlayerHistory();
+                if(choices.size() == 0) {
+                    setErrorText(getString(R.string.find_player_history_empty));
+                } else {
+                    Collections.reverse(choices);
+                    setItems(choices);
+                }
+            }
+        });
+
+        rootView.findViewById(R.id.find_player_reset).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 setAccount(0, null);
@@ -208,9 +210,7 @@ public class FindPlayerFragment extends WrapperFragment {
                         break;
 
                     case ITEMS_LIST:
-                        textError.setText(message);
-                        accountsList.setVisibility(View.GONE);
-                        textError.setVisibility(View.VISIBLE);
+                        setErrorText(message);
                         setMode(DataViewMode.DATA);
                         break;
 
@@ -249,8 +249,49 @@ public class FindPlayerFragment extends WrapperFragment {
         UiUtils.hideKeyboard(getActivity());
     }
 
+    private void setItems(final List<Pair<Integer, String>> items) {
+        final List<String> itemValues = new ArrayList<>(items.size());
+        for(final Pair<Integer, String> item : items) {
+            itemValues.add(item.second);
+        }
+
+        accountsList.setAdapter(new ChoiceDialog.ChoiceAdapter(
+                layoutInflater,
+                itemValues,
+                new ChoiceDialog.ItemChooseListener() {
+                    @Override
+                    public void onItemSelected(int position) {
+                        final Pair<Integer, String> item = items.get(position);
+                        setAccount(item.first, item.second);
+                    }
+                }));
+
+        textError.setVisibility(View.GONE);
+        textDescription.setVisibility(View.GONE);
+        accountsList.setVisibility(View.VISIBLE);
+    }
+
+    private void setErrorText(final String error) {
+        textError.setText(error);
+
+        textDescription.setVisibility(View.GONE);
+        accountsList.setVisibility(View.GONE);
+        textError.setVisibility(View.VISIBLE);
+    }
+
+    private void setDescriptionText(final String description) {
+        textDescription.setText(description);
+
+        accountsList.setVisibility(View.GONE);
+        textError.setVisibility(View.GONE);
+        textDescription.setVisibility(View.VISIBLE);
+    }
+
     private void setAccount(final int id, final String name) {
         PreferencesManager.setWatchingAccount(id, name);
+        if((id != 0) && !TextUtils.isEmpty(name)) {
+            PreferencesManager.addFindPlayerHistory(id, name);
+        }
 
         final Activity activity = getActivity();
         if(activity instanceof MainActivity) {

@@ -86,11 +86,13 @@
     <string name="game_title_might">Могущество</string>
     <string name="game_title_quests">Задания</string>
 
+    <string name="find_player_history">История просмотров</string>
+    <string name="find_player_history_empty">История просмотров пуста</string>
     <string name="find_player_info">Хранитель &lt;b&gt;%1$s&lt;/b&gt; и %2$s</string>
     <string name="find_player_info_short">Хранитель &lt;b&gt;%1$s&lt;/b&gt;</string>
-    <string name="find_player_reset">Вернуться к своему герою</string>
     <string name="find_player_not_found">Игроки не найдены</string>
     <string name="find_player_query_hint">Первые символы ника</string>
+    <string name="find_player_reset">Вернуться к своему герою</string>
     <string name="find_player_too_many">Найдено более %1$d игроков. Продолжить?</string>
 
     <string name="login_action_login">Войти</string>

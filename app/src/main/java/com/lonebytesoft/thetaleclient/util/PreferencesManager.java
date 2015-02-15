@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
+import android.util.Pair;
 
 import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.TheTaleClientApplication;
@@ -11,6 +12,12 @@ import com.lonebytesoft.thetaleclient.api.dictionary.Action;
 import com.lonebytesoft.thetaleclient.api.dictionary.MapStyle;
 import com.lonebytesoft.thetaleclient.fragment.GameFragment;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -19,6 +26,8 @@ import java.util.Map;
  */
 @SuppressLint("CommitPrefEdits")
 public class PreferencesManager {
+
+    private static final int FIND_PLAYER_HISTORY_SIZE = 20;
 
     private static final String KEY_MAP_STYLE = "KEY_MAP_STYLE";
     private static final String KEY_MAP_CENTER_PLACE_ID = "KEY_MAP_CENTER_PLACE_ID";
@@ -31,6 +40,7 @@ public class PreferencesManager {
     private static final String KEY_WATCHING_ACCOUNT_ID = "KEY_WATCHING_ACCOUNT_ID";
     private static final String KEY_WATCHING_ACCOUNT_NAME = "KEY_WATCHING_ACCOUNT_NAME";
     private static final String KEY_FIND_PLAYER_LAST_QUERY = "KEY_FIND_PLAYER_LAST_QUERY";
+    private static final String KEY_FIND_PLAYER_HISTORY = "KEY_FIND_PLAYER_HISTORY";
 
     private static final String KEY_ACCOUNT_ID = "KEY_ACCOUNT_ID";
     private static final String KEY_ACCOUNT_NAME = "KEY_ACCOUNT_NAME";
@@ -588,6 +598,82 @@ public class PreferencesManager {
 
     public static String getFindPlayerLastQuery() {
         return sharedPreferences.getString(KEY_FIND_PLAYER_LAST_QUERY, null);
+    }
+
+    public static void addFindPlayerHistory(final int id, final String name) {
+        // get history or create new
+        JSONArray history;
+        try {
+            history = new JSONArray(sharedPreferences.getString(KEY_FIND_PLAYER_HISTORY, ""));
+        } catch (JSONException e) {
+            history = new JSONArray();
+        }
+
+        // remove entries with same id
+        try {
+            final JSONArray historyNew = new JSONArray();
+            final int size = history.length();
+            for(int i = 0; i < size; i++) {
+                final JSONObject historyItem = history.getJSONObject(i);
+                if(historyItem.getInt("id") != id) {
+                    historyNew.put(historyItem);
+                }
+            }
+            history = historyNew;
+        } catch (JSONException ignored) {
+            // do nothing
+        }
+
+        // put new entry
+        try {
+            final JSONObject historyItem = new JSONObject();
+            historyItem.put("id", id);
+            historyItem.put("name", name);
+
+            history.put(historyItem);
+        } catch (JSONException ignored) {
+            // do nothing
+        }
+
+        // remove exceeding entries
+        final int size = history.length();
+        if(size > FIND_PLAYER_HISTORY_SIZE) {
+            try {
+                final JSONArray historyNew = new JSONArray();
+                for(int i = size - FIND_PLAYER_HISTORY_SIZE; i < size; i++) {
+                    historyNew.put(history.getJSONObject(i));
+                }
+                history = historyNew;
+            } catch (JSONException ignored) {
+                // do nothing
+            }
+        }
+
+        sharedPreferences.edit()
+                .putString(KEY_FIND_PLAYER_HISTORY, history.toString())
+                .commit();
+    }
+
+    public static List<Pair<Integer, String>> getFindPlayerHistory() {
+        JSONArray history;
+        try {
+            history = new JSONArray(sharedPreferences.getString(KEY_FIND_PLAYER_HISTORY, ""));
+        } catch (JSONException e) {
+            history = new JSONArray();
+        }
+
+        final int size = history.length();
+        final List<Pair<Integer, String>> result = new ArrayList<>(size);
+        for(int i = 0; i < size; i++) {
+            try {
+                final JSONObject historyItem = history.getJSONObject(i);
+                result.add(Pair.create(historyItem.getInt("id"), historyItem.getString("name")));
+            } catch (JSONException ignored) {
+                // do nothing
+            }
+        }
+
+        return result;
     }
 
     public static boolean isWatcherEnabled() {

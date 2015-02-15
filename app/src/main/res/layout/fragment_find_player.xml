@@ -22,14 +22,26 @@
             android:singleLine="true"/>
 
         <ImageView
-            android:id="@+id/fragment_game_find_player_search"
+            android:id="@+id/find_player_history"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:padding="8dp"
+            android:src="@drawable/ic_action_time"
+            android:scaleType="fitXY"
+            android:clickable="true"
+            android:background="@drawable/common_clickable_background"
+            android:contentDescription="@string/find_player_history"/>
+
+        <ImageView
+            android:id="@+id/find_player_search"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:padding="8dp"
             android:src="@drawable/ic_action_search"
             android:scaleType="fitXY"
             android:clickable="true"
-            android:background="@drawable/common_clickable_background"/>
+            android:background="@drawable/common_clickable_background"
+            android:contentDescription="@string/drawer_title_find_player"/>
 
     </LinearLayout>
 
@@ -49,6 +61,14 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             style="?android:attr/textAppearanceLarge"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/find_player_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            style="?android:attr/textAppearanceMedium"
             android:visibility="gone"/>
 
     </RelativeLayout>
