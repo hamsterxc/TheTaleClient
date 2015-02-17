@@ -165,10 +165,19 @@ public class GameFragment extends Fragment implements Refreshable, OnscreenState
         UiUtils.setupFindPlayerContainer(findPlayerContainer, this, this, (MainActivity) getActivity());
     }
 
-    public void refreshFragmentsAfterHelp() {
-        final Fragment fragment = getPageFragment(GamePage.QUESTS.ordinal());
+    private void refreshPageFragment(final int position) {
+        final Fragment fragment = getPageFragment(position);
         if(fragment instanceof WrapperFragment) {
             ((WrapperFragment) fragment).refresh(true);
+        }
+    }
+
+    public void refreshAdjacentFragments() {
+        if(currentPageIndex > 0) {
+            refreshPageFragment(currentPageIndex - 1);
+        }
+        if(currentPageIndex < GamePage.values().length - 1) {
+            refreshPageFragment(currentPageIndex + 1);
         }
     }
 

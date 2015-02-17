@@ -168,7 +168,7 @@ public class GameInfoFragment extends WrapperFragment {
 
                         final Activity activity = getActivity();
                         if(activity instanceof MainActivity) {
-                            ((MainActivity) activity).refreshFragmentsAfterHelp();
+                            ((MainActivity) activity).refreshGameAdjacentFragments();
                         }
                     }
 

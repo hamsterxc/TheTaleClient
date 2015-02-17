@@ -310,20 +310,11 @@ public class MainActivity extends ActionBarActivity
         }
     }
 
-    /**
-     * Refresh fragments that need to be refreshed after help
-     *
-     * Currently help can be performed on GameInfoFragment only, and it potentially affects data
-     * on all GameFragment child fragments (except EquipmentFragment)
-     * When user navigates to any fragment except QuestsFragment, it is resumed and thus refreshed
-     * We need to explicitly refresh QuestsFragment because it is adjacent to GameInfoFragment
-     * and is not resumed when navigated to from GameInfoFragment
-     */
-    public void refreshFragmentsAfterHelp() {
+    public void refreshGameAdjacentFragments() {
         if(currentItem == DrawerItem.GAME) {
             final Fragment fragment = getSupportFragmentManager().findFragmentByTag(currentItem.getFragmentTag());
             if(fragment instanceof GameFragment) {
-                ((GameFragment) fragment).refreshFragmentsAfterHelp();
+                ((GameFragment) fragment).refreshAdjacentFragments();
             }
         }
     }
