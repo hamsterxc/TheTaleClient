@@ -282,6 +282,114 @@
 
             </TableLayout>
 
+            <TextView
+                android:id="@+id/game_info_companion_absent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/game_companion_absent"
+                style="?android:attr/textAppearanceMedium"
+                android:visibility="gone"/>
+
+            <LinearLayout
+                android:id="@+id/game_info_companion_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/game_info_companion_coherence"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="?android:attr/textAppearanceMedium"
+                        android:paddingLeft="8dp"
+                        android:paddingRight="8dp"
+                        android:background="@color/game_info_level_background"
+                        android:textColor="@color/game_info_level_text"/>
+
+                    <TextView
+                        android:id="@+id/game_info_companion_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="?android:attr/textAppearanceMedium"
+                        android:layout_marginLeft="8dp"
+                        android:textColor="@color/common_link"/>
+
+                </LinearLayout>
+
+                <TableLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:stretchColumns="1">
+
+                    <TableRow
+                        android:gravity="center_vertical">
+
+                        <ImageView
+                            android:layout_width="@dimen/game_info_icon_size"
+                            android:layout_height="@dimen/game_info_icon_size"
+                            android:src="@drawable/ic_health"
+                            android:contentDescription="@string/game_info_health"/>
+
+                        <ProgressBar
+                            android:id="@+id/game_info_companion_health_progress"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/game_info_bar_height"
+                            android:layout_marginLeft="8dp"
+                            android:layout_marginRight="16dp"
+                            style="?android:attr/progressBarStyleHorizontal"
+                            android:progressDrawable="@drawable/game_info_health"/>
+
+                        <TextView
+                            android:id="@+id/game_info_companion_health_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="right"
+                            android:includeFontPadding="false"
+                            style="?android:attr/textAppearanceMedium"/>
+
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_marginTop="8dp"
+                        android:gravity="center_vertical">
+
+                        <ImageView
+                            android:layout_width="@dimen/game_info_icon_size"
+                            android:layout_height="@dimen/game_info_icon_size"
+                            android:src="@drawable/ic_experience"
+                            android:contentDescription="@string/game_info_experience"/>
+
+                        <ProgressBar
+                            android:id="@+id/game_info_companion_experience_progress"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/game_info_bar_height"
+                            android:layout_marginLeft="8dp"
+                            android:layout_marginRight="16dp"
+                            style="?android:attr/progressBarStyleHorizontal"
+                            android:progressDrawable="@drawable/game_info_experience"/>
+
+                        <TextView
+                            android:id="@+id/game_info_companion_experience_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="right"
+                            android:includeFontPadding="false"
+                            style="?android:attr/textAppearanceMedium"/>
+
+                    </TableRow>
+
+                </TableLayout>
+
+            </LinearLayout>
+
         </LinearLayout>
 
         <LinearLayout

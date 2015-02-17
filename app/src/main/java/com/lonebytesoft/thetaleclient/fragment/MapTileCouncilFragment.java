@@ -1,6 +1,7 @@
 package com.lonebytesoft.thetaleclient.fragment;
 
 import android.graphics.Typeface;
+import android.os.Bundle;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
@@ -21,11 +22,17 @@ import com.lonebytesoft.thetaleclient.util.UiUtils;
  * @author Hamster
  * @since 26.12.2014
  */
-public class MapTileCouncilFragment extends MapTileFragment {
+public class MapTileCouncilFragment extends TabbedDialogTabFragment {
+
+    private static final String PARAM_CELL_INFO = "PARAM_CELL_INFO";
 
     public static MapTileCouncilFragment newInstance(final MapCellResponse cellInfo) {
         final MapTileCouncilFragment dialog = new MapTileCouncilFragment();
-        setupParams(dialog, cellInfo);
+
+        final Bundle args = new Bundle();
+        args.putParcelable(PARAM_CELL_INFO, cellInfo);
+        dialog.setArguments(args);
+
         return dialog;
     }
 

@@ -5,6 +5,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.v4.app.Fragment;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
@@ -26,6 +27,7 @@ import com.lonebytesoft.thetaleclient.api.dictionary.Action;
 import com.lonebytesoft.thetaleclient.api.dictionary.ArtifactEffect;
 import com.lonebytesoft.thetaleclient.api.dictionary.Habit;
 import com.lonebytesoft.thetaleclient.api.dictionary.HeroAction;
+import com.lonebytesoft.thetaleclient.api.model.CompanionInfo;
 import com.lonebytesoft.thetaleclient.api.model.EnergyInfo;
 import com.lonebytesoft.thetaleclient.api.model.HeroActionInfo;
 import com.lonebytesoft.thetaleclient.api.model.JournalEntry;
@@ -35,6 +37,7 @@ import com.lonebytesoft.thetaleclient.api.request.GameInfoRequest;
 import com.lonebytesoft.thetaleclient.api.response.CommonResponse;
 import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;
 import com.lonebytesoft.thetaleclient.api.response.InfoResponse;
+import com.lonebytesoft.thetaleclient.fragment.dialog.TabbedDialog;
 import com.lonebytesoft.thetaleclient.util.DialogUtils;
 import com.lonebytesoft.thetaleclient.util.GameInfoUtils;
 import com.lonebytesoft.thetaleclient.util.PreferencesManager;
@@ -86,6 +89,15 @@ public class GameInfoFragment extends WrapperFragment {
     private TextView textMoney;
     private TextView textMight;
 
+    private View companionAbsentText;
+    private View companionContainer;
+    private TextView companionCoherence;
+    private TextView companionName;
+    private ProgressBar progressCompanionHealth;
+    private TextView textCompanionHealth;
+    private ProgressBar progressCompanionExperience;
+    private TextView textCompanionExperience;
+
     private ProgressBar progressAction;
     private TextView progressActionInfo;
     private TextView textAction;
@@ -121,6 +133,15 @@ public class GameInfoFragment extends WrapperFragment {
         textPowerMagical = (TextView) rootView.findViewById(R.id.game_info_power_magical);
         textMoney = (TextView) rootView.findViewById(R.id.game_info_money);
         textMight = (TextView) rootView.findViewById(R.id.game_info_might);
+
+        companionAbsentText = rootView.findViewById(R.id.game_info_companion_absent);
+        companionContainer = rootView.findViewById(R.id.game_info_companion_container);
+        companionCoherence = (TextView) rootView.findViewById(R.id.game_info_companion_coherence);
+        companionName = (TextView) rootView.findViewById(R.id.game_info_companion_name);
+        progressCompanionHealth = (ProgressBar) rootView.findViewById(R.id.game_info_companion_health_progress);
+        textCompanionHealth = (TextView) rootView.findViewById(R.id.game_info_companion_health_text);
+        progressCompanionExperience = (ProgressBar) rootView.findViewById(R.id.game_info_companion_experience_progress);
+        textCompanionExperience = (TextView) rootView.findViewById(R.id.game_info_companion_experience_text);
 
         progressAction = (ProgressBar) rootView.findViewById(R.id.game_info_action_progress);
         progressActionInfo = (TextView) rootView.findViewById(R.id.game_info_action_progress_info);
@@ -285,6 +306,36 @@ public class GameInfoFragment extends WrapperFragment {
                         DialogUtils.showMightDialog(getFragmentManager(), mightInfo);
                     }
                 });
+
+                final CompanionInfo companion = gameInfoResponse.account.hero.companionInfo;
+                if(companion == null) {
+                    companionContainer.setVisibility(View.GONE);
+                    companionAbsentText.setVisibility(View.VISIBLE);
+                } else {
+                    companionAbsentText.setVisibility(View.GONE);
+                    companionContainer.setVisibility(View.VISIBLE);
+
+                    companionName.setText(companion.name);
+                    companionCoherence.setText(String.valueOf(companion.coherence));
+
+                    progressCompanionHealth.setMax(companion.healthMax);
+                    progressCompanionHealth.setProgress(companion.healthCurrent);
+                    textCompanionHealth.setText(String.format("%d/%d",
+                            companion.healthCurrent, companion.healthMax));
+
+                    progressCompanionExperience.setMax(companion.experienceForNextLevel);
+                    progressCompanionExperience.setProgress(companion.experienceCurrent);
+                    textCompanionExperience.setText(String.format("%d/%d",
+                            companion.experienceCurrent, companion.experienceForNextLevel));
+
+                    companionName.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            DialogUtils.showTabbedDialog(getChildFragmentManager(),
+                                    companion.name, new CompanionTabsAdapter(companion));
+                        }
+                    });
+                }
 
                 final HeroActionInfo action = gameInfoResponse.account.hero.action;
                 progressAction.setMax(1000);
@@ -493,6 +544,55 @@ public class GameInfoFragment extends WrapperFragment {
         TheTaleClientApplication.getOnscreenStateWatcher().onscreenStateChange(OnscreenPart.GAME_INFO, true);
 
         TheTaleClientApplication.getNotificationManager().clearNotifications();
+    }
+
+    private class CompanionTabsAdapter extends TabbedDialog.TabbedDialogTabsAdapter {
+
+        private final CompanionInfo companion;
+
+        private CompanionTabsAdapter(final CompanionInfo companion) {
+            this.companion = companion;
+        }
+
+        @Override
+        public int getCount() {
+            return 3;
+        }
+
+        @Override
+        public Fragment getItem(int i) {
+            switch(i) {
+                case 0:
+                    return CompanionParamsFragment.newInstance(companion);
+
+                case 1:
+                    return CompanionFeaturesFragment.newInstance(companion);
+
+                case 2:
+                    return CompanionDescriptionFragment.newInstance(companion);
+
+                default:
+                    return null;
+            }
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            switch(position) {
+                case 0:
+                    return getString(R.string.game_companion_tab_params);
+
+                case 1:
+                    return getString(R.string.game_companion_tab_features);
+
+                case 2:
+                    return getString(R.string.game_companion_tab_description);
+
+                default:
+                    return null;
+            }
+        }
+
     }
 
 }

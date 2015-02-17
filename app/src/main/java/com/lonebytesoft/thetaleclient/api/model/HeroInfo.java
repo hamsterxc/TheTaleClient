@@ -38,6 +38,7 @@ public class HeroInfo {
     public final boolean canPvp;
     public final boolean canRepair;
     public final MightInfo might;
+    public final CompanionInfo companionInfo;
 
     public HeroInfo(final JSONObject json) throws JSONException {
         pvpInfo = ObjectUtils.getModelFromJson(PvpHeroInfo.class, json.getJSONObject("pvp"));
@@ -122,6 +123,8 @@ public class HeroInfo {
         id = json.getInt("id");
         actualityTurnNumber = json.getInt("actual_on_turn");
         spriteId = json.getInt("sprite");
+
+        companionInfo = ObjectUtils.getModelFromJson(CompanionInfo.class, json.optJSONObject("companion"));
     }
 
 }

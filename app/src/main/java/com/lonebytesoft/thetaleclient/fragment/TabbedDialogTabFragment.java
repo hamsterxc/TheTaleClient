@@ -9,33 +9,24 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 
 import com.lonebytesoft.thetaleclient.R;
-import com.lonebytesoft.thetaleclient.api.response.MapCellResponse;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
 
 /**
  * @author Hamster
  * @since 19.12.2014
  */
-public abstract class MapTileFragment extends Fragment {
+public abstract class TabbedDialogTabFragment extends Fragment {
 
     private static final double DIALOG_MAX_HEIGHT_SCREEN_PART = 0.8;
 
-    protected static final String PARAM_CELL_INFO = "PARAM_CELL_INFO";
-
-    protected static void setupParams(final Fragment dialog, final MapCellResponse cellInfo) {
-        Bundle args = new Bundle();
-        args.putParcelable(PARAM_CELL_INFO, cellInfo);
-        dialog.setArguments(args);
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
-        final View view = inflater.inflate(R.layout.fragment_map_tile_tab, container, false);
+        final View view = inflater.inflate(R.layout.fragment_tabbed_dialog_tab, container, false);
 
-        final ViewGroup content = (ViewGroup) view.findViewById(R.id.map_tile_tab_content);
+        final ViewGroup content = (ViewGroup) view.findViewById(R.id.tabbed_dialog_tab_content);
         setupContent(inflater, content);
 
-        final View contentContainer = view.findViewById(R.id.map_tile_tab_container);
+        final View contentContainer = view.findViewById(R.id.tabbed_dialog_tab_container);
         view.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {

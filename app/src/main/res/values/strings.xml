@@ -48,6 +48,18 @@
     <string name="game_bag_effects">(Все эффекты)</string>
     <string name="game_bag_effects_title">Все эффекты экипировки</string>
 
+    <string name="game_companion_absent">Нет спутника</string>
+    <string name="game_companion_feature_coherence">Слаженность %1$d</string>
+    <string name="game_companion_feature_initial">Начальные особенности</string>
+    <string name="game_companion_param_rarity">Редкость</string>
+    <string name="game_companion_param_type">Тип</string>
+    <string name="game_companion_param_archetype">Архетип</string>
+    <string name="game_companion_param_dedication">Самоотверженность</string>
+    <string name="game_companion_param_health">Здоровье</string>
+    <string name="game_companion_tab_params">Параметры</string>
+    <string name="game_companion_tab_features">Особенности</string>
+    <string name="game_companion_tab_description">Описание</string>
+
     <string name="game_action_time">Осталось: %1$d ч %2$d мин</string>
     <string name="game_action_time_short">Осталось: %1$d мин</string>
     <string name="game_action_time_approximate">Осталось: примерно %1$d мин %2$d с</string>

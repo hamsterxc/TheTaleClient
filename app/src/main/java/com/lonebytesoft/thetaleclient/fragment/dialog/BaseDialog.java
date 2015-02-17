@@ -3,7 +3,6 @@ package com.lonebytesoft.thetaleclient.fragment.dialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,7 +43,6 @@ public abstract class BaseDialog extends DialogFragment {
     }
 
     @Override
-    @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         setCancelable(true);
         setStyle(DialogFragment.STYLE_NO_TITLE, R.style.Dialog);

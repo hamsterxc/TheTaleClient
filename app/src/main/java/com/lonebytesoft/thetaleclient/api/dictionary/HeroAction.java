@@ -21,6 +21,7 @@ public enum HeroAction {
     PROXY_HEROES(12),
     PVP(13),
     TEST(14),
+    COMPANION_CARE(15),
     ;
 
     private final int code;

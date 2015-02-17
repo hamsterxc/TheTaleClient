@@ -39,14 +39,20 @@ public class TabbedDialog extends BaseDialog {
         final View view = inflater.inflate(R.layout.dialog_content_tabbed, container, false);
         final View dialogView = wrapView(inflater, view, getArguments().getString(PARAM_CAPTION));
 
+        isTabsInitialized = false;
         if(tabsAdapter == null) {
-            isTabsInitialized = false;
             setMode(DataViewMode.LOADING);
-        } else {
-            setupTabs();
         }
 
         return dialogView;
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        if(!isTabsInitialized && (tabsAdapter != null)) {
+            setupTabs();
+        }
     }
 
     public void setTabsAdapter(final TabbedDialogTabsAdapter tabsAdapter) {
