@@ -16,15 +16,19 @@ import android.widget.TextView;
 import com.lonebytesoft.thetaleclient.DataViewMode;
 import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.api.ApiResponseCallback;
-import com.lonebytesoft.thetaleclient.api.dictionary.CardType;
+import com.lonebytesoft.thetaleclient.api.model.CardInfo;
 import com.lonebytesoft.thetaleclient.api.request.GameInfoRequest;
 import com.lonebytesoft.thetaleclient.api.request.TakeCardRequest;
 import com.lonebytesoft.thetaleclient.api.response.CommonResponse;
 import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;
+import com.lonebytesoft.thetaleclient.util.ObjectUtils;
 import com.lonebytesoft.thetaleclient.util.PreferencesManager;
 import com.lonebytesoft.thetaleclient.util.RequestUtils;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
 import com.lonebytesoft.thetaleclient.widget.RequestActionView;
+
+import java.util.Comparator;
+import java.util.Map;
 
 /**
  * @author Hamster
@@ -65,7 +69,7 @@ public class CardsFragment extends WrapperFragment {
         final ApiResponseCallback<GameInfoResponse> callback = RequestUtils.wrapCallback(new ApiResponseCallback<GameInfoResponse>() {
             @Override
             public void processResponse(final GameInfoResponse response) {
-                if(response.account.isOwnInfo && (response.account.hero.basicInfo.cardHelpCurrent >= response.account.hero.basicInfo.cardHelpTotal)) {
+                if(response.account.isOwnInfo && (response.account.hero.cards.cardHelpCurrent >= response.account.hero.cards.cardHelpBarrier)) {
                     helpCounterContainer.setVisibility(View.GONE);
                     helpTakeCardWidget.setMode(RequestActionView.Mode.ACTION);
                     helpTakeCardWidget.setVisibility(View.VISIBLE);
@@ -90,11 +94,11 @@ public class CardsFragment extends WrapperFragment {
                     helpCounterContainer.setVisibility(View.VISIBLE);
                     helpTakeCardWidget.setVisibility(View.GONE);
 
-                    helpCounterProgress.setMax(response.account.hero.basicInfo.cardHelpTotal);
-                    helpCounterProgress.setProgress(response.account.hero.basicInfo.cardHelpCurrent);
+                    helpCounterProgress.setMax(response.account.hero.cards.cardHelpBarrier);
+                    helpCounterProgress.setProgress(response.account.hero.cards.cardHelpCurrent);
                     helpCounter.setText(getString(R.string.game_help_progress_to_next_card,
-                            response.account.hero.basicInfo.cardHelpCurrent,
-                            response.account.hero.basicInfo.cardHelpTotal));
+                            response.account.hero.cards.cardHelpCurrent,
+                            response.account.hero.cards.cardHelpBarrier));
                     helpCounter.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                         @Override
                         public void onGlobalLayout() {
@@ -108,24 +112,30 @@ public class CardsFragment extends WrapperFragment {
                 }
 
                 cardsContainer.removeAllViews();
-                final int cardTypesCount = CardType.values().length;
-                for(int i = 0; i < cardTypesCount; i++) {
-                    final CardType cardType = CardType.values()[i];
-                    final Integer cardCount = response.account.hero.cards.get(cardType);
-                    if((cardCount != null) && (cardCount > 0)) {
-                        final View cardEntryView = layoutInflater.inflate(R.layout.item_card, cardsContainer, false);
+                final Map<CardInfo, Integer> cards = ObjectUtils.getItemsCountList(response.account.hero.cards.cards,
+                        new Comparator<CardInfo>() {
+                            @Override
+                            public int compare(CardInfo lhs, CardInfo rhs) {
+                                return lhs.compareTo(rhs);
+                            }
+                        });
+                for(final Map.Entry<CardInfo, Integer> cardsEntry : cards.entrySet()) {
+                    final CardInfo card = cardsEntry.getKey();
+                    final int count = cardsEntry.getValue();
+                    final View cardEntryView = layoutInflater.inflate(R.layout.item_card, cardsContainer, false);
 
-                        final Spannable cardName = new SpannableString(cardType.getName());
-                        cardName.setSpan(new ForegroundColorSpan(getResources().getColor(cardType.getRarity().getColorResId())),
-                                0, cardName.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                        ((TextView) cardEntryView.findViewById(R.id.card_name)).setText(
-                                TextUtils.concat(cardName, " x ", String.valueOf(cardCount)));
+                    final Spannable cardName = new SpannableString(card.name);
+                    cardName.setSpan(new ForegroundColorSpan(getResources().getColor(card.type.getRarity().getColorResId())),
+                            0, cardName.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    ((TextView) cardEntryView.findViewById(R.id.card_name)).setText(
+                            TextUtils.concat(cardName, " x ", String.valueOf(count)));
 
-                        ((TextView) cardEntryView.findViewById(R.id.card_description)).setText(cardType.getDescription());
+                    ((TextView) cardEntryView.findViewById(R.id.card_description)).setText(card.type.getDescription());
+                    cardEntryView.findViewById(R.id.card_tradable).setVisibility(card.isTradable ? View.VISIBLE : View.GONE);
 
-                        cardsContainer.addView(cardEntryView);
-                    }
+                    cardsContainer.addView(cardEntryView);
                 }
+
                 setMode(DataViewMode.DATA);
             }
 

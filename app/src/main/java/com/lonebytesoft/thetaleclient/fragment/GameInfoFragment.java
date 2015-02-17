@@ -233,8 +233,8 @@ public class GameInfoFragment extends WrapperFragment {
                         getString(R.string.game_help_to_next_card),
                         getString(
                                 R.string.game_help_progress_to_next_card,
-                                gameInfoResponse.account.hero.basicInfo.cardHelpCurrent,
-                                gameInfoResponse.account.hero.basicInfo.cardHelpTotal)))
+                                gameInfoResponse.account.hero.cards.cardHelpCurrent,
+                                gameInfoResponse.account.hero.cards.cardHelpBarrier)))
                         .append("\n");
                 additionalInfoStringBuilder.append(UiUtils.getInfoItem(
                         getString(R.string.game_additional_info_move_speed),

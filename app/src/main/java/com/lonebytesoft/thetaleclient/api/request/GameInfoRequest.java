@@ -24,7 +24,7 @@ public class GameInfoRequest extends AbstractApiRequest<GameInfoResponse> {
     private final boolean needAuthorization;
 
     public GameInfoRequest(final boolean needAuthorization) {
-        super(HttpMethod.GET, "game/api/info", "1.1", true);
+        super(HttpMethod.GET, "game/api/info", "1.2", true);
         this.needAuthorization = needAuthorization;
     }
 

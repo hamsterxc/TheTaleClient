@@ -32,9 +32,6 @@ public class HeroBasicInfo {
     public final double moveSpeed;
     public final double initiative;
 
-    public final int cardHelpCurrent;
-    public final int cardHelpTotal;
-
     public final int money;
     public final int bagCapacity;
     public final int bagItemsCount;
@@ -58,9 +55,6 @@ public class HeroBasicInfo {
 
         moveSpeed = json.getDouble("move_speed");
         initiative = json.getDouble("initiative");
-
-        cardHelpCurrent = json.getInt("cards_help_count");
-        cardHelpTotal = json.getInt("cards_help_barrier");
 
         money = json.getInt("money");
         bagCapacity = json.getInt("max_bag_size");

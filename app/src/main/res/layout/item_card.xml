@@ -20,4 +20,13 @@
         android:layout_height="wrap_content"
         style="?android:attr/textAppearanceSmall"/>
 
+    <TextView
+        android:id="@+id/card_tradable"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="?android:attr/textAppearanceSmall"
+        android:textStyle="italic"
+        android:text="@string/game_card_tradable"
+        android:visibility="gone"/>
+
 </LinearLayout>

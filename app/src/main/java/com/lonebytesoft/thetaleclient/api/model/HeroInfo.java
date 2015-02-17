@@ -1,6 +1,5 @@
 package com.lonebytesoft.thetaleclient.api.model;
 
-import com.lonebytesoft.thetaleclient.api.dictionary.CardType;
 import com.lonebytesoft.thetaleclient.api.dictionary.EquipmentType;
 import com.lonebytesoft.thetaleclient.api.dictionary.Habit;
 import com.lonebytesoft.thetaleclient.util.ObjectUtils;
@@ -27,7 +26,7 @@ public class HeroInfo {
     public final PvpHeroInfo pvpInfo;
     public final EnergyInfo energy;
     public final Map<EquipmentType, ArtifactInfo> equipment;
-    public final Map<CardType, Integer> cards;
+    public final CardsInfo cards;
     public final Map<Integer, ArtifactInfo> bag;
     public final HeroBasicInfo basicInfo;
     public final List<DiaryEntry> diary;
@@ -54,12 +53,7 @@ public class HeroInfo {
             }
         }
 
-        cards = new HashMap<>(CardType.values().length);
-        final JSONObject cardsJson = json.getJSONObject("cards").getJSONObject("cards");
-        for(final Iterator<String> cardsJsonIterator = cardsJson.keys(); cardsJsonIterator.hasNext();) {
-            final String key = cardsJsonIterator.next();
-            cards.put(ObjectUtils.getEnumForCode(CardType.class, Integer.decode(key)), cardsJson.getInt(key));
-        }
+        cards = ObjectUtils.getModelFromJson(CardsInfo.class, json.getJSONObject("cards"));
 
         bag = new HashMap<>();
         final JSONObject bagJson = json.getJSONObject("bag");
