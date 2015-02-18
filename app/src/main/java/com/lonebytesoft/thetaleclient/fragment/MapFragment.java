@@ -96,6 +96,7 @@ public class MapFragment extends WrapperFragment {
     private float mapShiftX;
     private float mapShiftY;
     private boolean isMapInitialPosition = true;
+    private boolean shouldMoveToHero = false;
 
     private PositionInfo heroPosition;
     private List<PlaceInfo> places;
@@ -128,6 +129,7 @@ public class MapFragment extends WrapperFragment {
             mapShiftX = 0.0f;
             mapShiftY = 0.0f;
             mapModification = MapModification.NONE;
+            shouldMoveToHero = true;
         }
 
         findPlayerContainer = rootView.findViewById(R.id.map_find_player);
@@ -187,13 +189,14 @@ public class MapFragment extends WrapperFragment {
                     @Override
                     public void onItemSelected(int position) {
                         final PlaceInfo placeInfo = places.get(position);
-                        moveToTile(placeInfo.x, placeInfo.y);
+                        moveToTile(placeInfo.x, placeInfo.y, mapViewHelper.getMaximumScale());
                     }
                 });
                 return true;
 
             case R.id.action_map_find_hero:
-                moveToTile((int) Math.round(heroPosition.x), (int) Math.round(heroPosition.y));
+                moveToTile((int) Math.round(heroPosition.x), (int) Math.round(heroPosition.y),
+                        mapViewHelper.getMaximumScale());
                 return true;
 
             case R.id.action_map_modification:
@@ -415,9 +418,8 @@ public class MapFragment extends WrapperFragment {
         }, this).execute();
     }
 
-    private void moveToTile(final int tileX, final int tileY) {
-        mapViewHelper.setScale(ZOOM_MAX * MapUtils.getCurrentSizeDenominator());
-        final float scale = mapViewHelper.getScale();
+    private void moveToTile(final int tileX, final int tileY, final float scale) {
+        mapViewHelper.setScale(scale);
         final float newCenterX = (tileX + 0.5f) * MapUtils.MAP_TILE_SIZE / MapUtils.getCurrentSizeDenominator() * scale;
         final float newCenterY = (tileY + 0.5f) * MapUtils.MAP_TILE_SIZE / MapUtils.getCurrentSizeDenominator() * scale;
         final float newRectLeft = mapView.getWidth() / 2.0f - newCenterX;
@@ -483,11 +485,17 @@ public class MapFragment extends WrapperFragment {
                                 mapViewHelper.setMinimumScale(minimumScale);
                                 final PlaceInfo placeInfo = mapResponse.places.get(PreferencesManager.getMapCenterPlaceId());
                                 if(placeInfo == null) {
-                                    mapViewHelper.setScale(mapViewHelper.getMediumScale());
-                                    mapViewHelper.onDrag(mapShiftX, mapShiftY);
+                                    if(shouldMoveToHero) {
+                                        shouldMoveToHero = false;
+                                        moveToTile((int) Math.round(heroPosition.x), (int) Math.round(heroPosition.y),
+                                                mapViewHelper.getMediumScale());
+                                    } else {
+                                        mapViewHelper.setScale(mapViewHelper.getMediumScale());
+                                        mapViewHelper.onDrag(mapShiftX, mapShiftY);
+                                    }
                                 } else {
                                     PreferencesManager.setMapCenterPlaceId(-1);
-                                    moveToTile(placeInfo.x, placeInfo.y);
+                                    moveToTile(placeInfo.x, placeInfo.y, mapViewHelper.getMaximumScale());
                                 }
                             }
 
