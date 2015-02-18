@@ -38,7 +38,8 @@ public class CompanionInfo implements Parcelable {
     // parcelable stuff
 
     private CompanionInfo(final Parcel in) {
-        species = CompanionSpecies.values()[in.readInt()];
+        final int index = in.readInt();
+        species = index == -1 ? null : CompanionSpecies.values()[index];
         name = in.readString();
         healthCurrent = in.readInt();
         healthMax = in.readInt();
@@ -54,7 +55,7 @@ public class CompanionInfo implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel out, int flags) {
-        out.writeInt(species.ordinal());
+        out.writeInt(species == null ? -1 : species.ordinal());
         out.writeString(name);
         out.writeInt(healthCurrent);
         out.writeInt(healthMax);

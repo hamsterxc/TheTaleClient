@@ -328,13 +328,18 @@ public class GameInfoFragment extends WrapperFragment {
                     textCompanionExperience.setText(String.format("%d/%d",
                             companion.experienceCurrent, companion.experienceForNextLevel));
 
-                    companionName.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            DialogUtils.showTabbedDialog(getChildFragmentManager(),
-                                    companion.name, new CompanionTabsAdapter(companion));
-                        }
-                    });
+                    if(companion.species == null) {
+                        companionName.setTextColor(getResources().getColor(R.color.common_text));
+                    } else {
+                        companionName.setTextColor(getResources().getColor(R.color.common_link));
+                        companionName.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                DialogUtils.showTabbedDialog(getChildFragmentManager(),
+                                        companion.name, new CompanionTabsAdapter(companion));
+                            }
+                        });
+                    }
                 }
 
                 final HeroActionInfo action = gameInfoResponse.account.hero.action;
