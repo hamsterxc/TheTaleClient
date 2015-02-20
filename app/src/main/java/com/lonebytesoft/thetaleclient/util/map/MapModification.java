@@ -105,7 +105,10 @@ public enum MapModification {
                 windPaintRect = new Paint();
                 windPaintRect.setColor(Color.WHITE);
 
-                arrowBitmap = BitmapFactory.decodeResource(TheTaleClientApplication.getContext().getResources(), R.drawable.ic_arrow);
+                final BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inScaled = false;
+                arrowBitmap = BitmapFactory.decodeResource(TheTaleClientApplication.getContext().getResources(),
+                        R.drawable.ic_arrow, options);
 
                 break;
 
