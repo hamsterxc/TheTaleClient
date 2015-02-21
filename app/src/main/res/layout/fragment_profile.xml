@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:paddingTop="@dimen/game_info_lines_margin"
+            android:paddingBottom="@dimen/game_info_lines_margin"
+            android:orientation="vertical"
+            android:background="@drawable/block_background">
+
+            <TextView
+                android:id="@+id/profile_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginBottom="@dimen/game_info_lines_margin"
+                style="?android:attr/textAppearanceLarge"/>
+
+            <View style="@style/Delimiter"/>
+
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:stretchColumns="0"
+                android:shrinkColumns="0">
+
+                <TableRow
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="@dimen/game_info_lines_margin">
+
+                    <TextView
+                        android:text="@string/game_title_might"
+                        style="?android:attr/textAppearanceLarge"/>
+
+                    <TextView
+                        android:id="@+id/profile_might"
+                        style="?android:attr/textAppearanceLarge"/>
+
+                </TableRow>
+
+                <TableRow
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="@dimen/game_info_lines_margin">
+
+                    <TextView
+                        android:text="@string/profile_achievement_points"
+                        style="?android:attr/textAppearanceLarge"/>
+
+                    <TextView
+                        android:id="@+id/profile_achievement_points"
+                        style="?android:attr/textAppearanceLarge"/>
+
+                </TableRow>
+
+                <TableRow
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="@dimen/game_info_lines_margin">
+
+                    <TextView
+                        android:text="@string/profile_collection_items_count"
+                        style="?android:attr/textAppearanceLarge"/>
+
+                    <TextView
+                        android:id="@+id/profile_collection_items_count"
+                        style="?android:attr/textAppearanceLarge"/>
+
+                </TableRow>
+
+                <TableRow
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="@dimen/game_info_lines_margin">
+
+                    <TextView
+                        android:text="@string/profile_referrals_count"
+                        style="?android:attr/textAppearanceLarge"/>
+
+                    <TextView
+                        android:id="@+id/profile_referrals_count"
+                        style="?android:attr/textAppearanceLarge"/>
+
+                </TableRow>
+
+            </TableLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="8dp"
+            android:paddingLeft="16dp"
+            android:paddingTop="8dp"
+            android:paddingRight="16dp"
+            android:paddingBottom="8dp"
+            android:background="@drawable/block_background"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="?android:attr/textAppearanceLarge"
+                android:text="@string/profile_ratings"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/profile_ratings_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="?android:attr/textAppearanceMedium"
+                android:layout_marginBottom="16dp"
+                android:text="@string/profile_ratings_description"/>
+
+            <TableLayout
+                android:id="@+id/profile_container_ratings"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:stretchColumns="0"
+                android:shrinkColumns="0"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="8dp"
+            android:paddingLeft="16dp"
+            android:paddingTop="8dp"
+            android:paddingRight="16dp"
+            android:paddingBottom="8dp"
+            android:background="@drawable/block_background"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="?android:attr/textAppearanceLarge"
+                android:text="@string/profile_places_history"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="?android:attr/textAppearanceMedium"
+                android:layout_marginBottom="16dp"
+                android:text="@string/profile_places_history_description"/>
+
+            <TableLayout
+                android:id="@+id/profile_container_places_history"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:stretchColumns="1"
+                android:shrinkColumns="1,2"/>
+
+            <include layout="@layout/item_profile_table_delimiter"/>
+
+            <TextView
+                android:id="@+id/profile_container_places_history_switcher"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                style="?android:attr/textAppearanceMedium"
+                android:textColor="@color/common_link"
+                android:background="@drawable/common_clickable_background"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>

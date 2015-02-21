@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableRow
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:gravity="center_vertical"
+    android:layout_marginTop="@dimen/game_info_lines_margin">
+
+    <TextView
+        android:id="@+id/item_profile_table_text_1"
+        style="?android:attr/textAppearanceMedium"/>
+
+    <TextView
+        android:id="@+id/item_profile_table_text_2"
+        style="?android:attr/textAppearanceMedium"
+        android:layout_marginLeft="16dp"/>
+
+    <TextView
+        android:id="@+id/item_profile_table_text_3"
+        style="?android:attr/textAppearanceMedium"
+        android:layout_marginLeft="16dp"/>
+
+</TableRow>

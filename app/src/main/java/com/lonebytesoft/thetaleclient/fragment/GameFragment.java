@@ -248,6 +248,12 @@ public class GameFragment extends Fragment implements Refreshable, OnscreenState
                 return new DiaryFragment();
             }
         },
+        PROFILE(R.string.game_title_profile) {
+            @Override
+            public Fragment getFragment() {
+                return new ProfileFragment();
+            }
+        },
         ;
 
         private final int titleResId;

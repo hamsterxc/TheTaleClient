@@ -97,6 +97,7 @@
     <string name="game_title_equipment">Экипировка</string>
     <string name="game_title_info">Игра</string>
     <string name="game_title_might">Могущество</string>
+    <string name="game_title_profile">Профиль</string>
     <string name="game_title_quests">Задания</string>
 
     <string name="find_player_history">История просмотров</string>
@@ -174,6 +175,25 @@
     <string name="notification_lines_one">%d событие</string>
     <string name="notification_lines_few">%d события</string>
     <string name="notification_lines_many">%d событий</string>
+
+    <string name="profile_achievement_points">Очки достижений</string>
+    <string name="profile_collection_items_count">Предметов в коллекции</string>
+    <string name="profile_rating_caption_name">Название</string>
+    <string name="profile_rating_caption_place">Место</string>
+    <string name="profile_rating_caption_value">Значение</string>
+    <string name="profile_rating_item_no_place">не участвует</string>
+    <string name="profile_rating_item_no_place_short">\u2014</string>
+    <string name="profile_rating_item_place">%1$d место</string>
+    <string name="profile_ratings">Рейтинги</string>
+    <string name="profile_ratings_description">Положение игрока в рейтингах</string>
+    <string name="profile_places_history">Политика</string>
+    <string name="profile_places_history_caption_name">Город</string>
+    <string name="profile_places_history_caption_place">№</string>
+    <string name="profile_places_history_caption_value">Помогал (раз)</string>
+    <string name="profile_places_history_collapse">Свернуть</string>
+    <string name="profile_places_history_description">Города, которым герой помогает чаще</string>
+    <string name="profile_places_history_expand">Развернуть</string>
+    <string name="profile_referrals_count">Последователи</string>
 
     <string name="quest_actor_name">Имя</string>
     <string name="quest_actor_race">Раса</string>
