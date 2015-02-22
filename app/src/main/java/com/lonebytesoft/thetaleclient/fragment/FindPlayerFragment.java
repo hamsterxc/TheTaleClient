@@ -137,7 +137,7 @@ public class FindPlayerFragment extends WrapperFragment {
                         };
                         final int approximate = count * ACCOUNTS_PER_PAGE;
                         if(approximate > ACCOUNTS_COUNT_THRESHOLD) {
-                            if(UiUtils.getMainActivity(FindPlayerFragment.this).isPaused()) {
+                            if(!isAdded() || UiUtils.getMainActivity(FindPlayerFragment.this).isPaused()) {
                                 cancelRunnable.run();
                             } else {
                                 DialogUtils.showConfirmationDialog(
