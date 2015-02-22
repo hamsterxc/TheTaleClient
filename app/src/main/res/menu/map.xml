@@ -6,8 +6,10 @@
     tools:context=".MainActivity">
 
     <item
+        android:id="@+id/action_map_actions"
         android:title="@string/drawer_title_map"
         android:icon="@drawable/ic_action_settings"
+        android:visible="false"
         app:showAsAction="always">
 
         <menu>

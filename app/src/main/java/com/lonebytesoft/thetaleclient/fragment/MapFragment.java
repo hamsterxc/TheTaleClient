@@ -89,7 +89,7 @@ public class MapFragment extends WrapperFragment {
 
     private ImageView mapView;
     private PhotoViewAttacher mapViewHelper;
-
+    private MenuItem menuOptions;
     private View findPlayerContainer;
 
     private float mapZoom;
@@ -159,6 +159,8 @@ public class MapFragment extends WrapperFragment {
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
+
+        menuOptions = UiUtils.getMenuItem(getActivity(), R.id.action_map_actions);
 
         updateMenuItemTitle(R.id.action_map_style, getString(R.string.map_style, PreferencesManager.getMapStyle().getName()));
         updateMenuItemTitle(R.id.action_map_modification, getString(R.string.map_modification, mapModification.getName()));
@@ -294,6 +296,10 @@ public class MapFragment extends WrapperFragment {
         super.refresh(isGlobal);
 
         UiUtils.setupFindPlayerContainer(findPlayerContainer, this, this, (MainActivity) getActivity());
+
+        if(menuOptions != null) {
+            menuOptions.setVisible(false);
+        }
 
         if(!isMapInitialPosition) {
             mapZoom = getMapZoom();
@@ -562,6 +568,11 @@ public class MapFragment extends WrapperFragment {
                         return lhs.name.compareTo(rhs.name);
                     }
                 });
+
+                if(menuOptions != null) {
+                    menuOptions.setVisible(true);
+                }
+
                 setMode(DataViewMode.DATA);
             }
         });
