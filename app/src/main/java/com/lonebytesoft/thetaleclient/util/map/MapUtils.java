@@ -7,6 +7,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.AsyncTask;
+import android.os.Build;
 
 import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.TheTaleClientApplication;
@@ -80,8 +81,15 @@ public class MapUtils {
             final long size = (mapInfo.width * MAP_TILE_SIZE / sizeDenominator) *
                     (mapInfo.height * MAP_TILE_SIZE / sizeDenominator) * 4;
             if(size < TheTaleClientApplication.getFreeMemory() * 0.9) {
+                final Bitmap.Config bitmapConfig;
+                if((sizeDenominator > 1) || (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH)) {
+                    bitmapConfig = Bitmap.Config.RGB_565;
+                } else {
+                    bitmapConfig = Bitmap.Config.ARGB_8888;
+                }
+
                 return Bitmap.createBitmap(mapInfo.width * MAP_TILE_SIZE / sizeDenominator,
-                        mapInfo.height * MAP_TILE_SIZE / sizeDenominator, Bitmap.Config.ARGB_8888);
+                        mapInfo.height * MAP_TILE_SIZE / sizeDenominator, bitmapConfig);
             }
         }
     }
