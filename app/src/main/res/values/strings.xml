@@ -9,7 +9,7 @@
     <string name="app_widget_small">The Tale Client: Состояние героя (1x1)</string>
     <string name="app_widget_medium">The Tale Client: Основная информация (2x1)</string>
     <string name="app_widget_large">The Tale Client: Герой и помощь (3x1)</string>
-    <string name="app_widget_huge">The Tale Client: Герой, помощь и действие (4x2)</string>
+    <string name="app_widget_huge">The Tale Client: Герой, спутник, помощь и действие (4x2)</string>
 
     <string name="action_read_aloud">Читать журнал</string>
     <string name="action_refresh">Обновить</string>

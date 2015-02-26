@@ -7,8 +7,10 @@ import com.lonebytesoft.thetaleclient.api.dictionary.ArtifactEffect;
 import com.lonebytesoft.thetaleclient.api.dictionary.EquipmentType;
 import com.lonebytesoft.thetaleclient.api.dictionary.QuestType;
 import com.lonebytesoft.thetaleclient.api.model.ArtifactInfo;
+import com.lonebytesoft.thetaleclient.api.model.CompanionInfo;
 import com.lonebytesoft.thetaleclient.api.model.EnergyInfo;
 import com.lonebytesoft.thetaleclient.api.model.HeroActionInfo;
+import com.lonebytesoft.thetaleclient.api.model.HeroBasicInfo;
 import com.lonebytesoft.thetaleclient.api.model.HeroInfo;
 import com.lonebytesoft.thetaleclient.api.model.QuestStepInfo;
 import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;
@@ -49,8 +51,24 @@ public class GameInfoUtils {
         return false;
     }
 
+    public static String getHealthString(final HeroBasicInfo heroBasicInfo) {
+        return String.format("%d/%d", heroBasicInfo.healthCurrent, heroBasicInfo.healthMax);
+    }
+
+    public static String getExperienceString(final HeroBasicInfo heroBasicInfo) {
+        return String.format("%d/%d", heroBasicInfo.experienceCurrent, heroBasicInfo.experienceForNextLevel);
+    }
+
     public static String getEnergyString(final EnergyInfo energyInfo) {
         return String.format("%d/%d + %d", energyInfo.current, energyInfo.max, energyInfo.bonus);
+    }
+
+    public static String getCompanionHealthString(final CompanionInfo companionInfo) {
+        return String.format("%d/%d", companionInfo.healthCurrent, companionInfo.healthMax);
+    }
+
+    public static String getCompanionExperienceString(final CompanionInfo companionInfo) {
+        return String.format("%d/%d", companionInfo.experienceCurrent, companionInfo.experienceForNextLevel);
     }
 
     public static String getActionString(final Context context, final HeroActionInfo actionInfo) {

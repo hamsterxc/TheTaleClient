@@ -35,6 +35,11 @@ public class AppWidgetHelper {
     public static final String BROADCAST_WIDGET_REFRESH_ACTION =
             TheTaleClientApplication.getContext().getPackageName() + ".widget.refresh";
 
+    private static final int SIZE_SMALL = 0;
+    private static final int SIZE_MEDIUM = 1;
+    private static final int SIZE_LARGE = 2;
+    private static final int SIZE_HUGE = 3;
+
     public static void update(final Context context, final DataViewMode viewMode, final GameInfoResponse gameInfoResponse) {
         final AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
         final boolean isAppWidgetSizingSupported = isAppWidgetSizingSupported(context);
@@ -44,17 +49,22 @@ public class AppWidgetHelper {
 
             if(isAppWidgetSizingSupported && (viewMode == DataViewMode.DATA)) {
                 for (final int appWidgetId : appWidgetManager.getAppWidgetIds(componentName)) {
+                    final Bundle appWidgetOptions = appWidgetManager.getAppWidgetOptions(appWidgetId);
                     final RemoteViews remoteViews = getRemoteViews(context, viewMode);
-                    updateRemoteViewsContentLayout(context, remoteViews, appWidgetManager.getAppWidgetOptions(appWidgetId));
-                    fillRemoteViewsData(context, remoteViews, gameInfoResponse);
+                    fillRemoteViewsData(context, remoteViews,
+                            getWidgetSize(context, appWidgetOptions.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH)),
+                            getWidgetSize(context, appWidgetOptions.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT)),
+                            gameInfoResponse);
                     appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
                 }
             } else {
                 final RemoteViews remoteViews = getRemoteViews(context, viewMode);
                 switch(viewMode) {
                     case DATA:
-                        updateRemoteViewsContentLayout(context, remoteViews, appWidget.getWidth(), appWidget.getHeight());
-                        fillRemoteViewsData(context, remoteViews, gameInfoResponse);
+                        fillRemoteViewsData(context, remoteViews,
+                                getWidgetSize(context, appWidget.getWidth()),
+                                getWidgetSize(context, appWidget.getHeight()),
+                                gameInfoResponse);
                         break;
 
                     case ERROR:
@@ -92,9 +102,9 @@ public class AppWidgetHelper {
     private static RemoteViews getRemoteViews(final Context context, final DataViewMode viewMode) {
         final RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.app_widget);
 
-        remoteViews.setViewVisibility(R.id.app_widget_content, viewMode == DataViewMode.DATA ? View.VISIBLE : View.GONE);
-        remoteViews.setViewVisibility(R.id.app_widget_progress, viewMode == DataViewMode.LOADING ? View.VISIBLE : View.GONE);
-        remoteViews.setViewVisibility(R.id.app_widget_error, viewMode == DataViewMode.ERROR ? View.VISIBLE : View.GONE);
+        setRemoteViewsViewVisibility(remoteViews, R.id.app_widget_content, viewMode == DataViewMode.DATA);
+        setRemoteViewsViewVisibility(remoteViews, R.id.app_widget_progress, viewMode == DataViewMode.LOADING);
+        setRemoteViewsViewVisibility(remoteViews, R.id.app_widget_error, viewMode == DataViewMode.ERROR);
 
         remoteViews.setOnClickPendingIntent(R.id.app_widget, UiUtils.getApplicationIntent(context));
         remoteViews.setOnClickPendingIntent(R.id.app_widget_error_retry, PendingIntent.getBroadcast(
@@ -106,74 +116,150 @@ public class AppWidgetHelper {
         return remoteViews;
     }
 
-    private static void updateRemoteViewsContentLayout(final Context context, final RemoteViews remoteViews,
-                                                       final int width, final int height) {
-        setRemoteViewsViewVisibility(remoteViews, R.id.app_widget_bars_progress, true);
-
-        final boolean isWidthSmall = width < context.getResources().getDimension(R.dimen.app_widget_size_2);
-        setRemoteViewsViewVisibility(remoteViews, R.id.app_widget_bars_icon, !isWidthSmall);
-        setRemoteViewsViewVisibility(remoteViews, R.id.app_widget_bars_progress_health_text, isWidthSmall);
-        setRemoteViewsViewVisibility(remoteViews, R.id.app_widget_bars_progress_experience_text, isWidthSmall);
-        setRemoteViewsViewVisibility(remoteViews, R.id.app_widget_bars_progress_energy_text, isWidthSmall);
-        setRemoteViewsViewVisibility(remoteViews, R.id.app_widget_bars_text, !isWidthSmall);
-
-        final boolean isWidthMedium = width < context.getResources().getDimension(R.dimen.app_widget_size_3);
-        setRemoteViewsViewVisibility(remoteViews, R.id.app_widget_help, !isWidthMedium);
-
-        final boolean isHeightSmall = height < context.getResources().getDimension(R.dimen.app_widget_size_2);
-        setRemoteViewsViewVisibility(remoteViews, R.id.app_widget_action_info, !isWidthSmall && !isHeightSmall);
-        setRemoteViewsViewVisibility(remoteViews, R.id.app_widget_header, !isWidthSmall && !isHeightSmall);
-        setRemoteViewsViewVisibility(remoteViews, R.id.app_widget_logo, !isWidthMedium || !isHeightSmall);
-    }
-
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-    private static void updateRemoteViewsContentLayout(final Context context, final RemoteViews remoteViews,
-                                                       final Bundle appWidgetOptions) {
-        updateRemoteViewsContentLayout(context, remoteViews,
-                appWidgetOptions.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH),
-                appWidgetOptions.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT));
-    }
-
     private static void fillRemoteViewsData(final Context context, final RemoteViews remoteViews,
+                                            final int width, final int height,
                                             final GameInfoResponse gameInfoResponse) {
-        remoteViews.setProgressBar(R.id.app_widget_bars_progress_health,
+        setRemoteViewsViewVisibility(remoteViews, R.id.app_widget_logo, height >= SIZE_MEDIUM);
+
+        final boolean isActionPresent = (width >= SIZE_MEDIUM) && (height >= SIZE_MEDIUM) && !((width == SIZE_MEDIUM) && (height == SIZE_MEDIUM));
+        setRemoteViewsViewVisibility(remoteViews, R.id.app_widget_action_info, isActionPresent);
+        if(isActionPresent) {
+            final HeroActionInfo actionInfo = gameInfoResponse.account.hero.action;
+            remoteViews.setTextViewText(R.id.app_widget_action_info_text,
+                    GameInfoUtils.getActionString(context, actionInfo));
+            remoteViews.setProgressBar(R.id.app_widget_action_info_progress,
+                    1000, (int) (1000.0 * actionInfo.completion), false);
+        }
+
+        final boolean isHeroBasicInfoPresent = (width >= SIZE_LARGE) && (height >= SIZE_MEDIUM);
+        setRemoteViewsViewVisibility(remoteViews, R.id.app_widget_hero_basic_info, isHeroBasicInfoPresent);
+        if(isHeroBasicInfoPresent) {
+            remoteViews.setTextViewText(R.id.app_widget_hero_level, String.valueOf(gameInfoResponse.account.hero.basicInfo.level));
+            remoteViews.setTextViewText(R.id.app_widget_hero_name, gameInfoResponse.account.hero.basicInfo.name);
+        }
+
+        setRemoteViewsViewVisibility(remoteViews, R.id.app_widget_hero_bars_icon, width >= SIZE_MEDIUM);
+
+        remoteViews.setProgressBar(R.id.app_widget_hero_bars_progress_health,
                 gameInfoResponse.account.hero.basicInfo.healthMax,
                 gameInfoResponse.account.hero.basicInfo.healthCurrent,
                 false);
-        remoteViews.setTextViewText(R.id.app_widget_bars_text_health, String.format("%d/%d",
-                gameInfoResponse.account.hero.basicInfo.healthCurrent,
-                gameInfoResponse.account.hero.basicInfo.healthMax));
-
-        remoteViews.setProgressBar(R.id.app_widget_bars_progress_experience,
+        remoteViews.setProgressBar(R.id.app_widget_hero_bars_progress_experience,
                 gameInfoResponse.account.hero.basicInfo.experienceForNextLevel,
                 gameInfoResponse.account.hero.basicInfo.experienceCurrent,
                 false);
-        remoteViews.setTextViewText(R.id.app_widget_bars_text_experience, String.format("%d/%d",
-                gameInfoResponse.account.hero.basicInfo.experienceCurrent,
-                gameInfoResponse.account.hero.basicInfo.experienceForNextLevel));
-
-        remoteViews.setProgressBar(R.id.app_widget_bars_progress_energy,
+        remoteViews.setProgressBar(R.id.app_widget_hero_bars_progress_energy,
                 gameInfoResponse.account.hero.energy.max,
                 gameInfoResponse.account.hero.energy.current,
                 false);
-        remoteViews.setTextViewText(R.id.app_widget_bars_text_energy,
-                GameInfoUtils.getEnergyString(gameInfoResponse.account.hero.energy));
 
-        remoteViews.setTextViewText(R.id.app_widget_help, context.getString(R.string.game_help));
-        remoteViews.setOnClickPendingIntent(R.id.app_widget_help, PendingIntent.getBroadcast(
+        final boolean isHeroBarsCaptionsPresent = width <= SIZE_SMALL;
+        final boolean isHeroBarsValuesPresent = ((width == SIZE_LARGE) || (width == SIZE_HUGE)) && (height == SIZE_MEDIUM);
+        setRemoteViewsViewVisibility(remoteViews, R.id.app_widget_hero_bars_progress_health_text, isHeroBarsCaptionsPresent || isHeroBarsValuesPresent);
+        setRemoteViewsViewVisibility(remoteViews, R.id.app_widget_hero_bars_progress_experience_text, isHeroBarsCaptionsPresent || isHeroBarsValuesPresent);
+        setRemoteViewsViewVisibility(remoteViews, R.id.app_widget_hero_bars_progress_energy_text, isHeroBarsCaptionsPresent || isHeroBarsValuesPresent);
+        if(isHeroBarsCaptionsPresent) {
+            remoteViews.setTextViewText(R.id.app_widget_hero_bars_progress_health_text,
+                    context.getString(R.string.game_info_health));
+            remoteViews.setTextViewText(R.id.app_widget_hero_bars_progress_experience_text,
+                    context.getString(R.string.game_info_experience));
+            remoteViews.setTextViewText(R.id.app_widget_hero_bars_progress_energy_text,
+                    context.getString(R.string.game_info_energy));
+        } else if(isHeroBarsValuesPresent) {
+            remoteViews.setTextViewText(R.id.app_widget_hero_bars_progress_health_text,
+                    GameInfoUtils.getHealthString(gameInfoResponse.account.hero.basicInfo));
+            remoteViews.setTextViewText(R.id.app_widget_hero_bars_progress_experience_text,
+                    GameInfoUtils.getExperienceString(gameInfoResponse.account.hero.basicInfo));
+            remoteViews.setTextViewText(R.id.app_widget_hero_bars_progress_energy_text,
+                    GameInfoUtils.getEnergyString(gameInfoResponse.account.hero.energy));
+        }
+
+        final boolean isHeroBarsTextPresent = (width >= SIZE_MEDIUM) && !((width >= SIZE_LARGE) && (height == SIZE_MEDIUM));
+        setRemoteViewsViewVisibility(remoteViews, R.id.app_widget_hero_bars_text, isHeroBarsTextPresent);
+        if(isHeroBarsTextPresent) {
+            remoteViews.setTextViewText(R.id.app_widget_hero_bars_text_health,
+                    GameInfoUtils.getHealthString(gameInfoResponse.account.hero.basicInfo));
+            remoteViews.setTextViewText(R.id.app_widget_hero_bars_text_experience,
+                    GameInfoUtils.getExperienceString(gameInfoResponse.account.hero.basicInfo));
+            remoteViews.setTextViewText(R.id.app_widget_hero_bars_text_energy,
+                    GameInfoUtils.getEnergyString(gameInfoResponse.account.hero.energy));
+        }
+
+        final boolean isCompanionRightPresent = (width >= SIZE_LARGE) && (height == SIZE_MEDIUM);
+        setRemoteViewsViewVisibility(remoteViews, R.id.app_widget_companion_right_info, isCompanionRightPresent);
+        if(isCompanionRightPresent) {
+            remoteViews.setTextViewText(R.id.app_widget_companion_right_level, String.valueOf(gameInfoResponse.account.hero.companionInfo.coherence));
+            remoteViews.setTextViewText(R.id.app_widget_companion_right_name, gameInfoResponse.account.hero.companionInfo.name);
+
+            remoteViews.setProgressBar(R.id.app_widget_companion_right_bars_progress_health,
+                    gameInfoResponse.account.hero.companionInfo.healthMax,
+                    gameInfoResponse.account.hero.companionInfo.healthCurrent,
+                    false);
+            remoteViews.setProgressBar(R.id.app_widget_companion_right_bars_progress_experience,
+                    gameInfoResponse.account.hero.companionInfo.experienceForNextLevel,
+                    gameInfoResponse.account.hero.companionInfo.experienceCurrent,
+                    false);
+
+            remoteViews.setTextViewText(R.id.app_widget_companion_right_bars_progress_health_text,
+                    GameInfoUtils.getCompanionHealthString(gameInfoResponse.account.hero.companionInfo));
+            remoteViews.setTextViewText(R.id.app_widget_companion_right_bars_progress_experience_text,
+                    GameInfoUtils.getCompanionExperienceString(gameInfoResponse.account.hero.companionInfo));
+
+            setRemoteViewsHelpAction(context, remoteViews, R.id.app_widget_help_right_bottom);
+        }
+
+        final boolean isHelpRightPresent = (width >= SIZE_LARGE) && (height <= SIZE_SMALL);
+        setRemoteViewsViewVisibility(remoteViews, R.id.app_widget_help_right, isHelpRightPresent);
+        if(isHelpRightPresent) {
+            setRemoteViewsHelpAction(context, remoteViews, R.id.app_widget_help_right);
+        }
+
+        final boolean isCompanionBelowPresent = (width >= SIZE_LARGE) && (height >= SIZE_LARGE);
+        setRemoteViewsViewVisibility(remoteViews, R.id.app_widget_companion_below_info, isCompanionBelowPresent);
+        if(isCompanionBelowPresent) {
+            remoteViews.setTextViewText(R.id.app_widget_companion_bottom_level, String.valueOf(gameInfoResponse.account.hero.companionInfo.coherence));
+            remoteViews.setTextViewText(R.id.app_widget_companion_bottom_name, gameInfoResponse.account.hero.companionInfo.name);
+
+            remoteViews.setProgressBar(R.id.app_widget_companion_bottom_bars_progress_health,
+                    gameInfoResponse.account.hero.companionInfo.healthMax,
+                    gameInfoResponse.account.hero.companionInfo.healthCurrent,
+                    false);
+            remoteViews.setProgressBar(R.id.app_widget_companion_bottom_bars_progress_experience,
+                    gameInfoResponse.account.hero.companionInfo.experienceForNextLevel,
+                    gameInfoResponse.account.hero.companionInfo.experienceCurrent,
+                    false);
+
+            remoteViews.setTextViewText(R.id.app_widget_companion_bottom_bars_text_health,
+                    GameInfoUtils.getCompanionHealthString(gameInfoResponse.account.hero.companionInfo));
+            remoteViews.setTextViewText(R.id.app_widget_companion_bottom_bars_text_experience,
+                    GameInfoUtils.getCompanionExperienceString(gameInfoResponse.account.hero.companionInfo));
+        }
+
+        final boolean isHelpBelowPresent = !isCompanionRightPresent && (height >= SIZE_MEDIUM);
+        setRemoteViewsViewVisibility(remoteViews, R.id.app_widget_help_bottom, isHelpBelowPresent);
+        if(isHelpBelowPresent) {
+            setRemoteViewsHelpAction(context, remoteViews, R.id.app_widget_help_bottom);
+        }
+    }
+
+    private static int getWidgetSize(final Context context, final int size) {
+        if(size < context.getResources().getDimension(R.dimen.app_widget_size_2)) {
+            return SIZE_SMALL;
+        } else if(size < context.getResources().getDimension(R.dimen.app_widget_size_3)) {
+            return SIZE_MEDIUM;
+        } else if(size < context.getResources().getDimension(R.dimen.app_widget_size_4)) {
+            return SIZE_LARGE;
+        } else {
+            return SIZE_HUGE;
+        }
+    }
+
+    private static void setRemoteViewsHelpAction(final Context context, final RemoteViews remoteViews, final int resId) {
+        remoteViews.setOnClickPendingIntent(resId, PendingIntent.getBroadcast(
                 context,
                 (int) System.currentTimeMillis(),
                 new Intent(BROADCAST_WIDGET_HELP_ACTION),
                 PendingIntent.FLAG_CANCEL_CURRENT));
-
-        final HeroActionInfo actionInfo = gameInfoResponse.account.hero.action;
-        remoteViews.setTextViewText(R.id.app_widget_action_info_text,
-                GameInfoUtils.getActionString(context, actionInfo));
-        remoteViews.setProgressBar(R.id.app_widget_action_info_progress,
-                1000, (int) (1000.0 * actionInfo.completion), false);
-
-        remoteViews.setTextViewText(R.id.app_widget_header_level, String.valueOf(gameInfoResponse.account.hero.basicInfo.level));
-        remoteViews.setTextViewText(R.id.app_widget_header_name, gameInfoResponse.account.hero.basicInfo.name);
     }
 
     private static void fillRemoteViewsError(final Context context, final RemoteViews remoteViews,
