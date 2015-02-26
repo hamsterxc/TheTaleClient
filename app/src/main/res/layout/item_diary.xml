@@ -14,6 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
         style="?android:attr/textAppearanceSmall"
+        android:textColor="@color/common_text"
         android:textStyle="bold"/>
 
     <TextView
@@ -22,6 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="2dp"
-        style="?android:attr/textAppearanceSmall"/>
+        style="?android:attr/textAppearanceSmall"
+        android:textColor="@color/common_text"/>
 
 </LinearLayout>

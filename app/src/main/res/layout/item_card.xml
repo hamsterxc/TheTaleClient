@@ -12,19 +12,22 @@
         android:id="@+id/card_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        style="?android:attr/textAppearanceMedium"/>
+        style="?android:attr/textAppearanceMedium"
+        android:textColor="@color/common_text"/>
 
     <TextView
         android:id="@+id/card_description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        style="?android:attr/textAppearanceSmall"/>
+        style="?android:attr/textAppearanceSmall"
+        android:textColor="@color/common_text"/>
 
     <TextView
         android:id="@+id/card_tradable"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         style="?android:attr/textAppearanceSmall"
+        android:textColor="@color/common_text"
         android:textStyle="italic"
         android:text="@string/game_card_tradable"
         android:visibility="gone"/>

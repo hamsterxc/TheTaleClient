@@ -20,7 +20,8 @@
             android:id="@+id/chat_item_nickname"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="?android:attr/textAppearanceMedium"/>
+            style="?android:attr/textAppearanceMedium"
+            android:textColor="@color/common_text"/>
 
         <TextView
             android:id="@+id/chat_item_time"
@@ -37,7 +38,8 @@
         android:layout_height="wrap_content"
         android:layout_weight="@integer/chat_message_width_weight"
         android:layout_marginLeft="8dp"
-        style="?android:attr/textAppearanceMedium"/>
+        style="?android:attr/textAppearanceMedium"
+        android:textColor="@color/common_text"/>
 
     <View
         android:id="@+id/chat_item_hr"

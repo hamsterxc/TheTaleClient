@@ -112,7 +112,8 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="right"
                         android:includeFontPadding="false"
-                        style="?android:attr/textAppearanceMedium"/>
+                        style="?android:attr/textAppearanceMedium"
+                        android:textColor="@color/common_text"/>
 
                 </TableRow>
 
@@ -141,7 +142,8 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="right"
                         android:includeFontPadding="false"
-                        style="?android:attr/textAppearanceMedium"/>
+                        style="?android:attr/textAppearanceMedium"
+                        android:textColor="@color/common_text"/>
 
                 </TableRow>
 
@@ -170,7 +172,8 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="right"
                         android:includeFontPadding="false"
-                        style="?android:attr/textAppearanceMedium"/>
+                        style="?android:attr/textAppearanceMedium"
+                        android:textColor="@color/common_text"/>
 
                 </TableRow>
 
@@ -203,7 +206,8 @@
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="8dp"
                             android:includeFontPadding="false"
-                            style="?android:attr/textAppearanceMedium"/>
+                            style="?android:attr/textAppearanceMedium"
+                            android:textColor="@color/common_text"/>
 
                     </LinearLayout>
 
@@ -225,7 +229,8 @@
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="8dp"
                             android:includeFontPadding="false"
-                            style="?android:attr/textAppearanceMedium"/>
+                            style="?android:attr/textAppearanceMedium"
+                            android:textColor="@color/common_text"/>
 
                     </LinearLayout>
 
@@ -252,7 +257,8 @@
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="8dp"
                             android:includeFontPadding="false"
-                            style="?android:attr/textAppearanceMedium"/>
+                            style="?android:attr/textAppearanceMedium"
+                            android:textColor="@color/common_text"/>
 
                     </LinearLayout>
 
@@ -274,7 +280,8 @@
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="8dp"
                             android:includeFontPadding="false"
-                            style="?android:attr/textAppearanceMedium"/>
+                            style="?android:attr/textAppearanceMedium"
+                            android:textColor="@color/common_text"/>
 
                     </LinearLayout>
 
@@ -353,7 +360,8 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="right"
                             android:includeFontPadding="false"
-                            style="?android:attr/textAppearanceMedium"/>
+                            style="?android:attr/textAppearanceMedium"
+                            android:textColor="@color/common_text"/>
 
                     </TableRow>
 
@@ -382,7 +390,8 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="right"
                             android:includeFontPadding="false"
-                            style="?android:attr/textAppearanceMedium"/>
+                            style="?android:attr/textAppearanceMedium"
+                            android:textColor="@color/common_text"/>
 
                     </TableRow>
 
@@ -407,7 +416,8 @@
                 android:id="@+id/game_info_action_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                style="?android:attr/textAppearanceMedium"/>
+                style="?android:attr/textAppearanceMedium"
+                android:textColor="@color/common_text"/>
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -429,6 +439,7 @@
                     android:layout_marginBottom="@dimen/game_info_bar_padding"
                     android:layout_centerInParent="true"
                     style="?android:attr/textAppearanceSmall"
+                    android:textColor="@color/common_text"
                     android:visibility="gone"/>
 
             </RelativeLayout>

@@ -25,7 +25,8 @@
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
                 android:layout_marginBottom="@dimen/game_info_lines_margin"
-                style="?android:attr/textAppearanceLarge"/>
+                style="?android:attr/textAppearanceLarge"
+                android:textColor="@color/common_text"/>
 
             <View style="@style/Delimiter"/>
 
@@ -43,11 +44,13 @@
 
                     <TextView
                         android:text="@string/game_title_might"
-                        style="?android:attr/textAppearanceLarge"/>
+                        style="?android:attr/textAppearanceLarge"
+                        android:textColor="@color/common_text"/>
 
                     <TextView
                         android:id="@+id/profile_might"
-                        style="?android:attr/textAppearanceLarge"/>
+                        style="?android:attr/textAppearanceLarge"
+                        android:textColor="@color/common_text"/>
 
                 </TableRow>
 
@@ -57,11 +60,13 @@
 
                     <TextView
                         android:text="@string/profile_achievement_points"
-                        style="?android:attr/textAppearanceLarge"/>
+                        style="?android:attr/textAppearanceLarge"
+                        android:textColor="@color/common_text"/>
 
                     <TextView
                         android:id="@+id/profile_achievement_points"
-                        style="?android:attr/textAppearanceLarge"/>
+                        style="?android:attr/textAppearanceLarge"
+                        android:textColor="@color/common_text"/>
 
                 </TableRow>
 
@@ -71,11 +76,13 @@
 
                     <TextView
                         android:text="@string/profile_collection_items_count"
-                        style="?android:attr/textAppearanceLarge"/>
+                        style="?android:attr/textAppearanceLarge"
+                        android:textColor="@color/common_text"/>
 
                     <TextView
                         android:id="@+id/profile_collection_items_count"
-                        style="?android:attr/textAppearanceLarge"/>
+                        style="?android:attr/textAppearanceLarge"
+                        android:textColor="@color/common_text"/>
 
                 </TableRow>
 
@@ -85,11 +92,13 @@
 
                     <TextView
                         android:text="@string/profile_referrals_count"
-                        style="?android:attr/textAppearanceLarge"/>
+                        style="?android:attr/textAppearanceLarge"
+                        android:textColor="@color/common_text"/>
 
                     <TextView
                         android:id="@+id/profile_referrals_count"
-                        style="?android:attr/textAppearanceLarge"/>
+                        style="?android:attr/textAppearanceLarge"
+                        android:textColor="@color/common_text"/>
 
                 </TableRow>
 
@@ -116,6 +125,7 @@
                 android:layout_height="wrap_content"
                 style="?android:attr/textAppearanceLarge"
                 android:text="@string/profile_ratings"
+                android:textColor="@color/common_text"
                 android:textStyle="bold"/>
 
             <TextView
@@ -124,7 +134,8 @@
                 android:layout_height="wrap_content"
                 style="?android:attr/textAppearanceMedium"
                 android:layout_marginBottom="16dp"
-                android:text="@string/profile_ratings_description"/>
+                android:text="@string/profile_ratings_description"
+                android:textColor="@color/common_text"/>
 
             <TableLayout
                 android:id="@+id/profile_container_ratings"
@@ -154,6 +165,7 @@
                 android:layout_height="wrap_content"
                 style="?android:attr/textAppearanceLarge"
                 android:text="@string/profile_places_history"
+                android:textColor="@color/common_text"
                 android:textStyle="bold"/>
 
             <TextView
@@ -161,7 +173,8 @@
                 android:layout_height="wrap_content"
                 style="?android:attr/textAppearanceMedium"
                 android:layout_marginBottom="16dp"
-                android:text="@string/profile_places_history_description"/>
+                android:text="@string/profile_places_history_description"
+                android:textColor="@color/common_text"/>
 
             <TableLayout
                 android:id="@+id/profile_container_places_history"
