@@ -225,6 +225,47 @@
 
         </PreferenceScreen>
 
+        <CheckBoxPreference
+            android:layout="@layout/widget_preference_container"
+            android:key="@string/settings_key_autohelp_companion_care"
+            android:title="@string/settings_title_autohelp_companion_care"
+            android:summary="@string/settings_summary_autohelp_companion_care"
+            android:defaultValue="@bool/settings_autohelp_common_default"/>
+
+        <PreferenceScreen
+            android:layout="@layout/widget_preference_container"
+            android:key="@string/settings_key_autohelp_companion_care_screen"
+            android:title="@string/settings_title_autohelp_companion_care_details">
+
+            <EditTextPreference
+                android:layout="@layout/widget_preference_container"
+                android:key="@string/settings_key_autohelp_companion_care_health_amount_threshold"
+                android:title="@string/settings_title_autohelp_companion_care_health_amount_threshold"
+                android:defaultValue="@integer/settings_autohelp_companion_care_health_amount_threshold_default"
+                android:numeric="integer"/>
+
+            <EditTextPreference
+                android:layout="@layout/widget_preference_container"
+                android:key="@string/settings_key_autohelp_companion_care_energy_threshold"
+                android:title="@string/settings_title_autohelp_common_energy_threshold"
+                android:defaultValue="@integer/settings_autohelp_companion_care_energy_threshold_default"
+                android:numeric="integer"/>
+
+            <CheckBoxPreference
+                android:layout="@layout/widget_preference_container"
+                android:key="@string/settings_key_autohelp_companion_care_bonus_energy"
+                android:title="@string/settings_title_autohelp_common_bonus_energy"
+                android:defaultValue="@bool/settings_autohelp_common_bonus_energy_default"/>
+
+            <EditTextPreference
+                android:layout="@layout/widget_preference_container"
+                android:key="@string/settings_key_autohelp_companion_care_bonus_energy_threshold"
+                android:title="@string/settings_title_autohelp_common_bonus_energy_threshold"
+                android:defaultValue="@integer/settings_autohelp_common_bonus_energy_threshold_default"
+                android:numeric="integer"/>
+
+        </PreferenceScreen>
+
     </PreferenceCategory>
 
     <PreferenceCategory

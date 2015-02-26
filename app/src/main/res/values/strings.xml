@@ -284,6 +284,18 @@
     <string name="settings_title_autohelp_energy_religious">Во время обряда</string>
     <string name="settings_title_autohelp_energy_travel">В пути</string>
 
+    <string name="settings_key_autohelp_companion_care">KEY_SETTINGS_AUTOHELP_COMPANION_CARE</string>
+    <string name="settings_key_autohelp_companion_care_screen">KEY_SETTINGS_AUTOHELP_COMPANION_CARE_SCREEN</string>
+    <string name="settings_key_autohelp_companion_care_bonus_energy">KEY_SETTINGS_AUTOHELP_COMPANION_CARE_BONUS_ENERGY</string>
+    <string name="settings_key_autohelp_companion_care_bonus_energy_threshold">KEY_SETTINGS_AUTOHELP_COMPANION_CARE_BONUS_ENERGY_THRESHOLD</string>
+    <string name="settings_key_autohelp_companion_care_energy_threshold">KEY_SETTINGS_AUTOHELP_COMPANION_CARE_ENERGY_THRESHOLD</string>
+    <string name="settings_key_autohelp_companion_care_health_amount_threshold">KEY_SETTINGS_COMPANION_CARE_HEALTH_AMOUNT</string>
+    <string name="settings_summary_autohelp_companion_care">Помощь, когда герой ухаживает за спутником</string>
+    <string name="settings_summary_autohelp_companion_care_health_amount_threshold">Помогать, если здоровье спутника ниже %s</string>
+    <string name="settings_title_autohelp_companion_care">Уход за спутником</string>
+    <string name="settings_title_autohelp_companion_care_details">Настройки помощи: уход за спутником</string>
+    <string name="settings_title_autohelp_companion_care_health_amount_threshold">Уровень здоровья спутника</string>
+
     <string name="settings_autoaction">Автоматические действия</string>
     <string name="settings_key_autoaction_cardtake">KEY_SETTINGS_AUTOACTION_CARDTAKE</string>
     <string name="settings_title_autoaction_cardtake">Брать карты судьбы</string>

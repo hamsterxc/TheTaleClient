@@ -19,6 +19,7 @@ import com.lonebytesoft.thetaleclient.api.request.GameInfoRequest;
 import com.lonebytesoft.thetaleclient.api.response.CommonResponse;
 import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;
 import com.lonebytesoft.thetaleclient.service.autohelper.Autohelper;
+import com.lonebytesoft.thetaleclient.service.autohelper.CompanionCareAutohelper;
 import com.lonebytesoft.thetaleclient.service.autohelper.DeathAutohelper;
 import com.lonebytesoft.thetaleclient.service.autohelper.EnergyAutohelper;
 import com.lonebytesoft.thetaleclient.service.autohelper.HealthAutohelper;
@@ -171,6 +172,7 @@ public class WatcherService extends Service {
         autohelpers.add(new IdlenessAutohelper());
         autohelpers.add(new HealthAutohelper());
         autohelpers.add(new EnergyAutohelper());
+        autohelpers.add(new CompanionCareAutohelper());
 
         registerReceiver(notificationDeleteReceiver, new IntentFilter(NotificationManager.BROADCAST_NOTIFICATION_DELETE_ACTION));
         registerReceiver(widgetHelpReceiver, new IntentFilter(AppWidgetHelper.BROADCAST_WIDGET_HELP_ACTION));

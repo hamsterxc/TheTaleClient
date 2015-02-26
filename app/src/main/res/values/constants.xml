@@ -21,6 +21,9 @@
 
     <integer name="settings_autohelp_energy_energy_threshold_default">8</integer>
 
+    <integer name="settings_autohelp_companion_care_health_amount_threshold_default">10</integer>
+    <integer name="settings_autohelp_companion_care_energy_threshold_default">4</integer>
+
     <bool name="settings_autoaction_common_default">false</bool>
 
     <bool name="settings_service_start_boot_default">false</bool>

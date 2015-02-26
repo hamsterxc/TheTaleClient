@@ -110,6 +110,25 @@ public class SettingsFragment extends PreferenceFragment {
                 R.string.settings_summary_autohelp_common_energy_threshold,
                 String.valueOf(PreferencesManager.getAutohelpEnergyEnergyThreshold()));
 
+        // autohelp: companion care
+        setupDependentFields(
+                (CheckBoxPreference) findPreference(getString(R.string.settings_key_autohelp_companion_care)),
+                findPreference(getString(R.string.settings_key_autohelp_companion_care_screen)));
+        setupValueField(
+                findPreference(getString(R.string.settings_key_autohelp_companion_care_health_amount_threshold)),
+                R.string.settings_summary_autohelp_companion_care_health_amount_threshold,
+                String.valueOf(PreferencesManager.getAutohelpCompanionCareHealthAmountThreshold()));
+        setupValueField(
+                findPreference(getString(R.string.settings_key_autohelp_companion_care_energy_threshold)),
+                R.string.settings_summary_autohelp_common_energy_threshold,
+                String.valueOf(PreferencesManager.getAutohelpCompanionCareEnergyThreshold()));
+        final Preference companionCareBonusEnergyThreshold = findPreference(getString(R.string.settings_key_autohelp_companion_care_bonus_energy_threshold));
+        setupDependentFields(
+                (CheckBoxPreference) findPreference(getString(R.string.settings_key_autohelp_companion_care_bonus_energy)),
+                companionCareBonusEnergyThreshold);
+        setupValueField(companionCareBonusEnergyThreshold, R.string.settings_summary_autohelp_common_bonus_energy_threshold,
+                String.valueOf(PreferencesManager.getAutohelpCompanionCareBonusEnergyThreshold()));
+
         // service
         final ListPreference serviceInterval = (ListPreference) findPreference(getString(R.string.settings_key_service_interval));
         serviceInterval.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {

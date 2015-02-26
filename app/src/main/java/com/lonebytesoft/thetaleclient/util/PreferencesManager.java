@@ -382,6 +382,36 @@ public class PreferencesManager {
                 getBoolean(R.bool.settings_autohelp_common_default));
     }
 
+    public static boolean shouldAutohelpCompanionCare() {
+        return sharedPreferences.getBoolean(
+                getString(R.string.settings_key_autohelp_companion_care),
+                getBoolean(R.bool.settings_autohelp_common_default));
+    }
+
+    public static int getAutohelpCompanionCareHealthAmountThreshold() {
+        return getIntegerIfExist(
+                R.string.settings_key_autohelp_companion_care_health_amount_threshold,
+                R.integer.settings_autohelp_companion_care_health_amount_threshold_default);
+    }
+
+    public static int getAutohelpCompanionCareEnergyThreshold() {
+        return getIntegerIfExist(
+                R.string.settings_key_autohelp_companion_care_energy_threshold,
+                R.integer.settings_autohelp_companion_care_energy_threshold_default);
+    }
+
+    public static boolean shouldAutohelpCompanionCareUseBonusEnergy() {
+        return sharedPreferences.getBoolean(
+                getString(R.string.settings_key_autohelp_companion_care_bonus_energy),
+                getBoolean(R.bool.settings_autohelp_common_bonus_energy_default));
+    }
+
+    public static int getAutohelpCompanionCareBonusEnergyThreshold() {
+        return getIntegerIfExist(
+                R.string.settings_key_autohelp_companion_care_bonus_energy_threshold,
+                R.integer.settings_autohelp_common_bonus_energy_threshold_default);
+    }
+
     public static boolean shouldAutoactionCardTake() {
         return sharedPreferences.getBoolean(
                 getString(R.string.settings_key_autoaction_cardtake),
