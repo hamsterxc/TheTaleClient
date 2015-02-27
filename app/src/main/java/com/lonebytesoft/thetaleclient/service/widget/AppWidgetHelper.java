@@ -119,6 +119,8 @@ public class AppWidgetHelper {
     private static void fillRemoteViewsData(final Context context, final RemoteViews remoteViews,
                                             final int width, final int height,
                                             final GameInfoResponse gameInfoResponse) {
+        final boolean isCompanionPresent = gameInfoResponse.account.hero.companionInfo != null;
+
         setRemoteViewsViewVisibility(remoteViews, R.id.app_widget_logo, height >= SIZE_MEDIUM);
 
         final boolean isActionPresent = (width >= SIZE_MEDIUM) && (height >= SIZE_MEDIUM) && !((width == SIZE_MEDIUM) && (height == SIZE_MEDIUM));
@@ -154,7 +156,7 @@ public class AppWidgetHelper {
                 false);
 
         final boolean isHeroBarsCaptionsPresent = width <= SIZE_SMALL;
-        final boolean isHeroBarsValuesPresent = ((width == SIZE_LARGE) || (width == SIZE_HUGE)) && (height == SIZE_MEDIUM);
+        final boolean isHeroBarsValuesPresent = (width >= SIZE_LARGE) && (height == SIZE_MEDIUM);
         setRemoteViewsViewVisibility(remoteViews, R.id.app_widget_hero_bars_progress_health_text, isHeroBarsCaptionsPresent || isHeroBarsValuesPresent);
         setRemoteViewsViewVisibility(remoteViews, R.id.app_widget_hero_bars_progress_experience_text, isHeroBarsCaptionsPresent || isHeroBarsValuesPresent);
         setRemoteViewsViewVisibility(remoteViews, R.id.app_widget_hero_bars_progress_energy_text, isHeroBarsCaptionsPresent || isHeroBarsValuesPresent);
@@ -185,7 +187,7 @@ public class AppWidgetHelper {
                     GameInfoUtils.getEnergyString(gameInfoResponse.account.hero.energy));
         }
 
-        final boolean isCompanionRightPresent = (width >= SIZE_LARGE) && (height == SIZE_MEDIUM);
+        final boolean isCompanionRightPresent = isCompanionPresent && (width >= SIZE_LARGE) && (height == SIZE_MEDIUM);
         setRemoteViewsViewVisibility(remoteViews, R.id.app_widget_companion_right_info, isCompanionRightPresent);
         if(isCompanionRightPresent) {
             remoteViews.setTextViewText(R.id.app_widget_companion_right_level, String.valueOf(gameInfoResponse.account.hero.companionInfo.coherence));
@@ -214,7 +216,7 @@ public class AppWidgetHelper {
             setRemoteViewsHelpAction(context, remoteViews, R.id.app_widget_help_right);
         }
 
-        final boolean isCompanionBelowPresent = (width >= SIZE_LARGE) && (height >= SIZE_LARGE);
+        final boolean isCompanionBelowPresent = isCompanionPresent && (width >= SIZE_LARGE) && (height >= SIZE_LARGE);
         setRemoteViewsViewVisibility(remoteViews, R.id.app_widget_companion_below_info, isCompanionBelowPresent);
         if(isCompanionBelowPresent) {
             remoteViews.setTextViewText(R.id.app_widget_companion_bottom_level, String.valueOf(gameInfoResponse.account.hero.companionInfo.coherence));
