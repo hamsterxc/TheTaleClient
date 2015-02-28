@@ -97,6 +97,7 @@ public class MapFragment extends WrapperFragment {
     private float mapShiftY;
     private boolean isMapInitialPosition = true;
     private boolean shouldMoveToHero = false;
+    private boolean shouldShowMenuOptions = true;
 
     private PositionInfo heroPosition;
     private List<PlaceInfo> places;
@@ -161,6 +162,9 @@ public class MapFragment extends WrapperFragment {
         super.onPrepareOptionsMenu(menu);
 
         menuOptions = UiUtils.getMenuItem(getActivity(), R.id.action_map_actions);
+        if((menuOptions != null) && !shouldShowMenuOptions) {
+            menuOptions.setVisible(false);
+        }
 
         updateMenuItemTitle(R.id.action_map_style, getString(R.string.map_style, PreferencesManager.getMapStyle().getName()));
         updateMenuItemTitle(R.id.action_map_modification, getString(R.string.map_modification, mapModification.getName()));
@@ -294,6 +298,7 @@ public class MapFragment extends WrapperFragment {
     @Override
     public void refresh(final boolean isGlobal) {
         super.refresh(isGlobal);
+        shouldShowMenuOptions = false;
 
         UiUtils.setupFindPlayerContainer(findPlayerContainer, this, this, (MainActivity) getActivity());
 
@@ -569,6 +574,7 @@ public class MapFragment extends WrapperFragment {
                     }
                 });
 
+                shouldShowMenuOptions = true;
                 if(menuOptions != null) {
                     menuOptions.setVisible(true);
                 }
