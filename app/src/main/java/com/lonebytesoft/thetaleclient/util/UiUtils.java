@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.RemoteViews;
 import android.widget.TextView;
 
 import com.lonebytesoft.thetaleclient.DrawerItem;
@@ -215,6 +216,10 @@ public class UiUtils {
         } else {
             return null;
         }
+    }
+
+    public static void setRemoteViewsViewVisibility(final RemoteViews remoteViews, final int viewId, final boolean isVisible) {
+        remoteViews.setViewVisibility(viewId, isVisible ? View.VISIBLE : View.GONE);
     }
 
 }

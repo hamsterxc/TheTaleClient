@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/app_widget"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/app_widget_margin">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="8dp"
+        android:background="@drawable/block_background">
+
+        <LinearLayout
+            android:id="@+id/app_widget_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/game_info_icon_size">
+
+                <ProgressBar
+                    android:id="@+id/app_widget_hero_bars_progress_health"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:progressDrawable="@drawable/game_info_health"/>
+
+                <TextView
+                    android:id="@+id/app_widget_hero_bars_progress_health_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:textColor="@color/common_text"
+                    android:textSize="@dimen/app_widget_bar_text_height"
+                    android:text="@string/game_info_health"
+                    android:ellipsize="marquee"/>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/game_info_icon_size"
+                android:layout_marginTop="4dp">
+
+                <ProgressBar
+                    android:id="@+id/app_widget_hero_bars_progress_experience"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:progressDrawable="@drawable/game_info_experience"/>
+
+                <TextView
+                    android:id="@+id/app_widget_hero_bars_progress_experience_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:textColor="@color/common_text"
+                    android:textSize="@dimen/app_widget_bar_text_height"
+                    android:text="@string/game_info_experience"
+                    android:ellipsize="marquee"/>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/game_info_icon_size"
+                android:layout_marginTop="4dp">
+
+                <ProgressBar
+                    android:id="@+id/app_widget_hero_bars_progress_energy"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:progressDrawable="@drawable/game_info_energy"/>
+
+                <TextView
+                    android:id="@+id/app_widget_hero_bars_progress_energy_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:textColor="@color/common_text"
+                    android:textSize="@dimen/app_widget_bar_text_height"
+                    android:text="@string/game_info_energy"
+                    android:ellipsize="marquee"/>
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/app_widget_progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            style="?android:attr/progressBarStyle"
+            tools:visibility="gone"/>
+
+        <RelativeLayout
+            android:id="@+id/app_widget_error"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/app_widget_error_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:gravity="center"
+                style="?android:attr/textAppearanceSmall"
+                android:textColor="@color/common_error"/>
+
+            <ImageView
+                android:id="@+id/app_widget_error_retry"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:src="@drawable/ic_refresh"
+                android:contentDescription="@string/action_refresh"/>
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+</FrameLayout>

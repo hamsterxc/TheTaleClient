@@ -43,6 +43,10 @@ public class WatcherService extends Service {
 
     public static final String BROADCAST_SERVICE_RESTART_REFRESH_ACTION =
             TheTaleClientApplication.getContext().getPackageName() + ".service.restart.refresh";
+    public static final String BROADCAST_WIDGET_HELP_ACTION =
+            TheTaleClientApplication.getContext().getPackageName() + ".widget.help";
+    public static final String BROADCAST_WIDGET_REFRESH_ACTION =
+            TheTaleClientApplication.getContext().getPackageName() + ".widget.refresh";
 
     private static final double INTERVAL_MULTIPLIER = (Math.sqrt(5.0) + 1) / 2.0; // phi
     private static final long INTERVAL_MAX = 600;
@@ -125,7 +129,7 @@ public class WatcherService extends Service {
     private final BroadcastReceiver widgetHelpReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(final Context context, Intent intent) {
-            if(AppWidgetHelper.BROADCAST_WIDGET_HELP_ACTION.equals(intent.getAction())) {
+            if(BROADCAST_WIDGET_HELP_ACTION.equals(intent.getAction())) {
                 AppWidgetHelper.update(context, DataViewMode.LOADING, null);
                 new AbilityUseRequest(Action.HELP).execute(0, new ApiResponseCallback<CommonResponse>() {
                     @Override
@@ -152,7 +156,7 @@ public class WatcherService extends Service {
     private final BroadcastReceiver refreshWidgetReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(AppWidgetHelper.BROADCAST_WIDGET_REFRESH_ACTION.equals(intent.getAction())) {
+            if(BROADCAST_WIDGET_REFRESH_ACTION.equals(intent.getAction())) {
                 AppWidgetHelper.update(context, DataViewMode.LOADING, null);
                 restartRefresh();
             }
@@ -175,9 +179,9 @@ public class WatcherService extends Service {
         autohelpers.add(new CompanionCareAutohelper());
 
         registerReceiver(notificationDeleteReceiver, new IntentFilter(NotificationManager.BROADCAST_NOTIFICATION_DELETE_ACTION));
-        registerReceiver(widgetHelpReceiver, new IntentFilter(AppWidgetHelper.BROADCAST_WIDGET_HELP_ACTION));
+        registerReceiver(widgetHelpReceiver, new IntentFilter(BROADCAST_WIDGET_HELP_ACTION));
         registerReceiver(restartRefreshReceiver, new IntentFilter(BROADCAST_SERVICE_RESTART_REFRESH_ACTION));
-        registerReceiver(refreshWidgetReceiver, new IntentFilter(AppWidgetHelper.BROADCAST_WIDGET_REFRESH_ACTION));
+        registerReceiver(refreshWidgetReceiver, new IntentFilter(BROADCAST_WIDGET_REFRESH_ACTION));
 
         intervalMultiplierCurrent = 1.0;
     }
