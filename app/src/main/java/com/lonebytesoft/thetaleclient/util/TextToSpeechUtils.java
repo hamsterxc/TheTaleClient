@@ -21,29 +21,56 @@ public class TextToSpeechUtils {
     private static boolean isInitialized = false;
     private static List<String> queue = new ArrayList<>();
 
-    public static void init(final Context context) {
+    public static void init(final Context context, final InitCallback initCallback) {
+        final InitCallback callback;
+        if(initCallback == null) {
+            callback = new InitCallback() {
+                @Override
+                public void onSuccess() {
+                }
+
+                @Override
+                public void onInitError() {
+                }
+
+                @Override
+                public void onLanguageError() {
+                }
+            };
+        } else {
+            callback = initCallback;
+        }
+
         if(!isInitialized || (textToSpeech == null)) {
             textToSpeech = new TextToSpeech(context, new TextToSpeech.OnInitListener() {
                 @Override
-                public void onInit(int status) {
-                    final int initStatus = status;
+                public void onInit(final int status) {
                     new AsyncTask<Void, Void, Void>() {
                         @Override
                         protected Void doInBackground(Void... params) {
-                            if (initStatus == TextToSpeech.SUCCESS) {
-                                if (textToSpeech.setLanguage(new Locale("ru")) >= TextToSpeech.LANG_AVAILABLE) {
+                            if (status == TextToSpeech.SUCCESS) {
+                                final int setLanguageStatus = textToSpeech.setLanguage(new Locale("ru"));
+                                if(setLanguageStatus >= TextToSpeech.LANG_AVAILABLE) {
+                                    callback.onSuccess();
+
                                     isInitialized = true;
                                     for (final String text : queue) {
                                         speakText(text);
                                     }
                                     queue.clear();
+                                } else {
+                                    callback.onLanguageError();
                                 }
+                            } else {
+                                callback.onInitError();
                             }
                             return null;
                         }
                     }.execute();
                 }
             });
+        } else {
+            callback.onSuccess();
         }
     }
 
@@ -85,6 +112,12 @@ public class TextToSpeechUtils {
         }
         queue.clear();
         isInitialized = false;
+    }
+
+    public interface InitCallback {
+        void onSuccess();
+        void onInitError();
+        void onLanguageError();
     }
 
 }

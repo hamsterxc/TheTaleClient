@@ -1,5 +1,6 @@
 package com.lonebytesoft.thetaleclient.fragment;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
@@ -149,50 +150,10 @@ public class SettingsFragment extends PreferenceFragment {
 
         // reading aloud
         final CheckBoxPreference journalReadAloud = (CheckBoxPreference) findPreference(getString(R.string.settings_key_read_aloud_journal));
-        journalReadAloud.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                if(PreferencesManager.isReadAloudConfirmed()) {
-                    return true;
-                } else {
-                    DialogUtils.showConfirmationDialog(getFragmentManager(),
-                            getString(R.string.common_dialog_attention_title),
-                            getString(R.string.game_read_aloud_confirmation),
-                            new Runnable() {
-                                @Override
-                                public void run() {
-                                    PreferencesManager.setReadAloudConfirmed(true);
-                                    journalReadAloud.setChecked(true);
-                                    TextToSpeechUtils.init(TheTaleClientApplication.getContext());
-                                }
-                            });
-                    return false;
-                }
-            }
-        });
+        journalReadAloud.setOnPreferenceChangeListener(getReadAloudPreferenceChangeListener(journalReadAloud));
 
         final CheckBoxPreference diaryReadAloud = (CheckBoxPreference) findPreference(getString(R.string.settings_key_read_aloud_diary));
-        diaryReadAloud.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                if(PreferencesManager.isReadAloudConfirmed()) {
-                    return true;
-                } else {
-                    DialogUtils.showConfirmationDialog(getFragmentManager(),
-                            getString(R.string.common_dialog_attention_title),
-                            getString(R.string.game_read_aloud_confirmation),
-                            new Runnable() {
-                                @Override
-                                public void run() {
-                                    PreferencesManager.setReadAloudConfirmed(true);
-                                    diaryReadAloud.setChecked(true);
-                                    TextToSpeechUtils.init(TheTaleClientApplication.getContext());
-                                }
-                            });
-                    return false;
-                }
-            }
-        });
+        diaryReadAloud.setOnPreferenceChangeListener(getReadAloudPreferenceChangeListener(diaryReadAloud));
     }
 
     private void setupDependentFields(final CheckBoxPreference checkbox, final Preference value) {
@@ -237,6 +198,63 @@ public class SettingsFragment extends PreferenceFragment {
         } else {
             return getResources().getStringArray(entriesResId)[index];
         }
+    }
+
+    private Preference.OnPreferenceChangeListener getReadAloudPreferenceChangeListener(
+            final CheckBoxPreference checkBoxPreference) {
+        return new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                if(PreferencesManager.isReadAloudConfirmed()) {
+                    return true;
+                } else {
+                    DialogUtils.showConfirmationDialog(getFragmentManager(),
+                            getString(R.string.game_read_aloud_caption),
+                            getString(R.string.game_read_aloud_confirmation),
+                            new Runnable() {
+                                @Override
+                                public void run() {
+                                    final ProgressDialog progressDialog = ProgressDialog.show(getActivity(),
+                                            getString(R.string.game_read_aloud_caption),
+                                            getString(R.string.game_read_aloud_wait_message),
+                                            true, false);
+                                    TextToSpeechUtils.init(
+                                            TheTaleClientApplication.getContext(),
+                                            new TextToSpeechUtils.InitCallback() {
+                                                @Override
+                                                public void onSuccess() {
+                                                    PreferencesManager.setReadAloudConfirmed(true);
+                                                    getActivity().runOnUiThread(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            checkBoxPreference.setChecked(true);
+                                                            progressDialog.dismiss();
+                                                        }
+                                                    });
+                                                }
+
+                                                @Override
+                                                public void onInitError() {
+                                                    progressDialog.dismiss();
+                                                    DialogUtils.showMessageDialog(getFragmentManager(),
+                                                            getString(R.string.game_read_aloud_caption),
+                                                            getString(R.string.game_read_aloud_error_init));
+                                                }
+
+                                                @Override
+                                                public void onLanguageError() {
+                                                    progressDialog.dismiss();
+                                                    DialogUtils.showMessageDialog(getFragmentManager(),
+                                                            getString(R.string.game_read_aloud_caption),
+                                                            getString(R.string.game_read_aloud_error_not_supported));
+                                                }
+                                            });
+                                }
+                            });
+                    return false;
+                }
+            }
+        };
     }
 
 }

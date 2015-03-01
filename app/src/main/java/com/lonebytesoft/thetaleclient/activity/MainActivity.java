@@ -101,7 +101,7 @@ public class MainActivity extends ActionBarActivity
         super.onStart();
 
         if(PreferencesManager.isReadAloudConfirmed()) {
-            TextToSpeechUtils.init(TheTaleClientApplication.getContext());
+            TextToSpeechUtils.init(TheTaleClientApplication.getContext(), null);
         }
     }
 

@@ -82,11 +82,16 @@
     <string name="game_info_health">Здоровье</string>
     <string name="game_info_experience">Опыт</string>
     <string name="game_info_energy">Энергия</string>
+    <string name="game_lvlup">\u2b06</string>
+    <string name="game_not_authorized">Отсутствует авторизация в игре. Пожалуйста, войдите в игру заново.</string>
+
+    <string name="game_read_aloud_caption">Чтение вслух</string>
     <string name="game_read_aloud_confirmation">Для чтения текста вслух необходим языковой пакет русского языка.
         Если он не установлен на этом устройстве, пакет будет скачан.
         Это может использовать большое количество интернет-трафика.\nПродолжить?</string>
-    <string name="game_lvlup">\u2b06</string>
-    <string name="game_not_authorized">Отсутствует авторизация в игре. Пожалуйста, войдите в игру заново.</string>
+    <string name="game_read_aloud_error_init">Произошла неизвестная ошибка при инициализации голосового движка.</string>
+    <string name="game_read_aloud_error_not_supported">Языковой пакет русского языка не поддерживается текущим голосовым движком.</string>
+    <string name="game_read_aloud_wait_message">Инициализация голосового движка&#8230;</string>
 
     <string name="game_might_help_critical_chance">Критический эффект помощи: %.2f%%</string>
     <string name="game_might_pvp_effectiveness_bonus">Бонус к эффективности в PvP: %.2f%%</string>
