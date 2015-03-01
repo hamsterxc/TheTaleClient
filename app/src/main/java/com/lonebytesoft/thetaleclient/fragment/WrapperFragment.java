@@ -72,6 +72,10 @@ public class WrapperFragment extends Fragment implements Refreshable, OnscreenSt
     }
 
     public void setError(final String error) {
+        if(!isAdded()) {
+            return;
+        }
+
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
