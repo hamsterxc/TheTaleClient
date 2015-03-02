@@ -25,7 +25,7 @@ import java.util.concurrent.CountDownLatch;
  * @author Hamster
  * @since 27.12.2014
  */
-public class ApiTest extends TestCase {
+public class TestApiMap extends TestCase {
 
     public void testMapCellRequest() {
         final CountDownLatch latch = new CountDownLatch(1);

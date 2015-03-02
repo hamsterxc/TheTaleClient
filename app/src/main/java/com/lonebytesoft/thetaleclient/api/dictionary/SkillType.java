@@ -7,7 +7,8 @@ package com.lonebytesoft.thetaleclient.api.dictionary;
 public enum SkillType {
 
     COMBAT("боевая"),
-    PEACE("небоевая"),
+    PEACE("мирная"),
+    COMPANION("для спутника"),
     ;
 
     private final String code;
