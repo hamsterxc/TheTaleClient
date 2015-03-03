@@ -214,6 +214,10 @@ public class GameFragment extends Fragment implements Refreshable, OnscreenState
             UiUtils.callOnscreenStateChange(fragment, true);
             shouldCallOnscreen = false;
         }
+
+        if(findPlayerContainer != null) {
+            UiUtils.setupFindPlayerContainer(findPlayerContainer, this, this, (MainActivity) getActivity());
+        }
     }
 
     public enum GamePage {

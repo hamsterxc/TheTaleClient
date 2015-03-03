@@ -429,6 +429,15 @@ public class MapFragment extends WrapperFragment {
         }, this).execute();
     }
 
+    @Override
+    public void onOnscreen() {
+        super.onOnscreen();
+
+        if(findPlayerContainer != null) {
+            UiUtils.setupFindPlayerContainer(findPlayerContainer, this, this, (MainActivity) getActivity());
+        }
+    }
+
     private void moveToTile(final int tileX, final int tileY, final float scale) {
         mapViewHelper.setScale(scale);
         final float newCenterX = (tileX + 0.5f) * MapUtils.MAP_TILE_SIZE / MapUtils.getCurrentSizeDenominator() * scale;

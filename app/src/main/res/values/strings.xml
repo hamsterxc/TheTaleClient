@@ -330,4 +330,7 @@
     <string name="settings_title_read_aloud_diary">Читать дневник вслух</string>
     <string name="settings_title_read_aloud_journal">Читать журнал вслух</string>
 
+    <string name="uri_path_prefix_keeper">/accounts/</string>
+    <string name="uri_path_prefix_hero">/game/heroes/</string>
+
 </resources>
