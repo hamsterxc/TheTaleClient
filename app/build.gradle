@@ -57,6 +57,7 @@ android {
 }
 
 dependencies {
+    // latest versions of libraries as of 03.03.2015
     compile 'com.crashlytics.android:crashlytics:1.+'
     compile 'com.android.support:appcompat-v7:21.0.3'
     compile 'com.astuetz:pagerslidingtabstrip:1.0.1' // https://github.com/astuetz/PagerSlidingTabStrip
