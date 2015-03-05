@@ -19,7 +19,9 @@
             android:layout_gravity="center_vertical"
             android:hint="@string/find_player_query_hint"
             android:imeOptions="actionSearch"
-            android:singleLine="true"/>
+            android:singleLine="true"
+            android:textColor="@color/common_text"
+            android:textColorHint="@color/common_disabled"/>
 
         <ImageView
             android:id="@+id/find_player_history"
@@ -61,6 +63,7 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             style="?android:attr/textAppearanceLarge"
+            android:textColor="@color/common_text"
             android:visibility="gone"/>
 
         <TextView
@@ -69,6 +72,7 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             style="?android:attr/textAppearanceMedium"
+            android:textColor="@color/common_text"
             android:visibility="gone"/>
 
     </RelativeLayout>

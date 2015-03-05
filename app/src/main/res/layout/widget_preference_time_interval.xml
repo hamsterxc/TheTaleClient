@@ -24,7 +24,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textAppearance="?android:attr/textAppearanceMedium"/>
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/common_text"/>
 
         <CheckBox
             android:id="@+id/preference_time_interval_enabled"
@@ -46,6 +47,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/common_text"
             android:text="@string/settings_title_notification_settings_nighttime_from"/>
 
         <EditText
@@ -56,6 +58,7 @@
             android:layout_marginLeft="4dp"
             android:gravity="center"
             android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/common_text"
             android:focusable="false"
             android:clickable="true"/>
 
@@ -64,6 +67,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="4dp"
             android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/common_text"
             android:text="@string/settings_title_notification_settings_nighttime_to"/>
 
         <EditText
@@ -74,6 +78,7 @@
             android:layout_marginLeft="4dp"
             android:gravity="center"
             android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/common_text"
             android:focusable="false"
             android:clickable="true"/>
 
