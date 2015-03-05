@@ -110,9 +110,9 @@ public class QuestsFragment extends WrapperFragment {
 
                         final ViewGroup actorsContainer = (ViewGroup) questStepView.findViewById(R.id.quest_actors_container);
                         for(final QuestActorInfo actor : questStep.actors) {
-                            final View actorView = layoutInflater.inflate(R.layout.item_quest_actor, actorsContainer, false);
+                            final View actorView = layoutInflater.inflate(R.layout.item_text, actorsContainer, false);
 
-                            final TextView actorTextView = (TextView) actorView.findViewById(R.id.quest_actor);
+                            final TextView actorTextView = (TextView) actorView.findViewById(R.id.item_text_content);
                             final CharSequence actorText;
                             final Spannable actorName = new SpannableString(actor.name);
                             actorName.setSpan(new StyleSpan(Typeface.BOLD), 0, actorName.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);

@@ -1,6 +1,12 @@
 package com.lonebytesoft.thetaleclient.fragment.dialog;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,39 +39,56 @@ public class ArtifactDialog extends BaseDialog {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.dialog_content_artifact, container, false);
+        final ViewGroup artifactInfoContainer = (ViewGroup) view.findViewById(R.id.dialog_artifact_content);
         final ArtifactInfo artifactInfo = getArguments().getParcelable(PARAM_ARTIFACT_INFO);
 
-        final TextView textArtifactType = (TextView) view.findViewById(R.id.dialog_artifact_type);
-        UiUtils.setText(textArtifactType, artifactInfo.type == ArtifactType.JUNK ? artifactInfo.type.getName() : artifactInfo.rarity.getName());
-        textArtifactType.setTextColor(getResources().getColor(artifactInfo.rarity.getColorResId()));
+        final Spannable artifactType = new SpannableString(artifactInfo.type == ArtifactType.JUNK ?
+                artifactInfo.type.getName() : artifactInfo.rarity.getName());
+        artifactType.setSpan(new ForegroundColorSpan(getResources().getColor(artifactInfo.rarity.getColorResId())),
+                0, artifactType.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        addLine(inflater, artifactInfoContainer, artifactType);
 
         if(artifactInfo.type != ArtifactType.JUNK) {
-            UiUtils.setText(view.findViewById(R.id.dialog_artifact_equipment_type),
-                    getString(R.string.artifact_equipment_type, artifactInfo.type.getName()));
-            UiUtils.setText(view.findViewById(R.id.dialog_artifact_power_physical),
-                    getString(R.string.artifact_power_physical, artifactInfo.powerPhysical));
-            UiUtils.setText(view.findViewById(R.id.dialog_artifact_power_magical),
-                    getString(R.string.artifact_power_magical, artifactInfo.powerMagical));
-            UiUtils.setText(view.findViewById(R.id.dialog_artifact_integrity),
-                    getString(R.string.artifact_integrity, 100.0 * artifactInfo.integrityCurrent / artifactInfo.integrityTotal, artifactInfo.integrityCurrent, artifactInfo.integrityTotal));
-            UiUtils.setText(view.findViewById(R.id.dialog_artifact_rating),
-                    getString(R.string.artifact_rating, artifactInfo.rating));
+            addLine(inflater, artifactInfoContainer,
+                    UiUtils.getInfoItem(getString(R.string.artifact_equipment_type), artifactInfo.type.getName()));
+            addLine(inflater, artifactInfoContainer,
+                    UiUtils.getInfoItem(getString(R.string.artifact_power_physical), String.valueOf(artifactInfo.powerPhysical)));
+            addLine(inflater, artifactInfoContainer,
+                    UiUtils.getInfoItem(getString(R.string.artifact_power_magical), String.valueOf(artifactInfo.powerMagical)));
+            addLine(inflater, artifactInfoContainer,
+                    UiUtils.getInfoItem(getString(R.string.artifact_integrity), getString(R.string.artifact_integrity_value,
+                            100.0 * artifactInfo.integrityCurrent / artifactInfo.integrityTotal,
+                            artifactInfo.integrityCurrent, artifactInfo.integrityTotal)));
+            addLine(inflater, artifactInfoContainer,
+                    UiUtils.getInfoItem(getString(R.string.artifact_rating), String.format("%.2f", artifactInfo.rating)));
         }
 
         boolean showNoEffect = true;
         if(artifactInfo.effect != ArtifactEffect.NO_EFFECT) {
-            UiUtils.setText(view.findViewById(R.id.dialog_artifact_effect), artifactInfo.effect.getDescription());
+            addLine(inflater, artifactInfoContainer, getEffectString(artifactInfo.effect));
             showNoEffect = false;
         }
         if(artifactInfo.effectSpecial != ArtifactEffect.NO_EFFECT) {
-            UiUtils.setText(view.findViewById(R.id.dialog_artifact_effect_special), artifactInfo.effectSpecial.getDescription());
+            addLine(inflater, artifactInfoContainer, getEffectString(artifactInfo.effectSpecial));
             showNoEffect = false;
         }
         if(showNoEffect && (artifactInfo.type != ArtifactType.JUNK)) {
-            UiUtils.setText(view.findViewById(R.id.dialog_artifact_effect), ArtifactEffect.NO_EFFECT.getDescription());
+            addLine(inflater, artifactInfoContainer, getEffectString(ArtifactEffect.NO_EFFECT));
         }
 
         return wrapView(inflater, view, artifactInfo.name);
+    }
+
+    private void addLine(final LayoutInflater layoutInflater, final ViewGroup container, final CharSequence line) {
+        final View lineView = layoutInflater.inflate(R.layout.item_text, container, false);
+        ((TextView) lineView.findViewById(R.id.item_text_content)).setText(line);
+        container.addView(lineView);
+    }
+
+    private Spannable getEffectString(final ArtifactEffect artifactEffect) {
+        final Spannable effect = new SpannableString(artifactEffect.getDescription());
+        effect.setSpan(new StyleSpan(Typeface.ITALIC), 0, effect.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        return effect;
     }
 
 }
