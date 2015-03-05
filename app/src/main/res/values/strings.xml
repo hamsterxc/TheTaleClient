@@ -45,6 +45,7 @@
     <string name="drawer_title_site">Перейти к сайту</string>
 
     <string name="game_bag_drop_item">Выбросить предмет</string>
+    <string name="game_bag_drop_item_confirmation">Из рюкзака будет выброшен самый ненужный предмет.\nПродолжить?</string>
     <string name="game_bag_effects">(Все эффекты)</string>
     <string name="game_bag_effects_title">Все эффекты экипировки</string>
 
@@ -84,6 +85,9 @@
     <string name="game_info_energy">Энергия</string>
     <string name="game_lvlup">\u2b06</string>
     <string name="game_not_authorized">Отсутствует авторизация в игре. Пожалуйста, войдите в игру заново.</string>
+
+    <string name="game_quest_choice">Выбор в квесте</string>
+    <string name="game_quest_choice_confirmation">В квесте \"&lt;b&gt;%1$s&lt;/b&gt;\" будет выбран путь \"&lt;b&gt;%2$s&lt;/b&gt;\".\nПродолжить?</string>
 
     <string name="game_read_aloud_caption">Чтение вслух</string>
     <string name="game_read_aloud_confirmation">Для чтения текста вслух необходим языковой пакет русского языка.

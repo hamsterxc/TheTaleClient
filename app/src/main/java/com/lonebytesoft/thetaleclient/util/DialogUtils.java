@@ -102,7 +102,7 @@ public class DialogUtils {
     }
 
     public static void showConfirmationDialog(final FragmentManager fragmentManager,
-                                              final String caption, final String message,
+                                              final String caption, final CharSequence message,
                                               final String okCaption, final Runnable onOkListener,
                                               final String cancelCaption, final Runnable onCancelListener,
                                               final Runnable onDismissListener) {
@@ -114,7 +114,7 @@ public class DialogUtils {
     }
 
     public static void showConfirmationDialog(final FragmentManager fragmentManager,
-                                              final String caption, final String message,
+                                              final String caption, final CharSequence message,
                                               final Runnable onOkListener) {
         showConfirmationDialog(fragmentManager, caption, message, null, onOkListener, null, null, null);
     }

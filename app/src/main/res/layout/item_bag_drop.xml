@@ -8,4 +8,5 @@
     android:layout_marginTop="2dp"
     android:layout_marginBottom="2dp"
     custom:action_text="@string/game_bag_drop_item"
-    custom:mode="action"/>
+    custom:mode="action"
+    custom:auto_switch_mode="false"/>

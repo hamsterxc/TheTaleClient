@@ -5,4 +5,5 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     style="?android:attr/textAppearanceMedium"
-    android:textColor="@color/common_text"/>
+    android:textColor="@color/common_text"
+    android:background="@drawable/common_clickable_background"/>

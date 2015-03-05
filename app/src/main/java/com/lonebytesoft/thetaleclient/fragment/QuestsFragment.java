@@ -2,6 +2,7 @@ package com.lonebytesoft.thetaleclient.fragment;
 
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -164,21 +165,30 @@ public class QuestsFragment extends WrapperFragment {
                                 choiceTextView.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
-                                        choicesContainer.setVisibility(View.GONE);
-                                        choiceProgress.setVisibility(View.VISIBLE);
-                                        new QuestChoiceRequest().execute(choice.id, RequestUtils.wrapCallback(new ApiResponseCallback<CommonResponse>() {
-                                            @Override
-                                            public void processResponse(CommonResponse response) {
-                                                refresh(false);
-                                            }
+                                        DialogUtils.showConfirmationDialog(
+                                                getChildFragmentManager(),
+                                                getString(R.string.game_quest_choice),
+                                                Html.fromHtml(getString(R.string.game_quest_choice_confirmation, questStep.name, choice.description)),
+                                                new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        choicesContainer.setVisibility(View.GONE);
+                                                        choiceProgress.setVisibility(View.VISIBLE);
+                                                        new QuestChoiceRequest().execute(choice.id, RequestUtils.wrapCallback(new ApiResponseCallback<CommonResponse>() {
+                                                            @Override
+                                                            public void processResponse(CommonResponse response) {
+                                                                refresh(false);
+                                                            }
 
-                                            @Override
-                                            public void processError(CommonResponse response) {
-                                                choicesContainer.setVisibility(View.GONE);
-                                                choiceProgress.setVisibility(View.GONE);
-                                                UiUtils.setText(choiceError, response.errorMessage);
-                                            }
-                                        }, QuestsFragment.this));
+                                                            @Override
+                                                            public void processError(CommonResponse response) {
+                                                                choicesContainer.setVisibility(View.GONE);
+                                                                choiceProgress.setVisibility(View.GONE);
+                                                                UiUtils.setText(choiceError, response.errorMessage);
+                                                            }
+                                                        }, QuestsFragment.this));
+                                                    }
+                                                });
                                     }
                                 });
 

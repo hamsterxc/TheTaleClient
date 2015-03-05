@@ -7,6 +7,7 @@
         android:layout_height="wrap_content"
         style="?android:attr/textAppearanceMedium"
         android:textColor="@color/common_link"
+        android:background="@drawable/common_clickable_background"
         android:visibility="gone"/>
 
     <ProgressBar

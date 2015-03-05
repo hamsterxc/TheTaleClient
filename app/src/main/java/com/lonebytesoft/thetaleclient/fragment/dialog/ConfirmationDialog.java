@@ -29,12 +29,12 @@ public class ConfirmationDialog extends BaseDialog {
     private boolean isOkClicked;
     private boolean isCancelClicked;
 
-    public static ConfirmationDialog newInstance(final String title, final String message) {
+    public static ConfirmationDialog newInstance(final String title, final CharSequence message) {
         final ConfirmationDialog dialog = new ConfirmationDialog();
 
         Bundle args = new Bundle();
         args.putString(PARAM_TITLE, title);
-        args.putString(PARAM_MESSAGE, message);
+        args.putCharSequence(PARAM_MESSAGE, message);
 
         dialog.setArguments(args);
         return dialog;
@@ -60,7 +60,7 @@ public class ConfirmationDialog extends BaseDialog {
 
         isOkClicked = false;
 
-        ((TextView) view.findViewById(R.id.dialog_confirmation_message)).setText(getArguments().getString(PARAM_MESSAGE));
+        ((TextView) view.findViewById(R.id.dialog_confirmation_message)).setText(getArguments().getCharSequence(PARAM_MESSAGE));
 
         final Button okButton = (Button) view.findViewById(R.id.dialog_confirmation_ok);
         if(okCaption != null) {
