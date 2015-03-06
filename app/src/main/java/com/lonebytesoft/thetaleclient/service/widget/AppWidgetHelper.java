@@ -65,7 +65,7 @@ public class AppWidgetHelper {
         UiUtils.setRemoteViewsViewVisibility(remoteViews, R.id.app_widget_progress, viewMode == DataViewMode.LOADING);
         UiUtils.setRemoteViewsViewVisibility(remoteViews, R.id.app_widget_error, viewMode == DataViewMode.ERROR);
 
-        remoteViews.setOnClickPendingIntent(R.id.app_widget, UiUtils.getApplicationIntent(context));
+        remoteViews.setOnClickPendingIntent(R.id.app_widget, UiUtils.getApplicationIntent(context, null, true));
 
         switch(viewMode) {
             case DATA:

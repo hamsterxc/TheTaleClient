@@ -52,7 +52,7 @@ public class NewMessagesNotifier implements Notifier {
 
     @Override
     public PendingIntent getPendingIntent(Context context) {
-        return UiUtils.getApplicationIntent(context, GameFragment.GamePage.GAME_INFO);
+        return UiUtils.getApplicationIntent(context, GameFragment.GamePage.GAME_INFO, true);
     }
 
     @Override

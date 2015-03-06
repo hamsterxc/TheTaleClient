@@ -45,6 +45,8 @@ public class MainActivity extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
     public static final String KEY_GAME_TAB_INDEX = "KEY_GAME_TAB_INDEX";
+    public static final String KEY_SHOULD_RESET_WATCHING_ACCOUNT = "KEY_SHOULD_RESET_WATCHING_ACCOUNT";
+
     private static final String KEY_DRAWER_TAB_INDEX = "KEY_DRAWER_TAB_INDEX";
 
     private static final String URL_GAME = "http://the-tale.org/game/?action=the-tale-client";
@@ -115,11 +117,19 @@ public class MainActivity extends ActionBarActivity
             finish();
         }
 
+        final Intent intent = getIntent();
         int tabIndex = -1;
-        if((getIntent() != null) && getIntent().hasExtra(KEY_GAME_TAB_INDEX)) {
-            onNavigationDrawerItemSelected(DrawerItem.GAME);
-            tabIndex = getIntent().getIntExtra(KEY_GAME_TAB_INDEX, GameFragment.GamePage.GAME_INFO.ordinal());
-            getIntent().removeExtra(KEY_GAME_TAB_INDEX);
+        if(intent != null) {
+            if(intent.hasExtra(KEY_GAME_TAB_INDEX)) {
+                onNavigationDrawerItemSelected(DrawerItem.GAME);
+                tabIndex = intent.getIntExtra(KEY_GAME_TAB_INDEX, GameFragment.GamePage.GAME_INFO.ordinal());
+                intent.removeExtra(KEY_GAME_TAB_INDEX);
+            }
+
+            if(intent.getBooleanExtra(KEY_SHOULD_RESET_WATCHING_ACCOUNT, false)) {
+                PreferencesManager.setWatchingAccount(0, null);
+                intent.removeExtra(KEY_SHOULD_RESET_WATCHING_ACCOUNT);
+            }
         }
 
         final Fragment fragment = getSupportFragmentManager().findFragmentByTag(currentItem.getFragmentTag());

@@ -47,7 +47,7 @@ public class QuestChoiceNotifier implements Notifier {
 
     @Override
     public PendingIntent getPendingIntent(Context context) {
-        return UiUtils.getApplicationIntent(context, GameFragment.GamePage.QUESTS);
+        return UiUtils.getApplicationIntent(context, GameFragment.GamePage.QUESTS, true);
     }
 
     @Override

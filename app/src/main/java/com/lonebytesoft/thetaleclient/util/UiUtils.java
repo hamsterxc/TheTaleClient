@@ -119,21 +119,21 @@ public class UiUtils {
         }
     }
 
-    public static PendingIntent getApplicationIntent(final Context context, final GameFragment.GamePage gamePage) {
+    public static PendingIntent getApplicationIntent(final Context context, final GameFragment.GamePage gamePage,
+                                                     final boolean shouldResetWatchingAccount) {
         final Intent intent = new Intent(context, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
         if(gamePage != null) {
             intent.putExtra(MainActivity.KEY_GAME_TAB_INDEX, gamePage.ordinal());
         }
+        intent.putExtra(MainActivity.KEY_SHOULD_RESET_WATCHING_ACCOUNT, shouldResetWatchingAccount);
+
         return PendingIntent.getActivity(
                 context,
                 (int) System.currentTimeMillis(),
                 intent,
                 PendingIntent.FLAG_CANCEL_CURRENT);
-    }
-
-    public static PendingIntent getApplicationIntent(final Context context) {
-        return getApplicationIntent(context, null);
     }
 
     // TODO plurals in "values" folder are treated as English, not Russian
