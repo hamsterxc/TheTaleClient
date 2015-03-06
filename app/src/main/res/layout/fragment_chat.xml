@@ -5,31 +5,17 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <ScrollView
-        android:id="@+id/chat_scroll"
+    <ListView
+        android:id="@+id/chat_list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
-
-        <LinearLayout
-            android:id="@+id/chat_outer_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <LinearLayout
-                android:id="@+id/chat_container"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:orientation="vertical"
-                android:background="@drawable/block_background"/>
-
-            <View style="@style/Padder"/>
-
-        </LinearLayout>
-
-    </ScrollView>
+        android:layout_weight="1"
+        android:layout_margin="8dp"
+        android:padding="8dp"
+        android:stackFromBottom="true"
+        android:transcriptMode="normal"
+        android:divider="@null"
+        android:background="@drawable/block_background"/>
 
     <TextView
         android:id="@+id/chat_error_send"

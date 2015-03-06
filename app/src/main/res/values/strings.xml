@@ -22,9 +22,11 @@
     <string name="artifact_integrity_value">%1$.2f%% (%2$d из %3$d)</string>
     <string name="artifact_rating">полезность</string>
 
+    <string name="chat_copy">Копировать</string>
     <string name="chat_error">Произошла ошибка при обновлении чата. Пожалуйста, обновите страницу.</string>
     <string name="chat_error_send">Произошла ошибка при отправке сообщения. Попробуйте еще раз.</string>
     <string name="chat_message_hr">&lt;hr&gt;</string>
+    <string name="chat_quote">Цитировать</string>
     <string name="chat_send">Отправить</string>
 
     <string name="common_dialog_attention_title">Внимание</string>
