@@ -16,10 +16,12 @@ import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.style.StrikethroughSpan;
 import android.view.ContextMenu;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
@@ -87,9 +89,8 @@ public class ChatFragment extends WrapperFragment {
 
         sendContainer = rootView.findViewById(R.id.chat_send_container);
         errorSend = rootView.findViewById(R.id.chat_error_send);
-        textMessage = (EditText) rootView.findViewById(R.id.chat_message);
-        chatSend = rootView.findViewById(R.id.chat_send);
 
+        chatSend = rootView.findViewById(R.id.chat_send);
         chatSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -122,6 +123,19 @@ public class ChatFragment extends WrapperFragment {
                             errorSend.setVisibility(View.VISIBLE);
                         }
                     });
+                }
+            }
+        });
+
+        textMessage = (EditText) rootView.findViewById(R.id.chat_message);
+        textMessage.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if(actionId == EditorInfo.IME_ACTION_SEND) {
+                    chatSend.performClick();
+                    return true;
+                } else {
+                    return false;
                 }
             }
         });
