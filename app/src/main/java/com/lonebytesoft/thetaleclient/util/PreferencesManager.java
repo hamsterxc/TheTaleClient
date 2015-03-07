@@ -35,7 +35,7 @@ public class PreferencesManager {
     private static final String KEY_READ_ALOUD_CONFIRMED = "KEY_READ_ALOUD_CONFIRMED";
     private static final String KEY_LAST_DIARY_ENTRY_READ = "KEY_LAST_DIARY_ENTRY_READ";
     private static final String KEY_DESIRED_GAME_PAGE = "KEY_DESIRED_GAME_PAGE";
-    private static final String KEY_WIDGET_ENABLED = "KEY_WIDGET_ENABLED";
+    private static final String KEY_WIDGETS_COUNT = "KEY_WIDGETS_COUNT";
     private static final String KEY_SHOULD_EXIT = "KEY_SHOULD_EXIT";
     private static final String KEY_WATCHING_ACCOUNT_ID = "KEY_WATCHING_ACCOUNT_ID";
     private static final String KEY_WATCHING_ACCOUNT_NAME = "KEY_WATCHING_ACCOUNT_NAME";
@@ -585,14 +585,25 @@ public class PreferencesManager {
         return sharedPreferences.getString(KEY_STATIC_CONTENT_URL, null);
     }
 
-    public static void setWidgetEnabled(final boolean isEnabled) {
+    public static void onWidgetEnabled() {
         sharedPreferences.edit()
-                .putBoolean(KEY_WIDGET_ENABLED, isEnabled)
+                .putInt(KEY_WIDGETS_COUNT, getWidgetsCount() + 1)
                 .commit();
     }
 
-    public static boolean isWidgetEnabled() {
-        return sharedPreferences.getBoolean(KEY_WIDGET_ENABLED, false);
+    public static void onWidgetDisabled() {
+        final int widgetsCount = getWidgetsCount();
+        sharedPreferences.edit()
+                .putInt(KEY_WIDGETS_COUNT, widgetsCount > 0 ? widgetsCount - 1 : 0)
+                .commit();
+    }
+
+    private static int getWidgetsCount() {
+        return sharedPreferences.getInt(KEY_WIDGETS_COUNT, 0);
+    }
+
+    public static boolean isWidgetPresent() {
+        return getWidgetsCount() > 0;
     }
 
     public static void setShouldExit(final boolean shouldExit) {
@@ -708,7 +719,7 @@ public class PreferencesManager {
 
     public static boolean isWatcherEnabled() {
         return
-                isWidgetEnabled()
+                isWidgetPresent()
                 || shouldNotifyDeath()
                 || shouldNotifyIdleness()
                 || shouldNotifyHealth()

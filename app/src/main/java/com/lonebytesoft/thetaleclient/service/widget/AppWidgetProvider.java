@@ -4,6 +4,8 @@ import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.os.Bundle;
 
+import com.lonebytesoft.thetaleclient.R;
+import com.lonebytesoft.thetaleclient.service.WatcherService;
 import com.lonebytesoft.thetaleclient.util.PreferencesManager;
 
 /**
@@ -14,7 +16,11 @@ public class AppWidgetProvider extends android.appwidget.AppWidgetProvider {
 
     @Override
     public void onUpdate(final Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-        AppWidgetHelper.updateWithRequest(context);
+        if(!WatcherService.isRunning() && !PreferencesManager.shouldServiceStartBoot()) {
+            AppWidgetHelper.updateWithError(context, context.getString(R.string.app_widget_not_updated));
+        } else {
+            AppWidgetHelper.updateWithRequest(context);
+        }
     }
 
     @Override
@@ -24,12 +30,12 @@ public class AppWidgetProvider extends android.appwidget.AppWidgetProvider {
 
     @Override
     public void onEnabled(Context context) {
-        PreferencesManager.setWidgetEnabled(true);
+        PreferencesManager.onWidgetEnabled();
     }
 
     @Override
     public void onDisabled(Context context) {
-        PreferencesManager.setWidgetEnabled(false);
+        PreferencesManager.onWidgetDisabled();
     }
 
 }

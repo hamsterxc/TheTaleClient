@@ -48,6 +48,8 @@ public class WatcherService extends Service {
     public static final String BROADCAST_WIDGET_REFRESH_ACTION =
             TheTaleClientApplication.getContext().getPackageName() + ".widget.refresh";
 
+    private static boolean isRunning = false;
+
     private static final double INTERVAL_MULTIPLIER = (Math.sqrt(5.0) + 1) / 2.0; // phi
     private static final long INTERVAL_MAX = 600;
     private double intervalMultiplierCurrent;
@@ -188,6 +190,7 @@ public class WatcherService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        isRunning = true;
         restartRefresh();
         return START_STICKY;
     }
@@ -212,6 +215,10 @@ public class WatcherService extends Service {
     private void restartRefresh() {
         handler.removeCallbacks(refreshRunnable);
         refreshRunnable.run();
+    }
+
+    public static boolean isRunning() {
+        return isRunning;
     }
 
     @Override
