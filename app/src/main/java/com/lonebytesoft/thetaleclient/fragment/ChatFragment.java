@@ -84,6 +84,9 @@ public class ChatFragment extends WrapperFragment {
 
         chatMessagesList = (ListView) rootView.findViewById(R.id.chat_list);
         registerForContextMenu(chatMessagesList);
+        chatMessagesList.addHeaderView(inflater.inflate(R.layout.item_chat_header, chatMessagesList, false), null, false);
+        chatMessagesList.addFooterView(inflater.inflate(R.layout.item_chat_footer, chatMessagesList, false), null, false);
+
         chatAdapter = new ChatAdapter(inflater);
         chatMessagesList.setAdapter(chatAdapter);
 
@@ -159,7 +162,11 @@ public class ChatFragment extends WrapperFragment {
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         final AdapterView.AdapterContextMenuInfo contextMenuInfo = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        final ChatMessage chatMessage = (ChatMessage) chatAdapter.getItem(contextMenuInfo.position);
+        final int position = contextMenuInfo.position - chatMessagesList.getHeaderViewsCount();
+        if(position < 0) {
+            return super.onContextItemSelected(item);
+        }
+        final ChatMessage chatMessage = (ChatMessage) chatAdapter.getItem(position);
         final String message = Html.fromHtml(chatMessage.message).toString();
 
         switch(item.getItemId()) {

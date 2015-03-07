@@ -11,6 +11,8 @@
     <dimen name="drawer_item_height">48dp</dimen>
     <dimen name="drawer_width">240dp</dimen>
     <dimen name="tab_strip_height">48dp</dimen>
+    <dimen name="block_background_border">1dp</dimen>
+    <dimen name="block_background_corner">8dp</dimen>
 
     <dimen name="dialog_padding">8dp</dimen>
     <dimen name="dialog_padding_big">16dp</dimen>

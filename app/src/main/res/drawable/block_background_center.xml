@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:top="-2dp" android:bottom="-2dp">
         <shape>
-            <corners android:radius="@dimen/block_background_corner"/>
             <solid android:color="@color/common_background"/>
             <stroke android:width="@dimen/block_background_border" android:color="@color/common_delimiter"/>
         </shape>
     </item>
-</selector>
+</layer-list>
