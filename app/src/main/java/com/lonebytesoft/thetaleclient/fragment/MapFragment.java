@@ -28,6 +28,7 @@ import com.lonebytesoft.thetaleclient.TheTaleClientApplication;
 import com.lonebytesoft.thetaleclient.activity.MainActivity;
 import com.lonebytesoft.thetaleclient.api.ApiResponseCallback;
 import com.lonebytesoft.thetaleclient.api.CommonResponseCallback;
+import com.lonebytesoft.thetaleclient.api.HttpMethod;
 import com.lonebytesoft.thetaleclient.api.cache.prerequisite.InfoPrerequisiteRequest;
 import com.lonebytesoft.thetaleclient.api.cache.prerequisite.PrerequisiteRequest;
 import com.lonebytesoft.thetaleclient.api.dictionary.MapCellType;
@@ -52,6 +53,11 @@ import com.lonebytesoft.thetaleclient.util.RequestUtils;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
 import com.lonebytesoft.thetaleclient.util.map.MapModification;
 import com.lonebytesoft.thetaleclient.util.map.MapUtils;
+
+import org.apache.http.HttpRequest;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.impl.client.DefaultHttpClient;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -345,10 +351,22 @@ public class MapFragment extends WrapperFragment {
 
                                         final MenuItem actionMapModification = UiUtils.getMenuItem(getActivity(), R.id.action_map_modification);
                                         if(actionMapModification != null) {
+                                            actionMapModification.setVisible(false);
                                             if(MapUtils.getCurrentSizeDenominator() == 1) {
-                                                actionMapModification.setVisible(true);
+                                                new Thread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        final HttpClient httpClient = new DefaultHttpClient();
+                                                        final HttpRequest httpRequest = HttpMethod.GET.getHttpRequest(
+                                                                MapTerrainRequest.URL_BASE, null, null);
+                                                        try {
+                                                            httpClient.execute((HttpUriRequest) httpRequest);
+                                                            actionMapModification.setVisible(true);
+                                                        } catch(IOException ignored) {
+                                                        }
+                                                    }
+                                                }).start();
                                             } else {
-                                                actionMapModification.setVisible(false);
                                                 if(!UiUtils.getMainActivity(MapFragment.this).isPaused()) {
                                                     DialogUtils.showMessageDialog(getChildFragmentManager(),
                                                             getString(R.string.common_dialog_attention_title),

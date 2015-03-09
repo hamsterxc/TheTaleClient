@@ -14,7 +14,8 @@ import org.json.JSONException;
  */
 public class MapTerrainRequest extends CommonRequest {
 
-    private static final String URL = "http://lonebytesoft.com:15934/the-tale/map_data.js";
+    public static final String URL_BASE = "http://lonebytesoft.com:15934/";
+    private static final String URL = URL_BASE + "the-tale/map_data.js";
 
     public void execute(final CommonResponseCallback<MapTerrainResponse, String> callback) {
         execute(URL, HttpMethod.GET, null, null, new CommonResponseCallback<String, Throwable>() {
