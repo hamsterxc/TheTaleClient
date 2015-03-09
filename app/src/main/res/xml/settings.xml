@@ -318,4 +318,21 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory
+        android:title="@string/settings_misc">
+
+        <CheckBoxPreference
+            android:layout="@layout/widget_preference_container"
+            android:key="@string/settings_key_misc_confirmation_bag_drop"
+            android:title="@string/settings_title_misc_confirmation_bag_drop"
+            android:defaultValue="@bool/settings_misc_confirmation_default"/>
+
+        <CheckBoxPreference
+            android:layout="@layout/widget_preference_container"
+            android:key="@string/settings_key_misc_confirmation_quest_choice"
+            android:title="@string/settings_title_misc_confirmation_quest_choice"
+            android:defaultValue="@bool/settings_misc_confirmation_default"/>
+
+    </PreferenceCategory>
+
 </PreferenceScreen>

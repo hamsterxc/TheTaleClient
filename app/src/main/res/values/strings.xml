@@ -338,6 +338,12 @@
     <string name="settings_title_read_aloud_diary">Читать дневник вслух</string>
     <string name="settings_title_read_aloud_journal">Читать журнал вслух</string>
 
+    <string name="settings_misc">Разное</string>
+    <string name="settings_key_misc_confirmation_bag_drop">KEY_SETTINGS_MISC_CONFIRMATION_BAG_DROP</string>
+    <string name="settings_key_misc_confirmation_quest_choice">KEY_SETTINGS_MISC_CONFIRMATION_QUEST_CHOICE</string>
+    <string name="settings_title_misc_confirmation_bag_drop">Подтверждение при выбрасывании вещи</string>
+    <string name="settings_title_misc_confirmation_quest_choice">Подтверждение при выборе в квесте</string>
+
     <string name="uri_path_prefix_keeper">/accounts/</string>
     <string name="uri_path_prefix_hero">/game/heroes/</string>
 

@@ -480,6 +480,18 @@ public class PreferencesManager {
                 .commit();
     }
 
+    public static boolean isConfirmationBagDropEnabled() {
+        return sharedPreferences.getBoolean(
+                getString(R.string.settings_key_misc_confirmation_bag_drop),
+                getBoolean(R.bool.settings_misc_confirmation_default));
+    }
+
+    public static boolean isConfirmationQuestChoiceEnabled() {
+        return sharedPreferences.getBoolean(
+                getString(R.string.settings_key_misc_confirmation_quest_choice),
+                getBoolean(R.bool.settings_misc_confirmation_default));
+    }
+
     public static MapStyle getMapStyle() {
         return MapStyle.values()[sharedPreferences.getInt(KEY_MAP_STYLE, 0)];
     }

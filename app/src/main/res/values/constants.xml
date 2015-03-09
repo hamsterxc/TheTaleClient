@@ -41,4 +41,6 @@
 
     <bool name="settings_read_aloud_default">false</bool>
 
+    <bool name="settings_misc_confirmation_default">false</bool>
+
 </resources>

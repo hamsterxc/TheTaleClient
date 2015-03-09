@@ -165,30 +165,20 @@ public class QuestsFragment extends WrapperFragment {
                                 choiceTextView.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
-                                        DialogUtils.showConfirmationDialog(
-                                                getChildFragmentManager(),
-                                                getString(R.string.game_quest_choice),
-                                                Html.fromHtml(getString(R.string.game_quest_choice_confirmation, questStep.name, choice.description)),
-                                                new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        choicesContainer.setVisibility(View.GONE);
-                                                        choiceProgress.setVisibility(View.VISIBLE);
-                                                        new QuestChoiceRequest().execute(choice.id, RequestUtils.wrapCallback(new ApiResponseCallback<CommonResponse>() {
-                                                            @Override
-                                                            public void processResponse(CommonResponse response) {
-                                                                refresh(false);
-                                                            }
-
-                                                            @Override
-                                                            public void processError(CommonResponse response) {
-                                                                choicesContainer.setVisibility(View.GONE);
-                                                                choiceProgress.setVisibility(View.GONE);
-                                                                UiUtils.setText(choiceError, response.errorMessage);
-                                                            }
-                                                        }, QuestsFragment.this));
-                                                    }
-                                                });
+                                        if(PreferencesManager.isConfirmationQuestChoiceEnabled()) {
+                                            DialogUtils.showConfirmationDialog(
+                                                    getChildFragmentManager(),
+                                                    getString(R.string.game_quest_choice),
+                                                    Html.fromHtml(getString(R.string.game_quest_choice_confirmation, questStep.name, choice.description)),
+                                                    new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            selectQuestStep(questStepView, choice.id);
+                                                        }
+                                                    });
+                                        } else {
+                                            selectQuestStep(questStepView, choice.id);
+                                        }
                                     }
                                 });
 
@@ -241,6 +231,28 @@ public class QuestsFragment extends WrapperFragment {
         } else {
             new GameInfoRequest(true).execute(watchingAccountId, callback, true);
         }
+    }
+
+    private void selectQuestStep(final View questStepView, final String choiceId) {
+        final View choicesContainer = questStepView.findViewById(R.id.quest_choices_container);
+        final View choiceProgress = questStepView.findViewById(R.id.quest_choice_progress);
+
+        choicesContainer.setVisibility(View.GONE);
+        choiceProgress.setVisibility(View.VISIBLE);
+
+        new QuestChoiceRequest().execute(choiceId, RequestUtils.wrapCallback(new ApiResponseCallback<CommonResponse>() {
+            @Override
+            public void processResponse(CommonResponse response) {
+                refresh(false);
+            }
+
+            @Override
+            public void processError(CommonResponse response) {
+                choicesContainer.setVisibility(View.GONE);
+                choiceProgress.setVisibility(View.GONE);
+                UiUtils.setText(questStepView.findViewById(R.id.quest_choice_error), response.errorMessage);
+            }
+        }, QuestsFragment.this));
     }
 
     @Override

@@ -173,27 +173,20 @@ public class EquipmentFragment extends WrapperFragment {
                                     dropActionView.setActionClickListener(new Runnable() {
                                         @Override
                                         public void run() {
-                                            DialogUtils.showConfirmationDialog(
-                                                    getChildFragmentManager(),
-                                                    getString(R.string.game_bag_drop_item),
-                                                    getString(R.string.game_bag_drop_item_confirmation),
-                                                    new Runnable() {
-                                                        @Override
-                                                        public void run() {
-                                                            dropActionView.setMode(RequestActionView.Mode.LOADING);
-                                                            new AbilityUseRequest(Action.DROP_ITEM).execute(0, RequestUtils.wrapCallback(new ApiResponseCallback<CommonResponse>() {
-                                                                @Override
-                                                                public void processResponse(CommonResponse response) {
-                                                                    refresh(false);
-                                                                }
-
-                                                                @Override
-                                                                public void processError(CommonResponse response) {
-                                                                    dropActionView.setErrorText(response.errorMessage);
-                                                                }
-                                                            }, EquipmentFragment.this));
-                                                        }
-                                                    });
+                                            if(PreferencesManager.isConfirmationBagDropEnabled()) {
+                                                DialogUtils.showConfirmationDialog(
+                                                        getChildFragmentManager(),
+                                                        getString(R.string.game_bag_drop_item),
+                                                        getString(R.string.game_bag_drop_item_confirmation),
+                                                        new Runnable() {
+                                                            @Override
+                                                            public void run() {
+                                                                dropItem(dropActionView);
+                                                            }
+                                                        });
+                                            } else {
+                                                dropItem(dropActionView);
+                                            }
                                         }
                                     });
                                 } else {
@@ -299,6 +292,21 @@ public class EquipmentFragment extends WrapperFragment {
             }
         }
 
+    }
+
+    private void dropItem(final RequestActionView dropActionView) {
+        dropActionView.setMode(RequestActionView.Mode.LOADING);
+        new AbilityUseRequest(Action.DROP_ITEM).execute(0, RequestUtils.wrapCallback(new ApiResponseCallback<CommonResponse>() {
+            @Override
+            public void processResponse(CommonResponse response) {
+                refresh(false);
+            }
+
+            @Override
+            public void processError(CommonResponse response) {
+                dropActionView.setErrorText(response.errorMessage);
+            }
+        }, EquipmentFragment.this));
     }
 
 }
