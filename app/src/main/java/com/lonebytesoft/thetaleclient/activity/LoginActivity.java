@@ -1,7 +1,6 @@
 package com.lonebytesoft.thetaleclient.activity;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -17,19 +16,16 @@ import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.api.ApiResponseCallback;
 import com.lonebytesoft.thetaleclient.api.ApiResponseStatus;
 import com.lonebytesoft.thetaleclient.api.cache.RequestCacheManager;
-import com.lonebytesoft.thetaleclient.api.request.AccountInfoRequest;
 import com.lonebytesoft.thetaleclient.api.request.AuthRequest;
 import com.lonebytesoft.thetaleclient.api.request.GameInfoRequest;
 import com.lonebytesoft.thetaleclient.api.request.InfoRequest;
 import com.lonebytesoft.thetaleclient.api.request.ThirdPartyAuthRequest;
 import com.lonebytesoft.thetaleclient.api.request.ThirdPartyAuthStateRequest;
-import com.lonebytesoft.thetaleclient.api.response.AccountInfoResponse;
 import com.lonebytesoft.thetaleclient.api.response.AuthResponse;
 import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;
 import com.lonebytesoft.thetaleclient.api.response.InfoResponse;
 import com.lonebytesoft.thetaleclient.api.response.ThirdPartyAuthResponse;
 import com.lonebytesoft.thetaleclient.api.response.ThirdPartyAuthStateResponse;
-import com.lonebytesoft.thetaleclient.fragment.GameFragment;
 import com.lonebytesoft.thetaleclient.service.WatcherService;
 import com.lonebytesoft.thetaleclient.service.widget.AppWidgetHelper;
 import com.lonebytesoft.thetaleclient.util.DialogUtils;
@@ -364,38 +360,6 @@ public class LoginActivity extends FragmentActivity {
 
         final Intent intent = new Intent(this, MainActivity.class);
         intent.putExtras(getIntent());
-
-        final Uri data = getIntent().getData();
-        if(data != null) {
-            final int accountId;
-            if(data.getPath().contains(getString(R.string.uri_path_prefix_keeper))) {
-                intent.putExtra(MainActivity.KEY_GAME_TAB_INDEX, GameFragment.GamePage.PROFILE.ordinal());
-                accountId = Integer.decode(data.getLastPathSegment());
-            } else if(data.getPath().contains(getString(R.string.uri_path_prefix_hero))) {
-                intent.putExtra(MainActivity.KEY_GAME_TAB_INDEX, GameFragment.GamePage.GAME_INFO.ordinal());
-                accountId = Integer.decode(data.getLastPathSegment());
-            } else {
-                accountId = 0;
-            }
-
-            if(accountId != 0) {
-                new AccountInfoRequest(accountId).execute(new ApiResponseCallback<AccountInfoResponse>() {
-                    @Override
-                    public void processResponse(AccountInfoResponse response) {
-                        PreferencesManager.setWatchingAccount(accountId, response.name);
-                        startActivity(intent);
-                        finish();
-                    }
-
-                    @Override
-                    public void processError(AccountInfoResponse response) {
-                        startActivity(intent);
-                        finish();
-                    }
-                });
-                return;
-            }
-        }
 
         startActivity(intent);
         finish();

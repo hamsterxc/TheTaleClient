@@ -344,7 +344,4 @@
     <string name="settings_title_misc_confirmation_bag_drop">Подтверждение при выбрасывании вещи</string>
     <string name="settings_title_misc_confirmation_quest_choice">Подтверждение при выборе в квесте</string>
 
-    <string name="uri_path_prefix_keeper">/accounts/</string>
-    <string name="uri_path_prefix_hero">/game/heroes/</string>
-
 </resources>
