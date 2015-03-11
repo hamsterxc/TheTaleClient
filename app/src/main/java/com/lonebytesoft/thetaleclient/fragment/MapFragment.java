@@ -96,6 +96,7 @@ public class MapFragment extends WrapperFragment {
     private ImageView mapView;
     private PhotoViewAttacher mapViewHelper;
     private MenuItem menuOptions;
+    private MenuItem menuMapModification;
     private View findPlayerContainer;
 
     private float mapZoom;
@@ -163,6 +164,24 @@ public class MapFragment extends WrapperFragment {
         }
     }
 
+    private void updateMenuMapModificationVisibility() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final HttpClient httpClient = new DefaultHttpClient();
+                final HttpRequest httpRequest = HttpMethod.GET.getHttpRequest(
+                        MapTerrainRequest.URL_BASE, null, null);
+                try {
+                    httpClient.execute((HttpUriRequest) httpRequest);
+                    if(menuMapModification != null) {
+                        menuMapModification.setVisible(true);
+                    }
+                } catch(IOException ignored) {
+                }
+            }
+        }).start();
+    }
+
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
@@ -171,6 +190,9 @@ public class MapFragment extends WrapperFragment {
         if((menuOptions != null) && !shouldShowMenuOptions) {
             menuOptions.setVisible(false);
         }
+
+        menuMapModification = UiUtils.getMenuItem(getActivity(), R.id.action_map_modification);
+        updateMenuMapModificationVisibility();
 
         updateMenuItemTitle(R.id.action_map_style, getString(R.string.map_style, PreferencesManager.getMapStyle().getName()));
         updateMenuItemTitle(R.id.action_map_modification, getString(R.string.map_modification, mapModification.getName()));
@@ -351,21 +373,8 @@ public class MapFragment extends WrapperFragment {
 
                                         final MenuItem actionMapModification = UiUtils.getMenuItem(getActivity(), R.id.action_map_modification);
                                         if(actionMapModification != null) {
-                                            actionMapModification.setVisible(false);
                                             if(MapUtils.getCurrentSizeDenominator() == 1) {
-                                                new Thread(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        final HttpClient httpClient = new DefaultHttpClient();
-                                                        final HttpRequest httpRequest = HttpMethod.GET.getHttpRequest(
-                                                                MapTerrainRequest.URL_BASE, null, null);
-                                                        try {
-                                                            httpClient.execute((HttpUriRequest) httpRequest);
-                                                            actionMapModification.setVisible(true);
-                                                        } catch(IOException ignored) {
-                                                        }
-                                                    }
-                                                }).start();
+                                                updateMenuMapModificationVisibility();
                                             } else {
                                                 if(!UiUtils.getMainActivity(MapFragment.this).isPaused()) {
                                                     DialogUtils.showMessageDialog(getChildFragmentManager(),
