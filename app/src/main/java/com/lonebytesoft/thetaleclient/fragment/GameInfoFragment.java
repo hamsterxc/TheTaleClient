@@ -81,6 +81,7 @@ public class GameInfoFragment extends WrapperFragment {
     private TextView textHealth;
     private ProgressBar progressExperience;
     private TextView textExperience;
+    private View blockEnergy;
     private ProgressBar progressEnergy;
     private TextView textEnergy;
 
@@ -126,6 +127,7 @@ public class GameInfoFragment extends WrapperFragment {
         textHealth = (TextView) rootView.findViewById(R.id.game_info_health_text);
         progressExperience = (ProgressBar) rootView.findViewById(R.id.game_info_experience_progress);
         textExperience = (TextView) rootView.findViewById(R.id.game_info_experience_text);
+        blockEnergy = rootView.findViewById(R.id.game_info_energy);
         progressEnergy = (ProgressBar) rootView.findViewById(R.id.game_info_energy_progress);
         textEnergy = (TextView) rootView.findViewById(R.id.game_info_energy_text);
 
@@ -250,13 +252,15 @@ public class GameInfoFragment extends WrapperFragment {
                         getString(R.string.game_additional_info_destiny_points),
                         String.valueOf(gameInfoResponse.account.hero.basicInfo.destinyPoints)))
                         .append("\n");
-                additionalInfoStringBuilder.append(UiUtils.getInfoItem(
-                        getString(R.string.game_help_to_next_card),
-                        getString(
-                                R.string.game_help_progress_to_next_card,
-                                gameInfoResponse.account.hero.cards.cardHelpCurrent,
-                                gameInfoResponse.account.hero.cards.cardHelpBarrier)))
-                        .append("\n");
+                if(gameInfoResponse.account.isOwnInfo) {
+                    additionalInfoStringBuilder.append(UiUtils.getInfoItem(
+                            getString(R.string.game_help_to_next_card),
+                            getString(
+                                    R.string.game_help_progress_to_next_card,
+                                    gameInfoResponse.account.hero.cards.cardHelpCurrent,
+                                    gameInfoResponse.account.hero.cards.cardHelpBarrier)))
+                            .append("\n");
+                }
                 additionalInfoStringBuilder.append(UiUtils.getInfoItem(
                         getString(R.string.game_additional_info_move_speed),
                         String.valueOf(gameInfoResponse.account.hero.basicInfo.moveSpeed)))
@@ -285,14 +289,17 @@ public class GameInfoFragment extends WrapperFragment {
                         gameInfoResponse.account.hero.basicInfo.experienceCurrent,
                         gameInfoResponse.account.hero.basicInfo.experienceForNextLevel));
 
-                final EnergyInfo energy = gameInfoResponse.account.hero.energy;
-                progressEnergy.setMax(energy.max);
-                // https://code.google.com/p/android/issues/detail?id=12945
-                if(Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-                    progressEnergy.setProgress(0);
+                blockEnergy.setVisibility(gameInfoResponse.account.isOwnInfo ? View.VISIBLE : View.GONE);
+                if(gameInfoResponse.account.isOwnInfo) {
+                    final EnergyInfo energy = gameInfoResponse.account.hero.energy;
+                    progressEnergy.setMax(energy.max);
+                    // https://code.google.com/p/android/issues/detail?id=12945
+                    if(Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+                        progressEnergy.setProgress(0);
+                    }
+                    progressEnergy.setProgress(energy.current);
+                    textEnergy.setText(GameInfoUtils.getEnergyString(energy));
                 }
-                progressEnergy.setProgress(energy.current);
-                textEnergy.setText(GameInfoUtils.getEnergyString(energy));
 
                 textPowerPhysical.setText(String.valueOf(gameInfoResponse.account.hero.basicInfo.powerPhysical));
                 textPowerMagical.setText(String.valueOf(gameInfoResponse.account.hero.basicInfo.powerMagical));

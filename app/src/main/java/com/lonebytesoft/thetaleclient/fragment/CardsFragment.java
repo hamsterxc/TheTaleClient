@@ -69,7 +69,12 @@ public class CardsFragment extends WrapperFragment {
         final ApiResponseCallback<GameInfoResponse> callback = RequestUtils.wrapCallback(new ApiResponseCallback<GameInfoResponse>() {
             @Override
             public void processResponse(final GameInfoResponse response) {
-                if(response.account.isOwnInfo && (response.account.hero.cards.cardHelpCurrent >= response.account.hero.cards.cardHelpBarrier)) {
+                if(!response.account.isOwnInfo) {
+                    setError(getString(R.string.game_cards_unavailable_foreign));
+                    return;
+                }
+
+                if(response.account.hero.cards.cardHelpCurrent >= response.account.hero.cards.cardHelpBarrier) {
                     helpCounterContainer.setVisibility(View.GONE);
                     helpTakeCardWidget.setMode(RequestActionView.Mode.ACTION);
                     helpTakeCardWidget.setVisibility(View.VISIBLE);
