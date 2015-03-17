@@ -5,7 +5,7 @@ import android.content.Context;
 import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.api.dictionary.ArtifactEffect;
 import com.lonebytesoft.thetaleclient.api.dictionary.EquipmentType;
-import com.lonebytesoft.thetaleclient.api.dictionary.QuestType;
+import com.lonebytesoft.thetaleclient.api.dictionary.HeroAction;
 import com.lonebytesoft.thetaleclient.api.model.ArtifactInfo;
 import com.lonebytesoft.thetaleclient.api.model.CompanionInfo;
 import com.lonebytesoft.thetaleclient.api.model.EnergyInfo;
@@ -35,7 +35,7 @@ public class GameInfoUtils {
     }
 
     public static boolean isHeroIdle(final GameInfoResponse gameInfoResponse) {
-        return gameInfoResponse.account.hero.quests.get(gameInfoResponse.account.hero.quests.size() - 1).get(0).type == QuestType.NO_QUEST;
+        return gameInfoResponse.account.hero.action.type == HeroAction.IDLE;
     }
 
     public static boolean isQuestChoiceAvailable(final GameInfoResponse gameInfoResponse) {
