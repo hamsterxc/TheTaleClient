@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.lonebytesoft.thetaleclient.DataViewMode;
 import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.api.ApiResponseCallback;
+import com.lonebytesoft.thetaleclient.api.dictionary.CardRarity;
 import com.lonebytesoft.thetaleclient.api.model.CardInfo;
 import com.lonebytesoft.thetaleclient.api.request.GameInfoRequest;
 import com.lonebytesoft.thetaleclient.api.request.TakeCardRequest;
@@ -126,16 +127,23 @@ public class CardsFragment extends WrapperFragment {
                         });
                 for(final Map.Entry<CardInfo, Integer> cardsEntry : cards.entrySet()) {
                     final CardInfo card = cardsEntry.getKey();
+                    final CardRarity rarity = card.type == null ? card.rarity : card.type.getRarity();
                     final int count = cardsEntry.getValue();
                     final View cardEntryView = layoutInflater.inflate(R.layout.item_card, cardsContainer, false);
 
                     final Spannable cardName = new SpannableString(card.name);
-                    cardName.setSpan(new ForegroundColorSpan(getResources().getColor(card.type.getRarity().getColorResId())),
+                    cardName.setSpan(new ForegroundColorSpan(getResources().getColor(rarity.getColorResId())),
                             0, cardName.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                     ((TextView) cardEntryView.findViewById(R.id.card_name)).setText(
                             TextUtils.concat(cardName, " x ", String.valueOf(count)));
 
-                    ((TextView) cardEntryView.findViewById(R.id.card_description)).setText(card.type.getDescription());
+                    final TextView cardDescription = (TextView) cardEntryView.findViewById(R.id.card_description);
+                    if(card.type == null) {
+                        cardDescription.setVisibility(View.GONE);
+                    } else {
+                        cardDescription.setVisibility(View.VISIBLE);
+                        cardDescription.setText(card.type.getDescription());
+                    }
                     cardEntryView.findViewById(R.id.card_tradable).setVisibility(card.isTradable ? View.VISIBLE : View.GONE);
 
                     cardsContainer.addView(cardEntryView);
