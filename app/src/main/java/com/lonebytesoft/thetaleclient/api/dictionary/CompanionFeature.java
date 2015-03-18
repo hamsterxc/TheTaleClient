@@ -11,6 +11,7 @@ public enum CompanionFeature {
     FIGHTER("боец", "немного увеличивает инициативу героя, в бою может применить способность «Удар»", CompanionFeatureType.BATTLE),
     LIGHTFOOTED("быстроногий", "постоянный большой бонус к скорости героя", CompanionFeatureType.ROAD),
     INSPIRATION("воодушевление", "воодушевляет героя на подвиги, снижая время бездействия между заданиями", CompanionFeatureType.ROAD),
+    TEMPORARY("временный", "спутник с небольшой вероятностью может покинуть героя при посещении города", CompanionFeatureType.PERSISTENT),
     PACK("вьючный", "2 дополнительных места в рюкзаке", CompanionFeatureType.PERSISTENT),
     ROBBER("грабитель", "В каждом городе крадёт у горожан что-нибудь полезное, возможно, даже экипировку", CompanionFeatureType.MONEY),
     GOON("громила", "немного увеличивает инициативу героя, в бою может применить способность «Тяжёлый удар»", CompanionFeatureType.BATTLE),
@@ -31,12 +32,13 @@ public enum CompanionFeature {
     PARAPHERNALIA("личные вещи", "забирает 2 места в рюкзаке для своих вещей", CompanionFeatureType.PERSISTENT),
     DEXTEROUS("ловкий", "малый бонус к инициативе героя", CompanionFeatureType.BATTLE),
     SLOW("медлительный", "постоянный штраф к скорости героя", CompanionFeatureType.ROAD),
-    CUTE("милый", "симпатичен горожанам, герой получает небольшой бонус к денежной награда за задания", CompanionFeatureType.MONEY),
+    CUTE("милый", "симпатичен горожанам, герой получает небольшой бонус к денежной награде за задания", CompanionFeatureType.MONEY),
     PEACEFUL("миролюбивый", "увеличивает миролюбие героя", CompanionFeatureType.PERSISTENT),
     SHIVERS("мороз по коже", "сильно пугает горожан, герой получает значительно меньше денег в награду за задание.", CompanionFeatureType.MONEY),
     FREEZER("морозко", "немного увеличивает инициативу героя, в бою может применить способность «Заморозка»", CompanionFeatureType.BATTLE),
     WISE("мудрый", "спутник иногда делится мудростью с героем, давая тому немного опыта.", CompanionFeatureType.UNCOMMON),
-    PIGMEAT("не жилец", "при ранении получает 2 дополнительные единицы урона", CompanionFeatureType.PERSISTENT),
+    PIGMEAT("не жилец", "при ранении может получить 2 дополнительные единицы урона", CompanionFeatureType.PERSISTENT),
+    UNSOCIABLE("нелюдимый", "спутник может покинуть героя при посещении города", CompanionFeatureType.PERSISTENT),
     CLUMSY("неповоротливый", "малый штраф к инициативе героя", CompanionFeatureType.BATTLE),
     HULKY("неуклюжий", "большой штраф к инициативе героя", CompanionFeatureType.BATTLE),
     SPECIAL("особый", "особый спутник, которого нельзя получить обычным способом", CompanionFeatureType.PERSISTENT),
@@ -72,8 +74,8 @@ public enum CompanionFeature {
     GNAWER("терзатель", "растерзывает врагов в бою так сильно, что уменьшается шанс найти уцелевшую в бою добычу", CompanionFeatureType.BATTLE),
     TRADER("торгаш", "помогает герою торговаться, увеличивая цены продажи и уменьшая цены покупки", CompanionFeatureType.MONEY),
     COWARD("трусливый", "реже защищает героя в бою", CompanionFeatureType.BATTLE),
-    PUNY("тщедушный", "при ранении получает дополнительную единицу урона", CompanionFeatureType.PERSISTENT),
-    DRAUGHT("тягловой", "6 дополнительных места в рюкзаке", CompanionFeatureType.PERSISTENT),
+    PUNY("тщедушный", "при ранении может получить дополнительную единицу урона", CompanionFeatureType.PERSISTENT),
+    DRAUGHT("тягловой", "6 дополнительных мест в рюкзаке", CompanionFeatureType.PERSISTENT),
     STUBBORN("упрямый", "слаженность растёт медленнее обычного", CompanionFeatureType.PERSISTENT),
     CAD("хам", "хамит горожанам, герою не доверяют политически важную работу, поэтому он оказывает меньшее влияние на мир", CompanionFeatureType.UNCOMMON),
     HONEST("честный", "увеличивает честь героя", CompanionFeatureType.PERSISTENT),
@@ -85,7 +87,7 @@ public enum CompanionFeature {
     private final String description;
     private final CompanionFeatureType type;
 
-    private CompanionFeature(final String name, final String description, final CompanionFeatureType type) {
+    CompanionFeature(final String name, final String description, final CompanionFeatureType type) {
         this.name = name;
         this.description = description;
         this.type = type;

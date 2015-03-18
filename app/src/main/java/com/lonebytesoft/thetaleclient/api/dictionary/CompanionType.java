@@ -8,12 +8,12 @@ public enum CompanionType {
 
     ALIVE("живой"),
     MECH("магомеханический"),
-    UNCOMMON("необычный"),
+    UNCOMMON("особый"),
     ;
 
     private final String name;
 
-    private CompanionType(final String name) {
+    CompanionType(final String name) {
         this.name = name;
     }
 

@@ -5,7 +5,9 @@ import android.text.TextUtils;
 import com.lonebytesoft.thetaleclient.api.HttpMethod;
 import com.lonebytesoft.thetaleclient.api.dictionary.Action;
 import com.lonebytesoft.thetaleclient.api.dictionary.ArtifactEffect;
+import com.lonebytesoft.thetaleclient.api.dictionary.ArtifactRarity;
 import com.lonebytesoft.thetaleclient.api.dictionary.ArtifactType;
+import com.lonebytesoft.thetaleclient.api.dictionary.CardRarity;
 import com.lonebytesoft.thetaleclient.api.dictionary.CardType;
 import com.lonebytesoft.thetaleclient.api.dictionary.CompanionFeature;
 import com.lonebytesoft.thetaleclient.api.dictionary.CompanionFeatureType;
@@ -49,8 +51,6 @@ import java.util.regex.Pattern;
  * Are not tested:
  * - Archetype {@see http://the-tale.org/guide/mobs/}
  * - ArtifactOrientation {@see http://the-tale.org/guide/artifacts/}
- * - ArtifactRarity {@see http://the-tale.org/guide/artifacts/}
- * - CardRarity {@see http://the-tale.org/guide/cards/}
  * - ChatMilestone {@see chat scripts}
  * - CompanionDedication {@see http://the-tale.org/guide/companions/}
  * - CompanionFeatureType {@see http://the-tale.org/guide/companions/}
@@ -70,9 +70,36 @@ import java.util.regex.Pattern;
  */
 public class TestApiDictionaries extends TestCase {
 
+    private enum GuideApiTable {
+
+        ACTION(9),
+        ARTIFACT_EFFECT(7),
+        ARTIFACT_RARITY(3),
+        ARTIFACT_TYPE(5),
+        CARD_RARITY(4),
+        CARD_TYPE(13),
+        EQUIPMENT_TYPE(6),
+        GAME_STATE(11),
+        GENDER(1),
+        HABIT(14),
+        HERO_ACTION(10),
+        PROFESSION(8),
+        QUEST_ACTOR_TYPE(12),
+        RACE(2),
+        THIRD_PARTY_AUTH_STATE(0),
+        ;
+
+        public final int position;
+
+        GuideApiTable(final int position) {
+            this.position = position;
+        }
+
+    }
+
     public void testAction() {
         final Document document = getDocumentChecked("http://the-tale.org/guide/api");
-        final Element elementTable = document.select("table").get(8);
+        final Element elementTable = document.select("table").get(GuideApiTable.ACTION.position);
         final Elements elements = elementTable.select("td:first-child");
         checkSize(Action.class, elements.size());
 
@@ -103,7 +130,7 @@ public class TestApiDictionaries extends TestCase {
         }
 
         document = getDocumentChecked("http://the-tale.org/guide/api");
-        final Element elementTable = document.select("table").get(6);
+        final Element elementTable = document.select("table").get(GuideApiTable.ARTIFACT_EFFECT.position);
         elements = elementTable.select("tr");
         final int size = elements.size();
         checkSize(ArtifactEffect.class, size - 1, "code-name"); // exclude header
@@ -121,9 +148,29 @@ public class TestApiDictionaries extends TestCase {
         }
     }
 
+    public void testArtifactRarity() {
+        final Document document = getDocumentChecked("http://the-tale.org/guide/api");
+        final Element elementTable = document.select("table").get(GuideApiTable.ARTIFACT_RARITY.position);
+        final Elements elements = elementTable.select("tr");
+        final int size = elements.size();
+        checkSize(ArtifactRarity.class, size - 1); // exclude header
+
+        for(int i = 1; i < size; i++) {
+            final Element element = elements.get(i);
+
+            final int code = Integer.parseInt(element.child(0).text());
+            final ArtifactRarity artifactRarity = ObjectUtils.getEnumForCode(ArtifactRarity.class, code);
+            assertNotNull(String.format("ArtifactRarity not found: code = %d", code), artifactRarity);
+
+            final String name = element.child(1).text();
+            assertEquals(String.format("ArtifactRarity incorrect name: %s", name),
+                    name, artifactRarity.getName());
+        }
+    }
+
     public void testArtifactType() {
         final Document document = getDocumentChecked("http://the-tale.org/guide/api");
-        final Element elementTable = document.select("table").get(4);
+        final Element elementTable = document.select("table").get(GuideApiTable.ARTIFACT_TYPE.position);
         final Elements elements = elementTable.select("tr");
         final int size = elements.size();
         checkSize(ArtifactType.class, size - 1); // exclude header
@@ -138,6 +185,22 @@ public class TestApiDictionaries extends TestCase {
             final String name = element.child(1).text();
             assertEquals(String.format("ArtifactType incorrect name: %s", name),
                     name, artifactType.getName());
+        }
+    }
+
+    public void testCardRarity() {
+        final Document document = getDocumentChecked("http://the-tale.org/guide/api");
+        final Element elementTable = document.select("table").get(GuideApiTable.CARD_RARITY.position);
+        final Elements elements = elementTable.select("tr");
+        final int size = elements.size();
+        checkSize(CardRarity.class, size - 1); // exclude header
+
+        for(int i = 1; i < size; i++) {
+            final Element element = elements.get(i);
+
+            final int code = Integer.parseInt(element.child(0).text());
+            final CardRarity cardRarity = ObjectUtils.getEnumForCode(CardRarity.class, code);
+            assertNotNull(String.format("CardRarity not found: code = %d", code), cardRarity);
         }
     }
 
@@ -160,7 +223,7 @@ public class TestApiDictionaries extends TestCase {
         }
 
         document = getDocumentChecked("http://the-tale.org/guide/api");
-        final Element elementTable = document.select("table").get(12);
+        final Element elementTable = document.select("table").get(GuideApiTable.CARD_TYPE.position);
         elements = elementTable.select("tr");
         final int size = elements.size();
         checkSize(CardType.class, size - 1, "code-name"); // exclude header
@@ -272,7 +335,7 @@ public class TestApiDictionaries extends TestCase {
 
     public void testEquipmentType() {
         final Document document = getDocumentChecked("http://the-tale.org/guide/api");
-        final Element elementTable = document.select("table").get(5);
+        final Element elementTable = document.select("table").get(GuideApiTable.EQUIPMENT_TYPE.position);
         final Elements elements = elementTable.select("tr");
         final int size = elements.size();
         checkSize(EquipmentType.class, size - 1); // exclude header
@@ -288,7 +351,7 @@ public class TestApiDictionaries extends TestCase {
 
     public void testGameState() {
         final Document document = getDocumentChecked("http://the-tale.org/guide/api");
-        final Element elementTable = document.select("table").get(10);
+        final Element elementTable = document.select("table").get(GuideApiTable.GAME_STATE.position);
         final Elements elements = elementTable.select("tr");
         final int size = elements.size();
         checkSize(GameState.class, size - 1); // exclude header
@@ -304,7 +367,7 @@ public class TestApiDictionaries extends TestCase {
 
     public void testGender() {
         final Document document = getDocumentChecked("http://the-tale.org/guide/api");
-        final Element elementTable = document.select("table").get(1);
+        final Element elementTable = document.select("table").get(GuideApiTable.GENDER.position);
         final Elements elements = elementTable.select("tr");
         final int size = elements.size();
         checkSize(Gender.class, size - 1); // exclude header
@@ -324,7 +387,7 @@ public class TestApiDictionaries extends TestCase {
 
     public void testHabit() {
         final Document document = getDocumentChecked("http://the-tale.org/guide/api");
-        final Element elementTable = document.select("table").get(13);
+        final Element elementTable = document.select("table").get(GuideApiTable.HABIT.position);
         final Elements elements = elementTable.select("tr");
         final int size = elements.size();
         checkSize(Habit.class, size - 1); // exclude header
@@ -340,7 +403,7 @@ public class TestApiDictionaries extends TestCase {
 
     public void testHeroAction() {
         final Document document = getDocumentChecked("http://the-tale.org/guide/api");
-        final Element elementTable = document.select("table").get(9);
+        final Element elementTable = document.select("table").get(GuideApiTable.HERO_ACTION.position);
         final Elements elements = elementTable.select("tr");
         final int size = elements.size();
         checkSize(HeroAction.class, size - 1); // exclude header
@@ -356,7 +419,7 @@ public class TestApiDictionaries extends TestCase {
 
     public void testProfession() {
         final Document document = getDocumentChecked("http://the-tale.org/guide/api");
-        final Element elementTable = document.select("table").get(7);
+        final Element elementTable = document.select("table").get(GuideApiTable.PROFESSION.position);
         final Elements elements = elementTable.select("tr");
         final int size = elements.size();
         checkSize(Profession.class, size - 1); // exclude header
@@ -376,7 +439,7 @@ public class TestApiDictionaries extends TestCase {
 
     public void testQuestActorType() {
         final Document document = getDocumentChecked("http://the-tale.org/guide/api");
-        final Element elementTable = document.select("table").get(11);
+        final Element elementTable = document.select("table").get(GuideApiTable.QUEST_ACTOR_TYPE.position);
         final Elements elements = elementTable.select("tr");
         final int size = elements.size();
         checkSize(QuestActorType.class, size - 1); // exclude header
@@ -392,7 +455,7 @@ public class TestApiDictionaries extends TestCase {
 
     public void testRace() {
         final Document document = getDocumentChecked("http://the-tale.org/guide/api");
-        final Element elementTable = document.select("table").get(2);
+        final Element elementTable = document.select("table").get(GuideApiTable.RACE.position);
         final Elements elements = elementTable.select("tr");
         final int size = elements.size();
         checkSize(Race.class, size - 1); // exclude header
@@ -452,7 +515,7 @@ public class TestApiDictionaries extends TestCase {
 
     public void testThirdPartyAuthState() {
         final Document document = getDocumentChecked("http://the-tale.org/guide/api");
-        final Element elementTable = document.select("table").get(0);
+        final Element elementTable = document.select("table").get(GuideApiTable.THIRD_PARTY_AUTH_STATE.position);
         final Elements elements = elementTable.select("tr");
         final int size = elements.size();
         checkSize(ThirdPartyAuthState.class, size - 1); // exclude header

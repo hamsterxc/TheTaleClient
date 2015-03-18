@@ -13,7 +13,7 @@ public enum Skill {
     ECONOMIC("Бухгалтер", "Герои с бухгалтерской жилкой ответственно подходят не только к своему имуществу, но и к имуществу спутника. Способность улучшают денежные особенности спутника.", 5, SkillType.COMPANION, SkillAvailability.PLAYERS, SkillMethod.PASSIVE, false),
     EXTRA_FAST("Быстрее ветра", "В столкновении со столь быстрым существом далеко не каждому удаётся устоять под градом стремительных атак.", 5, SkillType.COMBAT, SkillAvailability.MONSTERS, SkillMethod.PASSIVE, false),
     FAST("Быстрый", "Обладатель этой способности имеет хорошую реакцию и действует в бою быстрее.", 5, SkillType.COMBAT, SkillAvailability.ALL, SkillMethod.PASSIVE, false),
-    WITCHCRAFT("Ведовство", "Герой, сведущий в нетрадиционных областях знаний, иногда может восстановить здоровье необычного спутника.", 5, SkillType.COMPANION, SkillAvailability.PLAYERS, SkillMethod.PASSIVE, false),
+    WITCHCRAFT("Ведовство", "Герой, сведущий в нетрадиционных областях знаний, иногда может восстановить здоровье особого спутника.", 5, SkillType.COMPANION, SkillAvailability.PLAYERS, SkillMethod.PASSIVE, false),
     WARRIOR("Воин", "Воин большую часть времени тратит на физические тренировки, благодаря чему наносит больший физический урон, имеет хорошую защиту от физических атак, но слабо противостоит магии и сам с трудом ей пользуется. Увеличение физических способностей сильнее, чем ослабление магических.", 5, SkillType.COMBAT, SkillAvailability.ALL, SkillMethod.PASSIVE, false),
     MAGIC_MUSHROOM("Волшебный гриб", "Герой всегда носит с собой особые грибы, съев один из которых в бою, на некоторое время существенно увеличивает наносимый урон.", 5, SkillType.COMBAT, SkillAvailability.ALL, SkillMethod.ACTIVE, false),
     HEALING("Врачевание", "Умение обращаться с ниткой, иголкой и хирургическим ножом позволяет иногда восстановить немного здоровья живому спутнику.", 5, SkillType.COMPANION, SkillAvailability.PLAYERS, SkillMethod.PASSIVE, false),
@@ -40,9 +40,9 @@ public enum Skill {
     PICKY("Придирчивый", "Герой с большей вероятностью получает редкие и эпические артефакты.", 5, SkillType.PEACE, SkillAvailability.PLAYERS, SkillMethod.PASSIVE, false),
     RUN_UP_PUSH("Разбег-толчок", "Герой разбегается и наносит урон противнику. Враг будет оглушён и пропустит один или несколько ходов атаки.", 5, SkillType.COMBAT, SkillAvailability.ALL, SkillMethod.ACTIVE, true),
     REGENERATION("Регенерация", "Во время боя герой может восстановить часть своего здоровья.", 5, SkillType.COMBAT, SkillAvailability.ALL, SkillMethod.ACTIVE, false),
-    SACREDNESS("Сакральность", "Некоторые спутники настолько необычны, что герою приходится учиться думать как его напарник. Если герою удаётся найти схожие струны в душе спутника, то их слаженность начинает расти быстрее.", 5, SkillType.COMPANION, SkillAvailability.PLAYERS, SkillMethod.PASSIVE, false),
+    SACREDNESS("Сакральность", "Особые спутники настолько необычны, что герою приходится учиться думать как его напарник. Если герою удаётся найти схожие струны в душе спутника, то их слаженность начинает расти быстрее.", 5, SkillType.COMPANION, SkillAvailability.PLAYERS, SkillMethod.PASSIVE, false),
     WEAK("Слабый", "Слабые монстры иногда стараются компенсировать небольшой недостаток урона за счёт хитрости, но мало у кого это получается.", 5, SkillType.COMBAT, SkillAvailability.MONSTERS, SkillMethod.PASSIVE, false),
-    COHERENCE("Товарищ", "Путешествия со спутником сложны и требуют от героя особых навыков. Умение по-товарищески относиться к спутнику определяет максимальную слаженность спутника. Она увеличивается на 20 за уровень способности.", 5, SkillType.COMPANION, SkillAvailability.PLAYERS, SkillMethod.PASSIVE, false),
+    COHERENCE("Товарищ", "Путешествия со спутником сложны и требуют от героя особых навыков. Умение по-товарищески относиться к спутнику определяет максимальную слаженность спутника. Она увеличивается на 20 за уровень способности. При сбросе навыка заработанная слаженность не теряется, но ограничивается его актуальным значением.", 5, SkillType.COMPANION, SkillAvailability.PLAYERS, SkillMethod.PASSIVE, false),
     EXTRA_THICK("Толстяк", "Монстр может похвастаться отменным здоровьем и очень большой живучестью.", 5, SkillType.COMBAT, SkillAvailability.MONSTERS, SkillMethod.PASSIVE, false),
     HUCKSTER("Торгаш", "Увеличивается цена продажи и уменьшается цена покупки предметов.", 5, SkillType.PEACE, SkillAvailability.PLAYERS, SkillMethod.PASSIVE, false),
     EXTRA_WEAK("Тростинка", "Обычные атаки монстра наносят очень мало урона.", 5, SkillType.COMBAT, SkillAvailability.MONSTERS, SkillMethod.PASSIVE, false),
@@ -69,8 +69,8 @@ public enum Skill {
     public final SkillMethod method;
     public final boolean isDirectDamage;
 
-    private Skill(final String name, final String description, final int maxLevel, final SkillType type,
-                  final SkillAvailability availability, final SkillMethod method, final boolean isDirectDamage) {
+    Skill(final String name, final String description, final int maxLevel, final SkillType type,
+          final SkillAvailability availability, final SkillMethod method, final boolean isDirectDamage) {
         this.name = name;
         this.description = description;
         this.maxLevel = maxLevel;
