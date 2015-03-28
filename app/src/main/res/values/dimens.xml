@@ -13,10 +13,14 @@
     <dimen name="tab_strip_height">48dp</dimen>
     <dimen name="block_background_border">1dp</dimen>
     <dimen name="block_background_corner">8dp</dimen>
+    <dimen name="request_action_padding">4dp</dimen>
 
     <dimen name="dialog_padding">8dp</dimen>
     <dimen name="dialog_padding_big">16dp</dimen>
     <dimen name="dialog_caption_height">64dp</dimen>
+
+    <dimen name="game_card_margins_vertical">1dp</dimen>
+    <dimen name="game_card_combine_margins">8dp</dimen>
 
     <dimen name="game_info_bar_height">@dimen/game_info_icon_size</dimen>
     <dimen name="game_info_bar_padding">2dp</dimen>

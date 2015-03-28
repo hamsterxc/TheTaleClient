@@ -1,32 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dialog_card_info_content"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="@dimen/game_card_margins_vertical"
-    android:layout_marginBottom="@dimen/game_card_margins_vertical"
-    android:layout_gravity="left"
+    android:padding="@dimen/dialog_padding"
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/card_name"
+        android:id="@+id/dialog_card_info_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="?android:attr/textAppearanceLarge"
+        android:textColor="@color/common_text"/>
+
+    <TextView
+        android:id="@+id/dialog_card_info_description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         style="?android:attr/textAppearanceMedium"
         android:textColor="@color/common_text"/>
 
     <TextView
-        android:id="@+id/card_description"
+        android:id="@+id/dialog_card_info_tradable"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        style="?android:attr/textAppearanceSmall"
-        android:textColor="@color/common_text"/>
-
-    <TextView
-        android:id="@+id/card_tradable"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="?android:attr/textAppearanceSmall"
+        style="?android:attr/textAppearanceMedium"
         android:textColor="@color/common_text"
         android:textStyle="italic"
         android:text="@string/game_card_tradable"

@@ -7,10 +7,12 @@ import android.support.v4.app.FragmentTransaction;
 
 import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.api.model.ArtifactInfo;
+import com.lonebytesoft.thetaleclient.api.model.CardInfo;
 import com.lonebytesoft.thetaleclient.api.model.MightInfo;
 import com.lonebytesoft.thetaleclient.api.model.QuestActorInfo;
 import com.lonebytesoft.thetaleclient.fragment.dialog.AboutDialog;
 import com.lonebytesoft.thetaleclient.fragment.dialog.ArtifactDialog;
+import com.lonebytesoft.thetaleclient.fragment.dialog.CardInfoDialog;
 import com.lonebytesoft.thetaleclient.fragment.dialog.ChoiceDialog;
 import com.lonebytesoft.thetaleclient.fragment.dialog.ConfirmationDialog;
 import com.lonebytesoft.thetaleclient.fragment.dialog.MessageDialog;
@@ -32,6 +34,7 @@ public class DialogUtils {
     public static final String DIALOG_MESSAGE_TAG = "DIALOG_MESSAGE_TAG";
     public static final String DIALOG_ABOUT_TAG = "DIALOG_ABOUT_TAG";
     public static final String DIALOG_CONFIRMATION_TAG = "DIALOG_CONFIRMATION_TAG";
+    public static final String DIALOG_CARD_INFO_TAG = "DIALOG_CARD_INFO_TAG";
 
     private static FragmentTransaction getFragmentTransaction(final FragmentManager fragmentManager, final String tag) {
         final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -90,6 +93,12 @@ public class DialogUtils {
 
     public static void showMessageDialog(final FragmentManager fragmentManager,
                                          final String caption, final String message,
+                                         final Runnable onCloseListener) {
+        showMessageDialog(fragmentManager, caption, message, onCloseListener, onCloseListener);
+    }
+
+    public static void showMessageDialog(final FragmentManager fragmentManager,
+                                         final String caption, final String message,
                                          final Runnable onOkClickListener, final Runnable onDismissListener) {
         final MessageDialog dialog = MessageDialog.newInstance(caption, message);
         dialog.setOnOkClickListener(onOkClickListener);
@@ -123,6 +132,14 @@ public class DialogUtils {
         showMessageDialog(fragmentManager,
                 context.getString(R.string.common_dialog_attention_title),
                 context.getString(R.string.common_error));
+    }
+
+    public static void showCardInfoDialog(final FragmentManager fragmentManager,
+                                          final String caption, final CardInfo card,
+                                          final Runnable onDismissListener) {
+        final CardInfoDialog cardInfoDialog = CardInfoDialog.newInstance(caption, card);
+        cardInfoDialog.setOnDismissListener(onDismissListener);
+        cardInfoDialog.show(getFragmentTransaction(fragmentManager, DIALOG_CARD_INFO_TAG), DIALOG_CARD_INFO_TAG);
     }
 
 }

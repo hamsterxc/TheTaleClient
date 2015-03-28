@@ -53,6 +53,15 @@
     <string name="game_bag_effects">(Все эффекты)</string>
     <string name="game_bag_effects_title">Все эффекты экипировки</string>
 
+    <string name="game_card_take">Взять карту!</string>
+    <string name="game_card_tradable">Может быть продана на рынке</string>
+    <string name="game_cards_combine">Объединить карты</string>
+    <string name="game_cards_combine_cancel">Отмена</string>
+    <string name="game_cards_combine_confirm">Объединить</string>
+    <string name="game_cards_combine_progress">Объединение карт&#8230;</string>
+    <string name="game_cards_combine_result">Карты объединены</string>
+    <string name="game_cards_unavailable_foreign">Просмотр чужих карт судьбы недоступен</string>
+
     <string name="game_companion_absent">Нет спутника</string>
     <string name="game_companion_feature_coherence">Слаженность %1$d</string>
     <string name="game_companion_feature_initial">Начальные особенности</string>
@@ -79,9 +88,6 @@
     <string name="game_additional_info_new_messages">Новых сообщений</string>
     <string name="game_additional_info_peacefulness">Характер, миролюбие</string>
     <string name="game_boss_fight">" \u2605"</string>
-    <string name="game_card_take">Взять карту!</string>
-    <string name="game_card_tradable">Может быть продана на рынке</string>
-    <string name="game_cards_unavailable_foreign">Просмотр чужих карт судьбы недоступен</string>
     <string name="game_help">Помочь</string>
     <string name="game_help_progress_to_next_card">%1$d / %2$d</string>
     <string name="game_help_to_next_card">Помощи до новой карты</string>
