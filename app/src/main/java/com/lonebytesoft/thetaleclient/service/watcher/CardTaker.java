@@ -14,7 +14,7 @@ public class CardTaker implements GameStateWatcher {
     public void processGameState(GameInfoResponse gameInfoResponse) {
         if(PreferencesManager.shouldAutoactionCardTake()) {
             if(gameInfoResponse.account.hero.cards.cardHelpCurrent >= gameInfoResponse.account.hero.cards.cardHelpBarrier) {
-                new TakeCardRequest(gameInfoResponse.account.accountId).execute(null);
+                new TakeCardRequest().execute(null);
             }
         }
     }

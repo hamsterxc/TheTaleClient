@@ -27,6 +27,7 @@ import com.lonebytesoft.thetaleclient.api.request.TakeCardRequest;
 import com.lonebytesoft.thetaleclient.api.response.CombineCardsResponse;
 import com.lonebytesoft.thetaleclient.api.response.CommonResponse;
 import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;
+import com.lonebytesoft.thetaleclient.api.response.TakeCardResponse;
 import com.lonebytesoft.thetaleclient.util.DialogUtils;
 import com.lonebytesoft.thetaleclient.util.ObjectUtils;
 import com.lonebytesoft.thetaleclient.util.PreferencesManager;
@@ -135,14 +136,23 @@ public class CardsFragment extends WrapperFragment {
                     helpTakeCardWidget.setActionClickListener(new Runnable() {
                         @Override
                         public void run() {
-                            new TakeCardRequest(response.account.accountId).execute(RequestUtils.wrapCallback(new ApiResponseCallback<CommonResponse>() {
+                            new TakeCardRequest().execute(RequestUtils.wrapCallback(new ApiResponseCallback<TakeCardResponse>() {
                                 @Override
-                                public void processResponse(CommonResponse response) {
-                                    refresh(false);
+                                public void processResponse(TakeCardResponse response) {
+                                    helpTakeCardWidget.setMode(RequestActionView.Mode.ACTION);
+                                    DialogUtils.showCardInfoDialog(getChildFragmentManager(),
+                                            getString(R.string.game_cards_combine_result),
+                                            response.card,
+                                            new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    refresh(true);
+                                                }
+                                            });
                                 }
 
                                 @Override
-                                public void processError(CommonResponse response) {
+                                public void processError(TakeCardResponse response) {
                                     helpTakeCardWidget.setErrorText(response.errorMessage);
                                 }
                             }, CardsFragment.this));
@@ -257,7 +267,7 @@ public class CardsFragment extends WrapperFragment {
                         }
                     }
 
-                    new CombineCardsRequest(cardIds).execute(new ApiResponseCallback<CombineCardsResponse>() {
+                    new CombineCardsRequest(cardIds).execute(RequestUtils.wrapCallback(new ApiResponseCallback<CombineCardsResponse>() {
                         @Override
                         public void processResponse(CombineCardsResponse response) {
                             progressDialog.dismiss();
@@ -279,7 +289,7 @@ public class CardsFragment extends WrapperFragment {
                                     getString(R.string.game_cards_combine),
                                     response.errorMessage);
                         }
-                    });
+                    }, CardsFragment.this));
                 }
             });
         } else {
