@@ -1,1 +1,1 @@
-include ':app', ':android-support-v4-preferencefragment'
+include ':app', ':android-support-v4-preferencefragment', ':sdk'

@@ -1,0 +1,6 @@
+apply plugin: 'java'
+
+dependencies {
+    compile 'org.apache.httpcomponents:httpclient:4.4'
+    compile 'org.json:json:20141113'
+}
