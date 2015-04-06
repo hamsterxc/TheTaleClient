@@ -35,7 +35,7 @@ public abstract class AbstractApiGetRequest<T extends AbstractApiResponse> exten
 
     public abstract T execute() throws ApiException, JSONException;
 
-    protected void setStaleTime(final long staleTime) {
+    public void setStaleTime(final long staleTime) {
         this.staleTime = staleTime;
     }
 
