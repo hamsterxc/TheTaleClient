@@ -16,8 +16,10 @@ import java.util.Map;
 public class ObjectUtils {
 
     private static final String FIELD_CODE = "code";
+    private static final String FIELD_NAME = "name";
 
     private static final Map<Class<?>, Map<?, ?>> codeToEnumCache = new HashMap<>();
+    private static final Map<Class<?>, Map<?, ?>> nameToEnumCache = new HashMap<>();
 
     public static <E extends Enum<E>, T> E getEnumForCode(final Class<E> clazz, final T code) {
         if(!clazz.isEnum()) {
@@ -38,6 +40,27 @@ public class ObjectUtils {
             }
         }
         return cache.get(code);
+    }
+
+    public static <E extends Enum<E>, T> E getEnumForName(final Class<E> clazz, final T name) {
+        if(!clazz.isEnum()) {
+            return null;
+        }
+
+        Map<T, E> cache = (Map<T, E>) nameToEnumCache.get(clazz);
+        if(cache == null) {
+            try {
+                final Field fieldName = clazz.getField(FIELD_NAME);
+                cache = new HashMap<>();
+                for(final E enumEntry : clazz.getEnumConstants()) {
+                    cache.put((T) fieldName.get(enumEntry), enumEntry);
+                }
+                nameToEnumCache.put(clazz, cache);
+            } catch(IllegalAccessException|NoSuchFieldException e) {
+                return null;
+            }
+        }
+        return cache.get(name);
     }
 
     public static <T> T getModelFromJson(final Class<T> clazz, final JSONObject json) {

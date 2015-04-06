@@ -6,9 +6,9 @@ package com.lonebytesoft.thetaleclient.sdk.dictionary;
  */
 public enum QuestActorType {
 
-    PERSON(0, "Горожанин"),
-    PLACE(1, "Город"),
-    SPENDING(2, "Цель накопления"),
+    PERSON(0, "житель"),
+    PLACE(1, "место"),
+    SPENDING(2, "трата денег"),
     ;
 
     public final int code;
