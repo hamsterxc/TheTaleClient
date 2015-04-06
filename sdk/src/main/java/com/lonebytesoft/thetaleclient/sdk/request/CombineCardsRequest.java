@@ -2,31 +2,44 @@ package com.lonebytesoft.thetaleclient.sdk.request;
 
 import com.lonebytesoft.thetaleclient.sdk.AbstractAsyncRequest;
 import com.lonebytesoft.thetaleclient.sdk.exception.ApiException;
-import com.lonebytesoft.thetaleclient.sdk.response.GetCardResponse;
+import com.lonebytesoft.thetaleclient.sdk.response.CombineCardsResponse;
 import com.lonebytesoft.thetaleclient.sdk.util.RequestUtils;
 
 import org.apache.http.client.methods.HttpUriRequest;
+import org.json.JSONException;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
  * @author Hamster
- * @since 19.03.2015
+ * @since 06.04.2015
  */
-public class GetCardRequest extends AbstractAsyncRequest<GetCardResponse> {
+public class CombineCardsRequest extends AbstractAsyncRequest<CombineCardsResponse> {
 
     private static final String VERSION = "1.0";
-    private static final String METHOD = "game/cards/api/get";
+    private static final String METHOD = "game/cards/api/combine";
 
     final String url;
     final Map<String, String> getParams;
     final Map<String, String> postParams;
 
-    public GetCardRequest(final String clientId) {
+    public CombineCardsRequest(final String clientId, final List<Integer> cardIds) {
         url = RequestUtils.getApiUrl(METHOD);
 
+        final StringBuilder cardIdsString = new StringBuilder();
+        boolean first = true;
+        for(final int cardId : cardIds) {
+            if(first) {
+                first = false;
+            } else {
+                cardIdsString.append(",");
+            }
+            cardIdsString.append(cardId);
+        }
         getParams = RequestUtils.getApiMethodGetParams(VERSION, clientId);
+        getParams.put("cards", cardIdsString.toString());
 
         postParams = new HashMap<>();
     }
@@ -38,8 +51,8 @@ public class GetCardRequest extends AbstractAsyncRequest<GetCardResponse> {
     }
 
     @Override
-    public GetCardResponse execute() throws ApiException {
-        return new GetCardResponse(executeRequest());
+    public CombineCardsResponse execute() throws ApiException, JSONException {
+        return new CombineCardsResponse(executeRequest());
     }
 
 }
