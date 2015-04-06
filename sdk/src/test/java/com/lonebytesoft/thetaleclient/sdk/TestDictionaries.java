@@ -17,6 +17,7 @@ import com.lonebytesoft.thetaleclient.sdk.dictionary.HeroAction;
 import com.lonebytesoft.thetaleclient.sdk.dictionary.Profession;
 import com.lonebytesoft.thetaleclient.sdk.dictionary.QuestActorType;
 import com.lonebytesoft.thetaleclient.sdk.dictionary.Race;
+import com.lonebytesoft.thetaleclient.sdk.dictionary.ThirdPartyAuthState;
 import com.lonebytesoft.thetaleclient.sdk.util.ObjectUtils;
 import com.lonebytesoft.thetaleclient.sdk.util.RequestUtils;
 
@@ -443,6 +444,24 @@ public class TestDictionaries extends TestCase {
             assertEquals(
                     String.format("Race incorrect name: %s", name),
                     name, race.name);
+        }
+    }
+
+    public void testThirdPartyAuthState() {
+        final List<List<String>> table = getApiTableData(0);
+        checkSize(ThirdPartyAuthState.class, table.size());
+
+        for(final List<String> item : table) {
+            final int code = Integer.parseInt(item.get(0));
+            final ThirdPartyAuthState thirdPartyAuthState = ObjectUtils.getEnumForCode(ThirdPartyAuthState.class, code);
+            assertNotNull(
+                    String.format("ThirdPartyAuthState not found: code = %d", code),
+                    thirdPartyAuthState);
+
+            final String name = item.get(1);
+            assertEquals(
+                    String.format("ThirdPartyAuthState incorrect name: %s", name),
+                    name, thirdPartyAuthState.name);
         }
     }
 
