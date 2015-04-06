@@ -6,10 +6,18 @@ package com.lonebytesoft.thetaleclient.sdk.dictionary;
  */
 public enum CardTargetType {
 
-    NONE,
-    PERSON,
-    PLACE,
-    BUILDING,
+    NONE("герой"),
+    PERSON("советник"),
+    PLACE("город"),
+    BUILDING("здание"),
     ;
+
+    public final String code;
+    public final String name;
+
+    CardTargetType(final String name) {
+        this.code = name;
+        this.name = name;
+    }
 
 }

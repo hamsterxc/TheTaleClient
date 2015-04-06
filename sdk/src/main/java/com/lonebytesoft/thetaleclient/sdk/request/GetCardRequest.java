@@ -6,6 +6,7 @@ import com.lonebytesoft.thetaleclient.sdk.response.GetCardResponse;
 import com.lonebytesoft.thetaleclient.sdk.util.RequestUtils;
 
 import org.apache.http.client.methods.HttpUriRequest;
+import org.json.JSONException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,9 +26,7 @@ public class GetCardRequest extends AbstractAsyncRequest<GetCardResponse> {
 
     public GetCardRequest(final String clientId) {
         url = RequestUtils.getApiUrl(METHOD);
-
         getParams = RequestUtils.getApiMethodGetParams(VERSION, clientId);
-
         postParams = new HashMap<>();
     }
 
@@ -38,7 +37,7 @@ public class GetCardRequest extends AbstractAsyncRequest<GetCardResponse> {
     }
 
     @Override
-    public GetCardResponse execute() throws ApiException {
+    public GetCardResponse execute() throws ApiException, JSONException {
         return new GetCardResponse(executeRequest());
     }
 
