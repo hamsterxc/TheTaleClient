@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 
 import com.lonebytesoft.thetaleclient.BuildConfig;
+import com.lonebytesoft.thetaleclient.activity.MainActivity;
 import com.lonebytesoft.thetaleclient.api.AbstractApiResponse;
 import com.lonebytesoft.thetaleclient.api.ApiResponseCallback;
 import com.lonebytesoft.thetaleclient.api.ApiResponseStatus;
@@ -121,46 +122,38 @@ public class RequestUtils {
         return context.getPackageName() + "-" + BuildConfig.VERSION_CODE;
     }
 
-    public static <T extends com.lonebytesoft.thetaleclient.sdk.AbstractApiResponse> ApiCallback<T> wrapCallback(final ApiCallback<T> callback, final Fragment fragment) {
-        if(fragment == null) {
-            return callback;
-        } else {
-            return new ApiCallback<T>() {
-                @Override
-                public void onSuccess(final T response) {
-                    if(fragment.isAdded()) {
-                        fragment.getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                callback.onSuccess(response);
-                            }
-                        });
-                    }
-                }
-
-                @Override
-                public void onError(final com.lonebytesoft.thetaleclient.sdk.AbstractApiResponse response) {
-                    if(fragment.isAdded()) {
-                        fragment.getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                callback.onError(response);
-                            }
-                        });
-                    }
-                }
-            };
+    private static void runChecked(final Fragment fragment, final Runnable task) {
+        if((fragment != null) && (fragment.isAdded())) {
+            runChecked(fragment.getActivity(), task);
         }
     }
 
-    public static <T extends com.lonebytesoft.thetaleclient.sdk.AbstractApiResponse> ApiCallback<T> wrapCallback(final ApiCallback<T> callback, final Activity activity) {
-        if(activity == null) {
+    private static void runChecked(final Activity activity, final Runnable task) {
+        if((activity != null)
+                && !activity.isFinishing()
+                && !((activity instanceof MainActivity) && ((MainActivity) activity).isPaused())) {
+            activity.runOnUiThread(task);
+        }
+    }
+
+    private static void runChecked(final Object uiComponent, final Runnable task) {
+        if(uiComponent instanceof Fragment) {
+            runChecked((Fragment) uiComponent, task);
+        } else if(uiComponent instanceof Activity) {
+            runChecked((Activity) uiComponent, task);
+        } else {
+            task.run();
+        }
+    }
+
+    public static <T extends com.lonebytesoft.thetaleclient.sdk.AbstractApiResponse> ApiCallback<T> wrapCallback(final ApiCallback<T> callback, final Object uiComponent) {
+        if(!(uiComponent instanceof Fragment) && !(uiComponent instanceof Activity)) {
             return callback;
         } else {
             return new ApiCallback<T>() {
                 @Override
                 public void onSuccess(final T response) {
-                    activity.runOnUiThread(new Runnable() {
+                    runChecked(uiComponent, new Runnable() {
                         @Override
                         public void run() {
                             callback.onSuccess(response);
@@ -170,7 +163,7 @@ public class RequestUtils {
 
                 @Override
                 public void onError(final com.lonebytesoft.thetaleclient.sdk.AbstractApiResponse response) {
-                    activity.runOnUiThread(new Runnable() {
+                    runChecked(uiComponent, new Runnable() {
                         @Override
                         public void run() {
                             callback.onError(response);
