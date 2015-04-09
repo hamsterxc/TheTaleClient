@@ -1,10 +1,12 @@
 package com.lonebytesoft.thetaleclient.util;
 
+import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 
+import com.lonebytesoft.thetaleclient.BuildConfig;
 import com.lonebytesoft.thetaleclient.api.AbstractApiResponse;
 import com.lonebytesoft.thetaleclient.api.ApiResponseCallback;
 import com.lonebytesoft.thetaleclient.api.ApiResponseStatus;
@@ -111,6 +113,10 @@ public class RequestUtils {
                 }
             }
         };
+    }
+
+    public static String getClientId(final Context context) {
+        return context.getPackageName() + "-" + BuildConfig.VERSION_CODE;
     }
 
 }

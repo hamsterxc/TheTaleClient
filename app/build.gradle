@@ -64,6 +64,7 @@ dependencies {
     compile project(':android-support-v4-preferencefragment') // https://github.com/kolavar/android-support-v4-preferencefragment
     compile 'com.github.chrisbanes.photoview:library:1.2.3' // https://github.com/chrisbanes/PhotoView
     compile 'org.jsoup:jsoup:1.8.1' // https://github.com/jhy/jsoup
+    compile project(':sdkandroid')
 }
 
 android.applicationVariants.all { variant ->

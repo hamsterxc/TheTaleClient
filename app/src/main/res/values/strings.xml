@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string name="api_error">Произошла неизвестная ошибка.</string>
+    <string name="api_error_network">Произошла ошибка сети.</string>
+    <string name="api_error_update">Идет обновление игры.</string>
+
     <string name="app_name">The Tale Client</string>
     <string name="app_description">The Tale Client by Hamster</string>
     <string name="app_about">Android-клиент для многопользовательской zero-player RPG &lt;a href=\"http://the-tale.org\"&gt;Сказка&lt;/a&gt;.
