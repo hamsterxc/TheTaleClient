@@ -1,5 +1,6 @@
 package com.lonebytesoft.thetaleclient.util;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
@@ -11,6 +12,7 @@ import com.lonebytesoft.thetaleclient.api.AbstractApiResponse;
 import com.lonebytesoft.thetaleclient.api.ApiResponseCallback;
 import com.lonebytesoft.thetaleclient.api.ApiResponseStatus;
 import com.lonebytesoft.thetaleclient.api.CommonResponseCallback;
+import com.lonebytesoft.thetaleclient.apisdk.ApiCallback;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -117,6 +119,66 @@ public class RequestUtils {
 
     public static String getClientId(final Context context) {
         return context.getPackageName() + "-" + BuildConfig.VERSION_CODE;
+    }
+
+    public static <T extends com.lonebytesoft.thetaleclient.sdk.AbstractApiResponse> ApiCallback<T> wrapCallback(final ApiCallback<T> callback, final Fragment fragment) {
+        if(fragment == null) {
+            return callback;
+        } else {
+            return new ApiCallback<T>() {
+                @Override
+                public void onSuccess(final T response) {
+                    if(fragment.isAdded()) {
+                        fragment.getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                callback.onSuccess(response);
+                            }
+                        });
+                    }
+                }
+
+                @Override
+                public void onError(final com.lonebytesoft.thetaleclient.sdk.AbstractApiResponse response) {
+                    if(fragment.isAdded()) {
+                        fragment.getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                callback.onError(response);
+                            }
+                        });
+                    }
+                }
+            };
+        }
+    }
+
+    public static <T extends com.lonebytesoft.thetaleclient.sdk.AbstractApiResponse> ApiCallback<T> wrapCallback(final ApiCallback<T> callback, final Activity activity) {
+        if(activity == null) {
+            return callback;
+        } else {
+            return new ApiCallback<T>() {
+                @Override
+                public void onSuccess(final T response) {
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            callback.onSuccess(response);
+                        }
+                    });
+                }
+
+                @Override
+                public void onError(final com.lonebytesoft.thetaleclient.sdk.AbstractApiResponse response) {
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            callback.onError(response);
+                        }
+                    });
+                }
+            };
+        }
     }
 
 }

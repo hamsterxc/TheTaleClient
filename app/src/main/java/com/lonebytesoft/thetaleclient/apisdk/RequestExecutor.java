@@ -47,4 +47,34 @@ public class RequestExecutor {
         }).start();
     }
 
+    public static <Q extends AbstractRequest<A>, A extends AbstractApiResponse> void executeOptional(
+            final Context context, final AbstractRequestBuilder<Q> requestBuilder,
+            final RequestExecutionInterceptor<A> interceptor, final ApiCallback<A> callback) {
+        if(interceptor.shouldExecute()) {
+            execute(context, requestBuilder, new ApiCallback<A>() {
+                @Override
+                public void onSuccess(A response) {
+                    interceptor.afterExecution(response);
+                    callback.onSuccess(response);
+                }
+
+                @Override
+                public void onError(AbstractApiResponse response) {
+                    callback.onError(response);
+                }
+            });
+        } else {
+            callback.onSuccess(null);
+        }
+    }
+
+    public static <A extends AbstractApiResponse> void executeOptional(
+            final Context context, final PrerequisiteRequest<?, A> prerequisiteRequest, final ApiCallback<A> callback) {
+        executeOptional(
+                context,
+                prerequisiteRequest.getRequestBuilder(),
+                prerequisiteRequest.getRequestExecutionInterceptor(),
+                callback);
+    }
+
 }

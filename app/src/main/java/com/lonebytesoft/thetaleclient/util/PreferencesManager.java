@@ -48,6 +48,7 @@ public class PreferencesManager {
     private static final String KEY_ABILITY_COST = "KEY_ABILITY_COST_%s";
     private static final String KEY_TURN_DELTA = "KEY_TURN_DELTA";
     private static final String KEY_STATIC_CONTENT_URL = "KEY_STATIC_CONTENT_URL";
+    private static final String KEY_DYNAMIC_CONTENT_URL = "KEY_DYNAMIC_CONTENT_URL";
 
     private static final String KEY_NOTIFICATION_LAST = "%s_LAST";
     private static final String KEY_NOTIFICATION_SHOULD_SHOW = "%s_SHOULD_SHOW";
@@ -595,6 +596,16 @@ public class PreferencesManager {
 
     public static String getStaticContentUrl() {
         return sharedPreferences.getString(KEY_STATIC_CONTENT_URL, null);
+    }
+
+    public static void setDynamicContentUrl(final String dynamicContentUrl) {
+        sharedPreferences.edit()
+                .putString(KEY_DYNAMIC_CONTENT_URL, dynamicContentUrl)
+                .commit();
+    }
+
+    public static String getDynamicContentUrl() {
+        return sharedPreferences.getString(KEY_DYNAMIC_CONTENT_URL, null);
     }
 
     public static void onWidgetEnabled() {
