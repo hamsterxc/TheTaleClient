@@ -17,23 +17,24 @@ import com.lonebytesoft.thetaleclient.DataViewMode;
 import com.lonebytesoft.thetaleclient.DrawerItem;
 import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.TheTaleClientApplication;
-import com.lonebytesoft.thetaleclient.api.ApiResponseCallback;
-import com.lonebytesoft.thetaleclient.api.cache.RequestCacheManager;
-import com.lonebytesoft.thetaleclient.api.cache.prerequisite.InfoPrerequisiteRequest;
-import com.lonebytesoft.thetaleclient.api.cache.prerequisite.PrerequisiteRequest;
-import com.lonebytesoft.thetaleclient.api.request.GameInfoRequest;
-import com.lonebytesoft.thetaleclient.api.request.LogoutRequest;
-import com.lonebytesoft.thetaleclient.api.response.CommonResponse;
-import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;
-import com.lonebytesoft.thetaleclient.api.response.InfoResponse;
+import com.lonebytesoft.thetaleclient.apisdk.ApiCallback;
+import com.lonebytesoft.thetaleclient.apisdk.RequestExecutor;
+import com.lonebytesoft.thetaleclient.apisdk.prerequisite.InfoPrerequisiteRequest;
+import com.lonebytesoft.thetaleclient.apisdk.request.GameInfoRequestBuilder;
+import com.lonebytesoft.thetaleclient.apisdk.request.LogoutRequestBuilder;
 import com.lonebytesoft.thetaleclient.fragment.GameFragment;
 import com.lonebytesoft.thetaleclient.fragment.NavigationDrawerFragment;
 import com.lonebytesoft.thetaleclient.fragment.Refreshable;
 import com.lonebytesoft.thetaleclient.fragment.WrapperFragment;
 import com.lonebytesoft.thetaleclient.fragment.dialog.ChoiceDialog;
+import com.lonebytesoft.thetaleclient.sdk.AbstractApiResponse;
+import com.lonebytesoft.thetaleclient.sdk.response.CommonResponse;
+import com.lonebytesoft.thetaleclient.sdk.response.GameInfoResponse;
+import com.lonebytesoft.thetaleclient.sdk.response.InfoResponse;
 import com.lonebytesoft.thetaleclient.util.DialogUtils;
 import com.lonebytesoft.thetaleclient.util.HistoryStack;
 import com.lonebytesoft.thetaleclient.util.PreferencesManager;
+import com.lonebytesoft.thetaleclient.util.RequestUtils;
 import com.lonebytesoft.thetaleclient.util.TextToSpeechUtils;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
 import com.lonebytesoft.thetaleclient.util.WebsiteUtils;
@@ -146,7 +147,6 @@ public class MainActivity extends ActionBarActivity
 
         TheTaleClientApplication.getOnscreenStateWatcher().onscreenStateChange(OnscreenPart.MAIN, false);
         TextToSpeechUtils.pause();
-        RequestCacheManager.invalidate();
         UiUtils.callOnscreenStateChange(getSupportFragmentManager().findFragmentByTag(currentItem.getFragmentTag()), false);
 
         super.onPause();
@@ -186,14 +186,12 @@ public class MainActivity extends ActionBarActivity
                             new ChoiceDialog.ItemChooseListener() {
                                 @Override
                                 public void onItemSelected(final int position) {
-                                    new InfoPrerequisiteRequest(new Runnable() {
+                                    RequestExecutor.executeOptional(MainActivity.this, new InfoPrerequisiteRequest(), RequestUtils.wrapCallback(new ApiCallback<InfoResponse>() {
                                         @Override
-                                        public void run() {
+                                        public void onSuccess(InfoResponse response) {
                                             final int accountId = PreferencesManager.getAccountId();
                                             if(accountId == 0) {
-                                                if(!isPaused()) {
-                                                    DialogUtils.showCommonErrorDialog(getSupportFragmentManager(), MainActivity.this);
-                                                }
+                                                DialogUtils.showCommonErrorDialog(getSupportFragmentManager(), MainActivity.this);
                                             } else {
                                                 switch(position) {
                                                     case 0:
@@ -205,21 +203,17 @@ public class MainActivity extends ActionBarActivity
                                                         break;
 
                                                     default:
-                                                        if(!isPaused()) {
-                                                            DialogUtils.showCommonErrorDialog(getSupportFragmentManager(), MainActivity.this);
-                                                        }
+                                                        DialogUtils.showCommonErrorDialog(getSupportFragmentManager(), MainActivity.this);
                                                         break;
                                                 }
                                             }
                                         }
-                                    }, new PrerequisiteRequest.ErrorCallback<InfoResponse>() {
+
                                         @Override
-                                        public void processError(InfoResponse response) {
-                                            if(!isPaused()) {
-                                                DialogUtils.showCommonErrorDialog(getSupportFragmentManager(), MainActivity.this);
-                                            }
+                                        public void onError(AbstractApiResponse response) {
+                                            DialogUtils.showCommonErrorDialog(getSupportFragmentManager(), MainActivity.this);
                                         }
-                                    }, null).execute();
+                                    }, MainActivity.this));
                                 }
                             });
                     break;
@@ -236,15 +230,15 @@ public class MainActivity extends ActionBarActivity
                         ((WrapperFragment) fragment).setMode(DataViewMode.LOADING);
                     }
 
-                    new LogoutRequest().execute(new ApiResponseCallback<CommonResponse>() {
+                    RequestExecutor.execute(this, new LogoutRequestBuilder(), new ApiCallback<CommonResponse>() {
                         @Override
-                        public void processResponse(CommonResponse response) {
+                        public void onSuccess(CommonResponse response) {
                             startActivity(new Intent(MainActivity.this, LoginActivity.class));
                             finish();
                         }
 
                         @Override
-                        public void processError(CommonResponse response) {
+                        public void onError(AbstractApiResponse response) {
                             if(fragment instanceof WrapperFragment) {
                                 ((WrapperFragment) fragment).setError(response.errorMessage);
                             }
@@ -354,31 +348,31 @@ public class MainActivity extends ActionBarActivity
     }
 
     public void onDataRefresh() {
-        new InfoPrerequisiteRequest(new Runnable() {
+        RequestExecutor.executeOptional(this, new InfoPrerequisiteRequest(), RequestUtils.wrapCallback(new ApiCallback<InfoResponse>() {
             @Override
-            public void run() {
+            public void onSuccess(InfoResponse response) {
                 drawerItemInfoView.setVisibility(View.VISIBLE);
                 UiUtils.setText(accountNameTextView, PreferencesManager.getAccountName());
-                new GameInfoRequest(false).execute(new ApiResponseCallback<GameInfoResponse>() {
+                RequestExecutor.execute(MainActivity.this, new GameInfoRequestBuilder(), RequestUtils.wrapCallback(new ApiCallback<GameInfoResponse>() {
                     @Override
-                    public void processResponse(GameInfoResponse response) {
+                    public void onSuccess(GameInfoResponse response) {
                         UiUtils.setText(timeTextView, String.format("%s %s", response.turnInfo.verboseDate, response.turnInfo.verboseTime));
                     }
 
                     @Override
-                    public void processError(GameInfoResponse response) {
+                    public void onError(AbstractApiResponse response) {
                         UiUtils.setText(timeTextView, null);
                     }
-                }, true);
+                }, MainActivity.this));
             }
-        }, new PrerequisiteRequest.ErrorCallback<InfoResponse>() {
+
             @Override
-            public void processError(InfoResponse response) {
+            public void onError(AbstractApiResponse response) {
                 drawerItemInfoView.setVisibility(View.GONE);
                 UiUtils.setText(accountNameTextView, null);
                 UiUtils.setText(timeTextView, null);
             }
-        }, null).execute();
+        }, this));
     }
 
     @Override
