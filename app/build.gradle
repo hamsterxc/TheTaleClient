@@ -23,8 +23,8 @@ android {
         applicationId "com.lonebytesoft.thetaleclient"
         minSdkVersion 9
         targetSdkVersion 22
-        versionCode 25
-        versionName "1.6.5"
+        versionCode 26
+        versionName "1.6.6"
     }
 
     signingConfigs {
