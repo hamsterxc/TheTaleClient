@@ -343,7 +343,7 @@ public class GameInfoFragment extends WrapperFragment {
                             @Override
                             public void onClick(View v) {
                                 DialogUtils.showTabbedDialog(getChildFragmentManager(),
-                                        companion.name, new CompanionTabsAdapter(companion));
+                                        companion.name, new CompanionTabsAdapter(companion, companion.coherence));
                             }
                         });
                     }
@@ -561,9 +561,11 @@ public class GameInfoFragment extends WrapperFragment {
     private class CompanionTabsAdapter extends TabbedDialog.TabbedDialogTabsAdapter {
 
         private final CompanionInfo companion;
+        private final int coherence;
 
-        private CompanionTabsAdapter(final CompanionInfo companion) {
+        private CompanionTabsAdapter(final CompanionInfo companion, final int coherence) {
             this.companion = companion;
+            this.coherence = coherence;
         }
 
         @Override
@@ -578,7 +580,7 @@ public class GameInfoFragment extends WrapperFragment {
                     return CompanionParamsFragment.newInstance(companion);
 
                 case 1:
-                    return CompanionFeaturesFragment.newInstance(companion);
+                    return CompanionFeaturesFragment.newInstance(companion, coherence);
 
                 case 2:
                     return CompanionDescriptionFragment.newInstance(companion);

@@ -24,12 +24,14 @@ import java.util.Map;
 public class CompanionFeaturesFragment extends TabbedDialogTabFragment {
 
     private static final String PARAM_COMPANION_INFO = "PARAM_COMPANION_INFO";
+    private static final String PARAM_COMPANION_COHERENCE = "PARAM_COMPANION_COHERENCE";
 
-    public static CompanionFeaturesFragment newInstance(final CompanionInfo companion) {
+    public static CompanionFeaturesFragment newInstance(final CompanionInfo companion, final int coherence) {
         final CompanionFeaturesFragment dialog = new CompanionFeaturesFragment();
 
         final Bundle args = new Bundle();
         args.putParcelable(PARAM_COMPANION_INFO, companion);
+        args.putInt(PARAM_COMPANION_COHERENCE, coherence);
         dialog.setArguments(args);
 
         return dialog;
@@ -56,21 +58,41 @@ public class CompanionFeaturesFragment extends TabbedDialogTabFragment {
             }
         });
 
+        final int coherence = getArguments().getInt(PARAM_COMPANION_COHERENCE, 0);
+        final int colorDisabled = getResources().getColor(R.color.common_disabled);
         int previous = -1;
         for(final Pair<Integer, CompanionFeature> feature : features) {
+            final boolean isDisabled = coherence < feature.first;
+
             if(previous != feature.first) {
                 previous = feature.first;
                 final View block = layoutInflater.inflate(R.layout.item_companion_feature_block, featuresContainer, false);
-                ((TextView) block.findViewById(R.id.companion_feature_block_text)).setText(
-                        previous == 0
-                                ? getString(R.string.game_companion_feature_initial)
-                                : getString(R.string.game_companion_feature_coherence, previous));
+
+                final TextView text = (TextView) block.findViewById(R.id.companion_feature_block_text);
+                text.setText(previous == 0
+                        ? getString(R.string.game_companion_feature_initial)
+                        : getString(R.string.game_companion_feature_coherence, previous));
+                if(isDisabled) {
+                    text.setTextColor(colorDisabled);
+                }
+
                 featuresContainer.addView(block);
             }
 
             final View item = layoutInflater.inflate(R.layout.item_companion_feature_item, featuresContainer, false);
-            ((TextView) item.findViewById(R.id.companion_feature_item_name)).setText(feature.second.getName());
-            ((TextView) item.findViewById(R.id.companion_feature_item_description)).setText(feature.second.getDescription());
+
+            final TextView textName = (TextView) item.findViewById(R.id.companion_feature_item_name);
+            textName.setText(feature.second.getName());
+            if(isDisabled) {
+                textName.setTextColor(colorDisabled);
+            }
+
+            final TextView textDescription = (TextView) item.findViewById(R.id.companion_feature_item_description);
+            textDescription.setText(feature.second.getDescription());
+            if(isDisabled) {
+                textDescription.setTextColor(colorDisabled);
+            }
+
             featuresContainer.addView(item);
         }
     }
