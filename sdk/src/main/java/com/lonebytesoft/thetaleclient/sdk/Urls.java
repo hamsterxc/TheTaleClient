@@ -1,4 +1,4 @@
-package com.lonebytesoft.thetaleclient.sdk.util;
+package com.lonebytesoft.thetaleclient.sdk;
 
 /**
  * @author Hamster

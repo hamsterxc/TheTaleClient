@@ -57,9 +57,11 @@ import javafx.util.Pair;
  * - CompanionRarity {@see http://the-tale.org/guide/companions/}
  * - CompanionType {@see http://the-tale.org/guide/companions/}
  * - HeroMode {@see http://the-tale.org/guide/api#game_info}
+ * - MapStyle {@see http://the-tale.org/guide/game-resources}
  * - PvpAbility {@see http://the-tale.org/guide/api#game_info}
  * - QuestType
  * - RatingItem {@see http://the-tale.org/guide/api#account_info}
+ * - RoadDirection
  */
 public class TestDictionaries extends TestCase {
 

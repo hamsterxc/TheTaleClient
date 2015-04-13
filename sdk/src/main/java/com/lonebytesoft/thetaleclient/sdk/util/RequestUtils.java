@@ -1,5 +1,7 @@
 package com.lonebytesoft.thetaleclient.sdk.util;
 
+import com.lonebytesoft.thetaleclient.sdk.Urls;
+
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;

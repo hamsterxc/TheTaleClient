@@ -16,9 +16,7 @@ import java.util.Map;
  * @author Hamster
  * @since 13.03.2015
  */
-public abstract class AbstractApiResponse {
-
-    public final String rawResponse;
+public abstract class AbstractApiResponse extends AbstractResponse {
 
     public final boolean isDeprecated;
     public final ApiResponseStatus status;
@@ -30,7 +28,7 @@ public abstract class AbstractApiResponse {
     public final String statusUrl;
 
     public AbstractApiResponse(final String response) throws JSONException {
-        rawResponse = response;
+        super(response);
         final JSONObject json = new JSONObject(response);
 
         isDeprecated = json.optBoolean("depricated");

@@ -11,7 +11,7 @@ import org.json.JSONException;
  * @author Hamster
  * @since 15.03.2015
  */
-public abstract class AbstractApiGetRequest<T extends AbstractApiResponse> extends AbstractRequest<T> {
+public abstract class AbstractApiGetRequest<T extends AbstractResponse> extends AbstractRequest<T> {
 
     private long staleTime = 0;
 

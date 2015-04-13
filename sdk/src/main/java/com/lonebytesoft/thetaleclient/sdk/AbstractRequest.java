@@ -3,7 +3,6 @@ package com.lonebytesoft.thetaleclient.sdk;
 import com.lonebytesoft.thetaleclient.sdk.exception.ApiException;
 import com.lonebytesoft.thetaleclient.sdk.exception.HttpException;
 import com.lonebytesoft.thetaleclient.sdk.exception.UpdateException;
-import com.lonebytesoft.thetaleclient.sdk.util.Urls;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -23,6 +22,8 @@ import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.HttpCookie;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -32,6 +33,8 @@ import java.util.Random;
 public abstract class AbstractRequest<T> {
 
     private static final String COOKIE_CSRF_TOKEN = "csrftoken";
+
+    private static final Object lock = new Object();
 
     /**
      * Executes current request using provided {@code HttpUriRequest}, {@link #getHttpUriRequest(String)}
@@ -47,11 +50,16 @@ public abstract class AbstractRequest<T> {
         }
         final CookieManager cookieManager = (CookieManager) cookieHandler;
 
+        final List<HttpCookie> cookies;
+        synchronized (lock) {
+            cookies = new ArrayList<>(cookieManager.getCookieStore().getCookies());
+        }
+
         String csrfToken = null;
         final HttpClientContext httpClientContext = HttpClientContext.create();
         final CookieStore cookieStore = new BasicCookieStore();
         httpClientContext.setCookieStore(cookieStore);
-        for(final HttpCookie httpCookie : cookieManager.getCookieStore().getCookies()) {
+        for(final HttpCookie httpCookie : cookies) {
             final BasicClientCookie cookie = new BasicClientCookie(httpCookie.getName(), httpCookie.getValue());
             cookie.setDomain(httpCookie.getDomain());
             cookie.setPath(httpCookie.getPath());
