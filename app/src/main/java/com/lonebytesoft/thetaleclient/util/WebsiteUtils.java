@@ -37,10 +37,15 @@ import java.util.concurrent.TimeUnit;
  * @author Hamster
  * @since 17.01.2015
  * TODO rewrite enumAccounts & enumMonsters using ExecutorService
+ * TODO rework urls: use RequestUtils.URL_BASE, move urls to a separate static class
  */
 public class WebsiteUtils {
 
     private static final int THREADS_COUNT = 20;
+
+    public static final String URL_GAME = "http://the-tale.org/game/?action=the-tale-client";
+    public static final String URL_PROFILE_KEEPER = "http://the-tale.org/accounts/%d?action=the-tale-client";
+    public static final String URL_PROFILE_HERO = "http://the-tale.org/game/heroes/%d?action=the-tale-client";
 
     private static final String PAGE_ACCOUNTS = "http://the-tale.org/accounts/";
     private static final String PAGE_MONSTERS = "http://the-tale.org/guide/mobs/";

@@ -96,6 +96,9 @@
     <string name="game_info_experience">Опыт</string>
     <string name="game_info_energy">Энергия</string>
     <string name="game_lvlup">\u2b06</string>
+    <string name="game_lvlup_dialog_title">Новые способности</string>
+    <string name="game_lvlup_dialog_message">Доступно способностей: %d.\nЧтобы выбрать новую способность, перейдите на сайт в профиль героя.</string>
+    <string name="game_lvlup_dialog_message_foreign">Доступно способностей: %d.</string>
     <string name="game_not_authorized">Отсутствует авторизация в игре. Пожалуйста, войдите в игру заново.</string>
 
     <string name="game_quest_choice">Выбор в квесте</string>

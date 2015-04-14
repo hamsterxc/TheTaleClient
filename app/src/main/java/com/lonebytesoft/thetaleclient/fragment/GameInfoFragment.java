@@ -44,6 +44,7 @@ import com.lonebytesoft.thetaleclient.util.PreferencesManager;
 import com.lonebytesoft.thetaleclient.util.RequestUtils;
 import com.lonebytesoft.thetaleclient.util.TextToSpeechUtils;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
+import com.lonebytesoft.thetaleclient.util.WebsiteUtils;
 import com.lonebytesoft.thetaleclient.util.onscreen.OnscreenPart;
 import com.lonebytesoft.thetaleclient.widget.RequestActionView;
 
@@ -214,7 +215,36 @@ public class GameInfoFragment extends WrapperFragment {
                         gameInfoResponse.account.hero.basicInfo.gender.getName()));
                 textLevel.setText(String.valueOf(gameInfoResponse.account.hero.basicInfo.level));
                 textName.setText(gameInfoResponse.account.hero.basicInfo.name);
-                textLevelUp.setVisibility(gameInfoResponse.account.hero.basicInfo.destinyPoints > 0 ? View.VISIBLE : View.GONE);
+                if(gameInfoResponse.account.hero.basicInfo.destinyPoints > 0) {
+                    textLevelUp.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if(gameInfoResponse.account.isOwnInfo) {
+                                DialogUtils.showConfirmationDialog(
+                                        getChildFragmentManager(),
+                                        getString(R.string.game_lvlup_dialog_title),
+                                        getString(R.string.game_lvlup_dialog_message, gameInfoResponse.account.hero.basicInfo.destinyPoints),
+                                        getString(R.string.drawer_title_site), new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                startActivity(UiUtils.getOpenLinkIntent(String.format(
+                                                        WebsiteUtils.URL_PROFILE_HERO, gameInfoResponse.account.hero.id)));
+                                            }
+                                        },
+                                        null, null, null);
+                            } else {
+                                DialogUtils.showMessageDialog(
+                                        getChildFragmentManager(),
+                                        getString(R.string.game_lvlup_dialog_title),
+                                        getString(R.string.game_lvlup_dialog_message_foreign,
+                                                gameInfoResponse.account.hero.basicInfo.destinyPoints));
+                            }
+                        }
+                    });
+                    textLevelUp.setVisibility(View.VISIBLE);
+                } else {
+                    textLevelUp.setVisibility(View.GONE);
+                }
 
                 final SpannableStringBuilder additionalInfoStringBuilder = new SpannableStringBuilder();
                 final Date lastVisit = new Date((long) gameInfoResponse.account.lastVisitTime * 1000);

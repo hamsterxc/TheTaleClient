@@ -36,11 +36,9 @@ import com.lonebytesoft.thetaleclient.util.HistoryStack;
 import com.lonebytesoft.thetaleclient.util.PreferencesManager;
 import com.lonebytesoft.thetaleclient.util.TextToSpeechUtils;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
+import com.lonebytesoft.thetaleclient.util.WebsiteUtils;
 import com.lonebytesoft.thetaleclient.util.onscreen.OnscreenPart;
 
-/**
- * todo rework urls: use RequestUtils.URL_BASE, possibly move urls to a separate static class
- */
 public class MainActivity extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
@@ -48,10 +46,6 @@ public class MainActivity extends ActionBarActivity
     public static final String KEY_SHOULD_RESET_WATCHING_ACCOUNT = "KEY_SHOULD_RESET_WATCHING_ACCOUNT";
 
     private static final String KEY_DRAWER_TAB_INDEX = "KEY_DRAWER_TAB_INDEX";
-
-    private static final String URL_GAME = "http://the-tale.org/game/?action=the-tale-client";
-    private static final String URL_PROFILE_KEEPER = "http://the-tale.org/accounts/%d?action=the-tale-client";
-    private static final String URL_PROFILE_HERO = "http://the-tale.org/game/heroes/%d?action=the-tale-client";
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -203,11 +197,11 @@ public class MainActivity extends ActionBarActivity
                                             } else {
                                                 switch(position) {
                                                     case 0:
-                                                        startActivity(UiUtils.getOpenLinkIntent(String.format(URL_PROFILE_KEEPER, accountId)));
+                                                        startActivity(UiUtils.getOpenLinkIntent(String.format(WebsiteUtils.URL_PROFILE_KEEPER, accountId)));
                                                         break;
 
                                                     case 1:
-                                                        startActivity(UiUtils.getOpenLinkIntent(String.format(URL_PROFILE_HERO, accountId)));
+                                                        startActivity(UiUtils.getOpenLinkIntent(String.format(WebsiteUtils.URL_PROFILE_HERO, accountId)));
                                                         break;
 
                                                     default:
@@ -231,7 +225,7 @@ public class MainActivity extends ActionBarActivity
                     break;
 
                 case SITE:
-                    startActivity(UiUtils.getOpenLinkIntent(URL_GAME));
+                    startActivity(UiUtils.getOpenLinkIntent(WebsiteUtils.URL_GAME));
                     break;
 
                 case LOGOUT:
