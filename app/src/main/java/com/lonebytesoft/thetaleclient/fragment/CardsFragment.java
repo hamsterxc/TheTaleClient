@@ -141,7 +141,7 @@ public class CardsFragment extends WrapperFragment {
                                 public void processResponse(TakeCardResponse response) {
                                     helpTakeCardWidget.setMode(RequestActionView.Mode.ACTION);
                                     DialogUtils.showCardInfoDialog(getChildFragmentManager(),
-                                            getString(R.string.game_cards_combine_result),
+                                            getString(R.string.game_card_take_result),
                                             response.card,
                                             new Runnable() {
                                                 @Override

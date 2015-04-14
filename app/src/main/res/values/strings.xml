@@ -54,6 +54,7 @@
     <string name="game_bag_effects_title">Все эффекты экипировки</string>
 
     <string name="game_card_take">Взять карту!</string>
+    <string name="game_card_take_result">Карта взята</string>
     <string name="game_card_tradable">Может быть продана на рынке</string>
     <string name="game_cards_combine">Объединить карты</string>
     <string name="game_cards_combine_cancel">Отмена</string>
