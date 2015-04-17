@@ -3,6 +3,7 @@ package com.lonebytesoft.thetaleclient.apisdk.prerequisite;
 import android.text.TextUtils;
 
 import com.lonebytesoft.thetaleclient.apisdk.AbstractRequestBuilder;
+import com.lonebytesoft.thetaleclient.apisdk.BaseRequestExecutionInterceptor;
 import com.lonebytesoft.thetaleclient.apisdk.PrerequisiteRequest;
 import com.lonebytesoft.thetaleclient.apisdk.RequestExecutionInterceptor;
 import com.lonebytesoft.thetaleclient.apisdk.request.GameInfoRequestBuilder;
@@ -22,15 +23,15 @@ public class GameInfoPrerequisiteRequest implements PrerequisiteRequest<GameInfo
     }
 
     @Override
-    public RequestExecutionInterceptor<GameInfoResponse> getRequestExecutionInterceptor() {
-        return new RequestExecutionInterceptor<GameInfoResponse>() {
+    public RequestExecutionInterceptor<GameInfoRequest, GameInfoResponse> getRequestExecutionInterceptor() {
+        return new BaseRequestExecutionInterceptor<GameInfoRequest, GameInfoResponse>() {
             @Override
-            public boolean shouldExecute() {
+            public boolean beforeExecute() {
                 return (PreferencesManager.getAccountId() != 0) && (!TextUtils.isEmpty(PreferencesManager.getMapVersion()));
             }
 
             @Override
-            public void afterExecution(GameInfoResponse response) {
+            public GameInfoResponse getSuccessResponseAfterSuccess(GameInfoResponse response) {
                 if(response.account == null) {
                     PreferencesManager.setAccountId(0);
                     PreferencesManager.setAccountName(null);
@@ -38,6 +39,7 @@ public class GameInfoPrerequisiteRequest implements PrerequisiteRequest<GameInfo
                     PreferencesManager.setAccountId(response.account.accountId);
                 }
                 PreferencesManager.setMapVersion(response.mapVersion);
+                return response;
             }
         };
     }

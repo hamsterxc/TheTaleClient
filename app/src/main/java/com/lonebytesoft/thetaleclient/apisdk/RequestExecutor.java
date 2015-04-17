@@ -47,31 +47,41 @@ public class RequestExecutor {
         }).start();
     }
 
-    public static <Q extends AbstractRequest<A>, A extends AbstractApiResponse> void executeOptional(
+    public static <Q extends AbstractRequest<A>, A extends AbstractApiResponse> void execute(
             final Context context, final AbstractRequestBuilder<Q> requestBuilder,
-            final RequestExecutionInterceptor<A> interceptor, final ApiCallback<A> callback) {
-        if(interceptor.shouldExecute()) {
-            execute(context, requestBuilder, new ApiCallback<A>() {
+            final RequestExecutionInterceptor<Q, A> interceptor, final ApiCallback<A> callback) {
+        if(interceptor.beforeExecute()) {
+            interceptor.execute(context, requestBuilder, new ApiCallback<A>() {
                 @Override
                 public void onSuccess(A response) {
-                    interceptor.afterExecution(response);
-                    callback.onSuccess(response);
+                    if(interceptor.isSuccessAfterSuccess(response)) {
+                        callback.onSuccess(interceptor.getSuccessResponseAfterSuccess(response));
+                    } else {
+                        callback.onError(interceptor.getErrorResponseAfterSuccess(response));
+                    }
                 }
 
                 @Override
                 public void onError(AbstractApiResponse response) {
-                    callback.onError(response);
+                    if(interceptor.isSuccessAfterError(response)) {
+                        callback.onSuccess(interceptor.getSuccessResponseAfterError(response));
+                    } else {
+                        callback.onError(interceptor.getErrorResponseAfterError(response));
+                    }
                 }
             });
         } else {
-            callback.onSuccess(null);
+            if(interceptor.isSuccessAfterSkip()) {
+                callback.onSuccess(interceptor.getSuccessResponseAfterSkip());
+            } else {
+                callback.onError(interceptor.getErrorResponseAfterSkip());
+            }
         }
     }
 
-    public static <A extends AbstractApiResponse> void executeOptional(
-            final Context context, final PrerequisiteRequest<?, A> prerequisiteRequest, final ApiCallback<A> callback) {
-        executeOptional(
-                context,
+    public static <Q extends AbstractRequest<A>, A extends AbstractApiResponse> void executeOptional(
+            final Context context, final PrerequisiteRequest<Q, A> prerequisiteRequest, final ApiCallback<A> callback) {
+        execute(context,
                 prerequisiteRequest.getRequestBuilder(),
                 prerequisiteRequest.getRequestExecutionInterceptor(),
                 callback);

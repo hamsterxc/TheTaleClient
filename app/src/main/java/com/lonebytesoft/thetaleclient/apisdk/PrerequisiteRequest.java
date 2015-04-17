@@ -11,6 +11,6 @@ public interface PrerequisiteRequest<Q extends AbstractRequest<A>, A extends Abs
 
     AbstractRequestBuilder<Q> getRequestBuilder();
 
-    RequestExecutionInterceptor<A> getRequestExecutionInterceptor();
+    RequestExecutionInterceptor<Q, A> getRequestExecutionInterceptor();
 
 }

@@ -4,6 +4,7 @@ import android.text.TextUtils;
 
 import com.lonebytesoft.thetaleclient.api.dictionary.Action;
 import com.lonebytesoft.thetaleclient.apisdk.AbstractRequestBuilder;
+import com.lonebytesoft.thetaleclient.apisdk.BaseRequestExecutionInterceptor;
 import com.lonebytesoft.thetaleclient.apisdk.PrerequisiteRequest;
 import com.lonebytesoft.thetaleclient.apisdk.RequestExecutionInterceptor;
 import com.lonebytesoft.thetaleclient.apisdk.request.InfoRequestBuilder;
@@ -27,10 +28,10 @@ public class InfoPrerequisiteRequest implements PrerequisiteRequest<InfoRequest,
     }
 
     @Override
-    public RequestExecutionInterceptor<InfoResponse> getRequestExecutionInterceptor() {
-        return new RequestExecutionInterceptor<InfoResponse>() {
+    public RequestExecutionInterceptor<InfoRequest, InfoResponse> getRequestExecutionInterceptor() {
+        return new BaseRequestExecutionInterceptor<InfoRequest, InfoResponse>() {
             @Override
-            public boolean shouldExecute() {
+            public boolean beforeExecute() {
                 boolean shouldExecute =
                         (PreferencesManager.getDynamicContentUrl() != null)
                         && (PreferencesManager.getStaticContentUrl() != null)
@@ -44,7 +45,7 @@ public class InfoPrerequisiteRequest implements PrerequisiteRequest<InfoRequest,
             }
 
             @Override
-            public void afterExecution(InfoResponse response) {
+            public InfoResponse getSuccessResponseAfterSuccess(InfoResponse response) {
                 PreferencesManager.setDynamicContentUrl(response.dynamicContentUrl);
                 PreferencesManager.setStaticContentUrl(response.staticContentUrl);
                 PreferencesManager.setTurnDelta(response.turnDelta);
@@ -59,6 +60,8 @@ public class InfoPrerequisiteRequest implements PrerequisiteRequest<InfoRequest,
                             com.lonebytesoft.thetaleclient.sdk.dictionary.Action.class, action.getCode())));
                 }
                 PreferencesManager.setAbilitiesCost(abilitiesCost);
+
+                return response;
             }
         };
     }
