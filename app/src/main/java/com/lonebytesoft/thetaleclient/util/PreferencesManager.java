@@ -11,6 +11,7 @@ import com.lonebytesoft.thetaleclient.TheTaleClientApplication;
 import com.lonebytesoft.thetaleclient.api.dictionary.Action;
 import com.lonebytesoft.thetaleclient.api.dictionary.MapStyle;
 import com.lonebytesoft.thetaleclient.fragment.GameFragment;
+import com.lonebytesoft.thetaleclient.sdk.response.GameInfoResponse;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -49,6 +50,7 @@ public class PreferencesManager {
     private static final String KEY_TURN_DELTA = "KEY_TURN_DELTA";
     private static final String KEY_STATIC_CONTENT_URL = "KEY_STATIC_CONTENT_URL";
     private static final String KEY_DYNAMIC_CONTENT_URL = "KEY_DYNAMIC_CONTENT_URL";
+    private static final String KEY_GAME_INFO_RESPONSE_CACHE = "KEY_GAME_INFO_RESPONSE_CACHE";
 
     private static final String KEY_NOTIFICATION_LAST = "%s_LAST";
     private static final String KEY_NOTIFICATION_SHOULD_SHOW = "%s_SHOULD_SHOW";
@@ -578,6 +580,10 @@ public class PreferencesManager {
         return sharedPreferences.getInt(String.format(KEY_ABILITY_COST, action.name()), -1);
     }
 
+    public static int getAbilityCost(final com.lonebytesoft.thetaleclient.sdk.dictionary.Action action) {
+        return sharedPreferences.getInt(String.format(KEY_ABILITY_COST, action.name()), -1);
+    }
+
     public static void setTurnDelta(final int turnDelta) {
         sharedPreferences.edit()
                 .putInt(KEY_TURN_DELTA, turnDelta)
@@ -606,6 +612,22 @@ public class PreferencesManager {
 
     public static String getDynamicContentUrl() {
         return sharedPreferences.getString(KEY_DYNAMIC_CONTENT_URL, null);
+    }
+
+    public static GameInfoResponse getGameInfoResponseCache() {
+        try {
+            return new GameInfoResponse(sharedPreferences.getString(KEY_GAME_INFO_RESPONSE_CACHE, ""));
+        } catch (com.lonebytesoft.thetaleclient.sdk.lib.org.json.JSONException e) {
+            return null;
+        }
+    }
+
+    public static void setGameInfoResponseCache(final GameInfoResponse gameInfoResponse) {
+        if(gameInfoResponse != null) {
+            sharedPreferences.edit()
+                    .putString(KEY_GAME_INFO_RESPONSE_CACHE, gameInfoResponse.rawResponse)
+                    .commit();
+        }
     }
 
     public static void onWidgetEnabled() {

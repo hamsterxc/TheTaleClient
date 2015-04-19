@@ -3,17 +3,17 @@ package com.lonebytesoft.thetaleclient.util;
 import android.content.Context;
 
 import com.lonebytesoft.thetaleclient.R;
-import com.lonebytesoft.thetaleclient.api.dictionary.ArtifactEffect;
-import com.lonebytesoft.thetaleclient.api.dictionary.EquipmentType;
 import com.lonebytesoft.thetaleclient.api.dictionary.HeroAction;
-import com.lonebytesoft.thetaleclient.api.model.ArtifactInfo;
 import com.lonebytesoft.thetaleclient.api.model.CompanionInfo;
 import com.lonebytesoft.thetaleclient.api.model.EnergyInfo;
 import com.lonebytesoft.thetaleclient.api.model.HeroActionInfo;
 import com.lonebytesoft.thetaleclient.api.model.HeroBasicInfo;
-import com.lonebytesoft.thetaleclient.api.model.HeroInfo;
 import com.lonebytesoft.thetaleclient.api.model.QuestStepInfo;
 import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;
+import com.lonebytesoft.thetaleclient.sdk.dictionary.ArtifactEffect;
+import com.lonebytesoft.thetaleclient.sdk.dictionary.EquipmentType;
+import com.lonebytesoft.thetaleclient.sdk.model.ArtifactInfo;
+import com.lonebytesoft.thetaleclient.sdk.model.HeroInfo;
 
 import java.util.List;
 import java.util.Map;
@@ -31,6 +31,10 @@ public class GameInfoUtils {
     }
 
     public static boolean isEnoughEnergy(final EnergyInfo energyInfo, final int need) {
+        return (energyInfo.current + energyInfo.bonus - energyInfo.discount) >= need;
+    }
+
+    public static boolean isEnoughEnergy(final com.lonebytesoft.thetaleclient.sdk.model.EnergyInfo energyInfo, final int need) {
         return (energyInfo.current + energyInfo.bonus - energyInfo.discount) >= need;
     }
 
@@ -71,7 +75,35 @@ public class GameInfoUtils {
         return String.format("%d/%d", companionInfo.experienceCurrent, companionInfo.experienceForNextLevel);
     }
 
+    public static String getHealthString(final com.lonebytesoft.thetaleclient.sdk.model.HeroBasicInfo heroBasicInfo) {
+        return String.format("%d/%d", heroBasicInfo.healthCurrent, heroBasicInfo.healthMax);
+    }
+
+    public static String getExperienceString(final com.lonebytesoft.thetaleclient.sdk.model.HeroBasicInfo heroBasicInfo) {
+        return String.format("%d/%d", heroBasicInfo.experienceCurrent, heroBasicInfo.experienceForNextLevel);
+    }
+
+    public static String getEnergyString(final com.lonebytesoft.thetaleclient.sdk.model.EnergyInfo energyInfo) {
+        return String.format("%d/%d + %d", energyInfo.current, energyInfo.max, energyInfo.bonus);
+    }
+
+    public static String getCompanionHealthString(final com.lonebytesoft.thetaleclient.sdk.model.CompanionInfo companionInfo) {
+        return String.format("%d/%d", companionInfo.healthCurrent, companionInfo.healthMax);
+    }
+
+    public static String getCompanionExperienceString(final com.lonebytesoft.thetaleclient.sdk.model.CompanionInfo companionInfo) {
+        return String.format("%d/%d", companionInfo.experienceCurrent, companionInfo.experienceForNextLevel);
+    }
+
     public static String getActionString(final Context context, final HeroActionInfo actionInfo) {
+        String actionDescription = actionInfo.description;
+        if(actionInfo.isBossFight) {
+            actionDescription += context.getString(R.string.game_boss_fight);
+        }
+        return actionDescription;
+    }
+
+    public static String getActionString(final Context context, final com.lonebytesoft.thetaleclient.sdk.model.HeroActionInfo actionInfo) {
         String actionDescription = actionInfo.description;
         if(actionInfo.isBossFight) {
             actionDescription += context.getString(R.string.game_boss_fight);

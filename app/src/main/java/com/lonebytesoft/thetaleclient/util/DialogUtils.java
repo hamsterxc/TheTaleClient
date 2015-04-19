@@ -8,7 +8,6 @@ import android.support.v4.app.FragmentTransaction;
 import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.api.model.ArtifactInfo;
 import com.lonebytesoft.thetaleclient.api.model.CardInfo;
-import com.lonebytesoft.thetaleclient.api.model.MightInfo;
 import com.lonebytesoft.thetaleclient.api.model.QuestActorInfo;
 import com.lonebytesoft.thetaleclient.fragment.dialog.AboutDialog;
 import com.lonebytesoft.thetaleclient.fragment.dialog.ArtifactDialog;
@@ -20,6 +19,7 @@ import com.lonebytesoft.thetaleclient.fragment.dialog.MessageDialog;
 import com.lonebytesoft.thetaleclient.fragment.dialog.MightDialog;
 import com.lonebytesoft.thetaleclient.fragment.dialog.QuestActorDialog;
 import com.lonebytesoft.thetaleclient.fragment.dialog.TabbedDialog;
+import com.lonebytesoft.thetaleclient.sdk.model.MightInfo;
 
 /**
  * @author Hamster

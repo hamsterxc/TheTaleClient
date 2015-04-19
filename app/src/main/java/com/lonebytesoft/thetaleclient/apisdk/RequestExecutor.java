@@ -50,6 +50,11 @@ public class RequestExecutor {
     public static <Q extends AbstractRequest<A>, A extends AbstractApiResponse> void execute(
             final Context context, final AbstractRequestBuilder<Q> requestBuilder,
             final RequestExecutionInterceptor<Q, A> interceptor, final ApiCallback<A> callback) {
+        if(interceptor == null) {
+            execute(context, requestBuilder, callback);
+            return;
+        }
+
         if(interceptor.beforeExecute()) {
             interceptor.execute(context, requestBuilder, new ApiCallback<A>() {
                 @Override

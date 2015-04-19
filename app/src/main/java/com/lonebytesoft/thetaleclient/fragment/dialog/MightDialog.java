@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.lonebytesoft.thetaleclient.R;
-import com.lonebytesoft.thetaleclient.api.model.MightInfo;
+import com.lonebytesoft.thetaleclient.sdk.model.MightInfo;
 
 /**
  * @author Hamster

@@ -8,8 +8,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.lonebytesoft.thetaleclient.R;
-import com.lonebytesoft.thetaleclient.api.dictionary.CompanionFeature;
-import com.lonebytesoft.thetaleclient.api.model.CompanionInfo;
+import com.lonebytesoft.thetaleclient.sdk.dictionary.CompanionFeature;
+import com.lonebytesoft.thetaleclient.apisdk.model.CompanionInfo;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -51,7 +51,7 @@ public class CompanionFeaturesFragment extends TabbedDialogTabFragment {
             @Override
             public int compare(Pair<Integer, CompanionFeature> lhs, Pair<Integer, CompanionFeature> rhs) {
                 if(lhs.first.equals(rhs.first)) {
-                    return lhs.second.getName().compareTo(rhs.second.getName());
+                    return lhs.second.name.compareTo(rhs.second.name);
                 } else {
                     return lhs.first - rhs.first;
                 }
@@ -82,13 +82,13 @@ public class CompanionFeaturesFragment extends TabbedDialogTabFragment {
             final View item = layoutInflater.inflate(R.layout.item_companion_feature_item, featuresContainer, false);
 
             final TextView textName = (TextView) item.findViewById(R.id.companion_feature_item_name);
-            textName.setText(feature.second.getName());
+            textName.setText(feature.second.name);
             if(isDisabled) {
                 textName.setTextColor(colorDisabled);
             }
 
             final TextView textDescription = (TextView) item.findViewById(R.id.companion_feature_item_description);
-            textDescription.setText(feature.second.getDescription());
+            textDescription.setText(feature.second.description);
             if(isDisabled) {
                 textDescription.setTextColor(colorDisabled);
             }

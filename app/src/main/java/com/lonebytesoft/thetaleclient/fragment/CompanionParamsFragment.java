@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.lonebytesoft.thetaleclient.R;
-import com.lonebytesoft.thetaleclient.api.model.CompanionInfo;
+import com.lonebytesoft.thetaleclient.apisdk.model.CompanionInfo;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
 
 /**
@@ -38,19 +38,19 @@ public class CompanionParamsFragment extends TabbedDialogTabFragment {
         final SpannableStringBuilder info = new SpannableStringBuilder();
         info.append(UiUtils.getInfoItem(
                 getString(R.string.game_companion_param_rarity),
-                companion.species.rarity.getName()))
+                companion.species.rarity.name))
                 .append("\n");
         info.append(UiUtils.getInfoItem(
                 getString(R.string.game_companion_param_type),
-                companion.species.type.getName()))
+                companion.species.type.name))
                 .append("\n");
         info.append(UiUtils.getInfoItem(
                 getString(R.string.game_companion_param_archetype),
-                companion.species.archetype.getCode()))
+                companion.species.archetype.name))
                 .append("\n");
         info.append(UiUtils.getInfoItem(
                 getString(R.string.game_companion_param_dedication),
-                companion.species.dedication.getName()))
+                companion.species.dedication.name))
                 .append("\n");
         info.append(UiUtils.getInfoItem(
                 getString(R.string.game_companion_param_health),
