@@ -6,9 +6,9 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
 import com.lonebytesoft.thetaleclient.R;
-import com.lonebytesoft.thetaleclient.api.model.ArtifactInfo;
 import com.lonebytesoft.thetaleclient.api.model.CardInfo;
-import com.lonebytesoft.thetaleclient.apisdk.model.QuestActorInfo;
+import com.lonebytesoft.thetaleclient.apisdk.model.ArtifactInfoParcelable;
+import com.lonebytesoft.thetaleclient.apisdk.model.QuestActorInfoParcelable;
 import com.lonebytesoft.thetaleclient.fragment.dialog.AboutDialog;
 import com.lonebytesoft.thetaleclient.fragment.dialog.ArtifactDialog;
 import com.lonebytesoft.thetaleclient.fragment.dialog.CardInfoDialog;
@@ -53,12 +53,12 @@ public class DialogUtils {
                 .show(getFragmentTransaction(fragmentManager, DIALOG_MIGHT_TAG), DIALOG_MIGHT_TAG);
     }
 
-    public static void showArtifactDialog(final FragmentManager fragmentManager, final ArtifactInfo artifactInfo) {
+    public static void showArtifactDialog(final FragmentManager fragmentManager, final ArtifactInfoParcelable artifactInfo) {
         ArtifactDialog.newInstance(artifactInfo)
                 .show(getFragmentTransaction(fragmentManager, DIALOG_ARTIFACT_TAG), DIALOG_ARTIFACT_TAG);
     }
 
-    public static void showQuestActorDialog(final FragmentManager fragmentManager, final QuestActorInfo questActorInfo) {
+    public static void showQuestActorDialog(final FragmentManager fragmentManager, final QuestActorInfoParcelable questActorInfo) {
         QuestActorDialog.newInstance(questActorInfo)
                 .show(getFragmentTransaction(fragmentManager, DIALOG_QUEST_ACTOR_TAG), DIALOG_QUEST_ACTOR_TAG);
     }

@@ -20,12 +20,12 @@ import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.TheTaleClientApplication;
 import com.lonebytesoft.thetaleclient.apisdk.ApiCallback;
 import com.lonebytesoft.thetaleclient.apisdk.RequestExecutor;
-import com.lonebytesoft.thetaleclient.apisdk.model.QuestActorInfo;
+import com.lonebytesoft.thetaleclient.apisdk.model.QuestActorInfoParcelable;
 import com.lonebytesoft.thetaleclient.apisdk.request.GameInfoRequestBuilder;
 import com.lonebytesoft.thetaleclient.apisdk.request.MapRequestBuilder;
 import com.lonebytesoft.thetaleclient.apisdk.request.QuestChoiceRequestBuilder;
+import com.lonebytesoft.thetaleclient.apisdk.util.DictionaryData;
 import com.lonebytesoft.thetaleclient.sdk.AbstractApiResponse;
-import com.lonebytesoft.thetaleclient.sdk.dictionary.QuestActorType;
 import com.lonebytesoft.thetaleclient.sdk.dictionary.QuestType;
 import com.lonebytesoft.thetaleclient.sdk.model.QuestActorDetailsPerson;
 import com.lonebytesoft.thetaleclient.sdk.model.QuestActorDetailsPlace;
@@ -36,7 +36,6 @@ import com.lonebytesoft.thetaleclient.sdk.response.CommonResponse;
 import com.lonebytesoft.thetaleclient.sdk.response.GameInfoResponse;
 import com.lonebytesoft.thetaleclient.sdk.response.MapResponse;
 import com.lonebytesoft.thetaleclient.util.DialogUtils;
-import com.lonebytesoft.thetaleclient.util.GameInfoUtils;
 import com.lonebytesoft.thetaleclient.util.PreferencesManager;
 import com.lonebytesoft.thetaleclient.util.RequestUtils;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
@@ -59,8 +58,6 @@ public class QuestsFragment extends WrapperFragment {
     private ViewGroup container;
 
     private final Map<TextView, Integer> actorNames = new HashMap<>();
-
-    private static final Map<QuestType, Integer> questTypeDrawableIds;
 
     public QuestsFragment() {
     }
@@ -114,7 +111,7 @@ public class QuestsFragment extends WrapperFragment {
                             questNameView.setText(TextUtils.concat(questStep.name, rewardsString));
                         }
 
-                        ((ImageView) questStepView.findViewById(R.id.quest_icon)).setImageResource(questTypeDrawableIds.get(questStep.type));
+                        ((ImageView) questStepView.findViewById(R.id.quest_icon)).setImageResource(DictionaryData.getQuestTypeDrawableId(questStep.type));
 
                         final ViewGroup actorsContainer = (ViewGroup) questStepView.findViewById(R.id.quest_actors_container);
                         for (final com.lonebytesoft.thetaleclient.sdk.model.QuestActorInfo actor : questStep.actors) {
@@ -145,7 +142,7 @@ public class QuestsFragment extends WrapperFragment {
                             }
 
                             actorTextView.setText(actorText);
-                            final QuestActorInfo questActorInfo = new QuestActorInfo(actor);
+                            final QuestActorInfoParcelable questActorInfo = new QuestActorInfoParcelable(actor);
                             actorTextView.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
@@ -269,23 +266,6 @@ public class QuestsFragment extends WrapperFragment {
         TheTaleClientApplication.getOnscreenStateWatcher().onscreenStateChange(OnscreenPart.QUESTS, true);
 
         TheTaleClientApplication.getNotificationManager().clearNotifications();
-    }
-
-    static {
-        questTypeDrawableIds = new HashMap<>(QuestType.values().length);
-        questTypeDrawableIds.put(QuestType.CARAVAN, R.drawable.quest_caravan);
-        questTypeDrawableIds.put(QuestType.DELIVERY, R.drawable.quest_delivery);
-        questTypeDrawableIds.put(QuestType.HELP, R.drawable.quest_help);
-        questTypeDrawableIds.put(QuestType.HELP_FRIEND, R.drawable.quest_help_friend);
-        questTypeDrawableIds.put(QuestType.HOMETOWN, R.drawable.quest_hometown);
-        questTypeDrawableIds.put(QuestType.HUNT, R.drawable.quest_hunt);
-        questTypeDrawableIds.put(QuestType.ENEMY, R.drawable.quest_enemy);
-        questTypeDrawableIds.put(QuestType.DEBT, R.drawable.quest_debt);
-        questTypeDrawableIds.put(QuestType.SPYING, R.drawable.quest_spying);
-        questTypeDrawableIds.put(QuestType.SMITH, R.drawable.quest_smith);
-        questTypeDrawableIds.put(QuestType.NO_QUEST, R.drawable.quest_no_quest);
-        questTypeDrawableIds.put(QuestType.SPENDING, R.drawable.quest_next_spending);
-        questTypeDrawableIds.put(QuestType.PILGRIMAGE, R.drawable.quest_pilgrimage);
     }
 
 }

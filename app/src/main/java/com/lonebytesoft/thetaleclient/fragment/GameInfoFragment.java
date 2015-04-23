@@ -22,8 +22,7 @@ import com.lonebytesoft.thetaleclient.TheTaleClientApplication;
 import com.lonebytesoft.thetaleclient.activity.MainActivity;
 import com.lonebytesoft.thetaleclient.apisdk.ApiCallback;
 import com.lonebytesoft.thetaleclient.apisdk.RequestExecutor;
-import com.lonebytesoft.thetaleclient.apisdk.interceptor.GameInfoRequestCacheInterceptor;
-import com.lonebytesoft.thetaleclient.apisdk.model.CompanionInfo;
+import com.lonebytesoft.thetaleclient.apisdk.model.CompanionInfoParcelable;
 import com.lonebytesoft.thetaleclient.apisdk.prerequisite.InfoPrerequisiteRequest;
 import com.lonebytesoft.thetaleclient.apisdk.request.GameInfoRequestBuilder;
 import com.lonebytesoft.thetaleclient.apisdk.request.PerformActionRequestBuilder;
@@ -33,6 +32,7 @@ import com.lonebytesoft.thetaleclient.sdk.dictionary.Action;
 import com.lonebytesoft.thetaleclient.sdk.dictionary.ArtifactEffect;
 import com.lonebytesoft.thetaleclient.sdk.dictionary.Habit;
 import com.lonebytesoft.thetaleclient.sdk.dictionary.HeroAction;
+import com.lonebytesoft.thetaleclient.sdk.model.CompanionInfo;
 import com.lonebytesoft.thetaleclient.sdk.model.EnergyInfo;
 import com.lonebytesoft.thetaleclient.sdk.model.HeroActionInfo;
 import com.lonebytesoft.thetaleclient.sdk.model.JournalEntry;
@@ -345,35 +345,35 @@ public class GameInfoFragment extends WrapperFragment {
                     }
                 });
 
-                final com.lonebytesoft.thetaleclient.sdk.model.CompanionInfo companionInfo = response.account.hero.companionInfo;
-                final CompanionInfo companion = companionInfo == null ? null : new CompanionInfo(companionInfo);
-                if (companion == null) {
+                final CompanionInfo companionInfo = response.account.hero.companionInfo;
+                if(companionInfo == null) {
                     companionContainer.setVisibility(View.GONE);
                     companionAbsentText.setVisibility(View.VISIBLE);
                 } else {
                     companionAbsentText.setVisibility(View.GONE);
                     companionContainer.setVisibility(View.VISIBLE);
 
-                    companionName.setText(companion.name);
-                    companionCoherence.setText(String.valueOf(companion.coherence));
+                    companionName.setText(companionInfo.name);
+                    companionCoherence.setText(String.valueOf(companionInfo.coherence));
 
-                    progressCompanionHealth.setMax(companion.healthMax);
-                    progressCompanionHealth.setProgress(companion.healthCurrent);
-                    textCompanionHealth.setText(GameInfoUtils.getCompanionHealthString(companion));
+                    progressCompanionHealth.setMax(companionInfo.healthMax);
+                    progressCompanionHealth.setProgress(companionInfo.healthCurrent);
+                    textCompanionHealth.setText(GameInfoUtils.getCompanionHealthString(companionInfo));
 
-                    progressCompanionExperience.setMax(companion.experienceForNextLevel);
-                    progressCompanionExperience.setProgress(companion.experienceCurrent);
-                    textCompanionExperience.setText(GameInfoUtils.getCompanionExperienceString(companion));
+                    progressCompanionExperience.setMax(companionInfo.experienceForNextLevel);
+                    progressCompanionExperience.setProgress(companionInfo.experienceCurrent);
+                    textCompanionExperience.setText(GameInfoUtils.getCompanionExperienceString(companionInfo));
 
-                    if (companion.species == null) {
+                    if(companionInfo.species == null) {
                         companionName.setTextColor(getResources().getColor(R.color.common_text));
                     } else {
                         companionName.setTextColor(getResources().getColor(R.color.common_link));
+                        final CompanionInfoParcelable companion = new CompanionInfoParcelable(companionInfo);
                         companionName.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 DialogUtils.showTabbedDialog(getChildFragmentManager(),
-                                        companion.name, new CompanionTabsAdapter(companion, companion.coherence));
+                                        companionInfo.name, new CompanionTabsAdapter(companion, companionInfo.coherence));
                             }
                         });
                     }
@@ -589,10 +589,10 @@ public class GameInfoFragment extends WrapperFragment {
 
     private class CompanionTabsAdapter extends TabbedDialog.TabbedDialogTabsAdapter {
 
-        private final CompanionInfo companion;
+        private final CompanionInfoParcelable companion;
         private final int coherence;
 
-        private CompanionTabsAdapter(final CompanionInfo companion, final int coherence) {
+        private CompanionTabsAdapter(final CompanionInfoParcelable companion, final int coherence) {
             this.companion = companion;
             this.coherence = coherence;
         }

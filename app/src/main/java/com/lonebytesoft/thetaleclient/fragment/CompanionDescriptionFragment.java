@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.lonebytesoft.thetaleclient.R;
-import com.lonebytesoft.thetaleclient.apisdk.model.CompanionInfo;
+import com.lonebytesoft.thetaleclient.apisdk.model.CompanionInfoParcelable;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
 
 /**
@@ -19,7 +19,7 @@ public class CompanionDescriptionFragment extends TabbedDialogTabFragment {
 
     private static final String PARAM_COMPANION_INFO = "PARAM_COMPANION_INFO";
 
-    public static CompanionDescriptionFragment newInstance(final CompanionInfo companion) {
+    public static CompanionDescriptionFragment newInstance(final CompanionInfoParcelable companion) {
         final CompanionDescriptionFragment dialog = new CompanionDescriptionFragment();
 
         final Bundle args = new Bundle();
@@ -34,7 +34,7 @@ public class CompanionDescriptionFragment extends TabbedDialogTabFragment {
         final View content = layoutInflater.inflate(R.layout.tabbed_dialog_tab_content_text, container, true);
         final TextView text = (TextView) content.findViewById(R.id.tabbed_dialog_tab_content_text);
 
-        final CompanionInfo companion = getArguments().getParcelable(PARAM_COMPANION_INFO);
+        final CompanionInfoParcelable companion = getArguments().getParcelable(PARAM_COMPANION_INFO);
         UiUtils.setText(text, Html.fromHtml(String.valueOf(companion.species.description)));
     }
 

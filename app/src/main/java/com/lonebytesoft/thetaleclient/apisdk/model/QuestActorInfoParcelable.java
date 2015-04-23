@@ -12,13 +12,14 @@ import com.lonebytesoft.thetaleclient.sdk.lib.org.json.JSONObject;
 import com.lonebytesoft.thetaleclient.sdk.model.QuestActorDetailsPerson;
 import com.lonebytesoft.thetaleclient.sdk.model.QuestActorDetailsPlace;
 import com.lonebytesoft.thetaleclient.sdk.model.QuestActorDetailsSpending;
+import com.lonebytesoft.thetaleclient.sdk.model.QuestActorInfo;
 import com.lonebytesoft.thetaleclient.sdk.util.ObjectUtils;
 
 /**
  * @author Hamster
  * @since 23.04.2015
  */
-public class QuestActorInfo extends com.lonebytesoft.thetaleclient.sdk.model.QuestActorInfo implements Parcelable {
+public class QuestActorInfoParcelable extends QuestActorInfo implements Parcelable {
 
     private static JSONObject getJsonPlace(final String name, final int placeId, final String placeName) {
         try {
@@ -105,7 +106,7 @@ public class QuestActorInfo extends com.lonebytesoft.thetaleclient.sdk.model.Que
         }
     }
 
-    private static JSONObject getJson(final com.lonebytesoft.thetaleclient.sdk.model.QuestActorInfo questActorInfo) {
+    private static JSONObject getJson(final QuestActorInfo questActorInfo) {
         switch(questActorInfo.type) {
             case PLACE:
                 final QuestActorDetailsPlace detailsPlace = (QuestActorDetailsPlace) questActorInfo.details;
@@ -125,11 +126,11 @@ public class QuestActorInfo extends com.lonebytesoft.thetaleclient.sdk.model.Que
         }
     }
 
-    private QuestActorInfo(final Parcel in) {
+    private QuestActorInfoParcelable(final Parcel in) {
         super(getJson(in));
     }
 
-    public QuestActorInfo(final com.lonebytesoft.thetaleclient.sdk.model.QuestActorInfo questActorInfo) {
+    public QuestActorInfoParcelable(final com.lonebytesoft.thetaleclient.sdk.model.QuestActorInfo questActorInfo) {
         super(getJson(questActorInfo));
     }
 
@@ -168,15 +169,15 @@ public class QuestActorInfo extends com.lonebytesoft.thetaleclient.sdk.model.Que
         }
     }
 
-    public static final Creator<QuestActorInfo> CREATOR = new Creator<QuestActorInfo>() {
+    public static final Creator<QuestActorInfoParcelable> CREATOR = new Creator<QuestActorInfoParcelable>() {
         @Override
-        public QuestActorInfo createFromParcel(Parcel source) {
-            return new QuestActorInfo(source);
+        public QuestActorInfoParcelable createFromParcel(Parcel source) {
+            return new QuestActorInfoParcelable(source);
         }
 
         @Override
-        public QuestActorInfo[] newArray(int size) {
-            return new QuestActorInfo[size];
+        public QuestActorInfoParcelable[] newArray(int size) {
+            return new QuestActorInfoParcelable[size];
         }
     };
 

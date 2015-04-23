@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.sdk.dictionary.CompanionFeature;
-import com.lonebytesoft.thetaleclient.apisdk.model.CompanionInfo;
+import com.lonebytesoft.thetaleclient.apisdk.model.CompanionInfoParcelable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,7 +26,7 @@ public class CompanionFeaturesFragment extends TabbedDialogTabFragment {
     private static final String PARAM_COMPANION_INFO = "PARAM_COMPANION_INFO";
     private static final String PARAM_COMPANION_COHERENCE = "PARAM_COMPANION_COHERENCE";
 
-    public static CompanionFeaturesFragment newInstance(final CompanionInfo companion, final int coherence) {
+    public static CompanionFeaturesFragment newInstance(final CompanionInfoParcelable companion, final int coherence) {
         final CompanionFeaturesFragment dialog = new CompanionFeaturesFragment();
 
         final Bundle args = new Bundle();
@@ -42,7 +42,7 @@ public class CompanionFeaturesFragment extends TabbedDialogTabFragment {
         final View content = layoutInflater.inflate(R.layout.fragment_companion_feature_content, container, true);
         final ViewGroup featuresContainer = (ViewGroup) content.findViewById(R.id.companion_feature_content);
 
-        final CompanionInfo companion = getArguments().getParcelable(PARAM_COMPANION_INFO);
+        final CompanionInfoParcelable companion = getArguments().getParcelable(PARAM_COMPANION_INFO);
         final List<Pair<Integer, CompanionFeature>> features = new ArrayList<>(companion.species.features.size());
         for(final Map.Entry<CompanionFeature, Integer> feature : companion.species.features.entrySet()) {
             features.add(Pair.create(feature.getValue(), feature.getKey()));

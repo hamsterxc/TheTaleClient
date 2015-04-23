@@ -6,13 +6,14 @@ import android.os.Parcelable;
 import com.lonebytesoft.thetaleclient.sdk.dictionary.CompanionSpecies;
 import com.lonebytesoft.thetaleclient.sdk.lib.org.json.JSONException;
 import com.lonebytesoft.thetaleclient.sdk.lib.org.json.JSONObject;
+import com.lonebytesoft.thetaleclient.sdk.model.CompanionInfo;
 import com.lonebytesoft.thetaleclient.sdk.util.ObjectUtils;
 
 /**
  * @author Hamster
  * @since 17.04.2015
  */
-public class CompanionInfo extends com.lonebytesoft.thetaleclient.sdk.model.CompanionInfo implements Parcelable {
+public class CompanionInfoParcelable extends CompanionInfo implements Parcelable {
 
     private static JSONObject getJson(
             final CompanionSpecies species, final String name, final int healthCurrent, final int healthMax,
@@ -33,14 +34,14 @@ public class CompanionInfo extends com.lonebytesoft.thetaleclient.sdk.model.Comp
         }
     }
 
-    private CompanionInfo(final Parcel in) {
+    private CompanionInfoParcelable(final Parcel in) {
         super(getJson(
                 ObjectUtils.getEnumForCode(CompanionSpecies.class, in.readInt()),
                 in.readString(), in.readInt(), in.readInt(),
                 in.readInt(), in.readInt(), in.readInt(), in.readInt()));
     }
 
-    public CompanionInfo(final com.lonebytesoft.thetaleclient.sdk.model.CompanionInfo companionInfo) {
+    public CompanionInfoParcelable(final CompanionInfo companionInfo) {
         super(getJson(
                 companionInfo.species, companionInfo.name, companionInfo.healthCurrent, companionInfo.healthMax,
                 companionInfo.coherence, companionInfo.coherenceReal,
@@ -63,15 +64,15 @@ public class CompanionInfo extends com.lonebytesoft.thetaleclient.sdk.model.Comp
         out.writeInt(experienceForNextLevel);
     }
 
-    public static final Creator<CompanionInfo> CREATOR = new Creator<CompanionInfo>() {
+    public static final Creator<CompanionInfoParcelable> CREATOR = new Creator<CompanionInfoParcelable>() {
         @Override
-        public CompanionInfo createFromParcel(Parcel source) {
-            return new CompanionInfo(source);
+        public CompanionInfoParcelable createFromParcel(Parcel source) {
+            return new CompanionInfoParcelable(source);
         }
 
         @Override
-        public CompanionInfo[] newArray(int size) {
-            return new CompanionInfo[size];
+        public CompanionInfoParcelable[] newArray(int size) {
+            return new CompanionInfoParcelable[size];
         }
     };
 

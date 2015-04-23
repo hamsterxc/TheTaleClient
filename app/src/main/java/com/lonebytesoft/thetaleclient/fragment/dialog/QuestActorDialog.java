@@ -14,20 +14,16 @@ import com.lonebytesoft.thetaleclient.DrawerItem;
 import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.activity.MainActivity;
 import com.lonebytesoft.thetaleclient.apisdk.ApiCallback;
-import com.lonebytesoft.thetaleclient.apisdk.model.QuestActorInfo;
+import com.lonebytesoft.thetaleclient.apisdk.model.QuestActorInfoParcelable;
 import com.lonebytesoft.thetaleclient.apisdk.request.MapRequestBuilder;
+import com.lonebytesoft.thetaleclient.apisdk.util.DictionaryData;
 import com.lonebytesoft.thetaleclient.sdk.AbstractApiResponse;
-import com.lonebytesoft.thetaleclient.sdk.dictionary.QuestActorType;
 import com.lonebytesoft.thetaleclient.sdk.model.QuestActorDetailsPerson;
 import com.lonebytesoft.thetaleclient.sdk.model.QuestActorDetailsPlace;
 import com.lonebytesoft.thetaleclient.sdk.model.QuestActorDetailsSpending;
 import com.lonebytesoft.thetaleclient.sdk.response.MapResponse;
 import com.lonebytesoft.thetaleclient.util.PreferencesManager;
-import com.lonebytesoft.thetaleclient.util.RequestUtils;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author Hamster
@@ -37,9 +33,7 @@ public class QuestActorDialog extends BaseDialog {
 
     private static final String PARAM_QUEST_ACTOR_INFO = "PARAM_QUEST_ACTOR_INFO";
 
-    private static final Map<QuestActorType, Integer> questActorTypeStringIds;
-
-    public static QuestActorDialog newInstance(final QuestActorInfo questActorInfo) {
+    public static QuestActorDialog newInstance(final QuestActorInfoParcelable questActorInfo) {
         final QuestActorDialog dialog = new QuestActorDialog();
 
         Bundle args = new Bundle();
@@ -51,7 +45,7 @@ public class QuestActorDialog extends BaseDialog {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        final QuestActorInfo questActorInfo = getArguments().getParcelable(PARAM_QUEST_ACTOR_INFO);
+        final QuestActorInfoParcelable questActorInfo = getArguments().getParcelable(PARAM_QUEST_ACTOR_INFO);
         final View view;
 
         switch(questActorInfo.type) {
@@ -119,7 +113,7 @@ public class QuestActorDialog extends BaseDialog {
                 break;
         }
 
-        return wrapView(inflater, view, getString(questActorTypeStringIds.get(questActorInfo.type)));
+        return wrapView(inflater, view, getString(DictionaryData.getQuestActorTypeStringId(questActorInfo.type)));
     }
 
     private void setPlaceLink(final View view, final CharSequence caption, final CharSequence info, final int placeId) {
@@ -140,13 +134,6 @@ public class QuestActorDialog extends BaseDialog {
                 ((MainActivity) activity).onNavigationDrawerItemSelected(DrawerItem.MAP);
             }
         });
-    }
-
-    static {
-        questActorTypeStringIds = new HashMap<>(QuestActorType.values().length);
-        questActorTypeStringIds.put(QuestActorType.PLACE, R.string.quest_actor_type_place);
-        questActorTypeStringIds.put(QuestActorType.PERSON, R.string.quest_actor_type_person);
-        questActorTypeStringIds.put(QuestActorType.SPENDING, R.string.quest_actor_type_spending);
     }
 
 }

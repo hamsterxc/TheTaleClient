@@ -13,9 +13,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.lonebytesoft.thetaleclient.R;
-import com.lonebytesoft.thetaleclient.api.dictionary.ArtifactEffect;
-import com.lonebytesoft.thetaleclient.api.dictionary.ArtifactType;
-import com.lonebytesoft.thetaleclient.api.model.ArtifactInfo;
+import com.lonebytesoft.thetaleclient.apisdk.model.ArtifactInfoParcelable;
+import com.lonebytesoft.thetaleclient.apisdk.util.DictionaryData;
+import com.lonebytesoft.thetaleclient.sdk.dictionary.ArtifactEffect;
+import com.lonebytesoft.thetaleclient.sdk.dictionary.ArtifactType;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
 
 /**
@@ -26,7 +27,7 @@ public class ArtifactDialog extends BaseDialog {
 
     private static final String PARAM_ARTIFACT_INFO = "PARAM_ARTIFACT_INFO";
 
-    public static ArtifactDialog newInstance(final ArtifactInfo artifactInfo) {
+    public static ArtifactDialog newInstance(final ArtifactInfoParcelable artifactInfo) {
         final ArtifactDialog dialog = new ArtifactDialog();
 
         Bundle args = new Bundle();
@@ -40,17 +41,17 @@ public class ArtifactDialog extends BaseDialog {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.dialog_content_artifact, container, false);
         final ViewGroup artifactInfoContainer = (ViewGroup) view.findViewById(R.id.dialog_artifact_content);
-        final ArtifactInfo artifactInfo = getArguments().getParcelable(PARAM_ARTIFACT_INFO);
+        final ArtifactInfoParcelable artifactInfo = getArguments().getParcelable(PARAM_ARTIFACT_INFO);
 
         final Spannable artifactType = new SpannableString(artifactInfo.type == ArtifactType.JUNK ?
-                artifactInfo.type.getName() : artifactInfo.rarity.getName());
-        artifactType.setSpan(new ForegroundColorSpan(getResources().getColor(artifactInfo.rarity.getColorResId())),
+                artifactInfo.type.name : artifactInfo.rarity.name);
+        artifactType.setSpan(new ForegroundColorSpan(getResources().getColor(DictionaryData.getArtifactRarityColorId(artifactInfo.rarity))),
                 0, artifactType.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         addLine(inflater, artifactInfoContainer, artifactType);
 
         if(artifactInfo.type != ArtifactType.JUNK) {
             addLine(inflater, artifactInfoContainer,
-                    UiUtils.getInfoItem(getString(R.string.artifact_equipment_type), artifactInfo.type.getName()));
+                    UiUtils.getInfoItem(getString(R.string.artifact_equipment_type), artifactInfo.type.name));
             addLine(inflater, artifactInfoContainer,
                     UiUtils.getInfoItem(getString(R.string.artifact_power_physical), String.valueOf(artifactInfo.powerPhysical)));
             addLine(inflater, artifactInfoContainer,
@@ -86,7 +87,7 @@ public class ArtifactDialog extends BaseDialog {
     }
 
     private Spannable getEffectString(final ArtifactEffect artifactEffect) {
-        final Spannable effect = new SpannableString(artifactEffect.getDescription());
+        final Spannable effect = new SpannableString(artifactEffect.description);
         effect.setSpan(new StyleSpan(Typeface.ITALIC), 0, effect.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         return effect;
     }
