@@ -7,10 +7,11 @@ import android.view.ViewGroup;
 
 import com.lonebytesoft.thetaleclient.DataViewMode;
 import com.lonebytesoft.thetaleclient.R;
-import com.lonebytesoft.thetaleclient.api.ApiResponseCallback;
-import com.lonebytesoft.thetaleclient.api.model.DiaryEntry;
-import com.lonebytesoft.thetaleclient.api.request.GameInfoRequest;
-import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;
+import com.lonebytesoft.thetaleclient.apisdk.ApiCallback;
+import com.lonebytesoft.thetaleclient.apisdk.request.GameInfoRequestBuilder;
+import com.lonebytesoft.thetaleclient.sdk.AbstractApiResponse;
+import com.lonebytesoft.thetaleclient.sdk.model.DiaryEntry;
+import com.lonebytesoft.thetaleclient.sdk.response.GameInfoResponse;
 import com.lonebytesoft.thetaleclient.util.PreferencesManager;
 import com.lonebytesoft.thetaleclient.util.RequestUtils;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
@@ -41,9 +42,9 @@ public class DiaryFragment extends WrapperFragment {
     public void refresh(final boolean isGlobal) {
         super.refresh(isGlobal);
 
-        final ApiResponseCallback<GameInfoResponse> callback = RequestUtils.wrapCallback(new ApiResponseCallback<GameInfoResponse>() {
+        GameInfoRequestBuilder.executeWatching(getActivity(), new ApiCallback<GameInfoResponse>() {
             @Override
-            public void processResponse(GameInfoResponse response) {
+            public void onSuccess(GameInfoResponse response) {
                 diaryContainer.removeAllViews();
                 for(int i = response.account.hero.diary.size() - 1; i >= 0; i--) {
                     final DiaryEntry diaryEntry = response.account.hero.diary.get(i);
@@ -63,17 +64,10 @@ public class DiaryFragment extends WrapperFragment {
             }
 
             @Override
-            public void processError(GameInfoResponse response) {
+            public void onError(AbstractApiResponse response) {
                 setError(response.errorMessage);
             }
-        }, this);
-
-        final int watchingAccountId = PreferencesManager.getWatchingAccountId();
-        if(watchingAccountId == 0) {
-            new GameInfoRequest(true).execute(callback, true);
-        } else {
-            new GameInfoRequest(true).execute(watchingAccountId, callback, true);
-        }
+        });
     }
 
 }
