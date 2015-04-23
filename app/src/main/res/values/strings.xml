@@ -241,6 +241,10 @@
     <string name="quest_actor_profession">Профессия</string>
     <string name="quest_actor_mastery">Мастерство</string>
 
+    <string name="quest_actor_type_place">Город</string>
+    <string name="quest_actor_type_person">Горожанин</string>
+    <string name="quest_actor_type_spending">Цель накопления</string>
+
     <string name="quest_choice_part">"\u2014 "</string>
     <string name="quest_reward_experience">+%d опыта</string>
     <string name="quest_reward_power">+%d влияния</string>

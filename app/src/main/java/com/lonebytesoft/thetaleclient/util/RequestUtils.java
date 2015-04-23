@@ -146,7 +146,7 @@ public class RequestUtils {
         }
     }
 
-    public static <T extends com.lonebytesoft.thetaleclient.sdk.AbstractApiResponse> ApiCallback<T> wrapCallback(final ApiCallback<T> callback, final Object uiComponent) {
+    public static <T extends com.lonebytesoft.thetaleclient.sdk.AbstractResponse> ApiCallback<T> wrapCallback(final ApiCallback<T> callback, final Object uiComponent) {
         if(!(uiComponent instanceof Fragment) && !(uiComponent instanceof Activity)) {
             return callback;
         } else {

@@ -208,336 +208,322 @@ public class GameInfoFragment extends WrapperFragment {
             lastKnownHealth = 0;
         }
 
-        final int watchingAccountId = PreferencesManager.getWatchingAccountId();
-        final boolean isForeignAccount = watchingAccountId != 0;
+        GameInfoRequestBuilder.executeWatching(getActivity(), RequestUtils.wrapCallback(new ApiCallback<GameInfoResponse>() {
+            @Override
+            public void onSuccess(final GameInfoResponse response) {
+                if (lastKnownHealth == 0) {
+                    lastKnownHealth = (int) Math.round((450.0 + 50.0 * response.account.hero.basicInfo.level) / 4.0);
+                }
 
-        final GameInfoRequestBuilder requestBuilder = new GameInfoRequestBuilder();
-        if(isForeignAccount) {
-            requestBuilder.setAccountId(watchingAccountId);
-        } else {
-            requestBuilder.setBase(PreferencesManager.getGameInfoResponseCache());
-        }
-
-        RequestExecutor.execute(
-                getActivity(),
-                requestBuilder,
-                isForeignAccount ? null : new GameInfoRequestCacheInterceptor(),
-                RequestUtils.wrapCallback(new ApiCallback<GameInfoResponse>() {
-                    @Override
-                    public void onSuccess(final GameInfoResponse response) {
-                        if(lastKnownHealth == 0) {
-                            lastKnownHealth = (int) Math.round((450.0 + 50.0 * response.account.hero.basicInfo.level) / 4.0);
-                        }
-
-                        textRaceGender.setText(String.format("%s-%s",
-                                gameInfoResponse.account.hero.basicInfo.race.getName(),
-                                gameInfoResponse.account.hero.basicInfo.gender.getName()));
-                        textLevel.setText(String.valueOf(gameInfoResponse.account.hero.basicInfo.level));
-                        textName.setText(gameInfoResponse.account.hero.basicInfo.name);
-                        if(gameInfoResponse.account.hero.basicInfo.destinyPoints > 0) {
-                            textLevelUp.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    if(gameInfoResponse.account.isOwnInfo) {
-                                        DialogUtils.showConfirmationDialog(
-                                                getChildFragmentManager(),
-                                                getString(R.string.game_lvlup_dialog_title),
-                                                getString(R.string.game_lvlup_dialog_message, gameInfoResponse.account.hero.basicInfo.destinyPoints),
-                                                getString(R.string.drawer_title_site), new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        startActivity(UiUtils.getOpenLinkIntent(String.format(
-                                                                WebsiteUtils.URL_PROFILE_HERO, gameInfoResponse.account.hero.id)));
-                                                    }
-                                                },
-                                                null, null, null);
-                                    } else {
-                                        DialogUtils.showMessageDialog(
-                                                getChildFragmentManager(),
-                                                getString(R.string.game_lvlup_dialog_title),
-                                                getString(R.string.game_lvlup_dialog_message_foreign,
-                                                        gameInfoResponse.account.hero.basicInfo.destinyPoints));
-                                    }
-                                }
-                            });
-                            textLevelUp.setVisibility(View.VISIBLE);
-                        } else {
-                            textLevelUp.setVisibility(View.GONE);
-                        }
-
-                        final SpannableStringBuilder additionalInfoStringBuilder = new SpannableStringBuilder();
-                        final Date lastVisit = new Date((long) response.account.lastVisitTime * 1000);
-                        additionalInfoStringBuilder.append(UiUtils.getInfoItem(
-                                getString(R.string.game_additional_info_account_id),
-                                String.valueOf(response.account.accountId)))
-                                .append("\n");
-                        additionalInfoStringBuilder.append(UiUtils.getInfoItem(
-                                getString(R.string.game_additional_info_last_visit),
-                                String.format("%s %s",
-                                        DateFormat.getDateFormat(TheTaleClientApplication.getContext()).format(lastVisit),
-                                        DateFormat.getTimeFormat(TheTaleClientApplication.getContext()).format(lastVisit))))
-                                .append("\n");
-                        if(response.account.isOwnInfo) {
-                            additionalInfoStringBuilder.append(UiUtils.getInfoItem(
-                                    getString(R.string.game_additional_info_new_messages),
-                                    String.valueOf(response.account.newMessagesCount)))
-                                    .append("\n");
-                        }
-                        additionalInfoStringBuilder.append("\n");
-                        additionalInfoStringBuilder.append(UiUtils.getInfoItem(
-                                getString(R.string.game_additional_info_honor),
-                                String.format("%s (%.2f)",
-                                        response.account.hero.habits.get(Habit.HONOR).description,
-                                        response.account.hero.habits.get(Habit.HONOR).value)))
-                                .append("\n");
-                        additionalInfoStringBuilder.append(UiUtils.getInfoItem(
-                                getString(R.string.game_additional_info_peacefulness),
-                                String.format("%s (%.2f)",
-                                        response.account.hero.habits.get(Habit.PEACEFULNESS).description,
-                                        response.account.hero.habits.get(Habit.PEACEFULNESS).value)))
-                                .append("\n");
-                        additionalInfoStringBuilder.append("\n");
-                        additionalInfoStringBuilder.append(UiUtils.getInfoItem(
-                                getString(R.string.game_additional_info_destiny_points),
-                                String.valueOf(response.account.hero.basicInfo.destinyPoints)))
-                                .append("\n");
-                        if(response.account.isOwnInfo) {
-                            additionalInfoStringBuilder.append(UiUtils.getInfoItem(
-                                    getString(R.string.game_help_to_next_card),
-                                    getString(
-                                            R.string.game_help_progress_to_next_card,
-                                            response.account.hero.cards.cardHelpCurrent,
-                                            response.account.hero.cards.cardHelpBarrier)))
-                                    .append("\n");
-                        }
-                        additionalInfoStringBuilder.append(UiUtils.getInfoItem(
-                                getString(R.string.game_additional_info_move_speed),
-                                String.valueOf(response.account.hero.basicInfo.moveSpeed)))
-                                .append("\n");
-                        additionalInfoStringBuilder.append(UiUtils.getInfoItem(
-                                getString(R.string.game_additional_info_initiative),
-                                String.valueOf(response.account.hero.basicInfo.initiative)));
-                        textName.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                DialogUtils.showMessageDialog(getChildFragmentManager(),
-                                        getString(R.string.game_additional_info),
-                                        additionalInfoStringBuilder);
-                            }
-                        });
-
-                        progressHealth.setMax(response.account.hero.basicInfo.healthMax);
-                        progressHealth.setProgress(response.account.hero.basicInfo.healthCurrent);
-                        textHealth.setText(GameInfoUtils.getHealthString(response.account.hero.basicInfo));
-
-                        progressExperience.setMax(response.account.hero.basicInfo.experienceForNextLevel);
-                        progressExperience.setProgress(response.account.hero.basicInfo.experienceCurrent);
-                        textExperience.setText(GameInfoUtils.getExperienceString(response.account.hero.basicInfo));
-
-                        blockEnergy.setVisibility(response.account.isOwnInfo ? View.VISIBLE : View.GONE);
-                        if(response.account.isOwnInfo) {
-                            final EnergyInfo energy = response.account.hero.energy;
-                            progressEnergy.setMax(energy.max);
-                            // https://code.google.com/p/android/issues/detail?id=12945
-                            if(Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-                                progressEnergy.setProgress(0);
-                            }
-                            progressEnergy.setProgress(energy.current);
-                            textEnergy.setText(GameInfoUtils.getEnergyString(energy));
-                        }
-
-                        textPowerPhysical.setText(String.valueOf(response.account.hero.basicInfo.powerPhysical));
-                        textPowerMagical.setText(String.valueOf(response.account.hero.basicInfo.powerMagical));
-                        textMoney.setText(String.valueOf(response.account.hero.basicInfo.money));
-
-                        final MightInfo mightInfo = response.account.hero.might;
-                        textMight.setText(String.valueOf(mightInfo.value));
-                        textMight.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                DialogUtils.showMightDialog(getFragmentManager(), mightInfo);
-                            }
-                        });
-
-                        final com.lonebytesoft.thetaleclient.sdk.model.CompanionInfo companionInfo = response.account.hero.companionInfo;
-                        final CompanionInfo companion = companionInfo == null ? null : new CompanionInfo(companionInfo);
-                        if(companion == null) {
-                            companionContainer.setVisibility(View.GONE);
-                            companionAbsentText.setVisibility(View.VISIBLE);
-                        } else {
-                            companionAbsentText.setVisibility(View.GONE);
-                            companionContainer.setVisibility(View.VISIBLE);
-
-                            companionName.setText(companion.name);
-                            companionCoherence.setText(String.valueOf(companion.coherence));
-
-                            progressCompanionHealth.setMax(companion.healthMax);
-                            progressCompanionHealth.setProgress(companion.healthCurrent);
-                            textCompanionHealth.setText(GameInfoUtils.getCompanionHealthString(companion));
-
-                            progressCompanionExperience.setMax(companion.experienceForNextLevel);
-                            progressCompanionExperience.setProgress(companion.experienceCurrent);
-                            textCompanionExperience.setText(GameInfoUtils.getCompanionExperienceString(companion));
-
-                            if(companion.species == null) {
-                                companionName.setTextColor(getResources().getColor(R.color.common_text));
+                textRaceGender.setText(String.format("%s-%s",
+                        gameInfoResponse.account.hero.basicInfo.race.getName(),
+                        gameInfoResponse.account.hero.basicInfo.gender.getName()));
+                textLevel.setText(String.valueOf(gameInfoResponse.account.hero.basicInfo.level));
+                textName.setText(gameInfoResponse.account.hero.basicInfo.name);
+                if (gameInfoResponse.account.hero.basicInfo.destinyPoints > 0) {
+                    textLevelUp.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (gameInfoResponse.account.isOwnInfo) {
+                                DialogUtils.showConfirmationDialog(
+                                        getChildFragmentManager(),
+                                        getString(R.string.game_lvlup_dialog_title),
+                                        getString(R.string.game_lvlup_dialog_message, gameInfoResponse.account.hero.basicInfo.destinyPoints),
+                                        getString(R.string.drawer_title_site), new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                startActivity(UiUtils.getOpenLinkIntent(String.format(
+                                                        WebsiteUtils.URL_PROFILE_HERO, gameInfoResponse.account.hero.id)));
+                                            }
+                                        },
+                                        null, null, null);
                             } else {
-                                companionName.setTextColor(getResources().getColor(R.color.common_link));
-                                companionName.setOnClickListener(new View.OnClickListener() {
+                                DialogUtils.showMessageDialog(
+                                        getChildFragmentManager(),
+                                        getString(R.string.game_lvlup_dialog_title),
+                                        getString(R.string.game_lvlup_dialog_message_foreign,
+                                                gameInfoResponse.account.hero.basicInfo.destinyPoints));
+                            }
+                        }
+                    });
+                    textLevelUp.setVisibility(View.VISIBLE);
+                } else {
+                    textLevelUp.setVisibility(View.GONE);
+                }
+
+                final SpannableStringBuilder additionalInfoStringBuilder = new SpannableStringBuilder();
+                final Date lastVisit = new Date((long) response.account.lastVisitTime * 1000);
+                additionalInfoStringBuilder.append(UiUtils.getInfoItem(
+                        getString(R.string.game_additional_info_account_id),
+                        String.valueOf(response.account.accountId)))
+                        .append("\n");
+                additionalInfoStringBuilder.append(UiUtils.getInfoItem(
+                        getString(R.string.game_additional_info_last_visit),
+                        String.format("%s %s",
+                                DateFormat.getDateFormat(TheTaleClientApplication.getContext()).format(lastVisit),
+                                DateFormat.getTimeFormat(TheTaleClientApplication.getContext()).format(lastVisit))))
+                        .append("\n");
+                if (response.account.isOwnInfo) {
+                    additionalInfoStringBuilder.append(UiUtils.getInfoItem(
+                            getString(R.string.game_additional_info_new_messages),
+                            String.valueOf(response.account.newMessagesCount)))
+                            .append("\n");
+                }
+                additionalInfoStringBuilder.append("\n");
+                additionalInfoStringBuilder.append(UiUtils.getInfoItem(
+                        getString(R.string.game_additional_info_honor),
+                        String.format("%s (%.2f)",
+                                response.account.hero.habits.get(Habit.HONOR).description,
+                                response.account.hero.habits.get(Habit.HONOR).value)))
+                        .append("\n");
+                additionalInfoStringBuilder.append(UiUtils.getInfoItem(
+                        getString(R.string.game_additional_info_peacefulness),
+                        String.format("%s (%.2f)",
+                                response.account.hero.habits.get(Habit.PEACEFULNESS).description,
+                                response.account.hero.habits.get(Habit.PEACEFULNESS).value)))
+                        .append("\n");
+                additionalInfoStringBuilder.append("\n");
+                additionalInfoStringBuilder.append(UiUtils.getInfoItem(
+                        getString(R.string.game_additional_info_destiny_points),
+                        String.valueOf(response.account.hero.basicInfo.destinyPoints)))
+                        .append("\n");
+                if (response.account.isOwnInfo) {
+                    additionalInfoStringBuilder.append(UiUtils.getInfoItem(
+                            getString(R.string.game_help_to_next_card),
+                            getString(
+                                    R.string.game_help_progress_to_next_card,
+                                    response.account.hero.cards.cardHelpCurrent,
+                                    response.account.hero.cards.cardHelpBarrier)))
+                            .append("\n");
+                }
+                additionalInfoStringBuilder.append(UiUtils.getInfoItem(
+                        getString(R.string.game_additional_info_move_speed),
+                        String.valueOf(response.account.hero.basicInfo.moveSpeed)))
+                        .append("\n");
+                additionalInfoStringBuilder.append(UiUtils.getInfoItem(
+                        getString(R.string.game_additional_info_initiative),
+                        String.valueOf(response.account.hero.basicInfo.initiative)));
+                textName.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        DialogUtils.showMessageDialog(getChildFragmentManager(),
+                                getString(R.string.game_additional_info),
+                                additionalInfoStringBuilder);
+                    }
+                });
+
+                progressHealth.setMax(response.account.hero.basicInfo.healthMax);
+                progressHealth.setProgress(response.account.hero.basicInfo.healthCurrent);
+                textHealth.setText(GameInfoUtils.getHealthString(response.account.hero.basicInfo));
+
+                progressExperience.setMax(response.account.hero.basicInfo.experienceForNextLevel);
+                progressExperience.setProgress(response.account.hero.basicInfo.experienceCurrent);
+                textExperience.setText(GameInfoUtils.getExperienceString(response.account.hero.basicInfo));
+
+                blockEnergy.setVisibility(response.account.isOwnInfo ? View.VISIBLE : View.GONE);
+                if (response.account.isOwnInfo) {
+                    final EnergyInfo energy = response.account.hero.energy;
+                    progressEnergy.setMax(energy.max);
+                    // https://code.google.com/p/android/issues/detail?id=12945
+                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+                        progressEnergy.setProgress(0);
+                    }
+                    progressEnergy.setProgress(energy.current);
+                    textEnergy.setText(GameInfoUtils.getEnergyString(energy));
+                }
+
+                textPowerPhysical.setText(String.valueOf(response.account.hero.basicInfo.powerPhysical));
+                textPowerMagical.setText(String.valueOf(response.account.hero.basicInfo.powerMagical));
+                textMoney.setText(String.valueOf(response.account.hero.basicInfo.money));
+
+                final MightInfo mightInfo = response.account.hero.might;
+                textMight.setText(String.valueOf(mightInfo.value));
+                textMight.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        DialogUtils.showMightDialog(getFragmentManager(), mightInfo);
+                    }
+                });
+
+                final com.lonebytesoft.thetaleclient.sdk.model.CompanionInfo companionInfo = response.account.hero.companionInfo;
+                final CompanionInfo companion = companionInfo == null ? null : new CompanionInfo(companionInfo);
+                if (companion == null) {
+                    companionContainer.setVisibility(View.GONE);
+                    companionAbsentText.setVisibility(View.VISIBLE);
+                } else {
+                    companionAbsentText.setVisibility(View.GONE);
+                    companionContainer.setVisibility(View.VISIBLE);
+
+                    companionName.setText(companion.name);
+                    companionCoherence.setText(String.valueOf(companion.coherence));
+
+                    progressCompanionHealth.setMax(companion.healthMax);
+                    progressCompanionHealth.setProgress(companion.healthCurrent);
+                    textCompanionHealth.setText(GameInfoUtils.getCompanionHealthString(companion));
+
+                    progressCompanionExperience.setMax(companion.experienceForNextLevel);
+                    progressCompanionExperience.setProgress(companion.experienceCurrent);
+                    textCompanionExperience.setText(GameInfoUtils.getCompanionExperienceString(companion));
+
+                    if (companion.species == null) {
+                        companionName.setTextColor(getResources().getColor(R.color.common_text));
+                    } else {
+                        companionName.setTextColor(getResources().getColor(R.color.common_link));
+                        companionName.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                DialogUtils.showTabbedDialog(getChildFragmentManager(),
+                                        companion.name, new CompanionTabsAdapter(companion, companion.coherence));
+                            }
+                        });
+                    }
+                }
+
+                final HeroActionInfo action = response.account.hero.action;
+                progressAction.setMax(1000);
+                progressAction.setProgress((int) (1000 * action.completion));
+                textAction.setText(GameInfoUtils.getActionString(getActivity(), action));
+
+                final List<JournalEntry> journal = response.account.hero.journal;
+                final int journalSize = journal.size();
+                journalContainer.removeAllViews();
+                for (int i = journalSize - 1; i >= 0; i--) {
+                    final JournalEntry journalEntry = journal.get(i);
+                    final View journalEntryView = layoutInflater.inflate(R.layout.item_journal, journalContainer, false);
+                    ((TextView) journalEntryView.findViewById(R.id.journal_time)).setText(journalEntry.time);
+                    ((TextView) journalEntryView.findViewById(R.id.journal_text)).setText(journalEntry.text);
+                    journalContainer.addView(journalEntryView);
+                }
+
+                if (!isGlobal
+                        && TheTaleClientApplication.getOnscreenStateWatcher().isOnscreen(OnscreenPart.GAME_INFO)
+                        && PreferencesManager.isJournalReadAloudEnabled()) {
+                    for (int i = 0; i < journalSize; i++) {
+                        final JournalEntry journalEntry = journal.get(i);
+                        if (journalEntry.timestamp > lastJournalTimestamp) {
+                            TextToSpeechUtils.speak(journalEntry.text);
+                        }
+                    }
+                }
+
+                if (journalSize > 0) {
+                    if ((journalSize > 1) && (journal.get(journalSize - 2).timestamp == lastJournalTimestamp) && (action.type == HeroAction.BATTLE)) {
+                        final Pattern pattern = Pattern.compile("(\\d+)");
+                        final Matcher matcher = pattern.matcher(journal.get(journalSize - 1).text);
+                        if (matcher.find()) {
+                            final String number = matcher.group(1);
+                            if (!matcher.find()) {
+                                final int amount = Integer.decode(number);
+                                final double difference = Math.abs(action.completion - lastFightProgress);
+                                if (difference != 0) {
+                                    lastKnownHealth = (int) Math.round(amount / difference);
+                                }
+                            }
+                        }
+                    }
+
+                    lastJournalTimestamp = journal.get(journalSize - 1).timestamp;
+                    if (action.type == HeroAction.BATTLE) {
+                        lastFightProgress = action.completion;
+                    } else {
+                        lastFightProgress = 0;
+                    }
+                } else {
+                    lastJournalTimestamp = 0;
+                    lastFightProgress = 0;
+                }
+
+                switch (action.type) {
+                    case BATTLE:
+                        if (lastKnownHealth != 0) {
+                            setProgressActionInfo(String.format("%d / %d HP",
+                                    Math.round(lastKnownHealth * (1 - action.completion)), lastKnownHealth));
+                        } else {
+                            setProgressActionInfo(null);
+                        }
+                        break;
+
+                    case IDLE:
+                        setProgressActionInfo(getActionTimeString((long) Math.ceil(
+                                (1 - action.completion)
+                                        * Math.pow(0.75, GameInfoUtils.getArtifactEffectCount(response.account.hero, ArtifactEffect.ACTIVENESS))
+                                        * response.account.hero.basicInfo.level)));
+                        break;
+
+                    case RESURRECTION:
+                        setProgressActionInfo(getActionTimeString((long) Math.ceil(
+                                (1 - action.completion)
+                                        * 3.0 * Math.pow(0.75, GameInfoUtils.getArtifactEffectCount(response.account.hero, ArtifactEffect.ACTIVENESS))
+                                        * response.account.hero.basicInfo.level)));
+                        break;
+
+                    case REST:
+                        RequestExecutor.executeOptional(
+                                getActivity(),
+                                new InfoPrerequisiteRequest(),
+                                RequestUtils.wrapCallback(new ApiCallback<InfoResponse>() {
                                     @Override
-                                    public void onClick(View v) {
-                                        DialogUtils.showTabbedDialog(getChildFragmentManager(),
-                                                companion.name, new CompanionTabsAdapter(companion, companion.coherence));
+                                    public void onSuccess(InfoResponse ignored) {
+                                        final int turnDelta = PreferencesManager.getTurnDelta();
+                                        long timeRest = Math.round(
+                                                (response.account.hero.basicInfo.healthMax - response.account.hero.basicInfo.healthCurrent)
+                                                        / ( // amount of health restored each turn
+                                                        response.account.hero.basicInfo.healthMax
+                                                                / 30.0
+                                                                * Math.pow(2.0, GameInfoUtils.getArtifactEffectCount(response.account.hero, ArtifactEffect.ENDURANCE))
+                                                )
+                                                        * turnDelta);
+                                        timeRest = Math.round(((double) timeRest) / turnDelta) * turnDelta;
+                                        setProgressActionInfo(getActionTimeApproximateString(timeRest < turnDelta ? turnDelta : timeRest));
                                     }
-                                });
-                            }
-                        }
 
-                        final HeroActionInfo action = response.account.hero.action;
-                        progressAction.setMax(1000);
-                        progressAction.setProgress((int) (1000 * action.completion));
-                        textAction.setText(GameInfoUtils.getActionString(getActivity(), action));
+                                    @Override
+                                    public void onError(AbstractApiResponse response) {
+                                        setProgressActionInfo(null);
+                                    }
+                                }, GameInfoFragment.this));
+                        break;
 
-                        final List<JournalEntry> journal = response.account.hero.journal;
-                        final int journalSize = journal.size();
-                        journalContainer.removeAllViews();
-                        for(int i = journalSize - 1; i >= 0; i--) {
-                            final JournalEntry journalEntry = journal.get(i);
-                            final View journalEntryView = layoutInflater.inflate(R.layout.item_journal, journalContainer, false);
-                            ((TextView) journalEntryView.findViewById(R.id.journal_time)).setText(journalEntry.time);
-                            ((TextView) journalEntryView.findViewById(R.id.journal_text)).setText(journalEntry.text);
-                            journalContainer.addView(journalEntryView);
-                        }
+                    default:
+                        setProgressActionInfo(null);
+                }
 
-                        if(!isGlobal
-                                && TheTaleClientApplication.getOnscreenStateWatcher().isOnscreen(OnscreenPart.GAME_INFO)
-                                && PreferencesManager.isJournalReadAloudEnabled()) {
-                            for(int i = 0; i < journalSize; i++) {
-                                final JournalEntry journalEntry = journal.get(i);
-                                if(journalEntry.timestamp > lastJournalTimestamp) {
-                                    TextToSpeechUtils.speak(journalEntry.text);
-                                }
-                            }
-                        }
-
-                        if(journalSize > 0) {
-                            if((journalSize > 1) && (journal.get(journalSize - 2).timestamp == lastJournalTimestamp) && (action.type == HeroAction.BATTLE)) {
-                                final Pattern pattern = Pattern.compile("(\\d+)");
-                                final Matcher matcher = pattern.matcher(journal.get(journalSize - 1).text);
-                                if(matcher.find()) {
-                                    final String number = matcher.group(1);
-                                    if(!matcher.find()) {
-                                        final int amount = Integer.decode(number);
-                                        final double difference = Math.abs(action.completion - lastFightProgress);
-                                        if(difference != 0) {
-                                            lastKnownHealth = (int) Math.round(amount / difference);
-                                        }
+                if (response.account.isOwnInfo) {
+                    actionHelp.setVisibility(View.VISIBLE);
+                    actionHelp.setEnabled(false);
+                    RequestExecutor.executeOptional(
+                            getActivity(),
+                            new InfoPrerequisiteRequest(),
+                            RequestUtils.wrapCallback(new ApiCallback<InfoResponse>() {
+                                @Override
+                                public void onSuccess(InfoResponse ignored) {
+                                    if (GameInfoUtils.isEnoughEnergy(response.account.hero.energy, PreferencesManager.getAbilityCost(Action.HELP))) {
+                                        actionHelp.setEnabled(true);
                                     }
                                 }
-                            }
 
-                            lastJournalTimestamp = journal.get(journalSize - 1).timestamp;
-                            if(action.type == HeroAction.BATTLE) {
-                                lastFightProgress = action.completion;
-                            } else {
-                                lastFightProgress = 0;
-                            }
-                        } else {
-                            lastJournalTimestamp = 0;
-                            lastFightProgress = 0;
-                        }
-
-                        switch(action.type) {
-                            case BATTLE:
-                                if(lastKnownHealth != 0) {
-                                    setProgressActionInfo(String.format("%d / %d HP",
-                                            Math.round(lastKnownHealth * (1 - action.completion)), lastKnownHealth));
-                                } else {
-                                    setProgressActionInfo(null);
+                                @Override
+                                public void onError(AbstractApiResponse response) {
+                                    actionHelp.setErrorText(response.errorMessage);
+                                    actionHelp.setMode(RequestActionView.Mode.ERROR);
                                 }
-                                break;
+                            }, GameInfoFragment.this));
+                } else {
+                    actionHelp.setVisibility(View.GONE);
+                }
 
-                            case IDLE:
-                                setProgressActionInfo(getActionTimeString((long) Math.ceil(
-                                        (1 - action.completion)
-                                                * Math.pow(0.75, GameInfoUtils.getArtifactEffectCount(response.account.hero, ArtifactEffect.ACTIVENESS))
-                                                * response.account.hero.basicInfo.level)));
-                                break;
+                setMode(DataViewMode.DATA);
+            }
 
-                            case RESURRECTION:
-                                setProgressActionInfo(getActionTimeString((long) Math.ceil(
-                                        (1 - action.completion)
-                                                * 3.0 * Math.pow(0.75, GameInfoUtils.getArtifactEffectCount(response.account.hero, ArtifactEffect.ACTIVENESS))
-                                                * response.account.hero.basicInfo.level)));
-                                break;
-
-                            case REST:
-                                RequestExecutor.executeOptional(
-                                        getActivity(),
-                                        new InfoPrerequisiteRequest(),
-                                        RequestUtils.wrapCallback(new ApiCallback<InfoResponse>() {
-                                            @Override
-                                            public void onSuccess(InfoResponse ignored) {
-                                                final int turnDelta = PreferencesManager.getTurnDelta();
-                                                long timeRest = Math.round(
-                                                        (response.account.hero.basicInfo.healthMax - response.account.hero.basicInfo.healthCurrent)
-                                                                / ( // amount of health restored each turn
-                                                                response.account.hero.basicInfo.healthMax
-                                                                        / 30.0
-                                                                        * Math.pow(2.0, GameInfoUtils.getArtifactEffectCount(response.account.hero, ArtifactEffect.ENDURANCE))
-                                                        )
-                                                                * turnDelta);
-                                                timeRest = Math.round(((double) timeRest) / turnDelta) * turnDelta;
-                                                setProgressActionInfo(getActionTimeApproximateString(timeRest < turnDelta ? turnDelta : timeRest));
-                                            }
-
-                                            @Override
-                                            public void onError(AbstractApiResponse response) {
-                                                setProgressActionInfo(null);
-                                            }
-                                        }, GameInfoFragment.this));
-                                break;
-
-                            default:
-                                setProgressActionInfo(null);
-                        }
-
-                        if(response.account.isOwnInfo) {
-                            actionHelp.setVisibility(View.VISIBLE);
-                            actionHelp.setEnabled(false);
-                            RequestExecutor.executeOptional(
-                                    getActivity(),
-                                    new InfoPrerequisiteRequest(),
-                                    RequestUtils.wrapCallback(new ApiCallback<InfoResponse>() {
-                                        @Override
-                                        public void onSuccess(InfoResponse ignored) {
-                                            if(GameInfoUtils.isEnoughEnergy(response.account.hero.energy, PreferencesManager.getAbilityCost(Action.HELP))) {
-                                                actionHelp.setEnabled(true);
-                                            }
-                                        }
-
-                                        @Override
-                                        public void onError(AbstractApiResponse response) {
-                                            actionHelp.setErrorText(response.errorMessage);
-                                            actionHelp.setMode(RequestActionView.Mode.ERROR);
-                                        }
-                                    }, GameInfoFragment.this));
-                        } else {
-                            actionHelp.setVisibility(View.GONE);
-                        }
-
-                        setMode(DataViewMode.DATA);
-                    }
-
-                    @Override
-                    public void onError(AbstractApiResponse response) {
-                        setError(response.errorMessage);
-                    }
-                }, this));
+            @Override
+            public void onError(AbstractApiResponse response) {
+                setError(response.errorMessage);
+            }
+        }, this));
     }
 
     private void setProgressActionInfo(final CharSequence info) {
-        if(TextUtils.isEmpty(info)) {
+        if (TextUtils.isEmpty(info)) {
             progressActionInfo.setVisibility(View.GONE);
             UiUtils.setHeight(progressAction, (int) getResources().getDimension(R.dimen.game_info_bar_height));
         } else {
@@ -547,8 +533,8 @@ public class GameInfoFragment extends WrapperFragment {
                 @Override
                 public void onGlobalLayout() {
                     final int height = progressActionInfo.getHeight();
-                    if(height > 0) {
-                        if(isAdded()) {
+                    if (height > 0) {
+                        if (isAdded()) {
                             UiUtils.setHeight(progressAction,
                                     height + 2 * (int) getResources().getDimension(R.dimen.game_info_bar_padding));
                         }
@@ -560,12 +546,12 @@ public class GameInfoFragment extends WrapperFragment {
     }
 
     private String getActionTimeString(final long minutes) {
-        if(minutes < 0) {
+        if (minutes < 0) {
             return null;
         }
 
         final long hours = minutes / 60;
-        if(hours > 0) {
+        if (hours > 0) {
             return getString(R.string.game_action_time, hours, minutes % 60);
         } else {
             return getString(R.string.game_action_time_short, minutes);
@@ -573,12 +559,12 @@ public class GameInfoFragment extends WrapperFragment {
     }
 
     private String getActionTimeApproximateString(final long seconds) {
-        if(seconds < 0) {
+        if (seconds < 0) {
             return null;
         }
 
         final long minutes = seconds / 60;
-        if(minutes > 0) {
+        if (minutes > 0) {
             return getString(R.string.game_action_time_approximate, minutes, seconds % 60);
         } else {
             return getString(R.string.game_action_time_approximate_short, seconds);

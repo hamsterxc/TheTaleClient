@@ -13,14 +13,21 @@ import android.view.ViewGroup;
 import com.lonebytesoft.thetaleclient.DrawerItem;
 import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.activity.MainActivity;
-import com.lonebytesoft.thetaleclient.api.CommonResponseCallback;
-import com.lonebytesoft.thetaleclient.api.cache.prerequisite.GameInfoPrerequisiteRequest;
-import com.lonebytesoft.thetaleclient.api.model.QuestActorInfo;
-import com.lonebytesoft.thetaleclient.api.request.MapRequest;
-import com.lonebytesoft.thetaleclient.api.response.MapResponse;
+import com.lonebytesoft.thetaleclient.apisdk.ApiCallback;
+import com.lonebytesoft.thetaleclient.apisdk.model.QuestActorInfo;
+import com.lonebytesoft.thetaleclient.apisdk.request.MapRequestBuilder;
+import com.lonebytesoft.thetaleclient.sdk.AbstractApiResponse;
+import com.lonebytesoft.thetaleclient.sdk.dictionary.QuestActorType;
+import com.lonebytesoft.thetaleclient.sdk.model.QuestActorDetailsPerson;
+import com.lonebytesoft.thetaleclient.sdk.model.QuestActorDetailsPlace;
+import com.lonebytesoft.thetaleclient.sdk.model.QuestActorDetailsSpending;
+import com.lonebytesoft.thetaleclient.sdk.response.MapResponse;
 import com.lonebytesoft.thetaleclient.util.PreferencesManager;
 import com.lonebytesoft.thetaleclient.util.RequestUtils;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Hamster
@@ -29,6 +36,8 @@ import com.lonebytesoft.thetaleclient.util.UiUtils;
 public class QuestActorDialog extends BaseDialog {
 
     private static final String PARAM_QUEST_ACTOR_INFO = "PARAM_QUEST_ACTOR_INFO";
+
+    private static final Map<QuestActorType, Integer> questActorTypeStringIds;
 
     public static QuestActorDialog newInstance(final QuestActorInfo questActorInfo) {
         final QuestActorDialog dialog = new QuestActorDialog();
@@ -48,67 +57,61 @@ public class QuestActorDialog extends BaseDialog {
         switch(questActorInfo.type) {
             case PERSON:
                 view = inflater.inflate(R.layout.dialog_content_quest_actor_person, container, false);
+                final QuestActorDetailsPerson detailsPerson = (QuestActorDetailsPerson) questActorInfo.details;
                 UiUtils.setText(view.findViewById(R.id.dialog_quest_actor_person_name),
-                        UiUtils.getInfoItem(getString(R.string.quest_actor_name), questActorInfo.personInfo.name));
+                        UiUtils.getInfoItem(getString(R.string.quest_actor_name), detailsPerson.name));
                 UiUtils.setText(view.findViewById(R.id.dialog_quest_actor_person_race),
-                        UiUtils.getInfoItem(getString(R.string.quest_actor_race), questActorInfo.personInfo.race.getName()));
+                        UiUtils.getInfoItem(getString(R.string.quest_actor_race), detailsPerson.race.name));
                 UiUtils.setText(view.findViewById(R.id.dialog_quest_actor_person_gender),
-                        UiUtils.getInfoItem(getString(R.string.quest_actor_gender), questActorInfo.personInfo.gender.getName()));
+                        UiUtils.getInfoItem(getString(R.string.quest_actor_gender), detailsPerson.gender.name));
                 UiUtils.setText(view.findViewById(R.id.dialog_quest_actor_person_profession),
-                        UiUtils.getInfoItem(getString(R.string.quest_actor_profession), questActorInfo.personInfo.profession.getName()));
+                        UiUtils.getInfoItem(getString(R.string.quest_actor_profession), detailsPerson.profession.name));
                 UiUtils.setText(view.findViewById(R.id.dialog_quest_actor_person_mastery),
-                        UiUtils.getInfoItem(getString(R.string.quest_actor_mastery), questActorInfo.personInfo.mastery));
-                new GameInfoPrerequisiteRequest(new Runnable() {
+                        UiUtils.getInfoItem(getString(R.string.quest_actor_mastery), detailsPerson.mastery));
+                MapRequestBuilder.execute(getActivity(), new ApiCallback<MapResponse>() {
                     @Override
-                    public void run() {
-                        new MapRequest(PreferencesManager.getMapVersion()).execute(RequestUtils.wrapCallback(new CommonResponseCallback<MapResponse, String>() {
-                            @Override
-                            public void processResponse(MapResponse response) {
-                                setPlaceLink(
-                                        view.findViewById(R.id.dialog_quest_actor_person_place),
-                                        getString(R.string.quest_actor_place),
-                                        response.places.get(questActorInfo.personInfo.placeId).name,
-                                        questActorInfo.personInfo.placeId);
-                            }
-
-                            @Override
-                            public void processError(String error) {
-                            }
-                        }, QuestActorDialog.this));
+                    public void onSuccess(MapResponse response) {
+                        setPlaceLink(
+                                view.findViewById(R.id.dialog_quest_actor_person_place),
+                                getString(R.string.quest_actor_place),
+                                response.places.get(detailsPerson.placeId).name,
+                                detailsPerson.placeId);
                     }
-                }, null, this).execute();
+
+                    @Override
+                    public void onError(AbstractApiResponse response) {
+                        // do nothing
+                    }
+                });
                 break;
 
             case PLACE:
                 view = inflater.inflate(R.layout.dialog_content_quest_actor_place, container, false);
+                final QuestActorDetailsPlace detailsPlace = (QuestActorDetailsPlace) questActorInfo.details;
                 setPlaceLink(
                         view.findViewById(R.id.dialog_quest_actor_place_name),
                         getString(R.string.map_place_name),
-                        questActorInfo.placeInfo.name,
-                        questActorInfo.placeInfo.id);
-                new GameInfoPrerequisiteRequest(new Runnable() {
+                        detailsPlace.name,
+                        detailsPlace.id);
+                MapRequestBuilder.execute(getActivity(), new ApiCallback<MapResponse>() {
                     @Override
-                    public void run() {
-                        new MapRequest(PreferencesManager.getMapVersion()).execute(RequestUtils.wrapCallback(new CommonResponseCallback<MapResponse, String>() {
-                            @Override
-                            public void processResponse(MapResponse response) {
-                                UiUtils.setText(view.findViewById(R.id.dialog_quest_actor_place_size), UiUtils.getInfoItem(
-                                        getString(R.string.map_place_size),
-                                        String.valueOf(response.places.get(questActorInfo.placeInfo.id).size)));
-                            }
-
-                            @Override
-                            public void processError(String error) {
-                            }
-                        }, QuestActorDialog.this));
+                    public void onSuccess(MapResponse response) {
+                        UiUtils.setText(view.findViewById(R.id.dialog_quest_actor_place_size), UiUtils.getInfoItem(
+                                getString(R.string.map_place_size),
+                                String.valueOf(response.places.get(detailsPlace.id).size)));
                     }
-                }, null, this).execute();
+
+                    @Override
+                    public void onError(AbstractApiResponse response) {
+                        // do nothing
+                    }
+                });
                 break;
 
             case SPENDING:
                 view = inflater.inflate(R.layout.dialog_content_quest_actor_spending, container, false);
                 UiUtils.setText(view.findViewById(R.id.dialog_quest_actor_spending_description),
-                        questActorInfo.spendingInfo.description);
+                        ((QuestActorDetailsSpending) questActorInfo.details).description);
                 break;
 
             default:
@@ -116,7 +119,7 @@ public class QuestActorDialog extends BaseDialog {
                 break;
         }
 
-        return wrapView(inflater, view, questActorInfo.type.getName());
+        return wrapView(inflater, view, getString(questActorTypeStringIds.get(questActorInfo.type)));
     }
 
     private void setPlaceLink(final View view, final CharSequence caption, final CharSequence info, final int placeId) {
@@ -137,6 +140,13 @@ public class QuestActorDialog extends BaseDialog {
                 ((MainActivity) activity).onNavigationDrawerItemSelected(DrawerItem.MAP);
             }
         });
+    }
+
+    static {
+        questActorTypeStringIds = new HashMap<>(QuestActorType.values().length);
+        questActorTypeStringIds.put(QuestActorType.PLACE, R.string.quest_actor_type_place);
+        questActorTypeStringIds.put(QuestActorType.PERSON, R.string.quest_actor_type_person);
+        questActorTypeStringIds.put(QuestActorType.SPENDING, R.string.quest_actor_type_spending);
     }
 
 }

@@ -4,12 +4,13 @@ import android.content.Context;
 
 import com.lonebytesoft.thetaleclient.sdk.AbstractApiResponse;
 import com.lonebytesoft.thetaleclient.sdk.AbstractRequest;
+import com.lonebytesoft.thetaleclient.sdk.AbstractResponse;
 
 /**
  * @author Hamster
  * @since 09.04.2015
  */
-public interface RequestExecutionInterceptor<Q extends AbstractRequest<A>, A extends AbstractApiResponse> {
+public interface RequestExecutionInterceptor<Q extends AbstractRequest<A>, A extends AbstractResponse> {
 
     /**
      * @return true if his request should be executed, false if skipped

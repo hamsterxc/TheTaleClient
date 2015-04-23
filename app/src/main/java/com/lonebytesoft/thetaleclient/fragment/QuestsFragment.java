@@ -18,19 +18,25 @@ import android.widget.TextView;
 import com.lonebytesoft.thetaleclient.DataViewMode;
 import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.TheTaleClientApplication;
-import com.lonebytesoft.thetaleclient.api.ApiResponseCallback;
-import com.lonebytesoft.thetaleclient.api.CommonResponseCallback;
-import com.lonebytesoft.thetaleclient.api.dictionary.QuestType;
-import com.lonebytesoft.thetaleclient.api.model.QuestActorInfo;
-import com.lonebytesoft.thetaleclient.api.model.QuestChoiceInfo;
-import com.lonebytesoft.thetaleclient.api.model.QuestStepInfo;
-import com.lonebytesoft.thetaleclient.api.request.GameInfoRequest;
-import com.lonebytesoft.thetaleclient.api.request.MapRequest;
-import com.lonebytesoft.thetaleclient.api.request.QuestChoiceRequest;
-import com.lonebytesoft.thetaleclient.api.response.CommonResponse;
-import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;
-import com.lonebytesoft.thetaleclient.api.response.MapResponse;
+import com.lonebytesoft.thetaleclient.apisdk.ApiCallback;
+import com.lonebytesoft.thetaleclient.apisdk.RequestExecutor;
+import com.lonebytesoft.thetaleclient.apisdk.model.QuestActorInfo;
+import com.lonebytesoft.thetaleclient.apisdk.request.GameInfoRequestBuilder;
+import com.lonebytesoft.thetaleclient.apisdk.request.MapRequestBuilder;
+import com.lonebytesoft.thetaleclient.apisdk.request.QuestChoiceRequestBuilder;
+import com.lonebytesoft.thetaleclient.sdk.AbstractApiResponse;
+import com.lonebytesoft.thetaleclient.sdk.dictionary.QuestActorType;
+import com.lonebytesoft.thetaleclient.sdk.dictionary.QuestType;
+import com.lonebytesoft.thetaleclient.sdk.model.QuestActorDetailsPerson;
+import com.lonebytesoft.thetaleclient.sdk.model.QuestActorDetailsPlace;
+import com.lonebytesoft.thetaleclient.sdk.model.QuestActorDetailsSpending;
+import com.lonebytesoft.thetaleclient.sdk.model.QuestChoiceInfo;
+import com.lonebytesoft.thetaleclient.sdk.model.QuestStepInfo;
+import com.lonebytesoft.thetaleclient.sdk.response.CommonResponse;
+import com.lonebytesoft.thetaleclient.sdk.response.GameInfoResponse;
+import com.lonebytesoft.thetaleclient.sdk.response.MapResponse;
 import com.lonebytesoft.thetaleclient.util.DialogUtils;
+import com.lonebytesoft.thetaleclient.util.GameInfoUtils;
 import com.lonebytesoft.thetaleclient.util.PreferencesManager;
 import com.lonebytesoft.thetaleclient.util.RequestUtils;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
@@ -54,6 +60,8 @@ public class QuestsFragment extends WrapperFragment {
 
     private final Map<TextView, Integer> actorNames = new HashMap<>();
 
+    private static final Map<QuestType, Integer> questTypeDrawableIds;
+
     public QuestsFragment() {
     }
 
@@ -71,33 +79,33 @@ public class QuestsFragment extends WrapperFragment {
     public void refresh(final boolean isGlobal) {
         super.refresh(isGlobal);
 
-        final ApiResponseCallback<GameInfoResponse> callback = RequestUtils.wrapCallback(new ApiResponseCallback<GameInfoResponse>() {
+        GameInfoRequestBuilder.executeWatching(getActivity(), RequestUtils.wrapCallback(new ApiCallback<GameInfoResponse>() {
             @Override
-            public void processResponse(GameInfoResponse response) {
+            public void onSuccess(GameInfoResponse response) {
                 container.removeAllViews();
                 actorNames.clear();
                 final int questLinesCount = response.account.hero.quests.size();
-                for(int i = 0; i < questLinesCount; i++) {
+                for (int i = 0; i < questLinesCount; i++) {
                     final List<QuestStepInfo> questLine = response.account.hero.quests.get(i);
                     final int questStepsCount = questLine.size();
-                    for(int j = 0; j < questStepsCount; j++) {
+                    for (int j = 0; j < questStepsCount; j++) {
                         final QuestStepInfo questStep = questLine.get(j);
                         final View questStepView = layoutInflater.inflate(R.layout.item_quest, container, false);
 
                         final TextView questNameView = (TextView) questStepView.findViewById(R.id.quest_name);
                         final String rewards;
-                        if((questStep.experience > 0) && (questStep.power == 0)) {
+                        if ((questStep.experience > 0) && (questStep.power == 0)) {
                             rewards = String.format(" (%s)", getString(R.string.quest_reward_experience, questStep.experience));
-                        } else if((questStep.experience == 0) && (questStep.power > 0)) {
+                        } else if ((questStep.experience == 0) && (questStep.power > 0)) {
                             rewards = String.format(" (%s)", getString(R.string.quest_reward_power, questStep.power));
-                        } else if((questStep.experience > 0) && (questStep.power > 0)) {
+                        } else if ((questStep.experience > 0) && (questStep.power > 0)) {
                             rewards = String.format(" (%s, %s)",
                                     getString(R.string.quest_reward_experience, questStep.experience),
                                     getString(R.string.quest_reward_power, questStep.power));
                         } else {
                             rewards = null;
                         }
-                        if(TextUtils.isEmpty(rewards)) {
+                        if (TextUtils.isEmpty(rewards)) {
                             questNameView.setText(questStep.name);
                         } else {
                             final Spannable rewardsString = new SpannableString(rewards);
@@ -106,55 +114,56 @@ public class QuestsFragment extends WrapperFragment {
                             questNameView.setText(TextUtils.concat(questStep.name, rewardsString));
                         }
 
-                        ((ImageView) questStepView.findViewById(R.id.quest_icon)).setImageResource(questStep.type.getDrawableResId());
+                        ((ImageView) questStepView.findViewById(R.id.quest_icon)).setImageResource(questTypeDrawableIds.get(questStep.type));
 
                         final ViewGroup actorsContainer = (ViewGroup) questStepView.findViewById(R.id.quest_actors_container);
-                        for(final QuestActorInfo actor : questStep.actors) {
+                        for (final com.lonebytesoft.thetaleclient.sdk.model.QuestActorInfo actor : questStep.actors) {
                             final View actorView = layoutInflater.inflate(R.layout.item_text, actorsContainer, false);
 
                             final TextView actorTextView = (TextView) actorView.findViewById(R.id.item_text_content);
                             final CharSequence actorText;
                             final Spannable actorName = new SpannableString(actor.name);
                             actorName.setSpan(new StyleSpan(Typeface.BOLD), 0, actorName.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                            switch(actor.type) {
+                            switch (actor.type) {
                                 case PERSON:
-                                    actorText = TextUtils.concat(actorName, ": ", actor.personInfo.name);
-                                    actorNames.put(actorTextView, actor.personInfo.placeId);
+                                    final QuestActorDetailsPerson detailsPerson = (QuestActorDetailsPerson) actor.details;
+                                    actorText = TextUtils.concat(actorName, ": ", detailsPerson.name);
+                                    actorNames.put(actorTextView, detailsPerson.placeId);
                                     break;
 
                                 case PLACE:
-                                    actorText = TextUtils.concat(actorName, ": ", actor.placeInfo.name);
+                                    actorText = TextUtils.concat(actorName, ": ", ((QuestActorDetailsPlace) actor.details).name);
                                     break;
 
                                 case SPENDING:
-                                    actorText = TextUtils.concat(actorName, ": ", actor.spendingInfo.goal);
+                                    actorText = TextUtils.concat(actorName, ": ", ((QuestActorDetailsSpending) actor.details).goal);
                                     break;
 
                                 default:
                                     actorText = actorName;
                                     break;
                             }
+
                             actorTextView.setText(actorText);
+                            final QuestActorInfo questActorInfo = new QuestActorInfo(actor);
                             actorTextView.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    DialogUtils.showQuestActorDialog(getFragmentManager(), actor);
+                                    DialogUtils.showQuestActorDialog(getFragmentManager(), questActorInfo);
                                 }
                             });
 
                             actorsContainer.addView(actorView);
                         }
 
-                        if((questStep.type != QuestType.SPENDING) && (j == questStepsCount - 1)) {
+                        if ((questStep.type != QuestType.SPENDING) && (j == questStepsCount - 1)) {
                             UiUtils.setText(questStepView.findViewById(R.id.quest_action), questStep.heroAction);
                             UiUtils.setText(questStepView.findViewById(R.id.quest_current_choice), questStep.currentChoice);
                         }
 
-                        if(response.account.isOwnInfo) {
+                        if (response.account.isOwnInfo) {
                             final ViewGroup choicesContainer = (ViewGroup) questStepView.findViewById(R.id.quest_choices_container);
-                            final View choiceProgress = questStepView.findViewById(R.id.quest_choice_progress);
-                            final TextView choiceError = (TextView) questStepView.findViewById(R.id.quest_choice_error);
-                            for(final QuestChoiceInfo choice : questStep.choices) {
+                            for (final QuestChoiceInfo choice : questStep.choices) {
                                 final View choiceView = layoutInflater.inflate(R.layout.item_quest_choice, choicesContainer, false);
 
                                 final Spannable choiceDescription = new SpannableString(choice.description);
@@ -165,7 +174,7 @@ public class QuestsFragment extends WrapperFragment {
                                 choiceTextView.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
-                                        if(PreferencesManager.isConfirmationQuestChoiceEnabled()) {
+                                        if (PreferencesManager.isConfirmationQuestChoiceEnabled()) {
                                             DialogUtils.showConfirmationDialog(
                                                     getChildFragmentManager(),
                                                     getString(R.string.game_quest_choice),
@@ -189,16 +198,16 @@ public class QuestsFragment extends WrapperFragment {
                         container.addView(questStepView);
                     }
 
-                    if(i != questLinesCount - 1) {
+                    if (i != questLinesCount - 1) {
                         layoutInflater.inflate(R.layout.item_quest_delimiter, container, true);
                     }
                 }
 
                 // add town name to quest person actors
-                if(actorNames.size() > 0) {
-                    new MapRequest(response.mapVersion).execute(RequestUtils.wrapCallback(new CommonResponseCallback<MapResponse, String>() {
+                if (actorNames.size() > 0) {
+                    MapRequestBuilder.execute(getActivity(), RequestUtils.wrapCallback(new ApiCallback<MapResponse>() {
                         @Override
-                        public void processResponse(MapResponse response) {
+                        public void onSuccess(MapResponse response) {
                             for (final Map.Entry<TextView, Integer> actorNameEntry : actorNames.entrySet()) {
                                 final Spannable placeText = new SpannableString(String.format(" (%s)", response.places.get(actorNameEntry.getValue()).name));
                                 placeText.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.game_additional_info)),
@@ -210,7 +219,7 @@ public class QuestsFragment extends WrapperFragment {
                         }
 
                         @Override
-                        public void processError(String error) {
+                        public void onError(AbstractApiResponse response) {
                             // do nothing
                         }
                     }, QuestsFragment.this));
@@ -220,17 +229,10 @@ public class QuestsFragment extends WrapperFragment {
             }
 
             @Override
-            public void processError(GameInfoResponse response) {
+            public void onError(AbstractApiResponse response) {
                 setError(response.errorMessage);
             }
-        }, this);
-
-        final int watchingAccountId = PreferencesManager.getWatchingAccountId();
-        if(watchingAccountId == 0) {
-            new GameInfoRequest(true).execute(callback, true);
-        } else {
-            new GameInfoRequest(true).execute(watchingAccountId, callback, true);
-        }
+        }, this));
     }
 
     private void selectQuestStep(final View questStepView, final String choiceId) {
@@ -240,19 +242,19 @@ public class QuestsFragment extends WrapperFragment {
         choicesContainer.setVisibility(View.GONE);
         choiceProgress.setVisibility(View.VISIBLE);
 
-        new QuestChoiceRequest().execute(choiceId, RequestUtils.wrapCallback(new ApiResponseCallback<CommonResponse>() {
+        RequestExecutor.execute(getActivity(), new QuestChoiceRequestBuilder().setChoiceId(choiceId), RequestUtils.wrapCallback(new ApiCallback<CommonResponse>() {
             @Override
-            public void processResponse(CommonResponse response) {
+            public void onSuccess(CommonResponse response) {
                 refresh(false);
             }
 
             @Override
-            public void processError(CommonResponse response) {
+            public void onError(AbstractApiResponse response) {
                 choicesContainer.setVisibility(View.GONE);
                 choiceProgress.setVisibility(View.GONE);
                 UiUtils.setText(questStepView.findViewById(R.id.quest_choice_error), response.errorMessage);
             }
-        }, QuestsFragment.this));
+        }, this));
     }
 
     @Override
@@ -267,6 +269,23 @@ public class QuestsFragment extends WrapperFragment {
         TheTaleClientApplication.getOnscreenStateWatcher().onscreenStateChange(OnscreenPart.QUESTS, true);
 
         TheTaleClientApplication.getNotificationManager().clearNotifications();
+    }
+
+    static {
+        questTypeDrawableIds = new HashMap<>(QuestType.values().length);
+        questTypeDrawableIds.put(QuestType.CARAVAN, R.drawable.quest_caravan);
+        questTypeDrawableIds.put(QuestType.DELIVERY, R.drawable.quest_delivery);
+        questTypeDrawableIds.put(QuestType.HELP, R.drawable.quest_help);
+        questTypeDrawableIds.put(QuestType.HELP_FRIEND, R.drawable.quest_help_friend);
+        questTypeDrawableIds.put(QuestType.HOMETOWN, R.drawable.quest_hometown);
+        questTypeDrawableIds.put(QuestType.HUNT, R.drawable.quest_hunt);
+        questTypeDrawableIds.put(QuestType.ENEMY, R.drawable.quest_enemy);
+        questTypeDrawableIds.put(QuestType.DEBT, R.drawable.quest_debt);
+        questTypeDrawableIds.put(QuestType.SPYING, R.drawable.quest_spying);
+        questTypeDrawableIds.put(QuestType.SMITH, R.drawable.quest_smith);
+        questTypeDrawableIds.put(QuestType.NO_QUEST, R.drawable.quest_no_quest);
+        questTypeDrawableIds.put(QuestType.SPENDING, R.drawable.quest_next_spending);
+        questTypeDrawableIds.put(QuestType.PILGRIMAGE, R.drawable.quest_pilgrimage);
     }
 
 }

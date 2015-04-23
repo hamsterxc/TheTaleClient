@@ -8,7 +8,7 @@ import android.support.v4.app.FragmentTransaction;
 import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.api.model.ArtifactInfo;
 import com.lonebytesoft.thetaleclient.api.model.CardInfo;
-import com.lonebytesoft.thetaleclient.api.model.QuestActorInfo;
+import com.lonebytesoft.thetaleclient.apisdk.model.QuestActorInfo;
 import com.lonebytesoft.thetaleclient.fragment.dialog.AboutDialog;
 import com.lonebytesoft.thetaleclient.fragment.dialog.ArtifactDialog;
 import com.lonebytesoft.thetaleclient.fragment.dialog.CardInfoDialog;
