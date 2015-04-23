@@ -31,4 +31,18 @@ public class AccountPlaceHistoryInfo implements Comparable<AccountPlaceHistoryIn
         }
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        return (obj == this)
+                || (obj instanceof AccountPlaceHistoryInfo) && (((AccountPlaceHistoryInfo) obj).compareTo(this) == 0);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name.hashCode();
+        result = 31 * result + placeId;
+        result = 31 * result + helpCount;
+        return result;
+    }
+
 }
