@@ -17,15 +17,19 @@ import android.widget.TextView;
 
 import com.lonebytesoft.thetaleclient.DataViewMode;
 import com.lonebytesoft.thetaleclient.R;
-import com.lonebytesoft.thetaleclient.api.ApiResponseCallback;
-import com.lonebytesoft.thetaleclient.api.dictionary.CardRarity;
-import com.lonebytesoft.thetaleclient.api.model.CardInfo;
-import com.lonebytesoft.thetaleclient.api.request.CombineCardsRequest;
-import com.lonebytesoft.thetaleclient.api.request.GameInfoRequest;
-import com.lonebytesoft.thetaleclient.api.request.TakeCardRequest;
-import com.lonebytesoft.thetaleclient.api.response.CombineCardsResponse;
-import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;
-import com.lonebytesoft.thetaleclient.api.response.TakeCardResponse;
+import com.lonebytesoft.thetaleclient.apisdk.ApiCallback;
+import com.lonebytesoft.thetaleclient.apisdk.RequestExecutor;
+import com.lonebytesoft.thetaleclient.apisdk.model.CardInfoParcelable;
+import com.lonebytesoft.thetaleclient.apisdk.request.CombineCardsRequestBuilder;
+import com.lonebytesoft.thetaleclient.apisdk.request.GameInfoRequestBuilder;
+import com.lonebytesoft.thetaleclient.apisdk.request.GetCardRequestBuilder;
+import com.lonebytesoft.thetaleclient.apisdk.util.DictionaryData;
+import com.lonebytesoft.thetaleclient.sdk.AbstractApiResponse;
+import com.lonebytesoft.thetaleclient.sdk.dictionary.CardRarity;
+import com.lonebytesoft.thetaleclient.sdk.model.CardInfo;
+import com.lonebytesoft.thetaleclient.sdk.response.CombineCardsResponse;
+import com.lonebytesoft.thetaleclient.sdk.response.GameInfoResponse;
+import com.lonebytesoft.thetaleclient.sdk.response.GetCardResponse;
 import com.lonebytesoft.thetaleclient.util.DialogUtils;
 import com.lonebytesoft.thetaleclient.util.ObjectUtils;
 import com.lonebytesoft.thetaleclient.util.PreferencesManager;
@@ -107,8 +111,8 @@ public class CardsFragment extends WrapperFragment {
             @Override
             public void onGlobalLayout() {
                 final int height = combineActionStart.getHeight();
-                if(height > 0) {
-                    if(isAdded()) {
+                if (height > 0) {
+                    if (isAdded()) {
                         cardTextHeight = (int) (height
                                 - 2 * getResources().getDimension(R.dimen.request_action_padding)
                                 + 2 * getResources().getDimension(R.dimen.game_card_margins_vertical));
@@ -118,9 +122,9 @@ public class CardsFragment extends WrapperFragment {
             }
         });
 
-        final ApiResponseCallback<GameInfoResponse> callback = RequestUtils.wrapCallback(new ApiResponseCallback<GameInfoResponse>() {
+        GameInfoRequestBuilder.executeWatching(getActivity(), RequestUtils.wrapCallback(new ApiCallback<GameInfoResponse>() {
             @Override
-            public void processResponse(final GameInfoResponse response) {
+            public void onSuccess(GameInfoResponse response) {
                 if(!response.account.isOwnInfo) {
                     setError(getString(R.string.game_cards_unavailable_foreign));
                     return;
@@ -134,13 +138,13 @@ public class CardsFragment extends WrapperFragment {
                     helpTakeCardWidget.setActionClickListener(new Runnable() {
                         @Override
                         public void run() {
-                            new TakeCardRequest().execute(RequestUtils.wrapCallback(new ApiResponseCallback<TakeCardResponse>() {
+                            RequestExecutor.execute(getActivity(), new GetCardRequestBuilder(), RequestUtils.wrapCallback(new ApiCallback<GetCardResponse>() {
                                 @Override
-                                public void processResponse(TakeCardResponse response) {
+                                public void onSuccess(GetCardResponse response) {
                                     helpTakeCardWidget.setMode(RequestActionView.Mode.ACTION);
                                     DialogUtils.showCardInfoDialog(getChildFragmentManager(),
-                                            getString(R.string.game_card_take_result),
-                                            response.card,
+                                            getString(R.string.game_cards_combine_result),
+                                            new CardInfoParcelable(response.card),
                                             new Runnable() {
                                                 @Override
                                                 public void run() {
@@ -150,7 +154,7 @@ public class CardsFragment extends WrapperFragment {
                                 }
 
                                 @Override
-                                public void processError(TakeCardResponse response) {
+                                public void onError(AbstractApiResponse response) {
                                     helpTakeCardWidget.setErrorText(response.errorMessage);
                                 }
                             }, CardsFragment.this));
@@ -232,17 +236,10 @@ public class CardsFragment extends WrapperFragment {
             }
 
             @Override
-            public void processError(GameInfoResponse response) {
+            public void onError(AbstractApiResponse response) {
                 setError(response.errorMessage);
             }
-        }, this);
-
-        final int watchingAccountId = PreferencesManager.getWatchingAccountId();
-        if(watchingAccountId == 0) {
-            new GameInfoRequest(true).execute(callback, true);
-        } else {
-            new GameInfoRequest(true).execute(watchingAccountId, callback, true);
-        }
+        }, this));
     }
 
     private void updateCombineViews() {
@@ -283,29 +280,32 @@ public class CardsFragment extends WrapperFragment {
                         }
                     }
 
-                    new CombineCardsRequest(cardIds).execute(RequestUtils.wrapCallback(new ApiResponseCallback<CombineCardsResponse>() {
-                        @Override
-                        public void processResponse(CombineCardsResponse response) {
-                            progressDialog.dismiss();
-                            DialogUtils.showCardInfoDialog(getChildFragmentManager(),
-                                    getString(R.string.game_cards_combine_result),
-                                    response.card,
-                                    new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            refresh(true);
-                                        }
-                                    });
-                        }
+                    RequestExecutor.execute(
+                            getActivity(),
+                            new CombineCardsRequestBuilder().addCardIds(cardIds),
+                            RequestUtils.wrapCallback(new ApiCallback<CombineCardsResponse>() {
+                                @Override
+                                public void onSuccess(CombineCardsResponse response) {
+                                    progressDialog.dismiss();
+                                    DialogUtils.showCardInfoDialog(getChildFragmentManager(),
+                                            getString(R.string.game_cards_combine_result),
+                                            new CardInfoParcelable(response.card),
+                                            new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    refresh(true);
+                                                }
+                                            });
+                                }
 
-                        @Override
-                        public void processError(CombineCardsResponse response) {
-                            progressDialog.dismiss();
-                            DialogUtils.showMessageDialog(getChildFragmentManager(),
-                                    getString(R.string.game_cards_combine),
-                                    response.errorMessage);
-                        }
-                    }, CardsFragment.this));
+                                @Override
+                                public void onError(AbstractApiResponse response) {
+                                    progressDialog.dismiss();
+                                    DialogUtils.showMessageDialog(getChildFragmentManager(),
+                                            getString(R.string.game_cards_combine),
+                                            response.errorMessage);
+                                }
+                            }, CardsFragment.this));
                 }
             });
         } else {
@@ -372,9 +372,9 @@ public class CardsFragment extends WrapperFragment {
             return;
         }
 
-        final CardRarity rarity = card.type == null ? card.rarity : card.type.getRarity();
+        final CardRarity rarity = card.type == null ? card.rarity : card.type.rarity;
         final Spannable cardName = new SpannableString(card.name);
-        cardName.setSpan(new ForegroundColorSpan(getResources().getColor(rarity.getColorResId())),
+        cardName.setSpan(new ForegroundColorSpan(getResources().getColor(DictionaryData.getCardRarityColorId(rarity))),
                 0, cardName.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         if(isShort) {
             ((TextView) cardEntryView.findViewById(R.id.card_name)).setText(cardName);
@@ -388,7 +388,7 @@ public class CardsFragment extends WrapperFragment {
                 cardDescription.setVisibility(View.GONE);
             } else {
                 cardDescription.setVisibility(View.VISIBLE);
-                cardDescription.setText(card.type.getDescription());
+                cardDescription.setText(card.type.description);
             }
             cardEntryView.findViewById(R.id.card_tradable).setVisibility(card.isTradable ? View.VISIBLE : View.GONE);
         }

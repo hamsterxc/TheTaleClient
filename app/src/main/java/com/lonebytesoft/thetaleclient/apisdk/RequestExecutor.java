@@ -8,6 +8,7 @@ import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.sdk.AbstractApiResponse;
 import com.lonebytesoft.thetaleclient.sdk.AbstractRequest;
 import com.lonebytesoft.thetaleclient.sdk.AbstractResponse;
+import com.lonebytesoft.thetaleclient.sdk.ApiResponseStatus;
 import com.lonebytesoft.thetaleclient.sdk.exception.ApiException;
 import com.lonebytesoft.thetaleclient.sdk.exception.HttpException;
 import com.lonebytesoft.thetaleclient.sdk.exception.UpdateException;
@@ -35,7 +36,11 @@ public class RequestExecutor {
                     mainHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            callback.onSuccess(response);
+                            if((response instanceof AbstractApiResponse) && (((AbstractApiResponse) response).status != ApiResponseStatus.OK)) {
+                                callback.onError((AbstractApiResponse) response);
+                            } else {
+                                callback.onSuccess(response);
+                            }
                         }
                     });
                 } catch (UpdateException e) {

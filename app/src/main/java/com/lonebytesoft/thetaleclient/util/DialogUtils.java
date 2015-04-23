@@ -6,8 +6,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
 import com.lonebytesoft.thetaleclient.R;
-import com.lonebytesoft.thetaleclient.api.model.CardInfo;
 import com.lonebytesoft.thetaleclient.apisdk.model.ArtifactInfoParcelable;
+import com.lonebytesoft.thetaleclient.apisdk.model.CardInfoParcelable;
 import com.lonebytesoft.thetaleclient.apisdk.model.QuestActorInfoParcelable;
 import com.lonebytesoft.thetaleclient.fragment.dialog.AboutDialog;
 import com.lonebytesoft.thetaleclient.fragment.dialog.ArtifactDialog;
@@ -137,7 +137,7 @@ public class DialogUtils {
     }
 
     public static void showCardInfoDialog(final FragmentManager fragmentManager,
-                                          final String caption, final CardInfo card,
+                                          final String caption, final CardInfoParcelable card,
                                           final Runnable onDismissListener) {
         final CardInfoDialog cardInfoDialog = CardInfoDialog.newInstance(caption, card);
         cardInfoDialog.setOnDismissListener(onDismissListener);

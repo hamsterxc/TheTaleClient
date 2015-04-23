@@ -2,6 +2,7 @@ package com.lonebytesoft.thetaleclient.apisdk.util;
 
 import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.sdk.dictionary.ArtifactRarity;
+import com.lonebytesoft.thetaleclient.sdk.dictionary.CardRarity;
 import com.lonebytesoft.thetaleclient.sdk.dictionary.EquipmentType;
 import com.lonebytesoft.thetaleclient.sdk.dictionary.QuestActorType;
 import com.lonebytesoft.thetaleclient.sdk.dictionary.QuestType;
@@ -19,6 +20,7 @@ public class DictionaryData {
     private static final Map<ArtifactRarity, Integer> artifactRarityColorId;
     private static final Map<QuestActorType, Integer> questActorTypeStringId;
     private static final Map<EquipmentType, Integer> equipmentTypeDrawableId;
+    private static final Map<CardRarity, Integer> cardRarityColorId;
 
     public static int getQuestTypeDrawableId(final QuestType questType) {
         return questTypeDrawableId.get(questType);
@@ -34,6 +36,10 @@ public class DictionaryData {
 
     public static int getEquipmentTypeDrawableId(final EquipmentType equipmentType) {
         return equipmentTypeDrawableId.get(equipmentType);
+    }
+
+    public static int getCardRarityColorId(final CardRarity cardRarity) {
+        return cardRarityColorId.get(cardRarity);
     }
 
     static {
@@ -77,6 +83,14 @@ public class DictionaryData {
             put(EquipmentType.TROUSERS, R.drawable.artifact_trousers);
             put(EquipmentType.BOOTS, R.drawable.artifact_boots);
             put(EquipmentType.RING, R.drawable.artifact_ring);
+        }};
+
+        cardRarityColorId = new HashMap<CardRarity, Integer>(CardRarity.values().length) {{
+            put(CardRarity.COMMON, R.color.card_common);
+            put(CardRarity.UNCOMMON, R.color.card_uncommon);
+            put(CardRarity.RARE, R.color.card_rare);
+            put(CardRarity.EPIC, R.color.card_epic);
+            put(CardRarity.LEGENDARY, R.color.card_legendary);
         }};
     }
 

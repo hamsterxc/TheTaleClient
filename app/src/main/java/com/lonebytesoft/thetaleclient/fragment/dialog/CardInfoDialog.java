@@ -13,8 +13,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.lonebytesoft.thetaleclient.R;
-import com.lonebytesoft.thetaleclient.api.dictionary.CardRarity;
-import com.lonebytesoft.thetaleclient.api.model.CardInfo;
+import com.lonebytesoft.thetaleclient.apisdk.model.CardInfoParcelable;
+import com.lonebytesoft.thetaleclient.apisdk.util.DictionaryData;
+import com.lonebytesoft.thetaleclient.sdk.dictionary.CardRarity;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
 
 /**
@@ -28,7 +29,7 @@ public class CardInfoDialog extends BaseDialog {
 
     private Runnable onDismissListener = null;
 
-    public static CardInfoDialog newInstance(final String title, final CardInfo card) {
+    public static CardInfoDialog newInstance(final String title, final CardInfoParcelable card) {
         final CardInfoDialog dialog = new CardInfoDialog();
 
         final Bundle args = new Bundle();
@@ -47,10 +48,10 @@ public class CardInfoDialog extends BaseDialog {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.dialog_content_card_info, container, false);
 
-        final CardInfo card = getArguments().getParcelable(PARAM_CARD);
-        final CardRarity rarity = card.type == null ? card.rarity : card.type.getRarity();
+        final CardInfoParcelable card = getArguments().getParcelable(PARAM_CARD);
+        final CardRarity rarity = card.type == null ? card.rarity : card.type.rarity;
         final Spannable cardName = new SpannableString(card.name);
-        cardName.setSpan(new ForegroundColorSpan(getResources().getColor(rarity.getColorResId())),
+        cardName.setSpan(new ForegroundColorSpan(getResources().getColor(DictionaryData.getCardRarityColorId(rarity))),
                 0, cardName.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         ((TextView) view.findViewById(R.id.dialog_card_info_name)).setText(cardName);
         final TextView cardDescription = (TextView) view.findViewById(R.id.dialog_card_info_description);
@@ -58,7 +59,7 @@ public class CardInfoDialog extends BaseDialog {
             cardDescription.setVisibility(View.GONE);
         } else {
             cardDescription.setVisibility(View.VISIBLE);
-            cardDescription.setText(card.type.getDescription());
+            cardDescription.setText(card.type.description);
         }
         view.findViewById(R.id.dialog_card_info_tradable).setVisibility(card.isTradable ? View.VISIBLE : View.GONE);
 
