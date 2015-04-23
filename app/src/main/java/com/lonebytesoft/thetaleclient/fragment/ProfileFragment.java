@@ -16,13 +16,17 @@ import android.widget.TextView;
 
 import com.lonebytesoft.thetaleclient.DataViewMode;
 import com.lonebytesoft.thetaleclient.R;
-import com.lonebytesoft.thetaleclient.api.ApiResponseCallback;
-import com.lonebytesoft.thetaleclient.api.dictionary.RatingItem;
-import com.lonebytesoft.thetaleclient.api.model.AccountPlaceHistoryInfo;
-import com.lonebytesoft.thetaleclient.api.model.RatingItemInfo;
-import com.lonebytesoft.thetaleclient.api.request.AccountInfoRequest;
-import com.lonebytesoft.thetaleclient.api.response.AccountInfoResponse;
+import com.lonebytesoft.thetaleclient.apisdk.ApiCallback;
+import com.lonebytesoft.thetaleclient.apisdk.RequestExecutor;
+import com.lonebytesoft.thetaleclient.apisdk.request.AccountInfoRequestBuilder;
+import com.lonebytesoft.thetaleclient.sdk.AbstractApiResponse;
+import com.lonebytesoft.thetaleclient.sdk.dictionary.RatingItem;
+import com.lonebytesoft.thetaleclient.sdk.model.AccountPlaceHistoryInfo;
+import com.lonebytesoft.thetaleclient.sdk.model.RatingItemInfo;
+import com.lonebytesoft.thetaleclient.sdk.response.AccountInfoResponse;
+import com.lonebytesoft.thetaleclient.util.GameInfoUtils;
 import com.lonebytesoft.thetaleclient.util.PreferencesManager;
+import com.lonebytesoft.thetaleclient.util.RequestUtils;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
 
 import java.util.Collections;
@@ -85,49 +89,49 @@ public class ProfileFragment extends WrapperFragment {
 
         final int watchingAccountId = PreferencesManager.getWatchingAccountId();
         final int accountId = watchingAccountId == 0 ? PreferencesManager.getAccountId() : watchingAccountId;
-        new AccountInfoRequest(accountId).execute(new ApiResponseCallback<AccountInfoResponse>() {
-            @Override
-            public void processResponse(final AccountInfoResponse response) {
-                if(!isAdded()) {
-                    return;
-                }
 
-                if(isGlobal) {
-                    tableRatings.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                        @Override
-                        public void onGlobalLayout() {
-                            if(tableRatings.getWidth() > 0) {
-                                final Rect textRect = new Rect();
-                                textRatingsDescription.getPaint().getTextBounds("M", 0, 1, textRect);
-                                isNarrowMode = ((double) tableRatings.getWidth() / textRect.width()) < NARROWNESS_MULTIPLIER_THRESHOLD;
+        RequestExecutor.execute(
+                getActivity(),
+                new AccountInfoRequestBuilder().setAccountId(accountId),
+                RequestUtils.wrapCallback(new ApiCallback<AccountInfoResponse>() {
+                    @Override
+                    public void onSuccess(final AccountInfoResponse response) {
+                        if (isGlobal) {
+                            tableRatings.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                                @Override
+                                public void onGlobalLayout() {
+                                    if (tableRatings.getWidth() > 0) {
+                                        final Rect textRect = new Rect();
+                                        textRatingsDescription.getPaint().getTextBounds("M", 0, 1, textRect);
+                                        isNarrowMode = ((double) tableRatings.getWidth() / textRect.width()) < NARROWNESS_MULTIPLIER_THRESHOLD;
 
-                                UiUtils.removeGlobalLayoutListener(tableRatings, this);
-                                if(!isNarrowMode) {
-                                    fillRatings(response);
+                                        UiUtils.removeGlobalLayoutListener(tableRatings, this);
+                                        if (!isNarrowMode) {
+                                            fillRatings(response);
+                                        }
+                                    }
                                 }
-                            }
+                            });
                         }
-                    });
-                }
 
-                textName.setText(Html.fromHtml(getString(R.string.find_player_info_short, response.name)));
-                textAffectGame.setText(getString(response.canAffectGame ? R.string.game_affect_true : R.string.game_affect_false));
-                textMight.setText(String.valueOf((int) Math.floor(response.might)));
-                textAchievementPoints.setText(String.valueOf(response.achievementPoints));
-                textCollectionItemsCount.setText(String.valueOf(response.collectionItemsCount));
-                textReferralsCount.setText(String.valueOf(response.referralsCount));
+                        textName.setText(Html.fromHtml(getString(R.string.find_player_info_short, response.name)));
+                        textAffectGame.setText(getString(response.canAffectGame ? R.string.game_affect_true : R.string.game_affect_false));
+                        textMight.setText(String.valueOf((int) Math.floor(response.might)));
+                        textAchievementPoints.setText(String.valueOf(response.achievementPoints));
+                        textCollectionItemsCount.setText(String.valueOf(response.collectionItemsCount));
+                        textReferralsCount.setText(String.valueOf(response.referralsCount));
 
-                fillRatings(response);
-                fillPlacesHistory(response);
+                        fillRatings(response);
+                        fillPlacesHistory(response);
 
-                setMode(DataViewMode.DATA);
-            }
+                        setMode(DataViewMode.DATA);
+                    }
 
-            @Override
-            public void processError(AccountInfoResponse response) {
-                setError(response.errorMessage);
-            }
-        });
+                    @Override
+                    public void onError(AbstractApiResponse response) {
+                        setError(response.errorMessage);
+                    }
+                }, this));
     }
 
     private View getTableRow(final CharSequence text1, final CharSequence text2, final CharSequence text3) {
@@ -157,7 +161,7 @@ public class ProfileFragment extends WrapperFragment {
         for(final Map.Entry<RatingItem, RatingItemInfo> ratingEntry : accountInfoResponse.ratings.entrySet()) {
             layoutInflater.inflate(R.layout.item_profile_table_delimiter, tableRatings, true);
             final RatingItemInfo ratingItemInfo = ratingEntry.getValue();
-            final String value = ratingEntry.getKey().getValue(ratingItemInfo.value);
+            final String value = GameInfoUtils.getRatingValue(ratingEntry.getKey(), ratingEntry.getValue());
             final String place;
             if(isNarrowMode) {
                 place = ratingItemInfo.value == 0 ?

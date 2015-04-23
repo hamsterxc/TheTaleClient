@@ -12,9 +12,12 @@ import com.lonebytesoft.thetaleclient.api.model.QuestStepInfo;
 import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;
 import com.lonebytesoft.thetaleclient.sdk.dictionary.ArtifactEffect;
 import com.lonebytesoft.thetaleclient.sdk.dictionary.EquipmentType;
+import com.lonebytesoft.thetaleclient.sdk.dictionary.RatingItem;
 import com.lonebytesoft.thetaleclient.sdk.model.ArtifactInfo;
 import com.lonebytesoft.thetaleclient.sdk.model.HeroInfo;
+import com.lonebytesoft.thetaleclient.sdk.model.RatingItemInfo;
 
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map;
 
@@ -123,6 +126,19 @@ public class GameInfoUtils {
             }
         }
         return count;
+    }
+
+    public static String getRatingValue(final RatingItem ratingItem, final RatingItemInfo ratingItemInfo) {
+        switch(ratingItem) {
+            case MIGHT:
+                return new DecimalFormat("#.##").format(ratingItemInfo.value);
+
+            case PVP_VICTORIES:
+                return String.format("%.2f%%", ratingItemInfo.value * 100);
+
+            default:
+                return String.valueOf((int) Math.floor(ratingItemInfo.value));
+        }
     }
 
 }
