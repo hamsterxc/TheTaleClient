@@ -23,6 +23,7 @@ import com.lonebytesoft.thetaleclient.sdk.model.QuestActorDetailsPlace;
 import com.lonebytesoft.thetaleclient.sdk.model.QuestActorDetailsSpending;
 import com.lonebytesoft.thetaleclient.sdk.response.MapResponse;
 import com.lonebytesoft.thetaleclient.util.PreferencesManager;
+import com.lonebytesoft.thetaleclient.util.RequestUtils;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
 
 /**
@@ -62,7 +63,7 @@ public class QuestActorDialog extends BaseDialog {
                         UiUtils.getInfoItem(getString(R.string.quest_actor_profession), detailsPerson.profession.name));
                 UiUtils.setText(view.findViewById(R.id.dialog_quest_actor_person_mastery),
                         UiUtils.getInfoItem(getString(R.string.quest_actor_mastery), detailsPerson.mastery));
-                MapRequestBuilder.execute(getActivity(), new ApiCallback<MapResponse>() {
+                MapRequestBuilder.execute(getActivity(), RequestUtils.wrapCallback(new ApiCallback<MapResponse>() {
                     @Override
                     public void onSuccess(MapResponse response) {
                         setPlaceLink(
@@ -76,7 +77,7 @@ public class QuestActorDialog extends BaseDialog {
                     public void onError(AbstractApiResponse response) {
                         // do nothing
                     }
-                });
+                }, this));
                 break;
 
             case PLACE:
@@ -87,7 +88,7 @@ public class QuestActorDialog extends BaseDialog {
                         getString(R.string.map_place_name),
                         detailsPlace.name,
                         detailsPlace.id);
-                MapRequestBuilder.execute(getActivity(), new ApiCallback<MapResponse>() {
+                MapRequestBuilder.execute(getActivity(), RequestUtils.wrapCallback(new ApiCallback<MapResponse>() {
                     @Override
                     public void onSuccess(MapResponse response) {
                         UiUtils.setText(view.findViewById(R.id.dialog_quest_actor_place_size), UiUtils.getInfoItem(
@@ -99,7 +100,7 @@ public class QuestActorDialog extends BaseDialog {
                     public void onError(AbstractApiResponse response) {
                         // do nothing
                     }
-                });
+                }, this));
                 break;
 
             case SPENDING:

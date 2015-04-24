@@ -169,7 +169,7 @@ public class EquipmentFragment extends WrapperFragment {
                     final View dropView = layoutInflater.inflate(R.layout.item_bag_drop, bagContainer, false);
                     final RequestActionView dropActionView = (RequestActionView) dropView.findViewById(R.id.bag_drop);
                     if(response.account.hero.basicInfo.bagItemsCount > 0) {
-                        RequestExecutor.executeOptional(getActivity(), new InfoPrerequisiteRequest(), new ApiCallback<InfoResponse>() {
+                        RequestExecutor.executeOptional(getActivity(), new InfoPrerequisiteRequest(), RequestUtils.wrapCallback(new ApiCallback<InfoResponse>() {
                             @Override
                             public void onSuccess(InfoResponse infoResponse) {
                                 if (GameInfoUtils.isEnoughEnergy(response.account.hero.energy, PreferencesManager.getAbilityCost(Action.DROP_ITEM))) {
@@ -202,7 +202,7 @@ public class EquipmentFragment extends WrapperFragment {
                             public void onError(AbstractApiResponse response) {
                                 dropActionView.setErrorText(response.errorMessage);
                             }
-                        });
+                        }, EquipmentFragment.this));
                     } else {
                         dropActionView.setEnabled(false);
                     }
@@ -297,7 +297,7 @@ public class EquipmentFragment extends WrapperFragment {
         RequestExecutor.execute(
                 getActivity(),
                 new PerformActionRequestBuilder().setAction(Action.DROP_ITEM),
-                new ApiCallback<CommonResponse>() {
+                RequestUtils.wrapCallback(new ApiCallback<CommonResponse>() {
                     @Override
                     public void onSuccess(CommonResponse response) {
                         refresh(false);
@@ -307,7 +307,7 @@ public class EquipmentFragment extends WrapperFragment {
                     public void onError(AbstractApiResponse response) {
                         dropActionView.setErrorText(response.errorMessage);
                     }
-                });
+                }, this));
     }
 
 }

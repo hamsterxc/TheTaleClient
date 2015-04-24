@@ -230,7 +230,7 @@ public class MainActivity extends ActionBarActivity
                         ((WrapperFragment) fragment).setMode(DataViewMode.LOADING);
                     }
 
-                    RequestExecutor.execute(this, new LogoutRequestBuilder(), new ApiCallback<CommonResponse>() {
+                    RequestExecutor.execute(this, new LogoutRequestBuilder(), RequestUtils.wrapCallback(new ApiCallback<CommonResponse>() {
                         @Override
                         public void onSuccess(CommonResponse response) {
                             startActivity(new Intent(MainActivity.this, LoginActivity.class));
@@ -243,7 +243,7 @@ public class MainActivity extends ActionBarActivity
                                 ((WrapperFragment) fragment).setError(response.errorMessage);
                             }
                         }
-                    });
+                    }, this));
                     break;
 
                 case ABOUT:

@@ -42,7 +42,7 @@ public class DiaryFragment extends WrapperFragment {
     public void refresh(final boolean isGlobal) {
         super.refresh(isGlobal);
 
-        GameInfoRequestBuilder.executeWatching(getActivity(), new ApiCallback<GameInfoResponse>() {
+        GameInfoRequestBuilder.executeWatching(getActivity(), RequestUtils.wrapCallback(new ApiCallback<GameInfoResponse>() {
             @Override
             public void onSuccess(GameInfoResponse response) {
                 diaryContainer.removeAllViews();
@@ -67,7 +67,7 @@ public class DiaryFragment extends WrapperFragment {
             public void onError(AbstractApiResponse response) {
                 setError(response.errorMessage);
             }
-        });
+        }, this));
     }
 
 }
