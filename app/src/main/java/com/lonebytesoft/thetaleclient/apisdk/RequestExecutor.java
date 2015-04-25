@@ -21,8 +21,6 @@ import com.lonebytesoft.thetaleclient.util.RequestUtils;
  */
 public class RequestExecutor {
 
-    private static final Handler mainHandler = new Handler(Looper.getMainLooper());
-
     public static <Q extends AbstractRequest<A>, A extends AbstractResponse> void execute(
             final Context context, final AbstractRequestBuilder<Q> requestBuilder, final ApiCallback<A> callback) {
         new Thread(new Runnable() {
@@ -33,16 +31,11 @@ public class RequestExecutor {
                 final Q request = requestBuilder.build(RequestUtils.getClientId(context));
                 try {
                     final A response = request.execute();
-                    mainHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            if((response instanceof AbstractApiResponse) && (((AbstractApiResponse) response).status != ApiResponseStatus.OK)) {
-                                callback.onError((AbstractApiResponse) response);
-                            } else {
-                                callback.onSuccess(response);
-                            }
-                        }
-                    });
+                    if((response instanceof AbstractApiResponse) && (((AbstractApiResponse) response).status != ApiResponseStatus.OK)) {
+                        callback.onError((AbstractApiResponse) response);
+                    } else {
+                        callback.onSuccess(response);
+                    }
                 } catch (UpdateException e) {
                     errorStringResId = R.string.api_error_update;
                 } catch (HttpException e) {
@@ -51,19 +44,13 @@ public class RequestExecutor {
                     errorStringResId = R.string.api_error;
                 }
 
-                final int errorResId = errorStringResId;
-                mainHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if(errorResId != 0) {
-                            try {
-                                callback.onError(new ErrorApiResponse(context.getString(errorResId)));
-                            } catch (JSONException e) {
-                                callback.onError(null);
-                            }
-                        }
+                if(errorStringResId != 0) {
+                    try {
+                        callback.onError(new ErrorApiResponse(context.getString(errorStringResId)));
+                    } catch (JSONException e) {
+                        callback.onError(null);
                     }
-                });
+                }
             }
         }).start();
     }
