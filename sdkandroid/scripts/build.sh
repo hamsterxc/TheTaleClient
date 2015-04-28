@@ -17,10 +17,14 @@ java="$JAVA_HOME"
 javabin="$java/bin/java"
 javasrc="$java/src.zip"
 jarjar="jarjar-1.4.jar"
-sdk="../sdk"
+
+project="../.."
+sdk="$project/sdk"
 sdkbuild="$sdk/build.gradle"
 sdksource="$sdk/src/main/java"
 sdkjar="$sdk/build/libs/sdk.jar"
+current="sdkandroid/scripts"
+output="../libs/sdk.jar"
 
 rm -rf javasrc
 unzip -q "$javasrc" -d javasrc
@@ -31,9 +35,9 @@ rm -rf javasrc
 
 mv -f "$sdkbuild" "$sdkbuild"".backup"
 cp sdk.build.gradle "$sdkbuild"
-cd ..
+cd "$project"
 gradlew :sdk:clean :sdk:assemble -Dfile.encoding=UTF-8
-cd sdkandroid
+cd "$current"
 mv -f "$sdkbuild"".backup" "$sdkbuild"
 
 rm -rf "$sdksource/javax"
@@ -42,7 +46,8 @@ touch rules
 echo "rule org.apache.** com.lonebytesoft.thetaleclient.sdk.lib.org.apache.@1" >> rules
 echo "rule org.json.** com.lonebytesoft.thetaleclient.sdk.lib.org.json.@1" >> rules
 echo "rule javax.naming.** com.lonebytesoft.thetaleclient.sdk.lib.javax.naming.@1" >> rules
+echo "rule org.jsoup.** com.lonebytesoft.thetaleclient.sdk.lib.org.jsoup.@1" >> rules
 
-"$javabin" -jar $jarjar process rules $sdkjar sdk.jar
+"$javabin" -jar "$jarjar" process rules "$sdkjar" "$output"
 
 rm rules

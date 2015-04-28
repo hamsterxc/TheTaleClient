@@ -15,4 +15,5 @@ jar {
 dependencies {
     compile 'org.apache.httpcomponents:httpclient:4.4.1'
     compile 'org.json:json:20140107'
+    compile 'org.jsoup:jsoup:1.8.1'
 }
