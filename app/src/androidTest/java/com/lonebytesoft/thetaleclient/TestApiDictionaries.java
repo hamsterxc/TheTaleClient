@@ -73,20 +73,24 @@ public class TestApiDictionaries extends TestCase {
     private enum GuideApiTable {
 
         ACTION(9),
-        ARTIFACT_EFFECT(7),
-        ARTIFACT_RARITY(3),
-        ARTIFACT_TYPE(5),
-        CARD_RARITY(4),
-        CARD_TYPE(13),
-        EQUIPMENT_TYPE(6),
-        GAME_STATE(11),
-        GENDER(1),
-        HABIT(14),
-        HERO_ACTION(10),
-        PROFESSION(8),
-        QUEST_ACTOR_TYPE(12),
-        RACE(2),
-        THIRD_PARTY_AUTH_STATE(0),
+        ARTIFACT_EFFECT(3),
+        ARTIFACT_RARITY(0),
+        ARTIFACT_TYPE(1),
+        CARD_RARITY(5),
+        CARD_TYPE(4),
+        EQUIPMENT_TYPE(2),
+        GAME_STATE(16),
+        GENDER(10),
+        HABIT(12),
+        HABIT_HONOR(13),
+        HABIT_PEACEFULNESS(14),
+        HERO_ACTION(6),
+        PLACE_SPECIALIZATION(7),
+        PROFESSION(17),
+        QUEST_ACTOR_TYPE(8),
+        RACE(11),
+        SOCIAL_LINK(18),
+        THIRD_PARTY_AUTH_STATE(15),
         ;
 
         public final int position;
@@ -395,9 +399,17 @@ public class TestApiDictionaries extends TestCase {
         for(int i = 1; i < size; i++) {
             final Element element = elements.get(i);
 
-            final String code = element.child(0).text();
+            final int code = Integer.parseInt(element.child(0).text());
             final Habit habit = ObjectUtils.getEnumForCode(Habit.class, code);
             assertNotNull(String.format("Habit not found: code = %s", code), habit);
+
+            final String name = element.child(1).text();
+            assertEquals(String.format("Habit incorrect name: %s", name),
+                    name, habit.name);
+
+            final String description = element.child(2).text();
+            assertEquals(String.format("Habit incorrect description: %s", description),
+                    description, habit.description);
         }
     }
 

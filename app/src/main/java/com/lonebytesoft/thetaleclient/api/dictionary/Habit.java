@@ -6,18 +6,26 @@ package com.lonebytesoft.thetaleclient.api.dictionary;
  */
 public enum Habit {
 
-    PEACEFULNESS("peacefulness"),
-    HONOR("honor"),
+    HONOR(0, "honor", "честь"),
+    PEACEFULNESS(1, "peacefulness", "миролюбие"),
     ;
 
-    private final String code;
+    public final int code;
+    public final String name;
+    public final String description;
 
-    private Habit(final String code) {
+    Habit(final int code, final String name, final String description) {
         this.code = code;
+        this.name = name;
+        this.description = description;
     }
 
-    public String getCode() {
+    public int getCode() {
         return code;
+    }
+
+    public String getName() {
+        return name;
     }
 
 }
