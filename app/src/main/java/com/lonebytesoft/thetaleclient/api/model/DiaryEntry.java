@@ -10,12 +10,14 @@ import org.json.JSONObject;
 public class DiaryEntry {
 
     public final int timestamp;
+    public final String place;
     public final String time;
     public final String date;
     public final String text;
 
     public DiaryEntry(final JSONObject json) throws JSONException {
         timestamp = json.getInt("timestamp");
+        place = json.getString("place");
         time = json.getString("time");
         date = json.getString("date");
         text = json.getString("text");

@@ -3,10 +3,19 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="1dp"
-    android:layout_marginBottom="1dp"
+    android:layout_marginTop="4dp"
+    android:layout_marginBottom="4dp"
     android:layout_gravity="left"
     android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/diary_place"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        style="?android:attr/textAppearanceSmall"
+        android:textColor="@color/common_text"
+        android:textStyle="italic"/>
 
     <TextView
         android:id="@+id/diary_time"
@@ -15,7 +24,7 @@
         android:layout_marginLeft="8dp"
         style="?android:attr/textAppearanceSmall"
         android:textColor="@color/common_text"
-        android:textStyle="bold"/>
+        android:textStyle="italic"/>
 
     <TextView
         android:id="@+id/diary_text"

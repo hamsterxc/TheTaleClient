@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.lonebytesoft.thetaleclient.DataViewMode;
 import com.lonebytesoft.thetaleclient.R;
@@ -14,6 +13,7 @@ import com.lonebytesoft.thetaleclient.api.request.GameInfoRequest;
 import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;
 import com.lonebytesoft.thetaleclient.util.PreferencesManager;
 import com.lonebytesoft.thetaleclient.util.RequestUtils;
+import com.lonebytesoft.thetaleclient.util.UiUtils;
 
 /**
  * @author Hamster
@@ -45,12 +45,18 @@ public class DiaryFragment extends WrapperFragment {
             @Override
             public void processResponse(GameInfoResponse response) {
                 diaryContainer.removeAllViews();
-                for(int i = response.account.hero.diary.size() - 1; i > 0; i--) {
+                for(int i = response.account.hero.diary.size() - 1; i >= 0; i--) {
                     final DiaryEntry diaryEntry = response.account.hero.diary.get(i);
                     final View diaryEntryView = layoutInflater.inflate(R.layout.item_diary, diaryContainer, false);
-                    ((TextView) diaryEntryView.findViewById(R.id.diary_time)).setText(
+                    UiUtils.setText(
+                            diaryEntryView.findViewById(R.id.diary_place),
+                            diaryEntry.place);
+                    UiUtils.setText(
+                            diaryEntryView.findViewById(R.id.diary_time),
                             String.format("%s %s", diaryEntry.time, diaryEntry.date));
-                    ((TextView) diaryEntryView.findViewById(R.id.diary_text)).setText(diaryEntry.text);
+                    UiUtils.setText(
+                            diaryEntryView.findViewById(R.id.diary_text),
+                            diaryEntry.text);
                     diaryContainer.addView(diaryEntryView);
                 }
                 setMode(DataViewMode.DATA);
