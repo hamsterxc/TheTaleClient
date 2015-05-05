@@ -42,6 +42,7 @@ public class ProfileFragment extends WrapperFragment {
     private View rootView;
 
     private TextView textName;
+    private TextView textAffectGame;
     private TextView textMight;
     private TextView textAchievementPoints;
     private TextView textCollectionItemsCount;
@@ -60,6 +61,7 @@ public class ProfileFragment extends WrapperFragment {
         rootView = inflater.inflate(R.layout.fragment_profile, container, false);
 
         textName = (TextView) rootView.findViewById(R.id.profile_name);
+        textAffectGame = (TextView) rootView.findViewById(R.id.profile_affect_game);
         textMight = (TextView) rootView.findViewById(R.id.profile_might);
         textAchievementPoints = (TextView) rootView.findViewById(R.id.profile_achievement_points);
         textCollectionItemsCount = (TextView) rootView.findViewById(R.id.profile_collection_items_count);
@@ -109,6 +111,7 @@ public class ProfileFragment extends WrapperFragment {
                 }
 
                 textName.setText(Html.fromHtml(getString(R.string.find_player_info_short, response.name)));
+                textAffectGame.setText(getString(response.canAffectGame ? R.string.game_affect_true : R.string.game_affect_false));
                 textMight.setText(String.valueOf((int) Math.floor(response.might)));
                 textAchievementPoints.setText(String.valueOf(response.achievementPoints));
                 textCollectionItemsCount.setText(String.valueOf(response.collectionItemsCount));

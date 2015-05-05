@@ -24,9 +24,18 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
-                android:layout_marginBottom="@dimen/game_info_lines_margin"
                 style="?android:attr/textAppearanceLarge"
                 android:textColor="@color/common_text"/>
+
+            <TextView
+                android:id="@+id/profile_affect_game"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginBottom="@dimen/game_info_lines_margin"
+                style="?android:attr/textAppearanceMedium"
+                android:textColor="@color/common_disabled"/>
 
             <View style="@style/Delimiter"/>
 
