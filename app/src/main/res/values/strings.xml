@@ -32,8 +32,10 @@
 
     <string name="common_dialog_attention_title">Внимание</string>
     <string name="common_error">Произошла неизвестная ошибка. Попробуйте еще раз.</string>
+    <string name="common_error_hint">Ошибка</string>
     <string name="common_error_short">Произошла неизвестная ошибка.</string>
     <string name="common_item_count">" (x%d)"</string>
+    <string name="common_loading">Загрузка&#8230;</string>
 
     <string name="drawer_dialog_profile_item_keeper">Профиль хранителя</string>
     <string name="drawer_dialog_profile_item_hero">Профиль героя</string>
@@ -56,6 +58,13 @@
     <string name="game_card_take">Взять карту!</string>
     <string name="game_card_take_result">Карта взята</string>
     <string name="game_card_tradable">Может быть продана на рынке</string>
+    <string name="game_card_use">Использование карты</string>
+    <string name="game_card_use_action">Использовать</string>
+    <string name="game_card_use_building">Советник, которому принадлежит здание</string>
+    <string name="game_card_use_no_buildings">Нет советников со зданиями</string>
+    <string name="game_card_use_person">Советник</string>
+    <string name="game_card_use_place">Город</string>
+    <string name="game_card_use_progress">Использование карты&#8230;</string>
     <string name="game_cards_combine">Объединить карты</string>
     <string name="game_cards_combine_cancel">Отмена</string>
     <string name="game_cards_combine_confirm">Объединить</string>

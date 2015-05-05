@@ -33,7 +33,7 @@ import com.lonebytesoft.thetaleclient.api.cache.prerequisite.InfoPrerequisiteReq
 import com.lonebytesoft.thetaleclient.api.cache.prerequisite.PrerequisiteRequest;
 import com.lonebytesoft.thetaleclient.api.dictionary.MapCellType;
 import com.lonebytesoft.thetaleclient.api.dictionary.MapStyle;
-import com.lonebytesoft.thetaleclient.api.model.PlaceInfo;
+import com.lonebytesoft.thetaleclient.api.model.MapPlaceInfo;
 import com.lonebytesoft.thetaleclient.api.model.PositionInfo;
 import com.lonebytesoft.thetaleclient.api.request.GameInfoRequest;
 import com.lonebytesoft.thetaleclient.api.request.MapCellRequest;
@@ -107,7 +107,7 @@ public class MapFragment extends WrapperFragment {
     private boolean shouldShowMenuOptions = true;
 
     private PositionInfo heroPosition;
-    private List<PlaceInfo> places;
+    private List<MapPlaceInfo> places;
     private MapModification mapModification;
 
     @Override
@@ -222,7 +222,7 @@ public class MapFragment extends WrapperFragment {
                 DialogUtils.showChoiceDialog(getFragmentManager(), getString(R.string.map_find_place), choices, new ChoiceDialog.ItemChooseListener() {
                     @Override
                     public void onItemSelected(int position) {
-                        final PlaceInfo placeInfo = places.get(position);
+                        final MapPlaceInfo placeInfo = places.get(position);
                         moveToTile(placeInfo.x, placeInfo.y, mapViewHelper.getMaximumScale());
                     }
                 });
@@ -530,7 +530,7 @@ public class MapFragment extends WrapperFragment {
                                 mapViewHelper.setMaximumScale(ZOOM_MAX * currentSizeDenominator);
                                 mapViewHelper.setMediumScale((ZOOM_MAX * currentSizeDenominator + minimumScale) / 2.0f);
                                 mapViewHelper.setMinimumScale(minimumScale);
-                                final PlaceInfo placeInfo = mapResponse.places.get(PreferencesManager.getMapCenterPlaceId());
+                                final MapPlaceInfo placeInfo = mapResponse.places.get(PreferencesManager.getMapCenterPlaceId());
                                 if(placeInfo == null) {
                                     if(shouldMoveToHero) {
                                         shouldMoveToHero = false;
@@ -600,12 +600,12 @@ public class MapFragment extends WrapperFragment {
                 });
 
                 places = new ArrayList<>(mapResponse.places.size());
-                for (final PlaceInfo placeInfo : mapResponse.places.values()) {
+                for (final MapPlaceInfo placeInfo : mapResponse.places.values()) {
                     places.add(placeInfo);
                 }
-                Collections.sort(places, new Comparator<PlaceInfo>() {
+                Collections.sort(places, new Comparator<MapPlaceInfo>() {
                     @Override
-                    public int compare(PlaceInfo lhs, PlaceInfo rhs) {
+                    public int compare(MapPlaceInfo lhs, MapPlaceInfo rhs) {
                         return lhs.name.compareTo(rhs.name);
                     }
                 });

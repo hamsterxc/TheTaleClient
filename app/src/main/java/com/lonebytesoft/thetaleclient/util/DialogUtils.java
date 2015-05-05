@@ -13,6 +13,7 @@ import com.lonebytesoft.thetaleclient.api.model.QuestActorInfo;
 import com.lonebytesoft.thetaleclient.fragment.dialog.AboutDialog;
 import com.lonebytesoft.thetaleclient.fragment.dialog.ArtifactDialog;
 import com.lonebytesoft.thetaleclient.fragment.dialog.CardInfoDialog;
+import com.lonebytesoft.thetaleclient.fragment.dialog.CardUseDialog;
 import com.lonebytesoft.thetaleclient.fragment.dialog.ChoiceDialog;
 import com.lonebytesoft.thetaleclient.fragment.dialog.ConfirmationDialog;
 import com.lonebytesoft.thetaleclient.fragment.dialog.MessageDialog;
@@ -35,6 +36,7 @@ public class DialogUtils {
     public static final String DIALOG_ABOUT_TAG = "DIALOG_ABOUT_TAG";
     public static final String DIALOG_CONFIRMATION_TAG = "DIALOG_CONFIRMATION_TAG";
     public static final String DIALOG_CARD_INFO_TAG = "DIALOG_CARD_INFO_TAG";
+    public static final String DIALOG_CARD_USE_TAG = "DIALOG_CARD_USE_TAG";
 
     private static FragmentTransaction getFragmentTransaction(final FragmentManager fragmentManager, final String tag) {
         final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -140,6 +142,14 @@ public class DialogUtils {
         final CardInfoDialog cardInfoDialog = CardInfoDialog.newInstance(caption, card);
         cardInfoDialog.setOnDismissListener(onDismissListener);
         cardInfoDialog.show(getFragmentTransaction(fragmentManager, DIALOG_CARD_INFO_TAG), DIALOG_CARD_INFO_TAG);
+    }
+
+    public static void showCardUseDialog(final FragmentManager fragmentManager,
+                                         final String caption, final CardInfo card,
+                                         final Runnable onSuccessListener) {
+        final CardUseDialog dialog = CardUseDialog.newInstance(caption, card);
+        dialog.setOnSuccessListener(onSuccessListener);
+        dialog.show(getFragmentTransaction(fragmentManager, DIALOG_CARD_USE_TAG), DIALOG_CARD_USE_TAG);
     }
 
 }

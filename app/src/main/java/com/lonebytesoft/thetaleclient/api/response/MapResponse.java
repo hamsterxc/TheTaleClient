@@ -1,6 +1,6 @@
 package com.lonebytesoft.thetaleclient.api.response;
 
-import com.lonebytesoft.thetaleclient.api.model.PlaceInfo;
+import com.lonebytesoft.thetaleclient.api.model.MapPlaceInfo;
 import com.lonebytesoft.thetaleclient.api.model.RoadInfo;
 import com.lonebytesoft.thetaleclient.api.model.SpriteTileInfo;
 import com.lonebytesoft.thetaleclient.util.ObjectUtils;
@@ -24,7 +24,7 @@ public class MapResponse {
 
     public final String formatVersion;
     public final String mapVersion;
-    public final Map<Integer, PlaceInfo> places;
+    public final Map<Integer, MapPlaceInfo> places;
     public final Map<Integer, RoadInfo> roads;
     public final int width;
     public final int height;
@@ -39,7 +39,7 @@ public class MapResponse {
         places = new HashMap<>(placesJson.length());
         for(final Iterator<String> placesIterator = placesJson.keys(); placesIterator.hasNext();) {
             final String key = placesIterator.next();
-            places.put(Integer.decode(key), ObjectUtils.getModelFromJson(PlaceInfo.class, placesJson.getJSONObject(key)));
+            places.put(Integer.decode(key), ObjectUtils.getModelFromJson(MapPlaceInfo.class, placesJson.getJSONObject(key)));
         }
 
         final JSONObject roadsJson = json.getJSONObject("roads");

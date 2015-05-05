@@ -17,10 +17,12 @@ import com.lonebytesoft.thetaleclient.api.dictionary.GameState;
 import com.lonebytesoft.thetaleclient.api.dictionary.Gender;
 import com.lonebytesoft.thetaleclient.api.dictionary.Habit;
 import com.lonebytesoft.thetaleclient.api.dictionary.HeroAction;
+import com.lonebytesoft.thetaleclient.api.dictionary.PlaceSpecialization;
 import com.lonebytesoft.thetaleclient.api.dictionary.Profession;
 import com.lonebytesoft.thetaleclient.api.dictionary.QuestActorType;
 import com.lonebytesoft.thetaleclient.api.dictionary.Race;
 import com.lonebytesoft.thetaleclient.api.dictionary.Skill;
+import com.lonebytesoft.thetaleclient.api.dictionary.SocialLink;
 import com.lonebytesoft.thetaleclient.api.dictionary.ThirdPartyAuthState;
 import com.lonebytesoft.thetaleclient.util.ObjectUtils;
 
@@ -429,6 +431,28 @@ public class TestApiDictionaries extends TestCase {
         }
     }
 
+    public void testPlaceSpecialization() {
+        final Document document = getDocumentChecked("http://the-tale.org/guide/api");
+        final Element elementTable = document.select("table").get(GuideApiTable.PLACE_SPECIALIZATION.position);
+        final Elements elements = elementTable.select("tr");
+        final int size = elements.size();
+        checkSize(PlaceSpecialization.class, size - 1); // exclude header
+
+        for(int i = 1; i < size; i++) {
+            final Element element = elements.get(i);
+
+            final int code = Integer.parseInt(element.child(0).text());
+            final PlaceSpecialization placeSpecialization =
+                    ObjectUtils.getEnumForCode(PlaceSpecialization.class, code);
+            assertNotNull(String.format("Place specialization not found: code = %d", code),
+                    placeSpecialization);
+
+            final String name = element.child(1).text();
+            assertEquals(String.format("Place specialization incorrect name: %s", name),
+                    name, placeSpecialization.name);
+        }
+    }
+
     public void testProfession() {
         final Document document = getDocumentChecked("http://the-tale.org/guide/api");
         final Element elementTable = document.select("table").get(GuideApiTable.PROFESSION.position);
@@ -522,6 +546,26 @@ public class TestApiDictionaries extends TestCase {
             final boolean isDirect = (direct != null) && direct.equals("прямой урон");
             assertEquals(String.format("Skill %s incorrect is direct damage: %s", name, isDirect),
                     isDirect, skill.isDirectDamage);
+        }
+    }
+
+    public void testSocialLink() {
+        final Document document = getDocumentChecked("http://the-tale.org/guide/api");
+        final Element elementTable = document.select("table").get(GuideApiTable.SOCIAL_LINK.position);
+        final Elements elements = elementTable.select("tr");
+        final int size = elements.size();
+        checkSize(SocialLink.class, size - 1); // exclude header
+
+        for(int i = 1; i < size; i++) {
+            final Element element = elements.get(i);
+
+            final int code = Integer.parseInt(element.child(0).text());
+            final SocialLink socialLink = ObjectUtils.getEnumForCode(SocialLink.class, code);
+            assertNotNull(String.format("Social link not found: code = %d", code), socialLink);
+
+            final String name = element.child(1).text();
+            assertEquals(String.format("Social link incorrect name: %s", name),
+                    name, socialLink.getName());
         }
     }
 

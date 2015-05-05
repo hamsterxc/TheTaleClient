@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.lonebytesoft.thetaleclient.R;
-import com.lonebytesoft.thetaleclient.api.model.PlaceCouncilMember;
+import com.lonebytesoft.thetaleclient.api.model.MapCouncilMemberInfo;
 import com.lonebytesoft.thetaleclient.api.response.MapCellResponse;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
 
@@ -43,7 +43,7 @@ public class MapTileCouncilFragment extends TabbedDialogTabFragment {
 
         final MapCellResponse cellInfo = getArguments().getParcelable(PARAM_CELL_INFO);
         boolean first = true;
-        for(final PlaceCouncilMember councilMember : cellInfo.council) {
+        for(final MapCouncilMemberInfo councilMember : cellInfo.council) {
             if(first) {
                 first = false;
             } else {

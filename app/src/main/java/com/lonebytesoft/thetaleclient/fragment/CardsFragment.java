@@ -7,7 +7,6 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,7 +24,6 @@ import com.lonebytesoft.thetaleclient.api.request.CombineCardsRequest;
 import com.lonebytesoft.thetaleclient.api.request.GameInfoRequest;
 import com.lonebytesoft.thetaleclient.api.request.TakeCardRequest;
 import com.lonebytesoft.thetaleclient.api.response.CombineCardsResponse;
-import com.lonebytesoft.thetaleclient.api.response.CommonResponse;
 import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;
 import com.lonebytesoft.thetaleclient.api.response.TakeCardResponse;
 import com.lonebytesoft.thetaleclient.util.DialogUtils;
@@ -206,6 +204,24 @@ public class CardsFragment extends WrapperFragment {
                         public void onClick(View v) {
                             if(isCombining) {
                                 updateCombineList(cardEntryView, card, true);
+                            } else {
+                                if(card.type != null) {
+                                    DialogUtils.showCardUseDialog(
+                                            getChildFragmentManager(),
+                                            getString(R.string.game_card_use),
+                                            card,
+                                            new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    getActivity().runOnUiThread(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            refresh(true);
+                                                        }
+                                                    });
+                                                }
+                                            });
+                                }
                             }
                         }
                     });

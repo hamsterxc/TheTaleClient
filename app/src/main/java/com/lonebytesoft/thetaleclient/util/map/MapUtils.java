@@ -14,7 +14,7 @@ import com.lonebytesoft.thetaleclient.TheTaleClientApplication;
 import com.lonebytesoft.thetaleclient.api.dictionary.MapStyle;
 import com.lonebytesoft.thetaleclient.api.model.HeroInfo;
 import com.lonebytesoft.thetaleclient.api.model.MapCellTerrainInfo;
-import com.lonebytesoft.thetaleclient.api.model.PlaceInfo;
+import com.lonebytesoft.thetaleclient.api.model.MapPlaceInfo;
 import com.lonebytesoft.thetaleclient.api.model.SpriteTileInfo;
 import com.lonebytesoft.thetaleclient.api.response.MapResponse;
 import com.lonebytesoft.thetaleclient.api.response.MapTerrainResponse;
@@ -175,7 +175,7 @@ public class MapUtils {
             return;
         }
 
-        for(final PlaceInfo placeInfo : mapInfo.places.values()) {
+        for(final MapPlaceInfo placeInfo : mapInfo.places.values()) {
             float textSizeDenominator = sizeDenominator;
             if(PLACE_TEXT_SIZE / sizeDenominator < PLACE_TEXT_SIZE_MIN) {
                 textSizeDenominator = PLACE_TEXT_SIZE / PLACE_TEXT_SIZE_MIN;

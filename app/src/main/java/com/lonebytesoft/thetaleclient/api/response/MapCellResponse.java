@@ -8,7 +8,7 @@ import com.lonebytesoft.thetaleclient.api.dictionary.MapCellType;
 import com.lonebytesoft.thetaleclient.api.dictionary.Profession;
 import com.lonebytesoft.thetaleclient.api.dictionary.ProficiencyLevel;
 import com.lonebytesoft.thetaleclient.api.dictionary.Race;
-import com.lonebytesoft.thetaleclient.api.model.PlaceCouncilMember;
+import com.lonebytesoft.thetaleclient.api.model.MapCouncilMemberInfo;
 
 import org.json.JSONException;
 import org.jsoup.Jsoup;
@@ -36,7 +36,7 @@ public class MapCellResponse implements Parcelable {
     public final String title;
     public final String description;
     public final Map<String, String> parameters;
-    public final List<PlaceCouncilMember> council;
+    public final List<MapCouncilMemberInfo> council;
     public final List<String> terrain;
 
     public MapCellResponse(final String response) throws JSONException {
@@ -122,7 +122,7 @@ public class MapCellResponse implements Parcelable {
                         additionalInfoElements.get(additionalInfoElements.size() - 1).ownText());
                 friendsEnemiesMatcher.find();
 
-                council.add(new PlaceCouncilMember(
+                council.add(new MapCouncilMemberInfo(
                         rows.get(0).children().get(1).ownText(),
                         gender, race, profession, proficiencyLevel,
                         Integer.parseInt(powerMatcher.group(1)),
@@ -190,7 +190,7 @@ public class MapCellResponse implements Parcelable {
             throw new IllegalStateException("Error reading MapCellResponse from parcel: could not read parameters");
         }
 
-        council = Arrays.asList((PlaceCouncilMember[]) in.readParcelableArray(PlaceCouncilMember.class.getClassLoader()));
+        council = Arrays.asList((MapCouncilMemberInfo[]) in.readParcelableArray(MapCouncilMemberInfo.class.getClassLoader()));
 
         terrain = new ArrayList<>();
         in.readStringList(terrain);
@@ -208,7 +208,7 @@ public class MapCellResponse implements Parcelable {
         out.writeString(description);
         out.writeStringList(new ArrayList<>(parameters.keySet()));
         out.writeStringList(new ArrayList<>(parameters.values()));
-        out.writeParcelableArray((PlaceCouncilMember[]) council.toArray(), flags);
+        out.writeParcelableArray((MapCouncilMemberInfo[]) council.toArray(), flags);
         out.writeStringList(terrain);
     }
 

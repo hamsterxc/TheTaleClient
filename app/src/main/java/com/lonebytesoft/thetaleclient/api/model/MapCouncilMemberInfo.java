@@ -12,7 +12,7 @@ import com.lonebytesoft.thetaleclient.api.dictionary.Race;
  * @author Hamster
  * @since 25.12.2014
  */
-public class PlaceCouncilMember implements Parcelable {
+public class MapCouncilMemberInfo implements Parcelable {
 
     public final String name;
     public final Gender gender;
@@ -25,10 +25,10 @@ public class PlaceCouncilMember implements Parcelable {
     public final int friends;
     public final int enemies;
     
-    public PlaceCouncilMember(final String name, final Gender gender, final Race race,
-                              final Profession profession, final ProficiencyLevel proficiencyLevel,
-                              final int power, final float powerBonusPositive, final float powerBonusNegative,
-                              final int friends, final int enemies) {
+    public MapCouncilMemberInfo(final String name, final Gender gender, final Race race,
+                                final Profession profession, final ProficiencyLevel proficiencyLevel,
+                                final int power, final float powerBonusPositive, final float powerBonusNegative,
+                                final int friends, final int enemies) {
         this.name = name;
         this.gender = gender;
         this.race = race;
@@ -43,7 +43,7 @@ public class PlaceCouncilMember implements Parcelable {
 
     // Parcelable stuff
 
-    public PlaceCouncilMember(final Parcel in) {
+    public MapCouncilMemberInfo(final Parcel in) {
         name = in.readString();
         gender = Gender.values()[in.readInt()];
         race = Race.values()[in.readInt()];
@@ -75,15 +75,15 @@ public class PlaceCouncilMember implements Parcelable {
         out.writeInt(enemies);
     }
 
-    public static final Parcelable.Creator<PlaceCouncilMember> CREATOR = new Parcelable.Creator<PlaceCouncilMember>() {
+    public static final Parcelable.Creator<MapCouncilMemberInfo> CREATOR = new Parcelable.Creator<MapCouncilMemberInfo>() {
         @Override
-        public PlaceCouncilMember createFromParcel(Parcel source) {
-            return new PlaceCouncilMember(source);
+        public MapCouncilMemberInfo createFromParcel(Parcel source) {
+            return new MapCouncilMemberInfo(source);
         }
 
         @Override
-        public PlaceCouncilMember[] newArray(int size) {
-            return new PlaceCouncilMember[size];
+        public MapCouncilMemberInfo[] newArray(int size) {
+            return new MapCouncilMemberInfo[size];
         }
     };
 

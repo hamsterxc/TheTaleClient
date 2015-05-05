@@ -12,7 +12,7 @@ import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.TheTaleClientApplication;
 import com.lonebytesoft.thetaleclient.api.dictionary.MapCellWindSpeed;
 import com.lonebytesoft.thetaleclient.api.model.MapCellTerrainInfo;
-import com.lonebytesoft.thetaleclient.api.model.PlaceInfo;
+import com.lonebytesoft.thetaleclient.api.model.MapPlaceInfo;
 import com.lonebytesoft.thetaleclient.api.response.MapResponse;
 
 import java.util.ArrayList;
@@ -126,7 +126,7 @@ public enum MapModification {
                 wildernessPaint.setColor(colorsList.get(0));
                 influencePaint.put(0, wildernessPaint);
 
-                final List<PlaceInfo> places = new ArrayList<>(mapInfo.places.values());
+                final List<MapPlaceInfo> places = new ArrayList<>(mapInfo.places.values());
                 for(int i = 0; i < size; i++) {
                     final Paint paint = new Paint();
                     paint.setColor(colorsList.get(i + 1));

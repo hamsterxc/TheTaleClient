@@ -6,7 +6,7 @@ import android.util.Pair;
 import com.lonebytesoft.thetaleclient.api.ApiResponseCallback;
 import com.lonebytesoft.thetaleclient.api.CommonResponseCallback;
 import com.lonebytesoft.thetaleclient.api.dictionary.MapCellType;
-import com.lonebytesoft.thetaleclient.api.model.PlaceCouncilMember;
+import com.lonebytesoft.thetaleclient.api.model.MapCouncilMemberInfo;
 import com.lonebytesoft.thetaleclient.api.request.GameInfoRequest;
 import com.lonebytesoft.thetaleclient.api.request.MapCellRequest;
 import com.lonebytesoft.thetaleclient.api.request.MapRequest;
@@ -86,7 +86,7 @@ public class TestApiMap extends TestCase {
             assertNotNull(prefix + "council null", response.council);
             assertFalse(prefix + "council empty", response.council.size() == 0);
             for(int i = response.council.size() - 1; i >= 0; i--) {
-                final PlaceCouncilMember councilMember = response.council.get(i);
+                final MapCouncilMemberInfo councilMember = response.council.get(i);
                 assertFalse(prefix + "council member name empty", TextUtils.isEmpty(councilMember.name));
                 assertNotNull(prefix + "council member gender null", councilMember.gender);
                 assertNotNull(prefix + "council member race null", councilMember.race);
