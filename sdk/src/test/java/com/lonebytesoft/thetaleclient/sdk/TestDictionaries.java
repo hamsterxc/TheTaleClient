@@ -43,8 +43,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javafx.util.Pair;
-
 /**
  * @author Hamster
  * @since 25.03.2015
@@ -109,7 +107,7 @@ public class TestDictionaries extends TestCase {
                     description, artifactEffect.description);
         }
 
-        final List<List<String>> tableNames = getApiTableData(7);
+        final List<List<String>> tableNames = getApiTableData(3);
         checkSize(ArtifactEffect.class, tableNames.size(), "code-name");
         for(final List<String> item : tableNames) {
             final int code = Integer.parseInt(item.get(0));
@@ -126,7 +124,7 @@ public class TestDictionaries extends TestCase {
     }
 
     public void testArtifactRarity() {
-        final List<List<String>> table = getApiTableData(3);
+        final List<List<String>> table = getApiTableData(0);
         checkSize(ArtifactRarity.class, table.size());
 
         for(final List<String> item : table) {
@@ -144,7 +142,7 @@ public class TestDictionaries extends TestCase {
     }
 
     public void testArtifactType() {
-        final List<List<String>> table = getApiTableData(5);
+        final List<List<String>> table = getApiTableData(1);
         checkSize(ArtifactType.class, table.size());
 
         for(final List<String> item : table) {
@@ -162,7 +160,7 @@ public class TestDictionaries extends TestCase {
     }
 
     public void testCardRarity() {
-        final List<List<String>> table = getApiTableData(4);
+        final List<List<String>> table = getApiTableData(5);
         checkSize(CardRarity.class, table.size());
 
         for(final List<String> item : table) {
@@ -196,7 +194,7 @@ public class TestDictionaries extends TestCase {
                     description, cardType.description);
         }
 
-        final List<List<String>> table = getApiTableData(13);
+        final List<List<String>> table = getApiTableData(4);
         checkSize(CardType.class, table.size(), "code-name");
         for(final List<String> item : table) {
             final int code = Integer.parseInt(item.get(0));
@@ -306,7 +304,7 @@ public class TestDictionaries extends TestCase {
     }
 
     public void testEquipmentType() {
-        final List<List<String>> table = getApiTableData(6);
+        final List<List<String>> table = getApiTableData(2);
         checkSize(EquipmentType.class, table.size());
 
         for(final List<String> item : table) {
@@ -324,7 +322,7 @@ public class TestDictionaries extends TestCase {
     }
 
     public void testGameState() {
-        final List<List<String>> table = getApiTableData(11);
+        final List<List<String>> table = getApiTableData(16);
         checkSize(GameState.class, table.size());
 
         for(final List<String> item : table) {
@@ -342,7 +340,7 @@ public class TestDictionaries extends TestCase {
     }
 
     public void testGender() {
-        final List<List<String>> table = getApiTableData(1);
+        final List<List<String>> table = getApiTableData(10);
         checkSize(Gender.class, table.size());
 
         for(final List<String> item : table) {
@@ -360,11 +358,11 @@ public class TestDictionaries extends TestCase {
     }
 
     public void testHabit() {
-        final List<List<String>> table = getApiTableData(14);
+        final List<List<String>> table = getTableData(apiGuide.select("table").get(12), true, 0, 1, 2);
         checkSize(Habit.class, table.size());
 
         for(final List<String> item : table) {
-            final String code = item.get(0);
+            final int code = Integer.valueOf(item.get(0));
             final Habit habit = ObjectUtils.getEnumForCode(Habit.class, code);
             assertNotNull(
                     String.format("Habit not found: code = %s", code),
@@ -374,11 +372,16 @@ public class TestDictionaries extends TestCase {
             assertEquals(
                     String.format("Habit incorrect name: %s", name),
                     name, habit.name);
+
+            final String description = item.get(2);
+            assertEquals(
+                    String.format("Habit incorrect description: %s", name),
+                    description, habit.description);
         }
     }
 
     public void testHeroAction() {
-        final List<List<String>> table = getApiTableData(10);
+        final List<List<String>> table = getApiTableData(6);
         checkSize(HeroAction.class, table.size());
 
         for(final List<String> item : table) {
@@ -396,7 +399,7 @@ public class TestDictionaries extends TestCase {
     }
 
     public void testProfession() {
-        final List<List<String>> table = getApiTableData(8);
+        final List<List<String>> table = getApiTableData(17);
         checkSize(Profession.class, table.size());
 
         for(final List<String> item : table) {
@@ -414,7 +417,7 @@ public class TestDictionaries extends TestCase {
     }
 
     public void testQuestActorType() {
-        final List<List<String>> table = getApiTableData(12);
+        final List<List<String>> table = getApiTableData(8);
         checkSize(QuestActorType.class, table.size());
 
         for(final List<String> item : table) {
@@ -432,7 +435,7 @@ public class TestDictionaries extends TestCase {
     }
 
     public void testRace() {
-        final List<List<String>> table = getApiTableData(2);
+        final List<List<String>> table = getApiTableData(11);
         checkSize(Race.class, table.size());
 
         for(final List<String> item : table) {
@@ -450,7 +453,7 @@ public class TestDictionaries extends TestCase {
     }
 
     public void testThirdPartyAuthState() {
-        final List<List<String>> table = getApiTableData(0);
+        final List<List<String>> table = getApiTableData(15);
         checkSize(ThirdPartyAuthState.class, table.size());
 
         for(final List<String> item : table) {
