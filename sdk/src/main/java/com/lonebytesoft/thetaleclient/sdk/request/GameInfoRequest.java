@@ -17,7 +17,7 @@ import java.util.Map;
  */
 public class GameInfoRequest extends AbstractApiGetRequest<GameInfoResponse> {
 
-    private static final String VERSION = "1.2";
+    private static final String VERSION = "1.3";
     private static final String METHOD = "game/api/info";
     private static final long STALE_TIME = 10000; // 10 seconds
 

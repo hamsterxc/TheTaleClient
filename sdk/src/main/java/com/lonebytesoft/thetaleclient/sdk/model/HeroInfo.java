@@ -81,7 +81,8 @@ public class HeroInfo {
         diary = new ArrayList<>(diaryEntriesCount);
         for(int i = 0; i < diaryEntriesCount; i++) {
             diary.add(ObjectUtils.getModelFromJson(DiaryEntry.class,
-                    ObjectUtils.getObjectFromArray(diaryJson.getJSONArray(i), new String[]{"timestamp", "time", "text", "date"})));
+                    ObjectUtils.getObjectFromArray(diaryJson.getJSONArray(i),
+                            new String[]{"timestamp", "time", "text", "date", "place"})));
         }
 
         final JSONArray journalJson = json.getJSONArray("messages");
