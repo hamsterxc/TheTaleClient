@@ -5,8 +5,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -63,16 +64,51 @@ public class ObjectUtils {
         return cache.get(name);
     }
 
-    public static <T> T getModelFromJson(final Class<T> clazz, final JSONObject json) {
+    public static <T> T getModelFromJson(final Class<? extends T> clazz, final JSONObject json) {
         if(json == null) {
             return null;
         }
 
         try {
             return clazz.getConstructor(JSONObject.class).newInstance(json);
-        } catch(NoSuchMethodException|InstantiationException|IllegalAccessException|InvocationTargetException e) {
+        } catch(ReflectiveOperationException e) {
             return null;
         }
+    }
+
+    public static <T> List<T> getModelListFromJson(final Class<? extends T> clazz, final JSONArray json) {
+        if(json == null) {
+            return null;
+        }
+
+        final int count = json.length();
+        final List<T> result = new ArrayList<>(count);
+        for(int i = 0; i < count; i++) {
+            final T item = getModelFromJson(clazz, json.getJSONObject(i));
+            if(item != null) {
+                result.add(item);
+            }
+        }
+
+        return result;
+    }
+
+    public static <T> List<T> getModelListFromJson(final Class<? extends T> clazz,
+                                                   final JSONArray json, final String[] names) {
+        if(json == null) {
+            return null;
+        }
+
+        final int count = json.length();
+        final List<T> result = new ArrayList<>(count);
+        for(int i = 0; i < count; i++) {
+            final T item = getModelFromJson(clazz, getObjectFromArray(json.getJSONArray(i), names));
+            if(item != null) {
+                result.add(item);
+            }
+        }
+
+        return result;
     }
 
     public static String getOptionalString(final JSONObject json, final String key) {

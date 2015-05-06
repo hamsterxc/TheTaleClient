@@ -13,11 +13,14 @@ import com.lonebytesoft.thetaleclient.sdk.dictionary.EquipmentType;
 import com.lonebytesoft.thetaleclient.sdk.dictionary.GameState;
 import com.lonebytesoft.thetaleclient.sdk.dictionary.Gender;
 import com.lonebytesoft.thetaleclient.sdk.dictionary.Habit;
+import com.lonebytesoft.thetaleclient.sdk.dictionary.HabitHonor;
+import com.lonebytesoft.thetaleclient.sdk.dictionary.HabitPeacefulness;
 import com.lonebytesoft.thetaleclient.sdk.dictionary.HeroAction;
 import com.lonebytesoft.thetaleclient.sdk.dictionary.PlaceSpecialization;
 import com.lonebytesoft.thetaleclient.sdk.dictionary.Profession;
 import com.lonebytesoft.thetaleclient.sdk.dictionary.QuestActorType;
 import com.lonebytesoft.thetaleclient.sdk.dictionary.Race;
+import com.lonebytesoft.thetaleclient.sdk.dictionary.SocialLink;
 import com.lonebytesoft.thetaleclient.sdk.dictionary.ThirdPartyAuthState;
 import com.lonebytesoft.thetaleclient.sdk.util.ObjectUtils;
 import com.lonebytesoft.thetaleclient.sdk.util.RequestUtils;
@@ -57,6 +60,7 @@ import java.util.regex.Pattern;
  * - CompanionType {@see http://the-tale.org/guide/companions/}
  * - HeroMode {@see http://the-tale.org/guide/api#game_info}
  * - MapStyle {@see http://the-tale.org/guide/game-resources}
+ * - PlaceParameter {@see http://the-tale.org/guide/api#places_show}
  * - PvpAbility {@see http://the-tale.org/guide/api#game_info}
  * - QuestType
  * - RatingItem {@see http://the-tale.org/guide/api#account_info}
@@ -381,6 +385,52 @@ public class TestDictionaries extends TestCase {
         }
     }
 
+    public void testHabitHonor() {
+        final List<List<String>> table = getTableData(apiGuide.select("table").get(13), true, 0, 1, 2);
+        checkSize(HabitHonor.class, table.size());
+
+        for(final List<String> item : table) {
+            final int code = Integer.valueOf(item.get(0));
+            final HabitHonor habitHonor = ObjectUtils.getEnumForCode(HabitHonor.class, code);
+            assertNotNull(
+                    String.format("HabitHonor not found: code = %s", code),
+                    habitHonor);
+
+            final String nameHero = item.get(1);
+            assertEquals(
+                    String.format("HabitHonor incorrect name for hero: %s", nameHero),
+                    nameHero, habitHonor.nameHero);
+
+            final String namePlace = item.get(2);
+            assertEquals(
+                    String.format("HabitHonor incorrect name for place: %s", namePlace),
+                    namePlace, habitHonor.namePlace);
+        }
+    }
+
+    public void testHabitPeacefulness() {
+        final List<List<String>> table = getTableData(apiGuide.select("table").get(14), true, 0, 1, 2);
+        checkSize(HabitPeacefulness.class, table.size());
+
+        for(final List<String> item : table) {
+            final int code = Integer.valueOf(item.get(0));
+            final HabitPeacefulness habitPeacefulness = ObjectUtils.getEnumForCode(HabitPeacefulness.class, code);
+            assertNotNull(
+                    String.format("HabitPeacefulness not found: code = %s", code),
+                    habitPeacefulness);
+
+            final String nameHero = item.get(1);
+            assertEquals(
+                    String.format("HabitPeacefulness incorrect name for hero: %s", nameHero),
+                    nameHero, habitPeacefulness.nameHero);
+
+            final String namePlace = item.get(2);
+            assertEquals(
+                    String.format("HabitPeacefulness incorrect name for place: %s", namePlace),
+                    namePlace, habitPeacefulness.namePlace);
+        }
+    }
+
     public void testHeroAction() {
         final List<List<String>> table = getApiTableData(6);
         checkSize(HeroAction.class, table.size());
@@ -469,6 +519,24 @@ public class TestDictionaries extends TestCase {
             assertEquals(
                     String.format("Race incorrect name: %s", name),
                     name, race.name);
+        }
+    }
+
+    public void testSocialLink() {
+        final List<List<String>> table = getApiTableData(18);
+        checkSize(SocialLink.class, table.size());
+
+        for(final List<String> item : table) {
+            final int code = Integer.parseInt(item.get(0));
+            final SocialLink socialLink = ObjectUtils.getEnumForCode(SocialLink.class, code);
+            assertNotNull(
+                    String.format("SocialLink not found: code = %s", code),
+                    socialLink);
+
+            final String name = item.get(1);
+            assertEquals(
+                    String.format("SocialLink incorrect name: %s", name),
+                    name, socialLink.name);
         }
     }
 
