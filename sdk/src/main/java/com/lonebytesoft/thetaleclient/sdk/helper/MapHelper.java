@@ -1,17 +1,17 @@
 package com.lonebytesoft.thetaleclient.sdk.helper;
 
+import com.lonebytesoft.thetaleclient.sdk.Urls;
 import com.lonebytesoft.thetaleclient.sdk.dictionary.MapStyle;
 import com.lonebytesoft.thetaleclient.sdk.exception.ApiException;
 import com.lonebytesoft.thetaleclient.sdk.model.HeroInfo;
+import com.lonebytesoft.thetaleclient.sdk.model.MapPlaceInfo;
 import com.lonebytesoft.thetaleclient.sdk.model.MapTileInfo;
-import com.lonebytesoft.thetaleclient.sdk.model.PlaceInfo;
 import com.lonebytesoft.thetaleclient.sdk.request.GameInfoRequest;
 import com.lonebytesoft.thetaleclient.sdk.request.InfoRequest;
 import com.lonebytesoft.thetaleclient.sdk.request.MapRequest;
 import com.lonebytesoft.thetaleclient.sdk.response.GameInfoResponse;
 import com.lonebytesoft.thetaleclient.sdk.response.InfoResponse;
 import com.lonebytesoft.thetaleclient.sdk.response.MapResponse;
-import com.lonebytesoft.thetaleclient.sdk.Urls;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -117,12 +117,12 @@ public class MapHelper {
             final double placeTextPaddingY = (double) PLACE_TEXT_PADDING_Y * tileHeight / SPRITE_TILE_SIZE;
             final double placeTextShiftX = (double) PLACE_TEXT_SHIFT_X * tileWidth / SPRITE_TILE_SIZE;
             final double placeTextShiftY = (double) PLACE_TEXT_SHIFT_Y * tileHeight / SPRITE_TILE_SIZE;
-            for(final PlaceInfo placeInfo : mapInfo.places.values()) {
-                final String title = String.format("%s (%d)", placeInfo.name, placeInfo.size);
+            for(final MapPlaceInfo mapPlaceInfo : mapInfo.places.values()) {
+                final String title = String.format("%s (%d)", mapPlaceInfo.name, mapPlaceInfo.size);
                 final Rectangle2D rect = mapGraphics.getFontMetrics().getStringBounds(title, mapGraphics);
 
-                final double x = (placeInfo.x + 0.5) * tileWidth - rect.getWidth() / 2.0;
-                final double y = (placeInfo.y + 1.5) * tileHeight;
+                final double x = (mapPlaceInfo.x + 0.5) * tileWidth - rect.getWidth() / 2.0;
+                final double y = (mapPlaceInfo.y + 1.5) * tileHeight;
 
                 mapGraphics.setColor(PLACE_TEXT_BACKGROUND_COLOR);
                 mapGraphics.fillRect(

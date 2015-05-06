@@ -14,6 +14,7 @@ import com.lonebytesoft.thetaleclient.sdk.dictionary.GameState;
 import com.lonebytesoft.thetaleclient.sdk.dictionary.Gender;
 import com.lonebytesoft.thetaleclient.sdk.dictionary.Habit;
 import com.lonebytesoft.thetaleclient.sdk.dictionary.HeroAction;
+import com.lonebytesoft.thetaleclient.sdk.dictionary.PlaceSpecialization;
 import com.lonebytesoft.thetaleclient.sdk.dictionary.Profession;
 import com.lonebytesoft.thetaleclient.sdk.dictionary.QuestActorType;
 import com.lonebytesoft.thetaleclient.sdk.dictionary.Race;
@@ -395,6 +396,25 @@ public class TestDictionaries extends TestCase {
             assertEquals(
                     String.format("HeroAction incorrect name: %s", name),
                     name, heroAction.name);
+        }
+    }
+
+    public void testPlaceSpecialization() {
+        final List<List<String>> table = getApiTableData(7);
+        checkSize(PlaceSpecialization.class, table.size());
+
+        for(final List<String> item : table) {
+            final int code = Integer.parseInt(item.get(0));
+            final PlaceSpecialization placeSpecialization =
+                    ObjectUtils.getEnumForCode(PlaceSpecialization.class, code);
+            assertNotNull(
+                    String.format("PlaceSpecialization not found: code = %d", code),
+                    placeSpecialization);
+
+            final String name = item.get(1);
+            assertEquals(
+                    String.format("PlaceSpecialization incorrect name: %s", name),
+                    name, placeSpecialization.name);
         }
     }
 

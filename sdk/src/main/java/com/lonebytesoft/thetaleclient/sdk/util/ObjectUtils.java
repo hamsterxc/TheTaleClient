@@ -91,6 +91,22 @@ public class ObjectUtils {
         }
     }
 
+    public static Integer getOptionalInteger(final JSONObject json, final String key) {
+        if((json == null) || (key == null)) {
+            return null;
+        }
+
+        try {
+            if (json.isNull(key)) {
+                return null;
+            } else {
+                return json.getInt(key);
+            }
+        } catch(JSONException e) {
+            return null;
+        }
+    }
+
     public static JSONObject getObjectFromArray(final JSONArray jsonArray, final String[] names) {
         if((jsonArray == null) || (names == null)) {
             return null;
