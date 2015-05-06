@@ -31,6 +31,8 @@ public class AccountInfoResponse extends AbstractApiResponse {
     public int collectionItemsCount;
     public int referralsCount;
     public Map<RatingItem, RatingItemInfo> ratings;
+    public boolean canAffectGame;
+    public String description;
 
     public AccountInfoResponse(final String response) throws JSONException {
         super(response);
@@ -46,6 +48,8 @@ public class AccountInfoResponse extends AbstractApiResponse {
         achievementPoints = data.getInt("achievements");
         collectionItemsCount = data.getInt("collections");
         referralsCount = data.getInt("referrals");
+        canAffectGame = data.getJSONObject("permissions").getBoolean("can_affect_game");
+        description = data.getString("description");
 
         final JSONArray placesHistory = data.getJSONArray("places_history");
         final int placesSize = placesHistory.length();
