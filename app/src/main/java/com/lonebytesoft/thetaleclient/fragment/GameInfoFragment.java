@@ -216,24 +216,24 @@ public class GameInfoFragment extends WrapperFragment {
                 }
 
                 textRaceGender.setText(String.format("%s-%s",
-                        gameInfoResponse.account.hero.basicInfo.race.getName(),
-                        gameInfoResponse.account.hero.basicInfo.gender.getName()));
-                textLevel.setText(String.valueOf(gameInfoResponse.account.hero.basicInfo.level));
-                textName.setText(gameInfoResponse.account.hero.basicInfo.name);
-                if (gameInfoResponse.account.hero.basicInfo.destinyPoints > 0) {
+                        response.account.hero.basicInfo.race.name,
+                        response.account.hero.basicInfo.gender.name));
+                textLevel.setText(String.valueOf(response.account.hero.basicInfo.level));
+                textName.setText(response.account.hero.basicInfo.name);
+                if (response.account.hero.basicInfo.destinyPoints > 0) {
                     textLevelUp.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            if (gameInfoResponse.account.isOwnInfo) {
+                            if (response.account.isOwnInfo) {
                                 DialogUtils.showConfirmationDialog(
                                         getChildFragmentManager(),
                                         getString(R.string.game_lvlup_dialog_title),
-                                        getString(R.string.game_lvlup_dialog_message, gameInfoResponse.account.hero.basicInfo.destinyPoints),
+                                        getString(R.string.game_lvlup_dialog_message, response.account.hero.basicInfo.destinyPoints),
                                         getString(R.string.drawer_title_site), new Runnable() {
                                             @Override
                                             public void run() {
                                                 startActivity(UiUtils.getOpenLinkIntent(String.format(
-                                                        WebsiteUtils.URL_PROFILE_HERO, gameInfoResponse.account.hero.id)));
+                                                        WebsiteUtils.URL_PROFILE_HERO, response.account.hero.id)));
                                             }
                                         },
                                         null, null, null);
@@ -242,7 +242,7 @@ public class GameInfoFragment extends WrapperFragment {
                                         getChildFragmentManager(),
                                         getString(R.string.game_lvlup_dialog_title),
                                         getString(R.string.game_lvlup_dialog_message_foreign,
-                                                gameInfoResponse.account.hero.basicInfo.destinyPoints));
+                                                response.account.hero.basicInfo.destinyPoints));
                             }
                         }
                     });

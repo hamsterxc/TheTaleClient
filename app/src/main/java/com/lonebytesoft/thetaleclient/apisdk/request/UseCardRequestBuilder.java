@@ -12,26 +12,22 @@ public class UseCardRequestBuilder implements AbstractRequestBuilder<UseCardRequ
 
     private int cardId = 0;
     private CardTargetType targetType = null;
-    private Integer entityId = 0;
+    private int entityId = 0;
 
     public UseCardRequestBuilder setCardId(final int cardId) {
         this.cardId = cardId;
         return this;
     }
 
-    public UseCardRequestBuilder setCardTargetType(final CardTargetType targetType) {
+    public UseCardRequestBuilder setTarget(final CardTargetType targetType, final int entityId) {
         this.targetType = targetType;
-        return this;
-    }
-
-    public UseCardRequestBuilder setEntityId(final Integer entityId) {
         this.entityId = entityId;
         return this;
     }
 
     @Override
     public UseCardRequest build(String clientId) {
-        if((targetType == null) || (entityId == null)) {
+        if(targetType == null) {
             return new UseCardRequest(clientId, cardId);
         } else {
             return new UseCardRequest(clientId, cardId, targetType, entityId);

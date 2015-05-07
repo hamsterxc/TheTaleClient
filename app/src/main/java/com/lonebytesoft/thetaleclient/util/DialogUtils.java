@@ -145,7 +145,7 @@ public class DialogUtils {
     }
 
     public static void showCardUseDialog(final FragmentManager fragmentManager,
-                                         final String caption, final CardInfo card,
+                                         final String caption, final CardInfoParcelable card,
                                          final Runnable onSuccessListener) {
         final CardUseDialog dialog = CardUseDialog.newInstance(caption, card);
         dialog.setOnSuccessListener(onSuccessListener);

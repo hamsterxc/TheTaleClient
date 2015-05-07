@@ -32,7 +32,6 @@ import com.lonebytesoft.thetaleclient.sdk.response.GameInfoResponse;
 import com.lonebytesoft.thetaleclient.sdk.response.GetCardResponse;
 import com.lonebytesoft.thetaleclient.util.DialogUtils;
 import com.lonebytesoft.thetaleclient.util.ObjectUtils;
-import com.lonebytesoft.thetaleclient.util.PreferencesManager;
 import com.lonebytesoft.thetaleclient.util.RequestUtils;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
 import com.lonebytesoft.thetaleclient.widget.RequestActionView;
@@ -125,12 +124,12 @@ public class CardsFragment extends WrapperFragment {
         GameInfoRequestBuilder.executeWatching(getActivity(), RequestUtils.wrapCallback(new ApiCallback<GameInfoResponse>() {
             @Override
             public void onSuccess(GameInfoResponse response) {
-                if(!response.account.isOwnInfo) {
+                if (!response.account.isOwnInfo) {
                     setError(getString(R.string.game_cards_unavailable_foreign));
                     return;
                 }
 
-                if(response.account.hero.cards.cardHelpCurrent >= response.account.hero.cards.cardHelpBarrier) {
+                if (response.account.hero.cards.cardHelpCurrent >= response.account.hero.cards.cardHelpBarrier) {
                     helpCounterContainer.setVisibility(View.GONE);
                     helpTakeCardWidget.setMode(RequestActionView.Mode.ACTION);
                     helpTakeCardWidget.setVisibility(View.VISIBLE);
@@ -172,7 +171,7 @@ public class CardsFragment extends WrapperFragment {
                     helpCounter.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                         @Override
                         public void onGlobalLayout() {
-                            if(isAdded()) {
+                            if (isAdded()) {
                                 UiUtils.setHeight(helpCounterProgress,
                                         (int) (helpCounter.getHeight() + 2 * getResources().getDimension(R.dimen.game_info_bar_padding)));
                             }
@@ -213,7 +212,7 @@ public class CardsFragment extends WrapperFragment {
                                     DialogUtils.showCardUseDialog(
                                             getChildFragmentManager(),
                                             getString(R.string.game_card_use),
-                                            card,
+                                            new CardInfoParcelable(card),
                                             new Runnable() {
                                                 @Override
                                                 public void run() {
