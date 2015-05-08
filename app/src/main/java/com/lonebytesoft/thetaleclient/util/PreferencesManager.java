@@ -9,8 +9,8 @@ import android.util.Pair;
 import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.TheTaleClientApplication;
 import com.lonebytesoft.thetaleclient.api.dictionary.Action;
-import com.lonebytesoft.thetaleclient.api.dictionary.MapStyle;
 import com.lonebytesoft.thetaleclient.fragment.GameFragment;
+import com.lonebytesoft.thetaleclient.sdk.dictionary.MapStyle;
 import com.lonebytesoft.thetaleclient.sdk.response.GameInfoResponse;
 
 import org.json.JSONArray;

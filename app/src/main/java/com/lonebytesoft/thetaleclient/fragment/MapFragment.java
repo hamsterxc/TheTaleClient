@@ -3,7 +3,7 @@ package com.lonebytesoft.thetaleclient.fragment;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
+import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -24,40 +23,36 @@ import android.widget.ImageView;
 
 import com.lonebytesoft.thetaleclient.DataViewMode;
 import com.lonebytesoft.thetaleclient.R;
-import com.lonebytesoft.thetaleclient.TheTaleClientApplication;
 import com.lonebytesoft.thetaleclient.activity.MainActivity;
-import com.lonebytesoft.thetaleclient.api.ApiResponseCallback;
-import com.lonebytesoft.thetaleclient.api.CommonResponseCallback;
-import com.lonebytesoft.thetaleclient.api.HttpMethod;
-import com.lonebytesoft.thetaleclient.api.cache.prerequisite.InfoPrerequisiteRequest;
-import com.lonebytesoft.thetaleclient.api.cache.prerequisite.PrerequisiteRequest;
-import com.lonebytesoft.thetaleclient.api.dictionary.MapCellType;
-import com.lonebytesoft.thetaleclient.api.dictionary.MapStyle;
-import com.lonebytesoft.thetaleclient.api.model.MapPlaceInfo;
-import com.lonebytesoft.thetaleclient.api.model.PositionInfo;
-import com.lonebytesoft.thetaleclient.api.request.GameInfoRequest;
-import com.lonebytesoft.thetaleclient.api.request.MapCellRequest;
-import com.lonebytesoft.thetaleclient.api.request.MapRequest;
-import com.lonebytesoft.thetaleclient.api.request.MapTerrainRequest;
-import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;
-import com.lonebytesoft.thetaleclient.api.response.InfoResponse;
-import com.lonebytesoft.thetaleclient.api.response.MapCellResponse;
-import com.lonebytesoft.thetaleclient.api.response.MapResponse;
-import com.lonebytesoft.thetaleclient.api.response.MapTerrainResponse;
+import com.lonebytesoft.thetaleclient.apisdk.ApiCallback;
+import com.lonebytesoft.thetaleclient.apisdk.RequestExecutor;
+import com.lonebytesoft.thetaleclient.apisdk.request.GameInfoRequestBuilder;
+import com.lonebytesoft.thetaleclient.apisdk.request.MapCellRequestBuilder;
+import com.lonebytesoft.thetaleclient.apisdk.request.MapRequestBuilder;
+import com.lonebytesoft.thetaleclient.apisdk.request.PlaceRequestBuilder;
+import com.lonebytesoft.thetaleclient.apisdk.request.PlacesRequestBuilder;
 import com.lonebytesoft.thetaleclient.fragment.dialog.ChoiceDialog;
 import com.lonebytesoft.thetaleclient.fragment.dialog.TabbedDialog;
+import com.lonebytesoft.thetaleclient.sdk.AbstractApiResponse;
+import com.lonebytesoft.thetaleclient.sdk.dictionary.MapStyle;
+import com.lonebytesoft.thetaleclient.sdk.model.HeroInfo;
+import com.lonebytesoft.thetaleclient.sdk.model.MapPlaceInfo;
+import com.lonebytesoft.thetaleclient.sdk.model.PlaceInfo;
+import com.lonebytesoft.thetaleclient.sdk.model.PositionInfo;
+import com.lonebytesoft.thetaleclient.sdk.response.GameInfoResponse;
+import com.lonebytesoft.thetaleclient.sdk.response.MapCellResponse;
+import com.lonebytesoft.thetaleclient.sdk.response.MapResponse;
+import com.lonebytesoft.thetaleclient.sdk.response.PlaceResponse;
+import com.lonebytesoft.thetaleclient.sdk.response.PlacesResponse;
+import com.lonebytesoft.thetaleclient.sdkandroid.helper.MapHelper;
 import com.lonebytesoft.thetaleclient.util.DialogUtils;
 import com.lonebytesoft.thetaleclient.util.ObjectUtils;
 import com.lonebytesoft.thetaleclient.util.PreferencesManager;
 import com.lonebytesoft.thetaleclient.util.RequestUtils;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
-import com.lonebytesoft.thetaleclient.util.map.MapModification;
-import com.lonebytesoft.thetaleclient.util.map.MapUtils;
-
-import org.apache.http.HttpRequest;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.impl.client.DefaultHttpClient;
+import com.lonebytesoft.thetaleclient.util.map.MapTileBuildingTabsAdapter;
+import com.lonebytesoft.thetaleclient.util.map.MapTilePlaceTabsAdapter;
+import com.lonebytesoft.thetaleclient.util.map.MapTileTerrainTabsAdapter;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -69,10 +64,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import uk.co.senab.photoview.PhotoViewAttacher;
 
@@ -85,37 +78,36 @@ public class MapFragment extends WrapperFragment {
     private static final String KEY_MAP_ZOOM = "KEY_MAP_ZOOM";
     private static final String KEY_MAP_SHIFT_X = "KEY_MAP_SHIFT_X";
     private static final String KEY_MAP_SHIFT_Y = "KEY_MAP_SHIFT_Y";
-    private static final String KEY_MAP_MODIFICATION = "KEY_MAP_MODIFICATION";
 
     private static final float ZOOM_MAX = 3f;
 
     private LayoutInflater layoutInflater;
+    private Handler handler = new Handler(Looper.getMainLooper());
 
     private View rootView;
 
     private ImageView mapView;
     private PhotoViewAttacher mapViewHelper;
     private MenuItem menuOptions;
-    private MenuItem menuMapModification;
     private View findPlayerContainer;
 
     private float mapZoom;
     private float mapShiftX;
     private float mapShiftY;
+    private Point mapTileSize;
+    private Point mapSize;
+    private MapHelper.MapMemorySettings mapMemorySettings;
     private boolean isMapInitialPosition = true;
     private boolean shouldMoveToHero = false;
     private boolean shouldShowMenuOptions = true;
 
     private PositionInfo heroPosition;
     private List<MapPlaceInfo> places;
-    private MapModification mapModification;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-
-        mapModification = MapModification.NONE;
     }
 
     @Override
@@ -131,12 +123,10 @@ public class MapFragment extends WrapperFragment {
             mapZoom = savedInstanceState.getFloat(KEY_MAP_ZOOM, 1.0f);
             mapShiftX = savedInstanceState.getFloat(KEY_MAP_SHIFT_X, 0.0f);
             mapShiftY = savedInstanceState.getFloat(KEY_MAP_SHIFT_Y, 0.0f);
-            mapModification = MapModification.values()[savedInstanceState.getInt(KEY_MAP_MODIFICATION, MapModification.NONE.ordinal())];
         } else {
             mapZoom = 1.0f;
             mapShiftX = 0.0f;
             mapShiftY = 0.0f;
-            mapModification = MapModification.NONE;
             shouldMoveToHero = true;
         }
 
@@ -153,8 +143,6 @@ public class MapFragment extends WrapperFragment {
         final PointF mapShift = getMapShift();
         outState.putFloat(KEY_MAP_SHIFT_X, mapShift.x);
         outState.putFloat(KEY_MAP_SHIFT_Y, mapShift.y);
-
-        outState.putInt(KEY_MAP_MODIFICATION, mapModification.ordinal());
     }
 
     private void updateMenuItemTitle(final int id, final String title) {
@@ -162,24 +150,6 @@ public class MapFragment extends WrapperFragment {
         if(menuItem != null) {
             menuItem.setTitle(title);
         }
-    }
-
-    private void updateMenuMapModificationVisibility() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                final HttpClient httpClient = new DefaultHttpClient();
-                final HttpRequest httpRequest = HttpMethod.GET.getHttpRequest(
-                        MapTerrainRequest.URL_BASE, null, null);
-                try {
-                    httpClient.execute((HttpUriRequest) httpRequest);
-                    if(menuMapModification != null) {
-                        menuMapModification.setVisible(true);
-                    }
-                } catch(IOException ignored) {
-                }
-            }
-        }).start();
     }
 
     @Override
@@ -191,11 +161,8 @@ public class MapFragment extends WrapperFragment {
             menuOptions.setVisible(false);
         }
 
-        menuMapModification = UiUtils.getMenuItem(getActivity(), R.id.action_map_modification);
-        updateMenuMapModificationVisibility();
-
-        updateMenuItemTitle(R.id.action_map_style, getString(R.string.map_style, PreferencesManager.getMapStyle().getName()));
-        updateMenuItemTitle(R.id.action_map_modification, getString(R.string.map_modification, mapModification.getName()));
+        updateMenuItemTitle(R.id.action_map_style,
+                getString(R.string.map_style, PreferencesManager.getMapStyle().name));
     }
 
     @Override
@@ -223,26 +190,14 @@ public class MapFragment extends WrapperFragment {
                     @Override
                     public void onItemSelected(int position) {
                         final MapPlaceInfo placeInfo = places.get(position);
-                        moveToTile(placeInfo.x, placeInfo.y, mapViewHelper.getMaximumScale());
+                        moveToTile(placeInfo.x, placeInfo.y, mapViewHelper.getMediumScale());
                     }
                 });
                 return true;
 
             case R.id.action_map_find_hero:
                 moveToTile((int) Math.round(heroPosition.x), (int) Math.round(heroPosition.y),
-                        mapViewHelper.getMaximumScale());
-                return true;
-
-            case R.id.action_map_modification:
-                DialogUtils.showChoiceDialog(getChildFragmentManager(), getString(R.string.map_modification_caption),
-                        ObjectUtils.getNamesForEnum(MapModification.class), new ChoiceDialog.ItemChooseListener() {
-                            @Override
-                            public void onItemSelected(int position) {
-                                mapModification = MapModification.values()[position];
-                                refresh(true);
-                            }
-                        },
-                        R.layout.dialog_content_map_modification, R.id.dialog_map_modification_list);
+                        mapViewHelper.getMediumScale());
                 return true;
 
             case R.id.action_map_save:
@@ -284,23 +239,28 @@ public class MapFragment extends WrapperFragment {
                                 showMapSaveError(e.getLocalizedMessage());
                             }
 
-                            if(success && !UiUtils.getMainActivity(MapFragment.this).isPaused()) {
-                                DialogUtils.showConfirmationDialog(getChildFragmentManager(),
-                                        getString(R.string.map_save), getString(R.string.map_save_message, fileMap.getPath()),
-                                        null, null,
-                                        getString(R.string.map_save_open), new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                final Intent intent = new Intent();
-                                                intent.setAction(Intent.ACTION_VIEW);
-                                                intent.setDataAndType(Uri.fromFile(fileMap), "image/png");
-                                                startActivity(intent);
-                                            }
-                                        }, null);
+                            if(success) {
+                                UiUtils.runChecked(MapFragment.this, new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        DialogUtils.showConfirmationDialog(getChildFragmentManager(),
+                                                getString(R.string.map_save), getString(R.string.map_save_message, fileMap.getPath()),
+                                                null, null,
+                                                getString(R.string.map_save_open), new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        final Intent intent = new Intent();
+                                                        intent.setAction(Intent.ACTION_VIEW);
+                                                        intent.setDataAndType(Uri.fromFile(fileMap), "image/png");
+                                                        startActivity(intent);
+                                                    }
+                                                }, null);
+                                    }
+                                });
                             }
                         }
 
-                        getActivity().runOnUiThread(new Runnable() {
+                        UiUtils.runChecked(MapFragment.this, new Runnable() {
                             @Override
                             public void run() {
                                 progressDialog.dismiss();
@@ -316,11 +276,14 @@ public class MapFragment extends WrapperFragment {
     }
 
     private void showMapSaveError(final String error) {
-        if(!UiUtils.getMainActivity(this).isPaused()) {
-            DialogUtils.showMessageDialog(getChildFragmentManager(),
-                    getString(R.string.common_dialog_attention_title),
-                    TextUtils.isEmpty(error) ? getString(R.string.map_save_error_short) : getString(R.string.map_save_error, error));
-        }
+        UiUtils.runChecked(this, new Runnable() {
+            @Override
+            public void run() {
+                DialogUtils.showMessageDialog(getChildFragmentManager(),
+                        getString(R.string.common_dialog_attention_title),
+                        TextUtils.isEmpty(error) ? getString(R.string.map_save_error_short) : getString(R.string.map_save_error, error));
+            }
+        });
     }
 
     @Override
@@ -346,114 +309,62 @@ public class MapFragment extends WrapperFragment {
         System.gc();
 
         final MapStyle mapStyle = PreferencesManager.getMapStyle();
-        updateMenuItemTitle(R.id.action_map_style, getString(R.string.map_style, mapStyle.getName()));
+        updateMenuItemTitle(R.id.action_map_style, getString(R.string.map_style, mapStyle.name));
 
-        updateMenuItemTitle(R.id.action_map_modification, getString(R.string.map_modification, mapModification.getName()));
-
-        new InfoPrerequisiteRequest(new Runnable() {
+        GameInfoRequestBuilder.executeWatching(getActivity(), RequestUtils.wrapCallback(new ApiCallback<GameInfoResponse>() {
             @Override
-            public void run() {
-                final ApiResponseCallback<GameInfoResponse> gameInfoCallback = RequestUtils.wrapCallback(new ApiResponseCallback<GameInfoResponse>() {
+            public void onSuccess(final GameInfoResponse gameInfoResponse) {
+                MapRequestBuilder.execute(getActivity(), RequestUtils.wrapCallback(new ApiCallback<MapResponse>() {
                     @Override
-                    public void processResponse(final GameInfoResponse gameInfoResponse) {
-                        new MapRequest(gameInfoResponse.mapVersion).execute(RequestUtils.wrapCallback(new CommonResponseCallback<MapResponse, String>() {
+                    public void onSuccess(final MapResponse mapResponse) {
+                        heroPosition = gameInfoResponse.account.hero.position;
+                        final List<HeroInfo> heroes = new ArrayList<>();
+                        heroes.add(gameInfoResponse.account.hero);
+                        new Thread(new Runnable() {
                             @Override
-                            public void processResponse(final MapResponse mapResponse) {
-                                MapUtils.getMapSprite(mapStyle, new MapUtils.MapBitmapCallback() {
+                            public void run() {
+                                mapTileSize = new Point(mapResponse.width, mapResponse.height);
+                                mapSize = MapHelper.getMapSize(mapResponse);
+                                mapMemorySettings = MapHelper.getAvailableMapMemorySettings(mapResponse);
+                                if (getSizeDenominator() > 1) {
+                                    UiUtils.runChecked(MapFragment.this, new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            DialogUtils.showMessageDialog(getChildFragmentManager(),
+                                                    getString(R.string.common_dialog_attention_title),
+                                                    getString(R.string.map_decreased_quality));
+                                        }
+                                    });
+                                }
+                                final Bitmap map = MapHelper.getMapImage(
+                                        mapMemorySettings.width, mapMemorySettings.height, PreferencesManager.getMapStyle(),
+                                        true, mapResponse, PreferencesManager.getStaticContentUrl(), heroes, false);
+                                UiUtils.runChecked(MapFragment.this, new Runnable() {
                                     @Override
-                                    public void onBitmapBuilt(final Bitmap sprite) {
-                                        if(!isAdded()) {
-                                            return;
-                                        }
-
-                                        heroPosition = gameInfoResponse.account.hero.position;
-
-                                        final Bitmap map = MapUtils.getMapBitmap(mapResponse);
-                                        final Canvas canvas = new Canvas(map);
-
-                                        final MenuItem actionMapModification = UiUtils.getMenuItem(getActivity(), R.id.action_map_modification);
-                                        if(actionMapModification != null) {
-                                            if(MapUtils.getCurrentSizeDenominator() == 1) {
-                                                updateMenuMapModificationVisibility();
-                                            } else {
-                                                if(!UiUtils.getMainActivity(MapFragment.this).isPaused()) {
-                                                    DialogUtils.showMessageDialog(getChildFragmentManager(),
-                                                            getString(R.string.common_dialog_attention_title),
-                                                            getString(R.string.map_decreased_quality));
-                                                }
-                                            }
-                                        }
-
-                                        if(mapModification == MapModification.NONE) {
-                                            MapUtils.drawBaseLayer(canvas, mapResponse, sprite);
-                                            MapUtils.drawPlaceNamesLayer(canvas, mapResponse);
-                                            MapUtils.drawHeroLayer(canvas, gameInfoResponse.account.hero, sprite);
-                                            setMap(map, mapResponse);
+                                    public void run() {
+                                        if (map == null) {
+                                            setError(getString(R.string.map_error));
                                         } else {
-                                            new MapTerrainRequest().execute(RequestUtils.wrapCallback(new CommonResponseCallback<MapTerrainResponse, String>() {
-                                                @Override
-                                                public void processResponse(final MapTerrainResponse mapTerrainResponse) {
-                                                    switch(mapModification) {
-                                                        case WIND:
-                                                            MapUtils.drawModificationLayer(canvas, mapResponse, mapTerrainResponse, mapModification);
-                                                            break;
-
-                                                        case INFLUENCE:
-                                                            MapUtils.drawBaseLayer(canvas, mapResponse, sprite);
-                                                            MapUtils.drawModificationLayer(canvas, mapResponse, mapTerrainResponse, mapModification);
-                                                            MapUtils.drawPlaceNamesLayer(canvas, mapResponse);
-                                                            MapUtils.drawHeroLayer(canvas, gameInfoResponse.account.hero, sprite);
-                                                            break;
-                                                    }
-                                                    setMap(map, mapResponse);
-                                                }
-
-                                                @Override
-                                                public void processError(String error) {
-                                                    setError(getString(R.string.map_error));
-                                                    mapModification = MapModification.NONE;
-                                                }
-                                            }, MapFragment.this));
+                                            setMap(map, mapResponse);
                                         }
-                                    }
-
-                                    @Override
-                                    public void onError() {
-                                        if(!isAdded()) {
-                                            return;
-                                        }
-
-                                        setError(getString(R.string.map_error));
                                     }
                                 });
                             }
-
-                            @Override
-                            public void processError(String error) {
-                                setError(getString(R.string.map_error));
-                            }
-                        }, MapFragment.this));
+                        }).start();
                     }
 
                     @Override
-                    public void processError(GameInfoResponse response) {
+                    public void onError(AbstractApiResponse response) {
                         setError(getString(R.string.map_error));
                     }
-                }, MapFragment.this);
-
-                final int watchingAccountId = PreferencesManager.getWatchingAccountId();
-                if(watchingAccountId == 0) {
-                    new GameInfoRequest(true).execute(gameInfoCallback, true);
-                } else {
-                    new GameInfoRequest(true).execute(watchingAccountId, gameInfoCallback, true);
-                }
+                }, MapFragment.this));
             }
-        }, new PrerequisiteRequest.ErrorCallback<InfoResponse>() {
+
             @Override
-            public void processError(InfoResponse response) {
+            public void onError(AbstractApiResponse response) {
                 setError(getString(R.string.map_error));
             }
-        }, this).execute();
+        }, this));
     }
 
     @Override
@@ -465,10 +376,16 @@ public class MapFragment extends WrapperFragment {
         }
     }
 
+    private int getSizeDenominator() {
+        return (int) Math.round(Math.max(
+                (double) mapSize.x / mapMemorySettings.width,
+                (double) mapSize.y / mapMemorySettings.height));
+    }
+
     private void moveToTile(final int tileX, final int tileY, final float scale) {
         mapViewHelper.setScale(scale);
-        final float newCenterX = (tileX + 0.5f) * MapUtils.MAP_TILE_SIZE / MapUtils.getCurrentSizeDenominator() * scale;
-        final float newCenterY = (tileY + 0.5f) * MapUtils.MAP_TILE_SIZE / MapUtils.getCurrentSizeDenominator() * scale;
+        final float newCenterX = (tileX + 0.5f) / mapTileSize.x * mapMemorySettings.width * scale;
+        final float newCenterY = (tileY + 0.5f) / mapTileSize.y * mapMemorySettings.height * scale;
         final float newRectLeft = mapView.getWidth() / 2.0f - newCenterX;
         final float newRectTop = mapView.getHeight() / 2.0f - newCenterY;
         final RectF currentRect = mapViewHelper.getDisplayRect();
@@ -498,7 +415,7 @@ public class MapFragment extends WrapperFragment {
     }
 
     private void setMap(final Bitmap map, final MapResponse mapResponse) {
-        new Handler(Looper.getMainLooper()).post(new Runnable() {
+        UiUtils.runChecked(this, new Runnable() {
             @Override
             public void run() {
                 mapView.setImageBitmap(map);
@@ -517,7 +434,6 @@ public class MapFragment extends WrapperFragment {
                         final int viewWidth = mapView.getWidth();
                         final int viewHeight = mapView.getHeight();
                         if ((viewWidth != 0) && (viewHeight != 0)) {
-                            final int currentSizeDenominator = MapUtils.getCurrentSizeDenominator();
                             final float minimumScale;
                             if (viewWidth < viewHeight) {
                                 minimumScale = (float) viewWidth / width;
@@ -527,12 +443,12 @@ public class MapFragment extends WrapperFragment {
 
                             if (isMapInitialPosition) {
                                 isMapInitialPosition = false;
-                                mapViewHelper.setMaximumScale(ZOOM_MAX * currentSizeDenominator);
-                                mapViewHelper.setMediumScale((ZOOM_MAX * currentSizeDenominator + minimumScale) / 2.0f);
+                                mapViewHelper.setMaximumScale(ZOOM_MAX * getSizeDenominator());
+                                mapViewHelper.setMediumScale((ZOOM_MAX * getSizeDenominator() + minimumScale) / 2.0f);
                                 mapViewHelper.setMinimumScale(minimumScale);
                                 final MapPlaceInfo placeInfo = mapResponse.places.get(PreferencesManager.getMapCenterPlaceId());
-                                if(placeInfo == null) {
-                                    if(shouldMoveToHero) {
+                                if (placeInfo == null) {
+                                    if (shouldMoveToHero) {
                                         shouldMoveToHero = false;
                                         moveToTile((int) Math.round(heroPosition.x), (int) Math.round(heroPosition.y),
                                                 mapViewHelper.getMediumScale());
@@ -542,7 +458,7 @@ public class MapFragment extends WrapperFragment {
                                     }
                                 } else {
                                     PreferencesManager.setMapCenterPlaceId(-1);
-                                    moveToTile(placeInfo.x, placeInfo.y, mapViewHelper.getMaximumScale());
+                                    moveToTile(placeInfo.x, placeInfo.y, mapViewHelper.getMediumScale());
                                 }
                             }
 
@@ -554,48 +470,83 @@ public class MapFragment extends WrapperFragment {
                 mapViewHelper.setOnPhotoTapListener(new PhotoViewAttacher.OnPhotoTapListener() {
                     @Override
                     public void onPhotoTap(View view, float x, float y) {
-                        final int tileX = (int) Math.floor(x * width * MapUtils.getCurrentSizeDenominator() / MapUtils.MAP_TILE_SIZE);
-                        final int tileY = (int) Math.floor(y * height * MapUtils.getCurrentSizeDenominator() / MapUtils.MAP_TILE_SIZE);
+                        final int tileX = (int) Math.floor(x * mapTileSize.x);
+                        final int tileY = (int) Math.floor(y * mapTileSize.y);
 
                         DialogUtils.showTabbedDialog(getChildFragmentManager(), getString(R.string.drawer_title_map), null);
 
-                        new MapCellRequest().execute(tileX, tileY, RequestUtils.wrapCallback(new CommonResponseCallback<MapCellResponse, String>() {
-                            @Override
-                            public void processResponse(final MapCellResponse response) {
-                                // request may be completed before fragment is instantiated, we'll wait for it
-                                final Handler handler = new Handler();
-                                handler.post(new Runnable() {
+                        RequestExecutor.execute(
+                                getActivity(),
+                                new MapCellRequestBuilder().setX(tileX).setY(tileY),
+                                RequestUtils.wrapCallback(new ApiCallback<MapCellResponse>() {
                                     @Override
-                                    public void run() {
-                                        final TabbedDialog dialog = (TabbedDialog) getChildFragmentManager().findFragmentByTag(DialogUtils.DIALOG_TABBED_TAG);
-                                        if (dialog == null) {
-                                            handler.post(this);
-                                        } else {
-                                            dialog.setCaption(response.title == null ? getString(R.string.map_tile_caption, tileX, tileY) : response.title);
-                                            dialog.setTabsAdapter(new TileTabsAdapter(response));
-                                            dialog.setMode(DataViewMode.DATA);
-                                        }
-                                    }
-                                });
-                            }
+                                    public void onSuccess(final MapCellResponse mapCellResponse) {
+                                        final TabbedDialog.TabbedDialogTabsAdapter adapter;
+                                        switch(mapCellResponse.type) {
+                                            case PLACE:
+                                                RequestExecutor.execute(
+                                                        getActivity(),
+                                                        new PlacesRequestBuilder(),
+                                                        RequestUtils.wrapCallback(new ApiCallback<PlacesResponse>() {
+                                                            @Override
+                                                            public void onSuccess(PlacesResponse placesResponse) {
+                                                                for(final PlaceInfo placeInfo : placesResponse.places.values()) {
+                                                                    if((placeInfo.x == tileX) && (placeInfo.y == tileY)) {
+                                                                        RequestExecutor.execute(
+                                                                                getActivity(),
+                                                                                new PlaceRequestBuilder().setPlaceId(placeInfo.id),
+                                                                                RequestUtils.wrapCallback(new ApiCallback<PlaceResponse>() {
+                                                                                    @Override
+                                                                                    public void onSuccess(PlaceResponse placeResponse) {
+                                                                                        initTabbedDialog(placeResponse.name,
+                                                                                                new MapTilePlaceTabsAdapter(getActivity(), placeResponse, mapCellResponse));
+                                                                                    }
 
-                            @Override
-                            public void processError(String error) {
-                                final Handler handler = new Handler();
-                                handler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        final TabbedDialog dialog = (TabbedDialog) getChildFragmentManager().findFragmentByTag(DialogUtils.DIALOG_TABBED_TAG);
-                                        if (dialog == null) {
-                                            handler.post(this);
-                                        } else {
-                                            dialog.dismiss();
+                                                                                    @Override
+                                                                                    public void onError(AbstractApiResponse response) {
+                                                                                        dismissTabbedDialog();
+                                                                                        setError(getString(R.string.map_error));
+                                                                                    }
+                                                                                }, MapFragment.this));
+                                                                        return;
+                                                                    }
+                                                                }
+                                                                dismissTabbedDialog();
+                                                                setError(getString(R.string.map_error));
+                                                            }
+
+                                                            @Override
+                                                            public void onError(AbstractApiResponse response) {
+                                                                dismissTabbedDialog();
+                                                                setError(getString(R.string.map_error));
+                                                            }
+                                                        }, MapFragment.this));
+                                                return;
+
+                                            case BUILDING:
+                                                adapter = new MapTileBuildingTabsAdapter(getActivity(), mapCellResponse);
+                                                break;
+
+                                            case TERRAIN:
+                                                adapter = new MapTileTerrainTabsAdapter(getActivity(), mapCellResponse);
+                                                break;
+
+                                            default:
+                                                dismissTabbedDialog();
+                                                setError(getString(R.string.map_error));
+                                                return;
                                         }
+                                        initTabbedDialog(mapCellResponse.title == null
+                                                ? getString(R.string.map_tile_caption, tileX, tileY)
+                                                : mapCellResponse.title, adapter);
                                     }
-                                });
-                                setError(getString(R.string.map_error));
-                            }
-                        }, MapFragment.this));
+
+                                    @Override
+                                    public void onError(AbstractApiResponse response) {
+                                        dismissTabbedDialog();
+                                        setError(getString(R.string.map_error));
+                                    }
+                                }, MapFragment.this));
                     }
                 });
 
@@ -620,99 +571,36 @@ public class MapFragment extends WrapperFragment {
         });
     }
 
-    private class TileTabsAdapter extends TabbedDialog.TabbedDialogTabsAdapter {
-
-        private final MapCellResponse cellInfo;
-
-        public TileTabsAdapter(final MapCellResponse cellInfo) {
-            this.cellInfo = cellInfo;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return getTileTab(position).getTitle();
-        }
-
-        @Override
-        public Fragment getItem(int i) {
-            return getTileTab(i).getFragment(cellInfo);
-        }
-
-        @Override
-        public int getCount() {
-            return TileTab.getTabs(cellInfo.type).size();
-        }
-
-        private TileTab getTileTab(final int position) {
-            return TileTab.getTabs(cellInfo.type).get(position);
-        }
-
-    }
-
-    private enum TileTab {
-
-        PARAMETERS(R.string.map_tile_tab_params, new MapCellType[]{MapCellType.PLACE, MapCellType.BUILDING}) {
+    // requests may be completed before dialog is instantiated, we'll wait for it
+    private void initTabbedDialog(final CharSequence caption,
+                                  final TabbedDialog.TabbedDialogTabsAdapter tabsAdapter) {
+        handler.post(new Runnable() {
             @Override
-            public Fragment getFragment(MapCellResponse cellInfo) {
-                return MapTileParamsFragment.newInstance(cellInfo);
-            }
-        },
-        COUNCIL(R.string.map_tile_tab_council, new MapCellType[]{MapCellType.PLACE}) {
-            @Override
-            public Fragment getFragment(MapCellResponse cellInfo) {
-                return MapTileCouncilFragment.newInstance(cellInfo);
-            }
-        },
-        DESCRIPTION(R.string.map_tile_tab_description, new MapCellType[]{MapCellType.PLACE}) {
-            @Override
-            public Fragment getFragment(MapCellResponse cellInfo) {
-                return MapTileDescriptionFragment.newInstance(cellInfo);
-            }
-        },
-        TERRAIN(R.string.map_tile_tab_terrain, new MapCellType[]{MapCellType.PLACE, MapCellType.BUILDING, MapCellType.TERRAIN}) {
-            @Override
-            public Fragment getFragment(MapCellResponse cellInfo) {
-                return MapTileTerrainFragment.newInstance(cellInfo);
-            }
-        },
-        ;
-
-        private final int titleResId;
-        private final MapCellType[] cellTypes;
-
-        private TileTab(final int titleResId, final MapCellType[] cellTypes) {
-            this.titleResId = titleResId;
-            this.cellTypes = cellTypes;
-        }
-
-        public String getTitle() {
-            return TheTaleClientApplication.getContext().getString(titleResId);
-        }
-
-        public abstract Fragment getFragment(final MapCellResponse cellInfo);
-
-        private static final Map<MapCellType, List<TileTab>> tabs;
-
-        static {
-            tabs = new HashMap<>(MapCellType.values().length);
-            for(final TileTab tileTab : values()) {
-                for(final MapCellType cellType : tileTab.cellTypes) {
-                    List<TileTab> tileTabs = tabs.get(cellType);
-                    if(tileTabs == null) {
-                        tileTabs = new ArrayList<>();
-                        tileTabs.add(tileTab);
-                        tabs.put(cellType, tileTabs);
-                    } else {
-                        tileTabs.add(tileTab);
-                    }
+            public void run() {
+                final TabbedDialog dialog = (TabbedDialog) getChildFragmentManager().findFragmentByTag(DialogUtils.DIALOG_TABBED_TAG);
+                if (dialog == null) {
+                    handler.post(this);
+                } else {
+                    dialog.setCaption(caption);
+                    dialog.setTabsAdapter(tabsAdapter);
+                    dialog.setMode(DataViewMode.DATA);
                 }
             }
-        }
+        });
+    }
 
-        public static List<TileTab> getTabs(final MapCellType cellType) {
-            return tabs.get(cellType);
-        }
-
+    private void dismissTabbedDialog() {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                final TabbedDialog dialog = (TabbedDialog) getChildFragmentManager().findFragmentByTag(DialogUtils.DIALOG_TABBED_TAG);
+                if (dialog == null) {
+                    handler.post(this);
+                } else {
+                    dialog.dismiss();
+                }
+            }
+        });
     }
 
 }

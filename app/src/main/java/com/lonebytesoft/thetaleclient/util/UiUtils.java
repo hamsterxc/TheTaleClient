@@ -222,4 +222,19 @@ public class UiUtils {
         remoteViews.setViewVisibility(viewId, isVisible ? View.VISIBLE : View.GONE);
     }
 
+    public static void runChecked(final Object uiComponent, final Runnable task) {
+        final MainActivity mainActivity;
+        if(uiComponent instanceof Fragment) {
+            mainActivity = getMainActivity((Fragment) uiComponent);
+        } else if(uiComponent instanceof MainActivity) {
+            mainActivity = (MainActivity) uiComponent;
+        } else {
+            mainActivity = null;
+        }
+
+        if((mainActivity == null) || !mainActivity.isPaused()) {
+            com.lonebytesoft.thetaleclient.sdkandroid.util.UiUtils.runChecked(uiComponent, task);
+        }
+    }
+
 }

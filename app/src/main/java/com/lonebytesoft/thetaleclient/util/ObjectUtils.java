@@ -4,6 +4,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -147,12 +148,12 @@ public class ObjectUtils {
             try {
                 final int count = clazz.getEnumConstants().length;
                 names = new String[count];
-                final Method getNameMethod = clazz.getMethod(METHOD_GET_NAME);
+                final Field fieldName = clazz.getField("name");
                 for(int i = 0; i < count; i++) {
-                    names[i] = (String) getNameMethod.invoke(clazz.getEnumConstants()[i]);
+                    names[i] = (String) fieldName.get(clazz.getEnumConstants()[i]);
                 }
                 enumToNamesCache.put(clazz, names);
-            } catch(NoSuchMethodException|IllegalAccessException|InvocationTargetException e) {
+            } catch(NoSuchFieldException|IllegalAccessException e) {
                 return null;
             }
         }

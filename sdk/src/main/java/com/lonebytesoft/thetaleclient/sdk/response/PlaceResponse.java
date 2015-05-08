@@ -100,8 +100,10 @@ public class PlaceResponse extends AbstractApiResponse {
         bills = ObjectUtils.getModelListFromJson(BillInfo.class, data.getJSONArray("bills"));
 
         final JSONObject specializationsJson = data.getJSONObject("specializations");
-        specializationCurrent = ObjectUtils.getEnumForCode(PlaceSpecialization.class,
-                specializationsJson.getInt("current"));
+        final Integer specializationCode = ObjectUtils.getOptionalInteger(specializationsJson, "current");
+        specializationCurrent = specializationCode == null
+                ? null
+                : ObjectUtils.getEnumForCode(PlaceSpecialization.class, specializationCode);
         specializations = ObjectUtils.getModelListFromJson(PlaceSpecializationInfo.class,
                 specializationsJson.getJSONArray("all"));
 

@@ -7,8 +7,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.lonebytesoft.thetaleclient.R;
-import com.lonebytesoft.thetaleclient.api.response.MapCellResponse;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Hamster
@@ -16,13 +18,13 @@ import com.lonebytesoft.thetaleclient.util.UiUtils;
  */
 public class MapTileTerrainFragment extends TabbedDialogTabFragment {
 
-    private static final String PARAM_CELL_INFO = "PARAM_CELL_INFO";
+    private static final String PARAM_TERRAIN = "PARAM_TERRAIN";
 
-    public static MapTileTerrainFragment newInstance(final MapCellResponse cellInfo) {
+    public static MapTileTerrainFragment newInstance(final List<String> terrain) {
         final MapTileTerrainFragment dialog = new MapTileTerrainFragment();
 
         final Bundle args = new Bundle();
-        args.putParcelable(PARAM_CELL_INFO, cellInfo);
+        args.putStringArrayList(PARAM_TERRAIN, new ArrayList<>(terrain));
         dialog.setArguments(args);
 
         return dialog;
@@ -33,10 +35,10 @@ public class MapTileTerrainFragment extends TabbedDialogTabFragment {
         final View content = layoutInflater.inflate(R.layout.tabbed_dialog_tab_content_text, container, true);
         final TextView text = (TextView) content.findViewById(R.id.tabbed_dialog_tab_content_text);
 
-        final MapCellResponse cellInfo = getArguments().getParcelable(PARAM_CELL_INFO);
+        final List<String> terrain = getArguments().getStringArrayList(PARAM_TERRAIN);
         final StringBuilder stringBuilder = new StringBuilder();
         boolean first = true;
-        for(final String line : cellInfo.terrain) {
+        for(final String line : terrain) {
             if(first) {
                 first = false;
             } else {

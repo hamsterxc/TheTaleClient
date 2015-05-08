@@ -29,12 +29,6 @@
                 app:showAsAction="never"/>
 
             <item
-                android:id="@+id/action_map_modification"
-                android:title="@string/map_modification_caption"
-                app:showAsAction="never"
-                android:visible="false"/>
-
-            <item
                 android:id="@+id/action_map_save"
                 android:title="@string/map_save"
                 app:showAsAction="never"/>

@@ -4,6 +4,7 @@ import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.sdk.dictionary.ArtifactRarity;
 import com.lonebytesoft.thetaleclient.sdk.dictionary.CardRarity;
 import com.lonebytesoft.thetaleclient.sdk.dictionary.EquipmentType;
+import com.lonebytesoft.thetaleclient.sdk.dictionary.Profession;
 import com.lonebytesoft.thetaleclient.sdk.dictionary.QuestActorType;
 import com.lonebytesoft.thetaleclient.sdk.dictionary.QuestType;
 
@@ -21,6 +22,7 @@ public class DictionaryData {
     private static final Map<QuestActorType, Integer> questActorTypeStringId;
     private static final Map<EquipmentType, Integer> equipmentTypeDrawableId;
     private static final Map<CardRarity, Integer> cardRarityColorId;
+    private static final Map<Profession, Integer> professionDrawableId;
 
     public static int getQuestTypeDrawableId(final QuestType questType) {
         return questTypeDrawableId.get(questType);
@@ -40,6 +42,10 @@ public class DictionaryData {
 
     public static int getCardRarityColorId(final CardRarity cardRarity) {
         return cardRarityColorId.get(cardRarity);
+    }
+
+    public static int getProfessionDrawableId(final Profession profession) {
+        return professionDrawableId.get(profession);
     }
 
     static {
@@ -91,6 +97,31 @@ public class DictionaryData {
             put(CardRarity.RARE, R.color.card_rare);
             put(CardRarity.EPIC, R.color.card_epic);
             put(CardRarity.LEGENDARY, R.color.card_legendary);
+        }};
+
+        professionDrawableId = new HashMap<Profession, Integer>(Profession.values().length) {{
+            put(Profession.SMITH, R.drawable.profession_blacksmith);
+            put(Profession.FISHER, R.drawable.profession_fisherman);
+            put(Profession.TAILOR, R.drawable.profession_tailor);
+            put(Profession.CARPENTER, R.drawable.profession_carpenter);
+            put(Profession.HUNTER, R.drawable.profession_hunter);
+            put(Profession.GUARD, R.drawable.profession_warden);
+            put(Profession.TRADER, R.drawable.profession_merchant);
+            put(Profession.INNKEEPER, R.drawable.profession_innkeeper);
+            put(Profession.THIEF, R.drawable.profession_rogue);
+            put(Profession.FARMER, R.drawable.profession_farmer);
+            put(Profession.MINER, R.drawable.profession_miner);
+            put(Profession.PRIEST, R.drawable.profession_priest);
+            put(Profession.HEALER, R.drawable.profession_physician);
+            put(Profession.ALCHEMIST, R.drawable.profession_alchemist);
+            put(Profession.EXECUTIONER, R.drawable.profession_executioner);
+            put(Profession.WIZARD, R.drawable.profession_magician);
+            put(Profession.MAYOR, R.drawable.profession_mayor);
+            put(Profession.BUREAUCRAT, R.drawable.profession_bureaucrat);
+            put(Profession.ARISTOCRAT, R.drawable.profession_aristocrat);
+            put(Profession.BARD, R.drawable.profession_bard);
+            put(Profession.TRAINER, R.drawable.profession_tamer);
+            put(Profession.HERDER, R.drawable.profession_herdsman);
         }};
     }
 

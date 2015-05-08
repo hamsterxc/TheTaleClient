@@ -12,9 +12,11 @@ import com.lonebytesoft.thetaleclient.api.model.QuestStepInfo;
 import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;
 import com.lonebytesoft.thetaleclient.sdk.dictionary.ArtifactEffect;
 import com.lonebytesoft.thetaleclient.sdk.dictionary.EquipmentType;
+import com.lonebytesoft.thetaleclient.sdk.dictionary.PlaceParameter;
 import com.lonebytesoft.thetaleclient.sdk.dictionary.RatingItem;
 import com.lonebytesoft.thetaleclient.sdk.model.ArtifactInfo;
 import com.lonebytesoft.thetaleclient.sdk.model.HeroInfo;
+import com.lonebytesoft.thetaleclient.sdk.model.PlaceParameterInfo;
 import com.lonebytesoft.thetaleclient.sdk.model.RatingItemInfo;
 
 import java.text.DecimalFormat;
@@ -138,6 +140,36 @@ public class GameInfoUtils {
 
             default:
                 return String.valueOf((int) Math.floor(ratingItemInfo.value));
+        }
+    }
+
+    public static String getPlaceParameterValue(final PlaceParameter placeParameter,
+                                                final PlaceParameterInfo placeParameterInfo) {
+        switch(placeParameter) {
+            case SIZE:
+            case ECONOMIC:
+            case PRODUCTION:
+            case KEEPERS_GOODS:
+                return String.valueOf((int) placeParameterInfo.value);
+
+            case STABILITY:
+            case SAFETY:
+            case TRANSPORT:
+            case FREEDOM:
+            case TAX:
+                return String.format("%.2f%%", placeParameterInfo.value * 100);
+
+            case POLITIC_RADIUS:
+                return new DecimalFormat("#.## кл").format(placeParameterInfo.value);
+
+            case TERRAIN_RADIUS:
+                return String.format("%d кл", (int) placeParameterInfo.value);
+
+            case GOODS:
+                return String.format("%d / 6000", (int) placeParameterInfo.value);
+
+            default:
+                return String.valueOf(placeParameterInfo.value);
         }
     }
 
