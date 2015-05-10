@@ -36,6 +36,8 @@ import com.lonebytesoft.thetaleclient.util.RequestUtils;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
 import com.lonebytesoft.thetaleclient.widget.RequestActionView;
 
+import org.json.JSONException;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -141,15 +143,19 @@ public class CardsFragment extends WrapperFragment {
                                 @Override
                                 public void onSuccess(GetCardResponse response) {
                                     helpTakeCardWidget.setMode(RequestActionView.Mode.ACTION);
-                                    DialogUtils.showCardInfoDialog(getChildFragmentManager(),
-                                            getString(R.string.game_cards_combine_result),
-                                            new CardInfoParcelable(response.card),
-                                            new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    refresh(true);
-                                                }
-                                            });
+                                    try {
+                                        DialogUtils.showCardInfoDialog(getChildFragmentManager(),
+                                                getString(R.string.game_cards_combine_result),
+                                                new CardInfoParcelable(response.card),
+                                                new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        refresh(true);
+                                                    }
+                                                });
+                                    } catch (JSONException e) {
+                                        DialogUtils.showCommonErrorDialog(getChildFragmentManager(), getActivity());
+                                    }
                                 }
 
                                 @Override
@@ -209,21 +215,25 @@ public class CardsFragment extends WrapperFragment {
                                 updateCombineList(cardEntryView, card, true);
                             } else {
                                 if(card.type != null) {
-                                    DialogUtils.showCardUseDialog(
-                                            getChildFragmentManager(),
-                                            getString(R.string.game_card_use),
-                                            new CardInfoParcelable(card),
-                                            new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    getActivity().runOnUiThread(new Runnable() {
-                                                        @Override
-                                                        public void run() {
-                                                            refresh(true);
-                                                        }
-                                                    });
-                                                }
-                                            });
+                                    try {
+                                        DialogUtils.showCardUseDialog(
+                                                getChildFragmentManager(),
+                                                getString(R.string.game_card_use),
+                                                new CardInfoParcelable(card),
+                                                new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        getActivity().runOnUiThread(new Runnable() {
+                                                            @Override
+                                                            public void run() {
+                                                                refresh(true);
+                                                            }
+                                                        });
+                                                    }
+                                                });
+                                    } catch (JSONException e) {
+                                        DialogUtils.showCommonErrorDialog(getChildFragmentManager(), getActivity());
+                                    }
                                 }
                             }
                         }
@@ -286,15 +296,19 @@ public class CardsFragment extends WrapperFragment {
                                 @Override
                                 public void onSuccess(CombineCardsResponse response) {
                                     progressDialog.dismiss();
-                                    DialogUtils.showCardInfoDialog(getChildFragmentManager(),
-                                            getString(R.string.game_cards_combine_result),
-                                            new CardInfoParcelable(response.card),
-                                            new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    refresh(true);
-                                                }
-                                            });
+                                    try {
+                                        DialogUtils.showCardInfoDialog(getChildFragmentManager(),
+                                                getString(R.string.game_cards_combine_result),
+                                                new CardInfoParcelable(response.card),
+                                                new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        refresh(true);
+                                                    }
+                                                });
+                                    } catch (JSONException e) {
+                                        DialogUtils.showCommonErrorDialog(getChildFragmentManager(), getActivity());
+                                    }
                                 }
 
                                 @Override

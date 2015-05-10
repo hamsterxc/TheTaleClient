@@ -6,12 +6,13 @@ import android.os.Parcelable;
 import com.lonebytesoft.thetaleclient.sdk.dictionary.Gender;
 import com.lonebytesoft.thetaleclient.sdk.dictionary.Profession;
 import com.lonebytesoft.thetaleclient.sdk.dictionary.Race;
-import com.lonebytesoft.thetaleclient.sdk.lib.org.json.JSONArray;
-import com.lonebytesoft.thetaleclient.sdk.lib.org.json.JSONException;
-import com.lonebytesoft.thetaleclient.sdk.lib.org.json.JSONObject;
 import com.lonebytesoft.thetaleclient.sdk.model.CouncilMemberConnectionInfo;
 import com.lonebytesoft.thetaleclient.sdk.model.CouncilMemberInfo;
 import com.lonebytesoft.thetaleclient.sdk.util.ObjectUtils;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,7 +85,7 @@ public class CouncilMemberInfoParcelable extends CouncilMemberInfo implements Pa
         }
     }
 
-    public CouncilMemberInfoParcelable(final CouncilMemberInfo councilMemberInfo) {
+    public CouncilMemberInfoParcelable(final CouncilMemberInfo councilMemberInfo) throws JSONException {
         super(getJson(
                 councilMemberInfo.id, councilMemberInfo.name, councilMemberInfo.gender, councilMemberInfo.race,
                 councilMemberInfo.profession, councilMemberInfo.newThreshold, councilMemberInfo.buildingId,
@@ -93,7 +94,7 @@ public class CouncilMemberInfoParcelable extends CouncilMemberInfo implements Pa
                 councilMemberInfo.friends, councilMemberInfo.enemies, councilMemberInfo.connections));
     }
 
-    public CouncilMemberInfoParcelable(final Parcel in) {
+    public CouncilMemberInfoParcelable(final Parcel in) throws JSONException {
         super(getJson(
                 in.readInt(), in.readString(), Gender.values()[in.readInt()], Race.values()[in.readInt()],
                 Profession.values()[in.readInt()], in.readInt(), readBuildingIdFromParcel(in),
@@ -165,9 +166,12 @@ public class CouncilMemberInfoParcelable extends CouncilMemberInfo implements Pa
         final List<CouncilMemberConnectionInfo> result = new ArrayList<>(count);
         for(int i = 0; i < count; i++) {
             final JSONObject connectionJson = new JSONObject();
-            connectionJson.put("social_link", in.readInt());
-            connectionJson.put("council_member", in.readInt());
-            result.add(ObjectUtils.getModelFromJson(CouncilMemberConnectionInfo.class, connectionJson));
+            try {
+                connectionJson.put("social_link", in.readInt());
+                connectionJson.put("council_member", in.readInt());
+                result.add(ObjectUtils.getModelFromJson(CouncilMemberConnectionInfo.class, connectionJson));
+            } catch (JSONException ignored) {
+            }
         }
         return result;
     }
@@ -175,7 +179,11 @@ public class CouncilMemberInfoParcelable extends CouncilMemberInfo implements Pa
     public static final Creator<CouncilMemberInfoParcelable> CREATOR = new Creator<CouncilMemberInfoParcelable>() {
         @Override
         public CouncilMemberInfoParcelable createFromParcel(Parcel source) {
-            return new CouncilMemberInfoParcelable(source);
+            try {
+                return new CouncilMemberInfoParcelable(source);
+            } catch (JSONException e) {
+                return null;
+            }
         }
 
         @Override

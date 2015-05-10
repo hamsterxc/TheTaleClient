@@ -4,10 +4,11 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.lonebytesoft.thetaleclient.sdk.dictionary.CompanionSpecies;
-import com.lonebytesoft.thetaleclient.sdk.lib.org.json.JSONException;
-import com.lonebytesoft.thetaleclient.sdk.lib.org.json.JSONObject;
 import com.lonebytesoft.thetaleclient.sdk.model.CompanionInfo;
 import com.lonebytesoft.thetaleclient.sdk.util.ObjectUtils;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * @author Hamster
@@ -34,14 +35,14 @@ public class CompanionInfoParcelable extends CompanionInfo implements Parcelable
         }
     }
 
-    private CompanionInfoParcelable(final Parcel in) {
+    private CompanionInfoParcelable(final Parcel in) throws JSONException {
         super(getJson(
                 ObjectUtils.getEnumForCode(CompanionSpecies.class, in.readInt()),
                 in.readString(), in.readInt(), in.readInt(),
                 in.readInt(), in.readInt(), in.readInt(), in.readInt()));
     }
 
-    public CompanionInfoParcelable(final CompanionInfo companionInfo) {
+    public CompanionInfoParcelable(final CompanionInfo companionInfo) throws JSONException {
         super(getJson(
                 companionInfo.species, companionInfo.name, companionInfo.healthCurrent, companionInfo.healthMax,
                 companionInfo.coherence, companionInfo.coherenceReal,
@@ -67,7 +68,11 @@ public class CompanionInfoParcelable extends CompanionInfo implements Parcelable
     public static final Creator<CompanionInfoParcelable> CREATOR = new Creator<CompanionInfoParcelable>() {
         @Override
         public CompanionInfoParcelable createFromParcel(Parcel source) {
-            return new CompanionInfoParcelable(source);
+            try {
+                return new CompanionInfoParcelable(source);
+            } catch (JSONException e) {
+                return null;
+            }
         }
 
         @Override

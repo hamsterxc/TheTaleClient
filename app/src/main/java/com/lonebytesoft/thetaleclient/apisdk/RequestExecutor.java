@@ -1,8 +1,6 @@
 package com.lonebytesoft.thetaleclient.apisdk;
 
 import android.content.Context;
-import android.os.Handler;
-import android.os.Looper;
 
 import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.sdk.AbstractApiResponse;
@@ -12,8 +10,9 @@ import com.lonebytesoft.thetaleclient.sdk.ApiResponseStatus;
 import com.lonebytesoft.thetaleclient.sdk.exception.ApiException;
 import com.lonebytesoft.thetaleclient.sdk.exception.HttpException;
 import com.lonebytesoft.thetaleclient.sdk.exception.UpdateException;
-import com.lonebytesoft.thetaleclient.sdk.lib.org.json.JSONException;
 import com.lonebytesoft.thetaleclient.util.RequestUtils;
+
+import org.json.JSONException;
 
 /**
  * @author Hamster
@@ -40,7 +39,7 @@ public class RequestExecutor {
                     errorStringResId = R.string.api_error_update;
                 } catch (HttpException e) {
                     errorStringResId = R.string.api_error_network;
-                } catch (ApiException e) {
+                } catch (ApiException|JSONException e) {
                     errorStringResId = R.string.api_error;
                 }
 

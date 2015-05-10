@@ -5,10 +5,11 @@ import android.os.Parcelable;
 
 import com.lonebytesoft.thetaleclient.sdk.dictionary.CardRarity;
 import com.lonebytesoft.thetaleclient.sdk.dictionary.CardType;
-import com.lonebytesoft.thetaleclient.sdk.lib.org.json.JSONException;
-import com.lonebytesoft.thetaleclient.sdk.lib.org.json.JSONObject;
 import com.lonebytesoft.thetaleclient.sdk.model.CardInfo;
 import com.lonebytesoft.thetaleclient.sdk.util.ObjectUtils;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * @author Hamster
@@ -31,7 +32,7 @@ public class CardInfoParcelable extends CardInfo implements Parcelable {
         }
     }
 
-    private CardInfoParcelable(final Parcel in) {
+    private CardInfoParcelable(final Parcel in) throws JSONException {
         super(getJson(
                 in.readInt(),
                 ObjectUtils.getEnumForCode(CardType.class, in.readInt()),
@@ -39,7 +40,7 @@ public class CardInfoParcelable extends CardInfo implements Parcelable {
                 in.readString(), in.readInt() != 0));
     }
 
-    public CardInfoParcelable(final CardInfo cardInfo) {
+    public CardInfoParcelable(final CardInfo cardInfo) throws JSONException {
         super(getJson(cardInfo.id, cardInfo.type, cardInfo.rarity, cardInfo.name, cardInfo.isTradable));
     }
 
@@ -60,7 +61,11 @@ public class CardInfoParcelable extends CardInfo implements Parcelable {
     public static final Parcelable.Creator<CardInfoParcelable> CREATOR = new Parcelable.Creator<CardInfoParcelable>() {
         @Override
         public CardInfoParcelable createFromParcel(Parcel source) {
-            return new CardInfoParcelable(source);
+            try {
+                return new CardInfoParcelable(source);
+            } catch (JSONException e) {
+                return null;
+            }
         }
 
         @Override

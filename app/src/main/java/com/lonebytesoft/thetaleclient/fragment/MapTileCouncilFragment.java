@@ -19,6 +19,8 @@ import com.lonebytesoft.thetaleclient.sdk.model.CouncilMemberInfo;
 import com.lonebytesoft.thetaleclient.sdkandroid.model.CouncilMemberInfoParcelable;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
 
+import org.json.JSONException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,7 +38,10 @@ public class MapTileCouncilFragment extends TabbedDialogTabFragment {
         final Bundle args = new Bundle();
         final ArrayList<CouncilMemberInfoParcelable> councilParcelable = new ArrayList<>(council.size());
         for(final CouncilMemberInfo councilMemberInfo : council) {
-            councilParcelable.add(new CouncilMemberInfoParcelable(councilMemberInfo));
+            try {
+                councilParcelable.add(new CouncilMemberInfoParcelable(councilMemberInfo));
+            } catch (JSONException ignored) {
+            }
         }
         args.putParcelableArrayList(PARAM_COUNCIL, councilParcelable);
         dialog.setArguments(args);

@@ -50,6 +50,8 @@ import com.lonebytesoft.thetaleclient.util.WebsiteUtils;
 import com.lonebytesoft.thetaleclient.util.onscreen.OnscreenPart;
 import com.lonebytesoft.thetaleclient.widget.RequestActionView;
 
+import org.json.JSONException;
+
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -368,14 +370,19 @@ public class GameInfoFragment extends WrapperFragment {
                         companionName.setTextColor(getResources().getColor(R.color.common_text));
                     } else {
                         companionName.setTextColor(getResources().getColor(R.color.common_link));
-                        final CompanionInfoParcelable companion = new CompanionInfoParcelable(companionInfo);
-                        companionName.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                DialogUtils.showTabbedDialog(getChildFragmentManager(),
-                                        companionInfo.name, new CompanionTabsAdapter(companion, companionInfo.coherence));
-                            }
-                        });
+                        try {
+                            final CompanionInfoParcelable companion = new CompanionInfoParcelable(companionInfo);
+                            companionName.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    DialogUtils.showTabbedDialog(
+                                            getChildFragmentManager(),
+                                            companionInfo.name,
+                                            new CompanionTabsAdapter(companion, companionInfo.coherence));
+                                }
+                            });
+                        } catch (JSONException ignored) {
+                        }
                     }
                 }
 

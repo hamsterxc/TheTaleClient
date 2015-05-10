@@ -2,8 +2,9 @@ package com.lonebytesoft.thetaleclient.apisdk;
 
 import com.lonebytesoft.thetaleclient.sdk.AbstractApiResponse;
 import com.lonebytesoft.thetaleclient.sdk.ApiResponseStatus;
-import com.lonebytesoft.thetaleclient.sdk.lib.org.json.JSONException;
-import com.lonebytesoft.thetaleclient.sdk.lib.org.json.JSONObject;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * @author Hamster

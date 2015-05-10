@@ -617,7 +617,7 @@ public class PreferencesManager {
     public static GameInfoResponse getGameInfoResponseCache() {
         try {
             return new GameInfoResponse(sharedPreferences.getString(KEY_GAME_INFO_RESPONSE_CACHE, ""));
-        } catch (com.lonebytesoft.thetaleclient.sdk.lib.org.json.JSONException e) {
+        } catch (JSONException e) {
             return null;
         }
     }

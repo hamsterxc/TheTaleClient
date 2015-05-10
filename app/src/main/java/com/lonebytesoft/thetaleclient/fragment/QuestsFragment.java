@@ -41,6 +41,8 @@ import com.lonebytesoft.thetaleclient.util.RequestUtils;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
 import com.lonebytesoft.thetaleclient.util.onscreen.OnscreenPart;
 
+import org.json.JSONException;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -142,13 +144,16 @@ public class QuestsFragment extends WrapperFragment {
                             }
 
                             actorTextView.setText(actorText);
-                            final QuestActorInfoParcelable questActorInfo = new QuestActorInfoParcelable(actor);
-                            actorTextView.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    DialogUtils.showQuestActorDialog(getFragmentManager(), questActorInfo);
-                                }
-                            });
+                            try {
+                                final QuestActorInfoParcelable questActorInfo = new QuestActorInfoParcelable(actor);
+                                actorTextView.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        DialogUtils.showQuestActorDialog(getFragmentManager(), questActorInfo);
+                                    }
+                                });
+                            } catch (JSONException ignored) {
+                            }
 
                             actorsContainer.addView(actorView);
                         }

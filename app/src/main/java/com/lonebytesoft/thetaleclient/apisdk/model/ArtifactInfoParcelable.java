@@ -6,11 +6,12 @@ import android.os.Parcelable;
 import com.lonebytesoft.thetaleclient.sdk.dictionary.ArtifactEffect;
 import com.lonebytesoft.thetaleclient.sdk.dictionary.ArtifactRarity;
 import com.lonebytesoft.thetaleclient.sdk.dictionary.ArtifactType;
-import com.lonebytesoft.thetaleclient.sdk.lib.org.json.JSONArray;
-import com.lonebytesoft.thetaleclient.sdk.lib.org.json.JSONException;
-import com.lonebytesoft.thetaleclient.sdk.lib.org.json.JSONObject;
 import com.lonebytesoft.thetaleclient.sdk.model.ArtifactInfo;
 import com.lonebytesoft.thetaleclient.sdk.util.ObjectUtils;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * @author Hamster
@@ -51,7 +52,7 @@ public class ArtifactInfoParcelable extends ArtifactInfo implements Parcelable {
         }
     }
 
-    private ArtifactInfoParcelable(final Parcel in) {
+    private ArtifactInfoParcelable(final Parcel in) throws JSONException {
         super(getJson(
                 in.readInt(), in.readString(), in.readInt(), in.readInt(),
                 ObjectUtils.getEnumForCode(ArtifactType.class, in.readInt()),
@@ -62,7 +63,7 @@ public class ArtifactInfoParcelable extends ArtifactInfo implements Parcelable {
                 in.readDouble(), in.readInt() != 0));
     }
 
-    public ArtifactInfoParcelable(final ArtifactInfo artifactInfo) {
+    public ArtifactInfoParcelable(final ArtifactInfo artifactInfo) throws JSONException {
         super(getJson(
                 artifactInfo.id, artifactInfo.name, artifactInfo.powerPhysical, artifactInfo.powerMagical,
                 artifactInfo.type, artifactInfo.integrityCurrent, artifactInfo.integrityTotal,
@@ -94,7 +95,11 @@ public class ArtifactInfoParcelable extends ArtifactInfo implements Parcelable {
     public static final Creator<ArtifactInfoParcelable> CREATOR = new Creator<ArtifactInfoParcelable>() {
         @Override
         public ArtifactInfoParcelable createFromParcel(Parcel source) {
-            return new ArtifactInfoParcelable(source);
+            try {
+                return new ArtifactInfoParcelable(source);
+            } catch (JSONException e) {
+                return null;
+            }
         }
 
         @Override

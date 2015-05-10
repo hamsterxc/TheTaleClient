@@ -42,6 +42,8 @@ import com.lonebytesoft.thetaleclient.util.RequestUtils;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
 import com.lonebytesoft.thetaleclient.widget.RequestActionView;
 
+import org.json.JSONException;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -112,13 +114,16 @@ public class EquipmentFragment extends WrapperFragment {
                             equipmentEffectsList.add(artifactInfo.effectSpecial);
                         }
 
-                        final ArtifactInfoParcelable artifactInfoParcelable = new ArtifactInfoParcelable(artifactInfo);
-                        equipmentEntryView.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                DialogUtils.showArtifactDialog(getFragmentManager(), artifactInfoParcelable);
-                            }
-                        });
+                        try {
+                            final ArtifactInfoParcelable artifactInfoParcelable = new ArtifactInfoParcelable(artifactInfo);
+                            equipmentEntryView.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    DialogUtils.showArtifactDialog(getFragmentManager(), artifactInfoParcelable);
+                                }
+                            });
+                        } catch (JSONException ignored) {
+                        }
                     }
 
                     equipmentContainer.addView(equipmentEntryView);
@@ -238,13 +243,16 @@ public class EquipmentFragment extends WrapperFragment {
                     final ArtifactInfo artifactInfo = bagEntry.getKey();
                     ((TextView) bagEntryView.findViewById(R.id.bag_item_name)).setText(getArtifactString(artifactInfo, false, bagEntry.getValue())[0]);
 
-                    final ArtifactInfoParcelable artifactInfoParcelable = new ArtifactInfoParcelable(artifactInfo);
-                    bagEntryView.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            DialogUtils.showArtifactDialog(getFragmentManager(), artifactInfoParcelable);
-                        }
-                    });
+                    try {
+                        final ArtifactInfoParcelable artifactInfoParcelable = new ArtifactInfoParcelable(artifactInfo);
+                        bagEntryView.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                DialogUtils.showArtifactDialog(getFragmentManager(), artifactInfoParcelable);
+                            }
+                        });
+                    } catch (JSONException ignored) {
+                    }
 
                     bagContainer.addView(bagEntryView);
                 }

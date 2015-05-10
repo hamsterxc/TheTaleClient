@@ -7,13 +7,14 @@ import com.lonebytesoft.thetaleclient.sdk.dictionary.Gender;
 import com.lonebytesoft.thetaleclient.sdk.dictionary.Profession;
 import com.lonebytesoft.thetaleclient.sdk.dictionary.QuestActorType;
 import com.lonebytesoft.thetaleclient.sdk.dictionary.Race;
-import com.lonebytesoft.thetaleclient.sdk.lib.org.json.JSONException;
-import com.lonebytesoft.thetaleclient.sdk.lib.org.json.JSONObject;
 import com.lonebytesoft.thetaleclient.sdk.model.QuestActorDetailsPerson;
 import com.lonebytesoft.thetaleclient.sdk.model.QuestActorDetailsPlace;
 import com.lonebytesoft.thetaleclient.sdk.model.QuestActorDetailsSpending;
 import com.lonebytesoft.thetaleclient.sdk.model.QuestActorInfo;
 import com.lonebytesoft.thetaleclient.sdk.util.ObjectUtils;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * @author Hamster
@@ -126,11 +127,12 @@ public class QuestActorInfoParcelable extends QuestActorInfo implements Parcelab
         }
     }
 
-    private QuestActorInfoParcelable(final Parcel in) {
+    private QuestActorInfoParcelable(final Parcel in) throws JSONException {
         super(getJson(in));
     }
 
-    public QuestActorInfoParcelable(final com.lonebytesoft.thetaleclient.sdk.model.QuestActorInfo questActorInfo) {
+    public QuestActorInfoParcelable(final com.lonebytesoft.thetaleclient.sdk.model.QuestActorInfo questActorInfo)
+            throws JSONException {
         super(getJson(questActorInfo));
     }
 
@@ -172,7 +174,11 @@ public class QuestActorInfoParcelable extends QuestActorInfo implements Parcelab
     public static final Creator<QuestActorInfoParcelable> CREATOR = new Creator<QuestActorInfoParcelable>() {
         @Override
         public QuestActorInfoParcelable createFromParcel(Parcel source) {
-            return new QuestActorInfoParcelable(source);
+            try {
+                return new QuestActorInfoParcelable(source);
+            } catch (JSONException e) {
+                return null;
+            }
         }
 
         @Override
