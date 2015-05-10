@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 
 import com.lonebytesoft.thetaleclient.api.cache.RequestCacheManager;
+import com.lonebytesoft.thetaleclient.sdk.util.Logger;
 import com.lonebytesoft.thetaleclient.util.NotificationManager;
 import com.lonebytesoft.thetaleclient.util.map.MapUtils;
 import com.lonebytesoft.thetaleclient.util.onscreen.OnscreenStateWatcher;
@@ -25,6 +26,13 @@ public class TheTaleClientApplication extends Application {
         context = getApplicationContext();
         onscreenStateWatcher = new OnscreenStateWatcher();
         notificationManager = new NotificationManager(context);
+
+        if(BuildConfig.DEBUG) {
+            Logger.setEnabled(true);
+            Logger.setTag("TTCSDK");
+        } else {
+            Logger.setEnabled(false);
+        }
     }
 
     @Override

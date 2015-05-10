@@ -2,6 +2,7 @@ package com.lonebytesoft.thetaleclient.sdk;
 
 import com.lonebytesoft.thetaleclient.sdk.cache.Cache;
 import com.lonebytesoft.thetaleclient.sdk.exception.ApiException;
+import com.lonebytesoft.thetaleclient.sdk.util.Logger;
 import com.lonebytesoft.thetaleclient.sdk.util.RequestUtils;
 
 import org.apache.http.client.methods.HttpUriRequest;
@@ -22,6 +23,9 @@ public abstract class AbstractApiGetRequest<T extends AbstractResponse> extends 
         if(result == null) {
             result = super.executeRequest();
             Cache.complete(url, result, System.currentTimeMillis());
+        } else {
+            Logger.log(String.format("%s | cache hit | %d bytes | GET %s",
+                    getClass().getSimpleName(), result.length(), url));
         }
         return result;
     }

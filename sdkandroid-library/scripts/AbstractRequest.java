@@ -3,6 +3,7 @@ package com.lonebytesoft.thetaleclient.sdk;
 import com.lonebytesoft.thetaleclient.sdk.exception.ApiException;
 import com.lonebytesoft.thetaleclient.sdk.exception.HttpException;
 import com.lonebytesoft.thetaleclient.sdk.exception.UpdateException;
+import com.lonebytesoft.thetaleclient.sdk.util.Logger;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -84,7 +85,9 @@ public abstract class AbstractRequest<T> {
         final HttpUriRequest httpUriRequest = getHttpUriRequest(csrfToken);
 
         try {
+			long time = System.currentTimeMillis();
             final HttpResponse httpResponse = httpClient.execute(httpUriRequest);
+			time = System.currentTimeMillis() - time;
 
             for(final Cookie cookie : httpClient.getCookieStore().getCookies()) {
                 final HttpCookie httpCookie = new HttpCookie(cookie.getName(), cookie.getValue());
@@ -96,9 +99,13 @@ public abstract class AbstractRequest<T> {
             }
 
             final int httpStatusCode = httpResponse.getStatusLine().getStatusCode();
+            final String response = EntityUtils.toString(httpResponse.getEntity());
+            Logger.log(String.format("%s | %d ms | %d bytes | %d %s %s",
+                    getClass().getSimpleName(), time, response == null ? 0 : response.length(),
+                    httpStatusCode, httpUriRequest.getMethod(), httpUriRequest.getURI()));
             switch(httpStatusCode) {
                 case HttpStatus.SC_OK:
-                    return EntityUtils.toString(httpResponse.getEntity());
+                    return response;
 
                 case HttpStatus.SC_SERVICE_UNAVAILABLE:
                     throw new UpdateException();
