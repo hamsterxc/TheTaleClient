@@ -4,6 +4,8 @@ import com.lonebytesoft.thetaleclient.sdk.exception.ApiException;
 import com.lonebytesoft.thetaleclient.sdk.request.PostponedTaskRequest;
 import com.lonebytesoft.thetaleclient.sdk.response.CommonResponse;
 
+import org.json.JSONException;
+
 /**
  * @author Hamster
  * @since 19.03.2015
@@ -14,16 +16,21 @@ public abstract class AbstractAsyncRequest<T extends AbstractApiResponse> extend
 
     @Override
     protected String executeRequest() throws ApiException {
-        String responseData = super.executeRequest();
-        CommonResponse response = new CommonResponse(responseData);
-        while(response.status == ApiResponseStatus.PROCESSING) {
-            try {
-                Thread.sleep(REQUEST_PAUSE_MILLIS);
-            } catch (InterruptedException ignored) {
-            }
+        String responseData;
+        try {
+            responseData = super.executeRequest();
+            CommonResponse response = new CommonResponse(responseData);
+            while(response.status == ApiResponseStatus.PROCESSING) {
+                try {
+                    Thread.sleep(REQUEST_PAUSE_MILLIS);
+                } catch (InterruptedException ignored) {
+                }
 
-            responseData = new PostponedTaskRequest(response.statusUrl).execute();
-            response = new CommonResponse(responseData);
+                responseData = new PostponedTaskRequest(response.statusUrl).execute();
+                response = new CommonResponse(responseData);
+            }
+        } catch (JSONException e) {
+            throw new ApiException(e);
         }
 
         return responseData;

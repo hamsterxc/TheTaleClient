@@ -80,7 +80,8 @@ public class GameInfoRequest extends AbstractApiGetRequest<GameInfoResponse> {
         return new GameInfoResponse(response);
     }
 
-    private void mergeHeroInfo(final JSONObject data, final JSONObject dataBase, final String accountKey) {
+    private void mergeHeroInfo(final JSONObject data, final JSONObject dataBase,
+                               final String accountKey) throws JSONException {
         if(data.isNull(accountKey) || dataBase.isNull(accountKey)) {
             return;
         }

@@ -16,6 +16,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.client.LaxRedirectStrategy;
 import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONException;
 
 import java.io.IOException;
 import java.net.CookieHandler;
@@ -126,6 +127,6 @@ public abstract class AbstractRequest<T> {
      */
     protected abstract HttpUriRequest getHttpUriRequest(final String csrfToken);
 
-    public abstract T execute() throws ApiException;
+    public abstract T execute() throws ApiException, JSONException;
 
 }

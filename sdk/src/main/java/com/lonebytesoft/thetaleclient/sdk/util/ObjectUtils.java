@@ -36,7 +36,7 @@ public class ObjectUtils {
                     cache.put((T) fieldCode.get(enumEntry), enumEntry);
                 }
                 codeToEnumCache.put(clazz, cache);
-            } catch(IllegalAccessException|NoSuchFieldException e) {
+            } catch(ReflectiveOperationException e) {
                 return null;
             }
         }
@@ -57,7 +57,7 @@ public class ObjectUtils {
                     cache.put((T) fieldName.get(enumEntry), enumEntry);
                 }
                 nameToEnumCache.put(clazz, cache);
-            } catch(IllegalAccessException|NoSuchFieldException e) {
+            } catch(ReflectiveOperationException e) {
                 return null;
             }
         }
@@ -84,9 +84,12 @@ public class ObjectUtils {
         final int count = json.length();
         final List<T> result = new ArrayList<>(count);
         for(int i = 0; i < count; i++) {
-            final T item = getModelFromJson(clazz, json.getJSONObject(i));
-            if(item != null) {
-                result.add(item);
+            try {
+                final T item = getModelFromJson(clazz, json.getJSONObject(i));
+                if (item != null) {
+                    result.add(item);
+                }
+            } catch (JSONException ignored) {
             }
         }
 
@@ -102,9 +105,12 @@ public class ObjectUtils {
         final int count = json.length();
         final List<T> result = new ArrayList<>(count);
         for(int i = 0; i < count; i++) {
-            final T item = getModelFromJson(clazz, getObjectFromArray(json.getJSONArray(i), names));
-            if(item != null) {
-                result.add(item);
+            try {
+                final T item = getModelFromJson(clazz, getObjectFromArray(json.getJSONArray(i), names));
+                if(item != null) {
+                    result.add(item);
+                }
+            } catch (JSONException ignored) {
             }
         }
 
