@@ -314,6 +314,7 @@ public class MapFragment extends WrapperFragment {
         GameInfoRequestBuilder.executeWatching(getActivity(), RequestUtils.wrapCallback(new ApiCallback<GameInfoResponse>() {
             @Override
             public void onSuccess(final GameInfoResponse gameInfoResponse) {
+                UiUtils.updateGlobalInfo(MapFragment.this, gameInfoResponse);
                 MapRequestBuilder.execute(getActivity(), RequestUtils.wrapCallback(new ApiCallback<MapResponse>() {
                     @Override
                     public void onSuccess(final MapResponse mapResponse) {
@@ -362,6 +363,7 @@ public class MapFragment extends WrapperFragment {
 
             @Override
             public void onError(AbstractApiResponse response) {
+                UiUtils.updateGlobalInfo(MapFragment.this, null);
                 setError(getString(R.string.map_error));
             }
         }, this));

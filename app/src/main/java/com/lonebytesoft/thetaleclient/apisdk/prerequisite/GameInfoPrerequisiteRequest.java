@@ -27,7 +27,7 @@ public class GameInfoPrerequisiteRequest implements PrerequisiteRequest<GameInfo
         return new BaseRequestExecutionInterceptor<GameInfoRequest, GameInfoResponse>() {
             @Override
             public boolean beforeExecute() {
-                return (PreferencesManager.getAccountId() != 0) && (!TextUtils.isEmpty(PreferencesManager.getMapVersion()));
+                return (PreferencesManager.getAccountId() == 0) || TextUtils.isEmpty(PreferencesManager.getMapVersion());
             }
 
             @Override

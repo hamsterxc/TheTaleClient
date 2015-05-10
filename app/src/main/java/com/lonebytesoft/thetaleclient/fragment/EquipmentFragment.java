@@ -87,6 +87,8 @@ public class EquipmentFragment extends WrapperFragment {
         GameInfoRequestBuilder.executeWatching(getActivity(), RequestUtils.wrapCallback(new ApiCallback<GameInfoResponse>() {
             @Override
             public void onSuccess(final GameInfoResponse response) {
+                UiUtils.updateGlobalInfo(EquipmentFragment.this, response);
+
                 equipmentContainer.removeAllViews();
                 final List<ArtifactEffect> equipmentEffectsList = new ArrayList<>();
                 for(final EquipmentType equipmentType : EquipmentType.values()) {
@@ -262,6 +264,7 @@ public class EquipmentFragment extends WrapperFragment {
 
             @Override
             public void onError(AbstractApiResponse response) {
+                UiUtils.updateGlobalInfo(EquipmentFragment.this, null);
                 setError(response.errorMessage);
             }
         }, this));

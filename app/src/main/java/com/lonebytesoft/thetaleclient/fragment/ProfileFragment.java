@@ -96,6 +96,7 @@ public class ProfileFragment extends WrapperFragment {
                 RequestUtils.wrapCallback(new ApiCallback<AccountInfoResponse>() {
                     @Override
                     public void onSuccess(final AccountInfoResponse response) {
+                        UiUtils.updateGlobalInfo(ProfileFragment.this, null);
                         if (isGlobal) {
                             tableRatings.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                                 @Override
@@ -129,6 +130,7 @@ public class ProfileFragment extends WrapperFragment {
 
                     @Override
                     public void onError(AbstractApiResponse response) {
+                        UiUtils.updateGlobalInfo(ProfileFragment.this, null);
                         setError(response.errorMessage);
                     }
                 }, this));

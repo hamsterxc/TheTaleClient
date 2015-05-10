@@ -126,6 +126,8 @@ public class CardsFragment extends WrapperFragment {
         GameInfoRequestBuilder.executeWatching(getActivity(), RequestUtils.wrapCallback(new ApiCallback<GameInfoResponse>() {
             @Override
             public void onSuccess(GameInfoResponse response) {
+                UiUtils.updateGlobalInfo(CardsFragment.this, response);
+
                 if (!response.account.isOwnInfo) {
                     setError(getString(R.string.game_cards_unavailable_foreign));
                     return;
@@ -246,6 +248,7 @@ public class CardsFragment extends WrapperFragment {
 
             @Override
             public void onError(AbstractApiResponse response) {
+                UiUtils.updateGlobalInfo(CardsFragment.this, null);
                 setError(response.errorMessage);
             }
         }, this));

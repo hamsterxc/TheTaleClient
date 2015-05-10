@@ -94,11 +94,6 @@ public class WrapperFragment extends Fragment implements Refreshable, OnscreenSt
         if(isGlobal) {
             setMode(DataViewMode.LOADING);
         }
-
-        final Activity activity = getActivity();
-        if(activity instanceof MainActivity) {
-            ((MainActivity) activity).onDataRefresh();
-        }
     }
 
     @Override

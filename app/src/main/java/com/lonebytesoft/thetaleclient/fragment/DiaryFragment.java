@@ -12,7 +12,6 @@ import com.lonebytesoft.thetaleclient.apisdk.request.GameInfoRequestBuilder;
 import com.lonebytesoft.thetaleclient.sdk.AbstractApiResponse;
 import com.lonebytesoft.thetaleclient.sdk.model.DiaryEntry;
 import com.lonebytesoft.thetaleclient.sdk.response.GameInfoResponse;
-import com.lonebytesoft.thetaleclient.util.PreferencesManager;
 import com.lonebytesoft.thetaleclient.util.RequestUtils;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
 
@@ -45,6 +44,8 @@ public class DiaryFragment extends WrapperFragment {
         GameInfoRequestBuilder.executeWatching(getActivity(), RequestUtils.wrapCallback(new ApiCallback<GameInfoResponse>() {
             @Override
             public void onSuccess(GameInfoResponse response) {
+                UiUtils.updateGlobalInfo(DiaryFragment.this, response);
+
                 diaryContainer.removeAllViews();
                 for(int i = response.account.hero.diary.size() - 1; i >= 0; i--) {
                     final DiaryEntry diaryEntry = response.account.hero.diary.get(i);
@@ -65,6 +66,7 @@ public class DiaryFragment extends WrapperFragment {
 
             @Override
             public void onError(AbstractApiResponse response) {
+                UiUtils.updateGlobalInfo(DiaryFragment.this, null);
                 setError(response.errorMessage);
             }
         }, this));

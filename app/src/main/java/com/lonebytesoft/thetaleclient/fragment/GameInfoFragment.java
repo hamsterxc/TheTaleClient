@@ -190,6 +190,7 @@ public class GameInfoFragment extends WrapperFragment {
             }
         });
 
+        handler.removeCallbacks(refreshRunnable);
         handler.postDelayed(refreshRunnable, REFRESH_TIMEOUT_MILLIS);
     }
 
@@ -213,6 +214,8 @@ public class GameInfoFragment extends WrapperFragment {
         GameInfoRequestBuilder.executeWatching(getActivity(), RequestUtils.wrapCallback(new ApiCallback<GameInfoResponse>() {
             @Override
             public void onSuccess(final GameInfoResponse response) {
+                UiUtils.updateGlobalInfo(GameInfoFragment.this, response);
+
                 if (lastKnownHealth == 0) {
                     lastKnownHealth = (int) Math.round((450.0 + 50.0 * response.account.hero.basicInfo.level) / 4.0);
                 }
@@ -524,6 +527,7 @@ public class GameInfoFragment extends WrapperFragment {
 
             @Override
             public void onError(AbstractApiResponse response) {
+                UiUtils.updateGlobalInfo(GameInfoFragment.this, null);
                 setError(response.errorMessage);
             }
         }, this));

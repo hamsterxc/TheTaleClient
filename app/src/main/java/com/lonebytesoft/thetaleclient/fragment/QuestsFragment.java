@@ -81,6 +81,8 @@ public class QuestsFragment extends WrapperFragment {
         GameInfoRequestBuilder.executeWatching(getActivity(), RequestUtils.wrapCallback(new ApiCallback<GameInfoResponse>() {
             @Override
             public void onSuccess(GameInfoResponse response) {
+                UiUtils.updateGlobalInfo(QuestsFragment.this, response);
+
                 container.removeAllViews();
                 actorNames.clear();
                 final int questLinesCount = response.account.hero.quests.size();
@@ -232,6 +234,7 @@ public class QuestsFragment extends WrapperFragment {
 
             @Override
             public void onError(AbstractApiResponse response) {
+                UiUtils.updateGlobalInfo(QuestsFragment.this, null);
                 setError(response.errorMessage);
             }
         }, this));

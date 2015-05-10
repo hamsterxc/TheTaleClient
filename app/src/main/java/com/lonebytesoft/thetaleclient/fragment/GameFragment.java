@@ -202,7 +202,11 @@ public class GameFragment extends Fragment implements Refreshable, OnscreenState
 
     @Override
     public void onOffscreen() {
-        UiUtils.callOnscreenStateChange(getPageFragment(currentPageIndex), false);
+        final Fragment fragment = getPageFragment(currentPageIndex);
+        if(fragment != null) {
+            fragment.onPause();
+            UiUtils.callOnscreenStateChange(fragment, false);
+        }
     }
 
     @Override

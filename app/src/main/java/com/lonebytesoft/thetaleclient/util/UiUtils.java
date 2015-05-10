@@ -237,4 +237,12 @@ public class UiUtils {
         }
     }
 
+    public static void updateGlobalInfo(final Fragment fragment,
+                                        final com.lonebytesoft.thetaleclient.sdk.response.GameInfoResponse gameInfoResponse) {
+        final MainActivity mainActivity = getMainActivity(fragment);
+        if(mainActivity != null) {
+            mainActivity.updateGlobalInfo(gameInfoResponse == null ? null : gameInfoResponse.turnInfo);
+        }
+    }
+
 }

@@ -33,13 +33,15 @@ public class InfoPrerequisiteRequest implements PrerequisiteRequest<InfoRequest,
             @Override
             public boolean beforeExecute() {
                 boolean shouldExecute =
-                        (PreferencesManager.getDynamicContentUrl() != null)
-                        && (PreferencesManager.getStaticContentUrl() != null)
-                        && (PreferencesManager.getTurnDelta() > 0)
-                        && (PreferencesManager.getAccountId() != 0)
-                        && (!TextUtils.isEmpty(PreferencesManager.getAccountName()));
-                for(final Action action : Action.values()) {
-                    shouldExecute &= PreferencesManager.getAbilityCost(action) >= 0;
+                        (PreferencesManager.getDynamicContentUrl() == null)
+                        || (PreferencesManager.getStaticContentUrl() == null)
+                        || (PreferencesManager.getTurnDelta() <= 0)
+                        || (PreferencesManager.getAccountId() == 0)
+                        || TextUtils.isEmpty(PreferencesManager.getAccountName());
+                if(!shouldExecute) {
+                    for(final Action action : Action.values()) {
+                        shouldExecute |= PreferencesManager.getAbilityCost(action) < 0;
+                    }
                 }
                 return shouldExecute;
             }

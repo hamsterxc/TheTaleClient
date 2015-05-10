@@ -196,6 +196,8 @@ public class ChatFragment extends WrapperFragment {
     public void refresh(final boolean isGlobal) {
         super.refresh(isGlobal);
 
+        UiUtils.updateGlobalInfo(ChatFragment.this, null);
+
         if(isGlobal) {
             sendContainer.setVisibility(View.GONE);
             mainHandler.removeCallbacks(refreshRunnable);

@@ -19,6 +19,7 @@ import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.TheTaleClientApplication;
 import com.lonebytesoft.thetaleclient.apisdk.ApiCallback;
 import com.lonebytesoft.thetaleclient.apisdk.RequestExecutor;
+import com.lonebytesoft.thetaleclient.apisdk.interceptor.GameInfoRequestCacheInterceptor;
 import com.lonebytesoft.thetaleclient.apisdk.prerequisite.InfoPrerequisiteRequest;
 import com.lonebytesoft.thetaleclient.apisdk.request.GameInfoRequestBuilder;
 import com.lonebytesoft.thetaleclient.apisdk.request.LogoutRequestBuilder;
@@ -28,6 +29,7 @@ import com.lonebytesoft.thetaleclient.fragment.Refreshable;
 import com.lonebytesoft.thetaleclient.fragment.WrapperFragment;
 import com.lonebytesoft.thetaleclient.fragment.dialog.ChoiceDialog;
 import com.lonebytesoft.thetaleclient.sdk.AbstractApiResponse;
+import com.lonebytesoft.thetaleclient.sdk.model.TurnInfo;
 import com.lonebytesoft.thetaleclient.sdk.response.CommonResponse;
 import com.lonebytesoft.thetaleclient.sdk.response.GameInfoResponse;
 import com.lonebytesoft.thetaleclient.sdk.response.InfoResponse;
@@ -347,32 +349,47 @@ public class MainActivity extends ActionBarActivity
         }
     }
 
-    public void onDataRefresh() {
+    private void updateGlobalTime(final TurnInfo turnInfo) {
+        if(turnInfo == null) {
+            RequestExecutor.execute(
+                    this,
+                    new GameInfoRequestBuilder().setBase(PreferencesManager.getGameInfoResponseCache()),
+                    new GameInfoRequestCacheInterceptor(),
+                    RequestUtils.wrapCallback(new ApiCallback<GameInfoResponse>() {
+                        @Override
+                        public void onSuccess(GameInfoResponse response) {
+                            updateGlobalTime(response.turnInfo);
+                        }
+
+                        @Override
+                        public void onError(AbstractApiResponse response) {
+                            if (accountNameTextView.getVisibility() == View.VISIBLE) {
+                                timeTextView.setVisibility(View.GONE);
+                            } else {
+                                drawerItemInfoView.setVisibility(View.GONE);
+                            }
+                        }
+                    }, MainActivity.this));
+        } else {
+            UiUtils.setText(timeTextView, String.format("%s %s", turnInfo.verboseDate, turnInfo.verboseTime));
+        }
+    }
+
+    public void updateGlobalInfo(final TurnInfo turnInfo) {
+        drawerItemInfoView.setVisibility(View.VISIBLE);
         RequestExecutor.executeOptional(this, new InfoPrerequisiteRequest(), RequestUtils.wrapCallback(new ApiCallback<InfoResponse>() {
             @Override
             public void onSuccess(InfoResponse response) {
-                drawerItemInfoView.setVisibility(View.VISIBLE);
                 UiUtils.setText(accountNameTextView, PreferencesManager.getAccountName());
-                RequestExecutor.execute(MainActivity.this, new GameInfoRequestBuilder(), RequestUtils.wrapCallback(new ApiCallback<GameInfoResponse>() {
-                    @Override
-                    public void onSuccess(GameInfoResponse response) {
-                        UiUtils.setText(timeTextView, String.format("%s %s", response.turnInfo.verboseDate, response.turnInfo.verboseTime));
-                    }
-
-                    @Override
-                    public void onError(AbstractApiResponse response) {
-                        UiUtils.setText(timeTextView, null);
-                    }
-                }, MainActivity.this));
+                updateGlobalTime(turnInfo);
             }
 
             @Override
             public void onError(AbstractApiResponse response) {
-                drawerItemInfoView.setVisibility(View.GONE);
-                UiUtils.setText(accountNameTextView, null);
-                UiUtils.setText(timeTextView, null);
+                accountNameTextView.setVisibility(View.GONE);
+                updateGlobalTime(turnInfo);
             }
-        }, this));
+        }, MainActivity.this));
     }
 
     @Override
