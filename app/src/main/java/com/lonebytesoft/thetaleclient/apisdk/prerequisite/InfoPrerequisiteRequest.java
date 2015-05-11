@@ -3,14 +3,14 @@ package com.lonebytesoft.thetaleclient.apisdk.prerequisite;
 import android.text.TextUtils;
 
 import com.lonebytesoft.thetaleclient.api.dictionary.Action;
-import com.lonebytesoft.thetaleclient.apisdk.AbstractRequestBuilder;
-import com.lonebytesoft.thetaleclient.apisdk.BaseRequestExecutionInterceptor;
-import com.lonebytesoft.thetaleclient.apisdk.PrerequisiteRequest;
-import com.lonebytesoft.thetaleclient.apisdk.RequestExecutionInterceptor;
-import com.lonebytesoft.thetaleclient.apisdk.request.InfoRequestBuilder;
 import com.lonebytesoft.thetaleclient.sdk.request.InfoRequest;
 import com.lonebytesoft.thetaleclient.sdk.response.InfoResponse;
 import com.lonebytesoft.thetaleclient.sdk.util.ObjectUtils;
+import com.lonebytesoft.thetaleclient.sdkandroid.AbstractRequestBuilder;
+import com.lonebytesoft.thetaleclient.sdkandroid.interceptor.BaseRequestExecutionInterceptor;
+import com.lonebytesoft.thetaleclient.sdkandroid.interceptor.PrerequisiteRequest;
+import com.lonebytesoft.thetaleclient.sdkandroid.interceptor.RequestExecutionInterceptor;
+import com.lonebytesoft.thetaleclient.sdkandroid.request.InfoRequestBuilder;
 import com.lonebytesoft.thetaleclient.util.PreferencesManager;
 
 import java.util.HashMap;

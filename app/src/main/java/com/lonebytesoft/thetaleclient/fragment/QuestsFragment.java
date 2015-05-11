@@ -18,13 +18,6 @@ import android.widget.TextView;
 import com.lonebytesoft.thetaleclient.DataViewMode;
 import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.TheTaleClientApplication;
-import com.lonebytesoft.thetaleclient.apisdk.ApiCallback;
-import com.lonebytesoft.thetaleclient.apisdk.RequestExecutor;
-import com.lonebytesoft.thetaleclient.apisdk.model.QuestActorInfoParcelable;
-import com.lonebytesoft.thetaleclient.apisdk.request.GameInfoRequestBuilder;
-import com.lonebytesoft.thetaleclient.apisdk.request.MapRequestBuilder;
-import com.lonebytesoft.thetaleclient.apisdk.request.QuestChoiceRequestBuilder;
-import com.lonebytesoft.thetaleclient.apisdk.util.DictionaryData;
 import com.lonebytesoft.thetaleclient.sdk.AbstractApiResponse;
 import com.lonebytesoft.thetaleclient.sdk.dictionary.QuestType;
 import com.lonebytesoft.thetaleclient.sdk.model.QuestActorDetailsPerson;
@@ -35,7 +28,12 @@ import com.lonebytesoft.thetaleclient.sdk.model.QuestStepInfo;
 import com.lonebytesoft.thetaleclient.sdk.response.CommonResponse;
 import com.lonebytesoft.thetaleclient.sdk.response.GameInfoResponse;
 import com.lonebytesoft.thetaleclient.sdk.response.MapResponse;
+import com.lonebytesoft.thetaleclient.sdkandroid.ApiCallback;
+import com.lonebytesoft.thetaleclient.sdkandroid.RequestExecutor;
+import com.lonebytesoft.thetaleclient.sdkandroid.model.QuestActorInfoParcelable;
+import com.lonebytesoft.thetaleclient.sdkandroid.request.QuestChoiceRequestBuilder;
 import com.lonebytesoft.thetaleclient.util.DialogUtils;
+import com.lonebytesoft.thetaleclient.util.DictionaryData;
 import com.lonebytesoft.thetaleclient.util.PreferencesManager;
 import com.lonebytesoft.thetaleclient.util.RequestUtils;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
@@ -78,7 +76,7 @@ public class QuestsFragment extends WrapperFragment {
     public void refresh(final boolean isGlobal) {
         super.refresh(isGlobal);
 
-        GameInfoRequestBuilder.executeWatching(getActivity(), RequestUtils.wrapCallback(new ApiCallback<GameInfoResponse>() {
+        RequestUtils.executeGameInfoRequestWatching(getActivity(), RequestUtils.wrapCallback(new ApiCallback<GameInfoResponse>() {
             @Override
             public void onSuccess(GameInfoResponse response) {
                 UiUtils.updateGlobalInfo(QuestsFragment.this, response);
@@ -209,7 +207,7 @@ public class QuestsFragment extends WrapperFragment {
 
                 // add town name to quest person actors
                 if (actorNames.size() > 0) {
-                    MapRequestBuilder.execute(getActivity(), RequestUtils.wrapCallback(new ApiCallback<MapResponse>() {
+                    RequestUtils.executeMapRequest(getActivity(), RequestUtils.wrapCallback(new ApiCallback<MapResponse>() {
                         @Override
                         public void onSuccess(MapResponse response) {
                             for (final Map.Entry<TextView, Integer> actorNameEntry : actorNames.entrySet()) {

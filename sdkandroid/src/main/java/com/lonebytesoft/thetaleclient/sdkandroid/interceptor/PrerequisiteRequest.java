@@ -1,8 +1,8 @@
-package com.lonebytesoft.thetaleclient.apisdk;
+package com.lonebytesoft.thetaleclient.sdkandroid.interceptor;
 
-import com.lonebytesoft.thetaleclient.sdk.AbstractApiResponse;
 import com.lonebytesoft.thetaleclient.sdk.AbstractRequest;
 import com.lonebytesoft.thetaleclient.sdk.AbstractResponse;
+import com.lonebytesoft.thetaleclient.sdkandroid.AbstractRequestBuilder;
 
 /**
  * @author Hamster

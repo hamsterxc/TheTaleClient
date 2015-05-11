@@ -13,10 +13,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.lonebytesoft.thetaleclient.R;
-import com.lonebytesoft.thetaleclient.apisdk.model.ArtifactInfoParcelable;
-import com.lonebytesoft.thetaleclient.apisdk.util.DictionaryData;
 import com.lonebytesoft.thetaleclient.sdk.dictionary.ArtifactEffect;
 import com.lonebytesoft.thetaleclient.sdk.dictionary.ArtifactType;
+import com.lonebytesoft.thetaleclient.sdkandroid.model.ArtifactInfoParcelable;
+import com.lonebytesoft.thetaleclient.util.DictionaryData;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
 
 /**

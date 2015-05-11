@@ -24,13 +24,6 @@ import android.widget.ImageView;
 import com.lonebytesoft.thetaleclient.DataViewMode;
 import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.activity.MainActivity;
-import com.lonebytesoft.thetaleclient.apisdk.ApiCallback;
-import com.lonebytesoft.thetaleclient.apisdk.RequestExecutor;
-import com.lonebytesoft.thetaleclient.apisdk.request.GameInfoRequestBuilder;
-import com.lonebytesoft.thetaleclient.apisdk.request.MapCellRequestBuilder;
-import com.lonebytesoft.thetaleclient.apisdk.request.MapRequestBuilder;
-import com.lonebytesoft.thetaleclient.apisdk.request.PlaceRequestBuilder;
-import com.lonebytesoft.thetaleclient.apisdk.request.PlacesRequestBuilder;
 import com.lonebytesoft.thetaleclient.fragment.dialog.ChoiceDialog;
 import com.lonebytesoft.thetaleclient.fragment.dialog.TabbedDialog;
 import com.lonebytesoft.thetaleclient.sdk.AbstractApiResponse;
@@ -44,7 +37,12 @@ import com.lonebytesoft.thetaleclient.sdk.response.MapCellResponse;
 import com.lonebytesoft.thetaleclient.sdk.response.MapResponse;
 import com.lonebytesoft.thetaleclient.sdk.response.PlaceResponse;
 import com.lonebytesoft.thetaleclient.sdk.response.PlacesResponse;
+import com.lonebytesoft.thetaleclient.sdkandroid.ApiCallback;
+import com.lonebytesoft.thetaleclient.sdkandroid.RequestExecutor;
 import com.lonebytesoft.thetaleclient.sdkandroid.helper.MapHelper;
+import com.lonebytesoft.thetaleclient.sdkandroid.request.MapCellRequestBuilder;
+import com.lonebytesoft.thetaleclient.sdkandroid.request.PlaceRequestBuilder;
+import com.lonebytesoft.thetaleclient.sdkandroid.request.PlacesRequestBuilder;
 import com.lonebytesoft.thetaleclient.util.DialogUtils;
 import com.lonebytesoft.thetaleclient.util.ObjectUtils;
 import com.lonebytesoft.thetaleclient.util.PreferencesManager;
@@ -311,11 +309,11 @@ public class MapFragment extends WrapperFragment {
         final MapStyle mapStyle = PreferencesManager.getMapStyle();
         updateMenuItemTitle(R.id.action_map_style, getString(R.string.map_style, mapStyle.name));
 
-        GameInfoRequestBuilder.executeWatching(getActivity(), RequestUtils.wrapCallback(new ApiCallback<GameInfoResponse>() {
+        RequestUtils.executeGameInfoRequestWatching(getActivity(), RequestUtils.wrapCallback(new ApiCallback<GameInfoResponse>() {
             @Override
             public void onSuccess(final GameInfoResponse gameInfoResponse) {
                 UiUtils.updateGlobalInfo(MapFragment.this, gameInfoResponse);
-                MapRequestBuilder.execute(getActivity(), RequestUtils.wrapCallback(new ApiCallback<MapResponse>() {
+                RequestUtils.executeMapRequest(getActivity(), RequestUtils.wrapCallback(new ApiCallback<MapResponse>() {
                     @Override
                     public void onSuccess(final MapResponse mapResponse) {
                         heroPosition = gameInfoResponse.account.hero.position;

@@ -7,13 +7,22 @@ import android.os.Looper;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 
-import com.lonebytesoft.thetaleclient.BuildConfig;
 import com.lonebytesoft.thetaleclient.activity.MainActivity;
 import com.lonebytesoft.thetaleclient.api.AbstractApiResponse;
 import com.lonebytesoft.thetaleclient.api.ApiResponseCallback;
 import com.lonebytesoft.thetaleclient.api.ApiResponseStatus;
 import com.lonebytesoft.thetaleclient.api.CommonResponseCallback;
-import com.lonebytesoft.thetaleclient.apisdk.ApiCallback;
+import com.lonebytesoft.thetaleclient.apisdk.interceptor.GameInfoRequestCacheInterceptor;
+import com.lonebytesoft.thetaleclient.apisdk.prerequisite.GameInfoPrerequisiteRequest;
+import com.lonebytesoft.thetaleclient.sdk.AbstractRequest;
+import com.lonebytesoft.thetaleclient.sdk.AbstractResponse;
+import com.lonebytesoft.thetaleclient.sdk.response.GameInfoResponse;
+import com.lonebytesoft.thetaleclient.sdk.response.MapResponse;
+import com.lonebytesoft.thetaleclient.sdkandroid.ApiCallback;
+import com.lonebytesoft.thetaleclient.sdkandroid.RequestExecutor;
+import com.lonebytesoft.thetaleclient.sdkandroid.interceptor.PrerequisiteRequest;
+import com.lonebytesoft.thetaleclient.sdkandroid.request.GameInfoRequestBuilder;
+import com.lonebytesoft.thetaleclient.sdkandroid.request.MapRequestBuilder;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -118,10 +127,6 @@ public class RequestUtils {
         };
     }
 
-    public static String getClientId(final Context context) {
-        return context.getPackageName() + "-" + BuildConfig.VERSION_CODE;
-    }
-
     private static void runChecked(final Fragment fragment, final Runnable task) {
         if((fragment != null) && (fragment.isAdded())) {
             runChecked(fragment.getActivity(), task);
@@ -172,6 +177,51 @@ public class RequestUtils {
                 }
             };
         }
+    }
+
+    public static <Q extends AbstractRequest<A>, A extends AbstractResponse> void executePrerequisite(
+            final Context context, final PrerequisiteRequest<Q, A> prerequisiteRequest, final ApiCallback<A> callback) {
+        RequestExecutor.execute(context,
+                prerequisiteRequest.getRequestBuilder(),
+                prerequisiteRequest.getRequestExecutionInterceptor(),
+                callback);
+    }
+
+    public static void executeGameInfoRequestWatching(final Context context, final ApiCallback<GameInfoResponse> callback) {
+        final int watchingAccountId = PreferencesManager.getWatchingAccountId();
+        final boolean isForeignAccount = watchingAccountId != 0;
+
+        final GameInfoRequestBuilder requestBuilder = new GameInfoRequestBuilder();
+        if(isForeignAccount) {
+            requestBuilder.setAccountId(watchingAccountId);
+        } else {
+            requestBuilder.setBase(PreferencesManager.getGameInfoResponseCache());
+        }
+
+        RequestExecutor.execute(
+                context,
+                requestBuilder,
+                isForeignAccount ? null : new GameInfoRequestCacheInterceptor(),
+                callback);
+    }
+
+    public static void executeMapRequest(final Context context, final ApiCallback<MapResponse> callback) {
+        executePrerequisite(context, new GameInfoPrerequisiteRequest(), new ApiCallback<GameInfoResponse>() {
+            @Override
+            public void onSuccess(GameInfoResponse response) {
+                RequestExecutor.execute(
+                        context,
+                        new MapRequestBuilder()
+                                .setDynamicContentUrl(PreferencesManager.getDynamicContentUrl())
+                                .setMapVersion(PreferencesManager.getMapVersion()),
+                        callback);
+            }
+
+            @Override
+            public void onError(com.lonebytesoft.thetaleclient.sdk.AbstractApiResponse response) {
+                callback.onError(response);
+            }
+        });
     }
 
 }

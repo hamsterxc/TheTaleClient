@@ -1,4 +1,4 @@
-package com.lonebytesoft.thetaleclient.apisdk.util;
+package com.lonebytesoft.thetaleclient.util;
 
 import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.sdk.dictionary.ArtifactRarity;

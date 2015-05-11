@@ -6,9 +6,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
 import com.lonebytesoft.thetaleclient.R;
-import com.lonebytesoft.thetaleclient.apisdk.model.ArtifactInfoParcelable;
-import com.lonebytesoft.thetaleclient.apisdk.model.CardInfoParcelable;
-import com.lonebytesoft.thetaleclient.apisdk.model.QuestActorInfoParcelable;
 import com.lonebytesoft.thetaleclient.fragment.dialog.AboutDialog;
 import com.lonebytesoft.thetaleclient.fragment.dialog.ArtifactDialog;
 import com.lonebytesoft.thetaleclient.fragment.dialog.CardInfoDialog;
@@ -20,6 +17,9 @@ import com.lonebytesoft.thetaleclient.fragment.dialog.MightDialog;
 import com.lonebytesoft.thetaleclient.fragment.dialog.QuestActorDialog;
 import com.lonebytesoft.thetaleclient.fragment.dialog.TabbedDialog;
 import com.lonebytesoft.thetaleclient.sdk.model.MightInfo;
+import com.lonebytesoft.thetaleclient.sdkandroid.model.ArtifactInfoParcelable;
+import com.lonebytesoft.thetaleclient.sdkandroid.model.CardInfoParcelable;
+import com.lonebytesoft.thetaleclient.sdkandroid.model.QuestActorInfoParcelable;
 
 /**
  * @author Hamster

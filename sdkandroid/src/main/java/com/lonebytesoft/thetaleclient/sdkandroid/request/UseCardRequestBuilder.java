@@ -1,8 +1,8 @@
-package com.lonebytesoft.thetaleclient.apisdk.request;
+package com.lonebytesoft.thetaleclient.sdkandroid.request;
 
-import com.lonebytesoft.thetaleclient.apisdk.AbstractRequestBuilder;
 import com.lonebytesoft.thetaleclient.sdk.dictionary.CardTargetType;
 import com.lonebytesoft.thetaleclient.sdk.request.UseCardRequest;
+import com.lonebytesoft.thetaleclient.sdkandroid.AbstractRequestBuilder;
 
 /**
  * @author Hamster

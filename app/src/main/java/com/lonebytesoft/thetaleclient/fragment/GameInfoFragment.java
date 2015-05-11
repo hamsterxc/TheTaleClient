@@ -20,12 +20,7 @@ import com.lonebytesoft.thetaleclient.DataViewMode;
 import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.TheTaleClientApplication;
 import com.lonebytesoft.thetaleclient.activity.MainActivity;
-import com.lonebytesoft.thetaleclient.apisdk.ApiCallback;
-import com.lonebytesoft.thetaleclient.apisdk.RequestExecutor;
-import com.lonebytesoft.thetaleclient.apisdk.model.CompanionInfoParcelable;
 import com.lonebytesoft.thetaleclient.apisdk.prerequisite.InfoPrerequisiteRequest;
-import com.lonebytesoft.thetaleclient.apisdk.request.GameInfoRequestBuilder;
-import com.lonebytesoft.thetaleclient.apisdk.request.PerformActionRequestBuilder;
 import com.lonebytesoft.thetaleclient.fragment.dialog.TabbedDialog;
 import com.lonebytesoft.thetaleclient.sdk.AbstractApiResponse;
 import com.lonebytesoft.thetaleclient.sdk.dictionary.Action;
@@ -40,6 +35,10 @@ import com.lonebytesoft.thetaleclient.sdk.model.MightInfo;
 import com.lonebytesoft.thetaleclient.sdk.response.CommonResponse;
 import com.lonebytesoft.thetaleclient.sdk.response.GameInfoResponse;
 import com.lonebytesoft.thetaleclient.sdk.response.InfoResponse;
+import com.lonebytesoft.thetaleclient.sdkandroid.ApiCallback;
+import com.lonebytesoft.thetaleclient.sdkandroid.RequestExecutor;
+import com.lonebytesoft.thetaleclient.sdkandroid.model.CompanionInfoParcelable;
+import com.lonebytesoft.thetaleclient.sdkandroid.request.PerformActionRequestBuilder;
 import com.lonebytesoft.thetaleclient.util.DialogUtils;
 import com.lonebytesoft.thetaleclient.util.GameInfoUtils;
 import com.lonebytesoft.thetaleclient.util.PreferencesManager;
@@ -211,7 +210,7 @@ public class GameInfoFragment extends WrapperFragment {
             lastKnownHealth = 0;
         }
 
-        GameInfoRequestBuilder.executeWatching(getActivity(), RequestUtils.wrapCallback(new ApiCallback<GameInfoResponse>() {
+        RequestUtils.executeGameInfoRequestWatching(getActivity(), RequestUtils.wrapCallback(new ApiCallback<GameInfoResponse>() {
             @Override
             public void onSuccess(final GameInfoResponse response) {
                 UiUtils.updateGlobalInfo(GameInfoFragment.this, response);
@@ -351,7 +350,7 @@ public class GameInfoFragment extends WrapperFragment {
                 });
 
                 final CompanionInfo companionInfo = response.account.hero.companionInfo;
-                if(companionInfo == null) {
+                if (companionInfo == null) {
                     companionContainer.setVisibility(View.GONE);
                     companionAbsentText.setVisibility(View.VISIBLE);
                 } else {
@@ -369,7 +368,7 @@ public class GameInfoFragment extends WrapperFragment {
                     progressCompanionExperience.setProgress(companionInfo.experienceCurrent);
                     textCompanionExperience.setText(GameInfoUtils.getCompanionExperienceString(companionInfo));
 
-                    if(companionInfo.species == null) {
+                    if (companionInfo.species == null) {
                         companionName.setTextColor(getResources().getColor(R.color.common_text));
                     } else {
                         companionName.setTextColor(getResources().getColor(R.color.common_link));
@@ -468,7 +467,7 @@ public class GameInfoFragment extends WrapperFragment {
                         break;
 
                     case REST:
-                        RequestExecutor.executeOptional(
+                        RequestUtils.executePrerequisite(
                                 getActivity(),
                                 new InfoPrerequisiteRequest(),
                                 RequestUtils.wrapCallback(new ApiCallback<InfoResponse>() {
@@ -501,7 +500,7 @@ public class GameInfoFragment extends WrapperFragment {
                 if (response.account.isOwnInfo) {
                     actionHelp.setVisibility(View.VISIBLE);
                     actionHelp.setEnabled(false);
-                    RequestExecutor.executeOptional(
+                    RequestUtils.executePrerequisite(
                             getActivity(),
                             new InfoPrerequisiteRequest(),
                             RequestUtils.wrapCallback(new ApiCallback<InfoResponse>() {

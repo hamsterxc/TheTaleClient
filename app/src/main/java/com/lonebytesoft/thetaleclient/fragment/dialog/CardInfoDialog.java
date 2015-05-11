@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
-import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,10 +12,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.lonebytesoft.thetaleclient.R;
-import com.lonebytesoft.thetaleclient.apisdk.model.CardInfoParcelable;
-import com.lonebytesoft.thetaleclient.apisdk.util.DictionaryData;
 import com.lonebytesoft.thetaleclient.sdk.dictionary.CardRarity;
-import com.lonebytesoft.thetaleclient.util.UiUtils;
+import com.lonebytesoft.thetaleclient.sdkandroid.model.CardInfoParcelable;
+import com.lonebytesoft.thetaleclient.util.DictionaryData;
 
 /**
  * @author Hamster

@@ -14,9 +14,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.lonebytesoft.thetaleclient.R;
-import com.lonebytesoft.thetaleclient.apisdk.util.DictionaryData;
 import com.lonebytesoft.thetaleclient.sdk.model.CouncilMemberInfo;
 import com.lonebytesoft.thetaleclient.sdkandroid.model.CouncilMemberInfoParcelable;
+import com.lonebytesoft.thetaleclient.util.DictionaryData;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
 
 import org.json.JSONException;

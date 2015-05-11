@@ -1,8 +1,8 @@
-package com.lonebytesoft.thetaleclient.apisdk.request;
+package com.lonebytesoft.thetaleclient.sdkandroid.request;
 
-import com.lonebytesoft.thetaleclient.apisdk.AbstractRequestBuilder;
 import com.lonebytesoft.thetaleclient.sdk.dictionary.Action;
 import com.lonebytesoft.thetaleclient.sdk.request.PerformActionRequest;
+import com.lonebytesoft.thetaleclient.sdkandroid.AbstractRequestBuilder;
 
 /**
  * @author Hamster

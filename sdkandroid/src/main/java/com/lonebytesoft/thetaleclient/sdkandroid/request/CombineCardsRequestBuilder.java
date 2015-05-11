@@ -1,7 +1,7 @@
-package com.lonebytesoft.thetaleclient.apisdk.request;
+package com.lonebytesoft.thetaleclient.sdkandroid.request;
 
-import com.lonebytesoft.thetaleclient.apisdk.AbstractRequestBuilder;
 import com.lonebytesoft.thetaleclient.sdk.request.CombineCardsRequest;
+import com.lonebytesoft.thetaleclient.sdkandroid.AbstractRequestBuilder;
 
 import java.util.ArrayList;
 import java.util.List;

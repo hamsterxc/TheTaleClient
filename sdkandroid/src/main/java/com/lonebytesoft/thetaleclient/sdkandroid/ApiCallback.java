@@ -1,4 +1,4 @@
-package com.lonebytesoft.thetaleclient.apisdk;
+package com.lonebytesoft.thetaleclient.sdkandroid;
 
 import com.lonebytesoft.thetaleclient.sdk.AbstractApiResponse;
 import com.lonebytesoft.thetaleclient.sdk.AbstractResponse;

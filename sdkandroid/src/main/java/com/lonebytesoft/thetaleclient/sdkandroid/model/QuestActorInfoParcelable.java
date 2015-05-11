@@ -1,4 +1,4 @@
-package com.lonebytesoft.thetaleclient.apisdk.model;
+package com.lonebytesoft.thetaleclient.sdkandroid.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;

@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.lonebytesoft.thetaleclient.R;
-import com.lonebytesoft.thetaleclient.apisdk.model.CompanionInfoParcelable;
+import com.lonebytesoft.thetaleclient.sdkandroid.model.CompanionInfoParcelable;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
 
 /**

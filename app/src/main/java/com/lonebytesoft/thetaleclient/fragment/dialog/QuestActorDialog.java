@@ -13,15 +13,14 @@ import android.view.ViewGroup;
 import com.lonebytesoft.thetaleclient.DrawerItem;
 import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.activity.MainActivity;
-import com.lonebytesoft.thetaleclient.apisdk.ApiCallback;
-import com.lonebytesoft.thetaleclient.apisdk.model.QuestActorInfoParcelable;
-import com.lonebytesoft.thetaleclient.apisdk.request.MapRequestBuilder;
-import com.lonebytesoft.thetaleclient.apisdk.util.DictionaryData;
 import com.lonebytesoft.thetaleclient.sdk.AbstractApiResponse;
 import com.lonebytesoft.thetaleclient.sdk.model.QuestActorDetailsPerson;
 import com.lonebytesoft.thetaleclient.sdk.model.QuestActorDetailsPlace;
 import com.lonebytesoft.thetaleclient.sdk.model.QuestActorDetailsSpending;
 import com.lonebytesoft.thetaleclient.sdk.response.MapResponse;
+import com.lonebytesoft.thetaleclient.sdkandroid.ApiCallback;
+import com.lonebytesoft.thetaleclient.sdkandroid.model.QuestActorInfoParcelable;
+import com.lonebytesoft.thetaleclient.util.DictionaryData;
 import com.lonebytesoft.thetaleclient.util.PreferencesManager;
 import com.lonebytesoft.thetaleclient.util.RequestUtils;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
@@ -63,7 +62,7 @@ public class QuestActorDialog extends BaseDialog {
                         UiUtils.getInfoItem(getString(R.string.quest_actor_profession), detailsPerson.profession.name));
                 UiUtils.setText(view.findViewById(R.id.dialog_quest_actor_person_mastery),
                         UiUtils.getInfoItem(getString(R.string.quest_actor_mastery), detailsPerson.mastery));
-                MapRequestBuilder.execute(getActivity(), RequestUtils.wrapCallback(new ApiCallback<MapResponse>() {
+                RequestUtils.executeMapRequest(getActivity(), RequestUtils.wrapCallback(new ApiCallback<MapResponse>() {
                     @Override
                     public void onSuccess(MapResponse response) {
                         setPlaceLink(
@@ -88,7 +87,7 @@ public class QuestActorDialog extends BaseDialog {
                         getString(R.string.map_place_name),
                         detailsPlace.name,
                         detailsPlace.id);
-                MapRequestBuilder.execute(getActivity(), RequestUtils.wrapCallback(new ApiCallback<MapResponse>() {
+                RequestUtils.executeMapRequest(getActivity(), RequestUtils.wrapCallback(new ApiCallback<MapResponse>() {
                     @Override
                     public void onSuccess(MapResponse response) {
                         UiUtils.setText(view.findViewById(R.id.dialog_quest_actor_place_size), UiUtils.getInfoItem(

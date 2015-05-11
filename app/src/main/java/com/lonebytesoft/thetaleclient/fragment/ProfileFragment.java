@@ -16,14 +16,14 @@ import android.widget.TextView;
 
 import com.lonebytesoft.thetaleclient.DataViewMode;
 import com.lonebytesoft.thetaleclient.R;
-import com.lonebytesoft.thetaleclient.apisdk.ApiCallback;
-import com.lonebytesoft.thetaleclient.apisdk.RequestExecutor;
-import com.lonebytesoft.thetaleclient.apisdk.request.AccountInfoRequestBuilder;
 import com.lonebytesoft.thetaleclient.sdk.AbstractApiResponse;
 import com.lonebytesoft.thetaleclient.sdk.dictionary.RatingItem;
 import com.lonebytesoft.thetaleclient.sdk.model.AccountPlaceHistoryInfo;
 import com.lonebytesoft.thetaleclient.sdk.model.RatingItemInfo;
 import com.lonebytesoft.thetaleclient.sdk.response.AccountInfoResponse;
+import com.lonebytesoft.thetaleclient.sdkandroid.ApiCallback;
+import com.lonebytesoft.thetaleclient.sdkandroid.RequestExecutor;
+import com.lonebytesoft.thetaleclient.sdkandroid.request.AccountInfoRequestBuilder;
 import com.lonebytesoft.thetaleclient.util.GameInfoUtils;
 import com.lonebytesoft.thetaleclient.util.PreferencesManager;
 import com.lonebytesoft.thetaleclient.util.RequestUtils;

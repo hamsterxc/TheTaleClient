@@ -2,8 +2,18 @@ buildscript {
     repositories {
         jcenter()
     }
+
     dependencies {
         classpath 'com.android.tools.build:gradle:1.0.1' // with 1.1.0+ Android Studio does not see aar
+    }
+
+    ext {
+        compileSdkVersion = 22
+        buildToolsVersion = "22.0.1"
+        minSdkVersion = 9
+        targetSdkVersion = 22
+        versionCode = 27
+        versionName = "1.6.7"
     }
 }
 

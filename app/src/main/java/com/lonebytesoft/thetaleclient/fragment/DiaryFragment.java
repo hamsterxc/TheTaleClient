@@ -7,11 +7,10 @@ import android.view.ViewGroup;
 
 import com.lonebytesoft.thetaleclient.DataViewMode;
 import com.lonebytesoft.thetaleclient.R;
-import com.lonebytesoft.thetaleclient.apisdk.ApiCallback;
-import com.lonebytesoft.thetaleclient.apisdk.request.GameInfoRequestBuilder;
 import com.lonebytesoft.thetaleclient.sdk.AbstractApiResponse;
 import com.lonebytesoft.thetaleclient.sdk.model.DiaryEntry;
 import com.lonebytesoft.thetaleclient.sdk.response.GameInfoResponse;
+import com.lonebytesoft.thetaleclient.sdkandroid.ApiCallback;
 import com.lonebytesoft.thetaleclient.util.RequestUtils;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
 
@@ -41,13 +40,13 @@ public class DiaryFragment extends WrapperFragment {
     public void refresh(final boolean isGlobal) {
         super.refresh(isGlobal);
 
-        GameInfoRequestBuilder.executeWatching(getActivity(), RequestUtils.wrapCallback(new ApiCallback<GameInfoResponse>() {
+        RequestUtils.executeGameInfoRequestWatching(getActivity(), RequestUtils.wrapCallback(new ApiCallback<GameInfoResponse>() {
             @Override
             public void onSuccess(GameInfoResponse response) {
                 UiUtils.updateGlobalInfo(DiaryFragment.this, response);
 
                 diaryContainer.removeAllViews();
-                for(int i = response.account.hero.diary.size() - 1; i >= 0; i--) {
+                for (int i = response.account.hero.diary.size() - 1; i >= 0; i--) {
                     final DiaryEntry diaryEntry = response.account.hero.diary.get(i);
                     final View diaryEntryView = layoutInflater.inflate(R.layout.item_diary, diaryContainer, false);
                     UiUtils.setText(

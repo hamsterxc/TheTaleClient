@@ -17,20 +17,19 @@ import android.widget.TextView;
 
 import com.lonebytesoft.thetaleclient.DataViewMode;
 import com.lonebytesoft.thetaleclient.R;
-import com.lonebytesoft.thetaleclient.apisdk.ApiCallback;
-import com.lonebytesoft.thetaleclient.apisdk.RequestExecutor;
-import com.lonebytesoft.thetaleclient.apisdk.model.CardInfoParcelable;
-import com.lonebytesoft.thetaleclient.apisdk.request.CombineCardsRequestBuilder;
-import com.lonebytesoft.thetaleclient.apisdk.request.GameInfoRequestBuilder;
-import com.lonebytesoft.thetaleclient.apisdk.request.GetCardRequestBuilder;
-import com.lonebytesoft.thetaleclient.apisdk.util.DictionaryData;
 import com.lonebytesoft.thetaleclient.sdk.AbstractApiResponse;
 import com.lonebytesoft.thetaleclient.sdk.dictionary.CardRarity;
 import com.lonebytesoft.thetaleclient.sdk.model.CardInfo;
 import com.lonebytesoft.thetaleclient.sdk.response.CombineCardsResponse;
 import com.lonebytesoft.thetaleclient.sdk.response.GameInfoResponse;
 import com.lonebytesoft.thetaleclient.sdk.response.GetCardResponse;
+import com.lonebytesoft.thetaleclient.sdkandroid.ApiCallback;
+import com.lonebytesoft.thetaleclient.sdkandroid.RequestExecutor;
+import com.lonebytesoft.thetaleclient.sdkandroid.model.CardInfoParcelable;
+import com.lonebytesoft.thetaleclient.sdkandroid.request.CombineCardsRequestBuilder;
+import com.lonebytesoft.thetaleclient.sdkandroid.request.GetCardRequestBuilder;
 import com.lonebytesoft.thetaleclient.util.DialogUtils;
+import com.lonebytesoft.thetaleclient.util.DictionaryData;
 import com.lonebytesoft.thetaleclient.util.ObjectUtils;
 import com.lonebytesoft.thetaleclient.util.RequestUtils;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
@@ -123,7 +122,7 @@ public class CardsFragment extends WrapperFragment {
             }
         });
 
-        GameInfoRequestBuilder.executeWatching(getActivity(), RequestUtils.wrapCallback(new ApiCallback<GameInfoResponse>() {
+        RequestUtils.executeGameInfoRequestWatching(getActivity(), RequestUtils.wrapCallback(new ApiCallback<GameInfoResponse>() {
             @Override
             public void onSuccess(GameInfoResponse response) {
                 UiUtils.updateGlobalInfo(CardsFragment.this, response);
@@ -206,17 +205,17 @@ public class CardsFragment extends WrapperFragment {
                             }
                         });
                 cardsInitial = cards;
-                for(final Map.Entry<CardInfo, Integer> cardsEntry : cards.entrySet()) {
+                for (final Map.Entry<CardInfo, Integer> cardsEntry : cards.entrySet()) {
                     final CardInfo card = cardsEntry.getKey();
                     final int count = cardsEntry.getValue();
                     final View cardEntryView = getCardEntryView(layoutInflater, card, count, false);
                     cardEntryView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            if(isCombining) {
+                            if (isCombining) {
                                 updateCombineList(cardEntryView, card, true);
                             } else {
-                                if(card.type != null) {
+                                if (card.type != null) {
                                     try {
                                         DialogUtils.showCardUseDialog(
                                                 getChildFragmentManager(),

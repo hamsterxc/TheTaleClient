@@ -1,8 +1,7 @@
-package com.lonebytesoft.thetaleclient.apisdk;
+package com.lonebytesoft.thetaleclient.sdkandroid;
 
 import android.content.Context;
 
-import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.sdk.AbstractApiResponse;
 import com.lonebytesoft.thetaleclient.sdk.AbstractRequest;
 import com.lonebytesoft.thetaleclient.sdk.AbstractResponse;
@@ -10,7 +9,8 @@ import com.lonebytesoft.thetaleclient.sdk.ApiResponseStatus;
 import com.lonebytesoft.thetaleclient.sdk.exception.ApiException;
 import com.lonebytesoft.thetaleclient.sdk.exception.HttpException;
 import com.lonebytesoft.thetaleclient.sdk.exception.UpdateException;
-import com.lonebytesoft.thetaleclient.util.RequestUtils;
+import com.lonebytesoft.thetaleclient.sdkandroid.interceptor.RequestExecutionInterceptor;
+import com.lonebytesoft.thetaleclient.sdkandroid.util.RequestUtils;
 
 import org.json.JSONException;
 
@@ -89,14 +89,6 @@ public class RequestExecutor {
                 callback.onError(interceptor.getErrorResponseAfterSkip());
             }
         }
-    }
-
-    public static <Q extends AbstractRequest<A>, A extends AbstractResponse> void executeOptional(
-            final Context context, final PrerequisiteRequest<Q, A> prerequisiteRequest, final ApiCallback<A> callback) {
-        execute(context,
-                prerequisiteRequest.getRequestBuilder(),
-                prerequisiteRequest.getRequestExecutionInterceptor(),
-                callback);
     }
 
 }

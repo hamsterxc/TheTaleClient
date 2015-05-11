@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.sdk.dictionary.CompanionFeature;
-import com.lonebytesoft.thetaleclient.apisdk.model.CompanionInfoParcelable;
+import com.lonebytesoft.thetaleclient.sdkandroid.model.CompanionInfoParcelable;
 
 import java.util.ArrayList;
 import java.util.Collections;
