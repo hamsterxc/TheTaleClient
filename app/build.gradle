@@ -57,13 +57,13 @@ android {
 }
 
 dependencies {
-    // latest versions of libraries as of 10.04.2015
+    // latest versions of libraries as of 11.05.2015
     compile 'com.crashlytics.android:crashlytics:1.+'
-    compile 'com.android.support:appcompat-v7:22.0.0'
+    compile 'com.android.support:appcompat-v7:22.1.1'
     compile 'com.astuetz:pagerslidingtabstrip:1.0.1' // https://github.com/astuetz/PagerSlidingTabStrip
     compile project(':android-support-v4-preferencefragment') // https://github.com/kolavar/android-support-v4-preferencefragment
     compile 'com.github.chrisbanes.photoview:library:1.2.3' // https://github.com/chrisbanes/PhotoView
-    compile 'org.jsoup:jsoup:1.8.1' // https://github.com/jhy/jsoup
+    compile 'org.jsoup:jsoup:1.8.2' // https://github.com/jhy/jsoup
     compile project(':sdkandroid')
 }
 

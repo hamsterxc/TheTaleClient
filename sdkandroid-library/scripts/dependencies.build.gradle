@@ -3,7 +3,7 @@ apply plugin: 'java'
 dependencies {
     compile 'org.apache.httpcomponents:httpclient:4.4.1'
     compile 'org.json:json:20141113'
-    compile 'org.jsoup:jsoup:1.8.1'
+    compile 'org.jsoup:jsoup:1.8.2'
 }
 
 task getDependencies(type: Copy) {

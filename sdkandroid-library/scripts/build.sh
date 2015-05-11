@@ -18,7 +18,7 @@ rm "sdk/build.gradle"
 cd "sdk"
 rm -rf "libs"
 mkdir "libs"
-mv "dependencies/jsoup-1.8.1.jar" "libs/jsoup-1.8.1.jar"
+mv "dependencies/jsoup-1.8.2.jar" "libs/jsoup-1.8.2.jar"
 rm -rf "dependencies"
 cd ..
 
