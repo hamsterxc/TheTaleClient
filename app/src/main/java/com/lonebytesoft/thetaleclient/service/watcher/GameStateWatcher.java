@@ -1,6 +1,6 @@
 package com.lonebytesoft.thetaleclient.service.watcher;
 
-import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;
+import com.lonebytesoft.thetaleclient.sdk.response.GameInfoResponse;
 
 /**
  * @author Hamster

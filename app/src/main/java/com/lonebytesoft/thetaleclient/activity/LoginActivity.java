@@ -14,6 +14,7 @@ import com.lonebytesoft.thetaleclient.BuildConfig;
 import com.lonebytesoft.thetaleclient.DataViewMode;
 import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.apisdk.RequestExecutor;
+import com.lonebytesoft.thetaleclient.apisdk.interceptor.GameInfoRequestCacheInterceptor;
 import com.lonebytesoft.thetaleclient.sdk.AbstractApiResponse;
 import com.lonebytesoft.thetaleclient.sdk.response.AuthResponse;
 import com.lonebytesoft.thetaleclient.sdk.response.GameInfoResponse;
@@ -338,6 +339,7 @@ public class LoginActivity extends FragmentActivity {
         RequestExecutor.execute(
                 this,
                 new GameInfoRequestBuilder().setStaleTime(0),
+                new GameInfoRequestCacheInterceptor(),
                 new ApiCallback<GameInfoResponse>() {
                     @Override
                     public void onSuccess(GameInfoResponse response) {

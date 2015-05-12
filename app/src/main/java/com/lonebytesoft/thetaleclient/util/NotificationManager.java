@@ -8,7 +8,7 @@ import android.support.v4.app.NotificationCompat;
 
 import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.TheTaleClientApplication;
-import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;
+import com.lonebytesoft.thetaleclient.sdk.response.GameInfoResponse;
 import com.lonebytesoft.thetaleclient.service.notifier.DeathNotifier;
 import com.lonebytesoft.thetaleclient.service.notifier.EnergyNotifier;
 import com.lonebytesoft.thetaleclient.service.notifier.HealthNotifier;

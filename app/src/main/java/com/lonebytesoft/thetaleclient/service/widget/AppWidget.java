@@ -7,9 +7,9 @@ import android.content.Intent;
 import android.widget.RemoteViews;
 
 import com.lonebytesoft.thetaleclient.R;
-import com.lonebytesoft.thetaleclient.api.model.CompanionInfo;
-import com.lonebytesoft.thetaleclient.api.model.HeroActionInfo;
-import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;
+import com.lonebytesoft.thetaleclient.sdk.model.CompanionInfo;
+import com.lonebytesoft.thetaleclient.sdk.model.HeroActionInfo;
+import com.lonebytesoft.thetaleclient.sdk.response.GameInfoResponse;
 import com.lonebytesoft.thetaleclient.service.WatcherService;
 import com.lonebytesoft.thetaleclient.util.GameInfoUtils;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
@@ -95,7 +95,7 @@ public enum AppWidget {
     private final Class<? extends AppWidgetProvider> providerClass;
     private final int layoutResId;
 
-    private AppWidget(final Class<? extends android.appwidget.AppWidgetProvider> providerClass,
+    AppWidget(final Class<? extends android.appwidget.AppWidgetProvider> providerClass,
                       final int layoutResId) {
         this.providerClass = providerClass;
         this.layoutResId = layoutResId;

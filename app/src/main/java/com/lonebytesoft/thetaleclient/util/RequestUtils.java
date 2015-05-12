@@ -186,6 +186,14 @@ public class RequestUtils {
         }
     }
 
+    public static void executeGameInfoRequest(final Context context, final ApiCallback<GameInfoResponse> callback) {
+        RequestExecutor.execute(
+                context,
+                new GameInfoRequestBuilder().setBase(PreferencesManager.getGameInfoResponseCache()),
+                new GameInfoRequestCacheInterceptor(),
+                callback);
+    }
+
     public static void executeGameInfoRequestWatching(final Context context, final ApiCallback<GameInfoResponse> callback) {
         final int watchingAccountId = PreferencesManager.getWatchingAccountId();
         final boolean isForeignAccount = watchingAccountId != 0;

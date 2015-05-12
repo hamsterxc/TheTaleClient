@@ -1,7 +1,7 @@
 package com.lonebytesoft.thetaleclient.service.autohelper;
 
-import com.lonebytesoft.thetaleclient.api.dictionary.HeroAction;
-import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;
+import com.lonebytesoft.thetaleclient.sdk.dictionary.HeroAction;
+import com.lonebytesoft.thetaleclient.sdk.response.GameInfoResponse;
 import com.lonebytesoft.thetaleclient.util.GameInfoUtils;
 import com.lonebytesoft.thetaleclient.util.PreferencesManager;
 

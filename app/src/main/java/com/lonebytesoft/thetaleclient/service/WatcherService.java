@@ -11,13 +11,14 @@ import android.os.IBinder;
 import com.lonebytesoft.thetaleclient.DataViewMode;
 import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.TheTaleClientApplication;
-import com.lonebytesoft.thetaleclient.api.ApiResponseCallback;
-import com.lonebytesoft.thetaleclient.api.dictionary.Action;
-import com.lonebytesoft.thetaleclient.api.model.DiaryEntry;
-import com.lonebytesoft.thetaleclient.api.request.AbilityUseRequest;
-import com.lonebytesoft.thetaleclient.api.request.GameInfoRequest;
-import com.lonebytesoft.thetaleclient.api.response.CommonResponse;
-import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;
+import com.lonebytesoft.thetaleclient.apisdk.RequestExecutor;
+import com.lonebytesoft.thetaleclient.sdk.AbstractApiResponse;
+import com.lonebytesoft.thetaleclient.sdk.dictionary.Action;
+import com.lonebytesoft.thetaleclient.sdk.model.DiaryEntry;
+import com.lonebytesoft.thetaleclient.sdk.response.CommonResponse;
+import com.lonebytesoft.thetaleclient.sdk.response.GameInfoResponse;
+import com.lonebytesoft.thetaleclient.sdkandroid.ApiCallback;
+import com.lonebytesoft.thetaleclient.sdkandroid.request.PerformActionRequestBuilder;
 import com.lonebytesoft.thetaleclient.service.autohelper.Autohelper;
 import com.lonebytesoft.thetaleclient.service.autohelper.CompanionCareAutohelper;
 import com.lonebytesoft.thetaleclient.service.autohelper.DeathAutohelper;
@@ -29,6 +30,7 @@ import com.lonebytesoft.thetaleclient.service.watcher.GameStateWatcher;
 import com.lonebytesoft.thetaleclient.service.widget.AppWidgetHelper;
 import com.lonebytesoft.thetaleclient.util.NotificationManager;
 import com.lonebytesoft.thetaleclient.util.PreferencesManager;
+import com.lonebytesoft.thetaleclient.util.RequestUtils;
 import com.lonebytesoft.thetaleclient.util.TextToSpeechUtils;
 import com.lonebytesoft.thetaleclient.util.onscreen.OnscreenPart;
 
@@ -41,17 +43,15 @@ import java.util.List;
  */
 public class WatcherService extends Service {
 
-    public static final String BROADCAST_SERVICE_RESTART_REFRESH_ACTION =
-            TheTaleClientApplication.getContext().getPackageName() + ".service.restart.refresh";
-    public static final String BROADCAST_WIDGET_HELP_ACTION =
-            TheTaleClientApplication.getContext().getPackageName() + ".widget.help";
-    public static final String BROADCAST_WIDGET_REFRESH_ACTION =
-            TheTaleClientApplication.getContext().getPackageName() + ".widget.refresh";
+    private static final String PACKAGE = TheTaleClientApplication.getContext().getPackageName();
+    public static final String BROADCAST_SERVICE_RESTART_REFRESH_ACTION = PACKAGE + ".service.restart.refresh";
+    public static final String BROADCAST_WIDGET_HELP_ACTION = PACKAGE + ".widget.help";
+    public static final String BROADCAST_WIDGET_REFRESH_ACTION = PACKAGE + ".widget.refresh";
 
     private static boolean isRunning = false;
 
     private static final double INTERVAL_MULTIPLIER = (Math.sqrt(5.0) + 1) / 2.0; // phi
-    private static final long INTERVAL_MAX = 600;
+    private static final long INTERVAL_MAX = 600; // 10 min
     private double intervalMultiplierCurrent;
 
     private final Handler handler = new Handler();
@@ -59,61 +59,66 @@ public class WatcherService extends Service {
         @Override
         public void run() {
             if(PreferencesManager.isWatcherEnabled()) {
-                new GameInfoRequest(false).execute(new ApiResponseCallback<GameInfoResponse>() {
-                    @Override
-                    public void processResponse(GameInfoResponse response) {
-                        if (response.account == null) {
-                            AppWidgetHelper.updateWithError(WatcherService.this, getString(R.string.game_not_authorized));
-                            stopSelf();
-                            return;
-                        }
-
-                        TheTaleClientApplication.getNotificationManager().notify(response);
-
-                        for (final GameStateWatcher watcher : watchers) {
-                            watcher.processGameState(response);
-                        }
-
-                        boolean shouldHelp = false;
-                        for (final Autohelper autohelper : autohelpers) {
-                            shouldHelp |= autohelper.shouldHelp(response);
-                            if (shouldHelp) {
-                                break;
-                            }
-                        }
-                        if (shouldHelp) {
-                            new AbilityUseRequest(Action.HELP).execute(0, null);
-                        }
-
-                        final int diarySize = response.account.hero.diary.size();
-                        final int lastDiaryTimestamp = PreferencesManager.getLastDiaryEntryRead();
-                        if(PreferencesManager.isDiaryReadAloudEnabled()
-                                && TheTaleClientApplication.getOnscreenStateWatcher().isOnscreen(OnscreenPart.MAIN)
-                                && (lastDiaryTimestamp > 0)) {
-                            for(int i = 0; i < diarySize; i++) {
-                                final DiaryEntry diaryEntry = response.account.hero.diary.get(i);
-                                if(diaryEntry.timestamp > lastDiaryTimestamp) {
-                                    TextToSpeechUtils.speak(String.format("%s, %s.\n%s",
-                                            diaryEntry.date, diaryEntry.time, diaryEntry.text));
+                RequestUtils.executeGameInfoRequest(
+                        WatcherService.this,
+                        new ApiCallback<GameInfoResponse>() {
+                            @Override
+                            public void onSuccess(GameInfoResponse response) {
+                                if (response.account == null) {
+                                    AppWidgetHelper.updateWithError(WatcherService.this, getString(R.string.game_not_authorized));
+                                    stopSelf();
+                                    return;
                                 }
+
+                                TheTaleClientApplication.getNotificationManager().notify(response);
+
+                                for (final GameStateWatcher watcher : watchers) {
+                                    watcher.processGameState(response);
+                                }
+
+                                boolean shouldHelp = false;
+                                for (final Autohelper autohelper : autohelpers) {
+                                    shouldHelp |= autohelper.shouldHelp(response);
+                                    if (shouldHelp) {
+                                        break;
+                                    }
+                                }
+                                if (shouldHelp) {
+                                    RequestExecutor.execute(
+                                            WatcherService.this,
+                                            new PerformActionRequestBuilder().setAction(Action.HELP),
+                                            null);
+                                }
+
+                                final int diarySize = response.account.hero.diary.size();
+                                final int lastDiaryTimestamp = PreferencesManager.getLastDiaryEntryRead();
+                                if (PreferencesManager.isDiaryReadAloudEnabled()
+                                        && TheTaleClientApplication.getOnscreenStateWatcher().isOnscreen(OnscreenPart.MAIN)
+                                        && (lastDiaryTimestamp > 0)) {
+                                    for (int i = 0; i < diarySize; i++) {
+                                        final DiaryEntry diaryEntry = response.account.hero.diary.get(i);
+                                        if (diaryEntry.timestamp > lastDiaryTimestamp) {
+                                            TextToSpeechUtils.speak(String.format("%s, %s.\n%s",
+                                                    diaryEntry.date, diaryEntry.time, diaryEntry.text));
+                                        }
+                                    }
+                                }
+                                PreferencesManager.setLastDiaryEntryRead(response.account.hero.diary.get(diarySize - 1).timestamp);
+
+                                AppWidgetHelper.update(WatcherService.this, DataViewMode.DATA, response);
+
+                                intervalMultiplierCurrent = 1.0;
+                                postRefresh();
                             }
-                        }
-                        PreferencesManager.setLastDiaryEntryRead(response.account.hero.diary.get(diarySize - 1).timestamp);
 
-                        AppWidgetHelper.update(WatcherService.this, DataViewMode.DATA, response);
+                            @Override
+                            public void onError(AbstractApiResponse response) {
+                                AppWidgetHelper.update(WatcherService.this, response);
 
-                        intervalMultiplierCurrent = 1.0;
-                        postRefresh();
-                    }
-
-                    @Override
-                    public void processError(GameInfoResponse response) {
-                        AppWidgetHelper.update(WatcherService.this, DataViewMode.ERROR, response);
-
-                        intervalMultiplierCurrent *= INTERVAL_MULTIPLIER;
-                        postRefresh();
-                    }
-                }, false);
+                                intervalMultiplierCurrent *= INTERVAL_MULTIPLIER;
+                                postRefresh();
+                            }
+                        });
             } else {
                 postRefresh();
             }
@@ -133,17 +138,20 @@ public class WatcherService extends Service {
         public void onReceive(final Context context, Intent intent) {
             if(BROADCAST_WIDGET_HELP_ACTION.equals(intent.getAction())) {
                 AppWidgetHelper.update(context, DataViewMode.LOADING, null);
-                new AbilityUseRequest(Action.HELP).execute(0, new ApiResponseCallback<CommonResponse>() {
-                    @Override
-                    public void processResponse(CommonResponse response) {
-                        AppWidgetHelper.updateWithRequest(context);
-                    }
+                RequestExecutor.execute(
+                        WatcherService.this,
+                        new PerformActionRequestBuilder().setAction(Action.HELP),
+                        new ApiCallback<CommonResponse>() {
+                            @Override
+                            public void onSuccess(CommonResponse response) {
+                                AppWidgetHelper.updateWithRequest(context);
+                            }
 
-                    @Override
-                    public void processError(CommonResponse response) {
-                        AppWidgetHelper.updateWithError(context, response.errorMessage);
-                    }
-                });
+                            @Override
+                            public void onError(AbstractApiResponse response) {
+                                AppWidgetHelper.updateWithError(context, response.errorMessage);
+                            }
+                        });
             }
         }
     };

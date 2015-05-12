@@ -26,7 +26,22 @@ import org.json.JSONException;
 public class RequestExecutor {
 
     public static <Q extends AbstractRequest<A>, A extends AbstractResponse> void execute(
-            final Context context, final AbstractRequestBuilder<Q> requestBuilder, final ApiCallback<A> callback) {
+            final Context context, final AbstractRequestBuilder<Q> requestBuilder, final ApiCallback<A> apiCallback) {
+        final ApiCallback<A> callback;
+        if(apiCallback == null) {
+            callback = new ApiCallback<A>() {
+                @Override
+                public void onSuccess(A response) {
+                }
+
+                @Override
+                public void onError(AbstractApiResponse response) {
+                }
+            };
+        } else {
+            callback = apiCallback;
+        }
+
         new Thread(new Runnable() {
             @Override
             public void run() {

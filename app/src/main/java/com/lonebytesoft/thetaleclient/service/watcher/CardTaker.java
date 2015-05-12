@@ -1,7 +1,9 @@
 package com.lonebytesoft.thetaleclient.service.watcher;
 
-import com.lonebytesoft.thetaleclient.api.request.TakeCardRequest;
-import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;
+import com.lonebytesoft.thetaleclient.TheTaleClientApplication;
+import com.lonebytesoft.thetaleclient.apisdk.RequestExecutor;
+import com.lonebytesoft.thetaleclient.sdk.response.GameInfoResponse;
+import com.lonebytesoft.thetaleclient.sdkandroid.request.GetCardRequestBuilder;
 import com.lonebytesoft.thetaleclient.util.PreferencesManager;
 
 /**
@@ -14,7 +16,7 @@ public class CardTaker implements GameStateWatcher {
     public void processGameState(GameInfoResponse gameInfoResponse) {
         if(PreferencesManager.shouldAutoactionCardTake()) {
             if(gameInfoResponse.account.hero.cards.cardHelpCurrent >= gameInfoResponse.account.hero.cards.cardHelpBarrier) {
-                new TakeCardRequest().execute(null);
+                RequestExecutor.execute(TheTaleClientApplication.getContext(), new GetCardRequestBuilder(), null);
             }
         }
     }

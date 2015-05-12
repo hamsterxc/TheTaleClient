@@ -9,9 +9,9 @@ import android.widget.RemoteViews;
 
 import com.lonebytesoft.thetaleclient.DataViewMode;
 import com.lonebytesoft.thetaleclient.R;
-import com.lonebytesoft.thetaleclient.api.ApiResponseCallback;
-import com.lonebytesoft.thetaleclient.api.request.GameInfoRequest;
-import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;
+import com.lonebytesoft.thetaleclient.sdk.AbstractApiResponse;
+import com.lonebytesoft.thetaleclient.sdk.response.GameInfoResponse;
+import com.lonebytesoft.thetaleclient.sdkandroid.ApiCallback;
 import com.lonebytesoft.thetaleclient.service.WatcherService;
 import com.lonebytesoft.thetaleclient.util.RequestUtils;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
@@ -34,19 +34,31 @@ public class AppWidgetHelper {
         }
     }
 
+    public static void update(final Context context, final AbstractApiResponse abstractApiResponse) {
+        final AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+
+        for(final AppWidget appWidget : AppWidget.values()) {
+            appWidgetManager.updateAppWidget(
+                    new ComponentName(context, appWidget.getProviderClass()),
+                    getRemoteViews(context, appWidget, abstractApiResponse));
+        }
+    }
+
     public static void updateWithRequest(final Context context) {
         update(context, DataViewMode.LOADING, null);
-        new GameInfoRequest(true).execute(new ApiResponseCallback<GameInfoResponse>() {
-            @Override
-            public void processResponse(GameInfoResponse response) {
-                update(context, DataViewMode.DATA, response);
-            }
+        RequestUtils.executeGameInfoRequest(
+                context,
+                new ApiCallback<GameInfoResponse>() {
+                    @Override
+                    public void onSuccess(GameInfoResponse response) {
+                        update(context, DataViewMode.DATA, response);
+                    }
 
-            @Override
-            public void processError(GameInfoResponse response) {
-                update(context, DataViewMode.ERROR, response);
-            }
-        }, true);
+                    @Override
+                    public void onError(AbstractApiResponse response) {
+                        update(context, response);
+                    }
+                });
     }
 
     public static void updateWithError(final Context context, final String error) {
@@ -88,6 +100,16 @@ public class AppWidgetHelper {
         }
 
         return remoteViews;
+    }
+
+    private static RemoteViews getRemoteViews(final Context context, final AppWidget appWidget,
+                                              final AbstractApiResponse abstractApiResponse) {
+        try {
+            return getRemoteViews(context, appWidget, DataViewMode.ERROR,
+                    new GameInfoResponse(abstractApiResponse.rawResponse));
+        } catch (JSONException e) {
+            return getRemoteViews(context, appWidget, DataViewMode.ERROR, null);
+        }
     }
 
 }
