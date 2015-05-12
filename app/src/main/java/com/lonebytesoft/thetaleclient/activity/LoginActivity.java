@@ -13,25 +13,25 @@ import com.crashlytics.android.Crashlytics;
 import com.lonebytesoft.thetaleclient.BuildConfig;
 import com.lonebytesoft.thetaleclient.DataViewMode;
 import com.lonebytesoft.thetaleclient.R;
-import com.lonebytesoft.thetaleclient.api.ApiResponseCallback;
-import com.lonebytesoft.thetaleclient.api.ApiResponseStatus;
-import com.lonebytesoft.thetaleclient.api.cache.RequestCacheManager;
-import com.lonebytesoft.thetaleclient.api.request.AuthRequest;
-import com.lonebytesoft.thetaleclient.api.request.GameInfoRequest;
-import com.lonebytesoft.thetaleclient.api.request.InfoRequest;
-import com.lonebytesoft.thetaleclient.api.request.ThirdPartyAuthRequest;
-import com.lonebytesoft.thetaleclient.api.request.ThirdPartyAuthStateRequest;
-import com.lonebytesoft.thetaleclient.api.response.AuthResponse;
-import com.lonebytesoft.thetaleclient.api.response.GameInfoResponse;
-import com.lonebytesoft.thetaleclient.api.response.InfoResponse;
-import com.lonebytesoft.thetaleclient.api.response.ThirdPartyAuthResponse;
-import com.lonebytesoft.thetaleclient.api.response.ThirdPartyAuthStateResponse;
+import com.lonebytesoft.thetaleclient.apisdk.RequestExecutor;
+import com.lonebytesoft.thetaleclient.sdk.AbstractApiResponse;
+import com.lonebytesoft.thetaleclient.sdk.response.AuthResponse;
+import com.lonebytesoft.thetaleclient.sdk.response.GameInfoResponse;
+import com.lonebytesoft.thetaleclient.sdk.response.ThirdPartyAuthResponse;
+import com.lonebytesoft.thetaleclient.sdk.response.ThirdPartyAuthStateResponse;
+import com.lonebytesoft.thetaleclient.sdkandroid.ApiCallback;
+import com.lonebytesoft.thetaleclient.sdkandroid.request.AuthRequestBuilder;
+import com.lonebytesoft.thetaleclient.sdkandroid.request.GameInfoRequestBuilder;
+import com.lonebytesoft.thetaleclient.sdkandroid.request.ThirdPartyAuthRequestBuilder;
+import com.lonebytesoft.thetaleclient.sdkandroid.request.ThirdPartyAuthStateRequestBuilder;
 import com.lonebytesoft.thetaleclient.service.WatcherService;
 import com.lonebytesoft.thetaleclient.service.widget.AppWidgetHelper;
 import com.lonebytesoft.thetaleclient.util.DialogUtils;
 import com.lonebytesoft.thetaleclient.util.PreferencesManager;
 import com.lonebytesoft.thetaleclient.util.RequestUtils;
 import com.lonebytesoft.thetaleclient.util.UiUtils;
+
+import java.util.List;
 
 /**
  * @author Hamster
@@ -42,7 +42,7 @@ public class LoginActivity extends FragmentActivity {
     private static final String URL_HOME = "http://the-tale.org/?action=the-tale-client";
     private static final String URL_REGISTRATION = "http://the-tale.org/accounts/registration/fast?action=the-tale-client";
     private static final String URL_PASSWORD_REMIND = "http://the-tale.org/accounts/profile/reset-password?action=the-tale-client";
-    private static final long THIRD_PARTY_AUTH_STATE_TIMEOUT = 10000;
+    private static final long THIRD_PARTY_AUTH_STATE_TIMEOUT = 5000; // 5 s
 
     private final Handler handler = new Handler(Looper.getMainLooper());
 
@@ -68,35 +68,38 @@ public class LoginActivity extends FragmentActivity {
     private Runnable thirdPartyAuthStateRequester = new Runnable() {
         @Override
         public void run() {
-            new ThirdPartyAuthStateRequest().execute(new ApiResponseCallback<ThirdPartyAuthStateResponse>() {
-                @Override
-                public void processResponse(ThirdPartyAuthStateResponse response) {
-                    switch(response.authState) {
-                        case NOT_REQUESTED:
-                        case REJECT:
-                            isThirdPartyAuthInProgress = false;
-                            UiUtils.setText(textError, response.authState.getDescription());
-                            setLoginContainersVisibility(true);
-                            setMode(DataViewMode.DATA);
-                            break;
+            RequestExecutor.execute(
+                    LoginActivity.this,
+                    new ThirdPartyAuthStateRequestBuilder(),
+                    RequestUtils.wrapCallback(new ApiCallback<ThirdPartyAuthStateResponse>() {
+                        @Override
+                        public void onSuccess(ThirdPartyAuthStateResponse response) {
+                            switch (response.authState) {
+                                case NOT_REQUESTED:
+                                case REJECT:
+                                    isThirdPartyAuthInProgress = false;
+                                    UiUtils.setText(textError, response.authState.name);
+                                    setLoginContainersVisibility(true);
+                                    setMode(DataViewMode.DATA);
+                                    break;
 
-                        case SUCCESS:
-                            isThirdPartyAuthInProgress = false;
-                            onSuccessfulLogin();
-                            break;
+                                case SUCCESS:
+                                    isThirdPartyAuthInProgress = false;
+                                    onSuccessfulLogin();
+                                    break;
 
-                        default:
+                                default:
+                                    isThirdPartyAuthInProgress = true;
+                                    handler.postDelayed(thirdPartyAuthStateRequester, THIRD_PARTY_AUTH_STATE_TIMEOUT);
+                            }
+                        }
+
+                        @Override
+                        public void onError(AbstractApiResponse response) {
                             isThirdPartyAuthInProgress = true;
                             handler.postDelayed(thirdPartyAuthStateRequester, THIRD_PARTY_AUTH_STATE_TIMEOUT);
-                    }
-                }
-
-                @Override
-                public void processError(ThirdPartyAuthStateResponse response) {
-                    isThirdPartyAuthInProgress = true;
-                    handler.postDelayed(thirdPartyAuthStateRequester, THIRD_PARTY_AUTH_STATE_TIMEOUT);
-                }
-            });
+                        }
+                    }, LoginActivity.this));
         }
     };
 
@@ -185,14 +188,14 @@ public class LoginActivity extends FragmentActivity {
 
     private void startRequestInit() {
         setMode(DataViewMode.LOADING);
-        new InfoRequest().execute(new ApiResponseCallback<InfoResponse>() {
-            @Override
-            public void processResponse(InfoResponse response) {
-                RequestUtils.setSession();
-                new GameInfoRequest(false).execute(new ApiResponseCallback<GameInfoResponse>() {
+        RequestUtils.restoreSession();
+        RequestExecutor.execute(
+                this,
+                new GameInfoRequestBuilder(),
+                RequestUtils.wrapCallback(new ApiCallback<GameInfoResponse>() {
                     @Override
-                    public void processResponse(GameInfoResponse response) {
-                        if(response.account == null) {
+                    public void onSuccess(GameInfoResponse response) {
+                        if (response.account == null) {
                             setLoginContainersVisibility(true);
                             setMode(DataViewMode.DATA);
                             AppWidgetHelper.updateWithError(LoginActivity.this, getString(R.string.game_not_authorized));
@@ -202,7 +205,7 @@ public class LoginActivity extends FragmentActivity {
                     }
 
                     @Override
-                    public void processError(GameInfoResponse response) {
+                    public void onError(AbstractApiResponse response) {
                         actionRetry.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -211,111 +214,92 @@ public class LoginActivity extends FragmentActivity {
                         });
                         setError(response.errorMessage);
                     }
-                }, false);
-            }
-
-            @Override
-            public void processError(InfoResponse response) {
-                actionRetry.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        startRequestInit();
-                    }
-                });
-                setError(response.errorMessage);
-            }
-        });
+                }, LoginActivity.this));
     }
 
     private void startRequestAuthSite() {
         setMode(DataViewMode.LOADING);
-        new ThirdPartyAuthRequest().execute(new ApiResponseCallback<ThirdPartyAuthResponse>() {
-            @Override
-            public void processResponse(final ThirdPartyAuthResponse response) {
-                // TODO check for isPaused if there will be crashes
-                DialogUtils.showMessageDialog(
-                        getSupportFragmentManager(),
-                        getString(R.string.common_dialog_attention_title),
-                        getString(R.string.login_dialog_confirm_authorization),
-                        new Runnable() {
+        RequestExecutor.execute(
+                this,
+                new ThirdPartyAuthRequestBuilder().setDefaults(this),
+                RequestUtils.wrapCallback(new ApiCallback<ThirdPartyAuthResponse>() {
+                    @Override
+                    public void onSuccess(final ThirdPartyAuthResponse response) {
+                        DialogUtils.showMessageDialog(
+                                getSupportFragmentManager(),
+                                getString(R.string.common_dialog_attention_title),
+                                getString(R.string.login_dialog_confirm_authorization),
+                                new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        isThirdPartyAuthInProgress = true;
+                                        thirdPartyAuthStateRequester.run();
+                                        startActivity(UiUtils.getOpenLinkIntent(
+                                                RequestUtils.URL_BASE + response.nextUrl));
+                                    }
+                                },
+                                new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        setLoginContainersVisibility(true);
+                                        setMode(DataViewMode.DATA);
+                                    }
+                                });
+                    }
+
+                    @Override
+                    public void onError(AbstractApiResponse response) {
+                        actionRetry.setOnClickListener(new View.OnClickListener() {
                             @Override
-                            public void run() {
-                                isThirdPartyAuthInProgress = true;
-                                thirdPartyAuthStateRequester.run();
-                                startActivity(UiUtils.getOpenLinkIntent(RequestUtils.URL_BASE + response.nextUrl));
-                            }
-                        },
-                        new Runnable() {
-                            @Override
-                            public void run() {
-                                setLoginContainersVisibility(true);
-                                setMode(DataViewMode.DATA);
+                            public void onClick(View v) {
+                                startRequestAuthSite();
                             }
                         });
-            }
-
-            @Override
-            public void processError(ThirdPartyAuthResponse response) {
-                actionRetry.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        startRequestAuthSite();
+                        setError(response.errorMessage);
                     }
-                });
-                setError(response.errorMessage);
-            }
-        });
+                }, LoginActivity.this));
     }
 
     private void sendAuthRequest(final String login, final String password) {
-        new AuthRequest().execute(login, password, true,
-                new ApiResponseCallback<AuthResponse>() {
+        RequestExecutor.execute(
+                this,
+                new AuthRequestBuilder().setLogin(login).setPassword(password),
+                RequestUtils.wrapCallback(new ApiCallback<AuthResponse>() {
                     @Override
-                    public void processResponse(AuthResponse response) {
-                        if (response.status == ApiResponseStatus.OK) {
-                            onSuccessfulLogin();
-                        } else {
-                            setMode(DataViewMode.LOADING);
-                        }
+                    public void onSuccess(AuthResponse response) {
+                        onSuccessfulLogin();
                     }
 
                     @Override
-                    public void processError(AuthResponse response) {
+                    public void onError(AbstractApiResponse response) {
                         LoginActivity.this.processError(response.errorMessage, login, password);
-                        if (response.errorsLogin != null) {
-                            UiUtils.setText(textErrorLogin, TextUtils.join("\n", response.errorsLogin));
+                        final List<String> errorsLogin;
+                        final List<String> errorsPassword;
+                        if(response.errors == null) {
+                            errorsLogin = null;
+                            errorsPassword = null;
+                        } else {
+                            errorsLogin = response.errors.get("email");
+                            errorsPassword = response.errors.get("password");
+                        }
+                        if (errorsLogin != null) {
+                            UiUtils.setText(textErrorLogin, TextUtils.join("\n", errorsLogin));
                             textLogin.requestFocus();
                         }
-                        if (response.errorsPassword != null) {
-                            UiUtils.setText(textErrorPassword, TextUtils.join("\n", response.errorsPassword));
-                            if(response.errorsLogin == null) {
+                        if (errorsPassword != null) {
+                            UiUtils.setText(textErrorPassword, TextUtils.join("\n", errorsPassword));
+                            if(errorsLogin == null) {
                                 textPassword.requestFocus();
                             } else {
                                 textLogin.requestFocus();
                             }
                         }
                     }
-                });
+                }, LoginActivity.this));
     }
 
     private void authorize(final String login, final String password) {
-        RequestCacheManager.invalidate();
-        if(wasError) {
-            new InfoRequest().execute(new ApiResponseCallback<InfoResponse>() {
-                @Override
-                public void processResponse(InfoResponse response) {
-                    sendAuthRequest(login, password);
-                }
-
-                @Override
-                public void processError(InfoResponse response) {
-                    LoginActivity.this.processError(response.errorMessage, login, password);
-                    textLogin.requestFocus();
-                }
-            });
-        } else {
-            sendAuthRequest(login, password);
-        }
+        sendAuthRequest(login, password);
     }
 
     private void setMode(final DataViewMode mode) {
@@ -351,8 +335,21 @@ public class LoginActivity extends FragmentActivity {
     }
 
     private void onSuccessfulLogin() {
-        startService(new Intent(this, WatcherService.class));
-        startMainActivity();
+        RequestExecutor.execute(
+                this,
+                new GameInfoRequestBuilder().setStaleTime(0),
+                new ApiCallback<GameInfoResponse>() {
+                    @Override
+                    public void onSuccess(GameInfoResponse response) {
+                        startService(new Intent(LoginActivity.this, WatcherService.class));
+                        startMainActivity();
+                    }
+
+                    @Override
+                    public void onError(AbstractApiResponse response) {
+                        setError(response.errorMessage);
+                    }
+                });
     }
 
     private void startMainActivity() {

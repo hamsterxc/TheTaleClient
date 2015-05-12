@@ -2,7 +2,6 @@
 <resources>
     <string name="app_name">The Tale Client Android SDK</string>
 
-    <string name="api_error">Произошла неизвестная ошибка.</string>
-    <string name="api_error_network">Произошла ошибка сети.</string>
-    <string name="api_error_update">Идет обновление игры.</string>
+    <string name="auth_app_name">The Tale Client</string>
+    <string name="auth_app_description">The Tale Client by Hamster</string>
 </resources>

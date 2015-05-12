@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.lonebytesoft.thetaleclient.DataViewMode;
 import com.lonebytesoft.thetaleclient.R;
+import com.lonebytesoft.thetaleclient.apisdk.RequestExecutor;
 import com.lonebytesoft.thetaleclient.apisdk.prerequisite.InfoPrerequisiteRequest;
 import com.lonebytesoft.thetaleclient.sdk.AbstractApiResponse;
 import com.lonebytesoft.thetaleclient.sdk.dictionary.Action;
@@ -29,7 +30,6 @@ import com.lonebytesoft.thetaleclient.sdk.response.CommonResponse;
 import com.lonebytesoft.thetaleclient.sdk.response.GameInfoResponse;
 import com.lonebytesoft.thetaleclient.sdk.response.InfoResponse;
 import com.lonebytesoft.thetaleclient.sdkandroid.ApiCallback;
-import com.lonebytesoft.thetaleclient.sdkandroid.RequestExecutor;
 import com.lonebytesoft.thetaleclient.sdkandroid.model.ArtifactInfoParcelable;
 import com.lonebytesoft.thetaleclient.sdkandroid.request.PerformActionRequestBuilder;
 import com.lonebytesoft.thetaleclient.util.DialogUtils;
@@ -175,7 +175,7 @@ public class EquipmentFragment extends WrapperFragment {
                     final View dropView = layoutInflater.inflate(R.layout.item_bag_drop, bagContainer, false);
                     final RequestActionView dropActionView = (RequestActionView) dropView.findViewById(R.id.bag_drop);
                     if (response.account.hero.basicInfo.bagItemsCount > 0) {
-                        RequestUtils.executePrerequisite(getActivity(), new InfoPrerequisiteRequest(), RequestUtils.wrapCallback(new ApiCallback<InfoResponse>() {
+                        RequestExecutor.executeOptional(getActivity(), new InfoPrerequisiteRequest(), RequestUtils.wrapCallback(new ApiCallback<InfoResponse>() {
                             @Override
                             public void onSuccess(InfoResponse infoResponse) {
                                 if (GameInfoUtils.isEnoughEnergy(response.account.hero.energy, PreferencesManager.getAbilityCost(Action.DROP_ITEM))) {

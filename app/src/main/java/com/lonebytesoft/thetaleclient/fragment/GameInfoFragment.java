@@ -20,6 +20,7 @@ import com.lonebytesoft.thetaleclient.DataViewMode;
 import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.TheTaleClientApplication;
 import com.lonebytesoft.thetaleclient.activity.MainActivity;
+import com.lonebytesoft.thetaleclient.apisdk.RequestExecutor;
 import com.lonebytesoft.thetaleclient.apisdk.prerequisite.InfoPrerequisiteRequest;
 import com.lonebytesoft.thetaleclient.fragment.dialog.TabbedDialog;
 import com.lonebytesoft.thetaleclient.sdk.AbstractApiResponse;
@@ -36,7 +37,6 @@ import com.lonebytesoft.thetaleclient.sdk.response.CommonResponse;
 import com.lonebytesoft.thetaleclient.sdk.response.GameInfoResponse;
 import com.lonebytesoft.thetaleclient.sdk.response.InfoResponse;
 import com.lonebytesoft.thetaleclient.sdkandroid.ApiCallback;
-import com.lonebytesoft.thetaleclient.sdkandroid.RequestExecutor;
 import com.lonebytesoft.thetaleclient.sdkandroid.model.CompanionInfoParcelable;
 import com.lonebytesoft.thetaleclient.sdkandroid.request.PerformActionRequestBuilder;
 import com.lonebytesoft.thetaleclient.util.DialogUtils;
@@ -467,7 +467,7 @@ public class GameInfoFragment extends WrapperFragment {
                         break;
 
                     case REST:
-                        RequestUtils.executePrerequisite(
+                        RequestExecutor.executeOptional(
                                 getActivity(),
                                 new InfoPrerequisiteRequest(),
                                 RequestUtils.wrapCallback(new ApiCallback<InfoResponse>() {
@@ -500,7 +500,7 @@ public class GameInfoFragment extends WrapperFragment {
                 if (response.account.isOwnInfo) {
                     actionHelp.setVisibility(View.VISIBLE);
                     actionHelp.setEnabled(false);
-                    RequestUtils.executePrerequisite(
+                    RequestExecutor.executeOptional(
                             getActivity(),
                             new InfoPrerequisiteRequest(),
                             RequestUtils.wrapCallback(new ApiCallback<InfoResponse>() {

@@ -2,10 +2,10 @@ package com.lonebytesoft.thetaleclient.apisdk.prerequisite;
 
 import android.text.TextUtils;
 
+import com.lonebytesoft.thetaleclient.apisdk.interceptor.BaseRequestExecutionInterceptor;
 import com.lonebytesoft.thetaleclient.sdk.request.GameInfoRequest;
 import com.lonebytesoft.thetaleclient.sdk.response.GameInfoResponse;
 import com.lonebytesoft.thetaleclient.sdkandroid.AbstractRequestBuilder;
-import com.lonebytesoft.thetaleclient.sdkandroid.interceptor.BaseRequestExecutionInterceptor;
 import com.lonebytesoft.thetaleclient.sdkandroid.interceptor.PrerequisiteRequest;
 import com.lonebytesoft.thetaleclient.sdkandroid.interceptor.RequestExecutionInterceptor;
 import com.lonebytesoft.thetaleclient.sdkandroid.request.GameInfoRequestBuilder;

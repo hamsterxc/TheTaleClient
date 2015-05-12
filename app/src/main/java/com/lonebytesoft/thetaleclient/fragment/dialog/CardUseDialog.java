@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.lonebytesoft.thetaleclient.R;
+import com.lonebytesoft.thetaleclient.apisdk.RequestExecutor;
 import com.lonebytesoft.thetaleclient.sdk.AbstractApiResponse;
 import com.lonebytesoft.thetaleclient.sdk.dictionary.CardTargetType;
 import com.lonebytesoft.thetaleclient.sdk.model.CouncilMemberInfo;
@@ -20,7 +21,6 @@ import com.lonebytesoft.thetaleclient.sdk.response.CommonResponse;
 import com.lonebytesoft.thetaleclient.sdk.response.PlaceResponse;
 import com.lonebytesoft.thetaleclient.sdk.response.PlacesResponse;
 import com.lonebytesoft.thetaleclient.sdkandroid.ApiCallback;
-import com.lonebytesoft.thetaleclient.sdkandroid.RequestExecutor;
 import com.lonebytesoft.thetaleclient.sdkandroid.model.CardInfoParcelable;
 import com.lonebytesoft.thetaleclient.sdkandroid.request.PlaceRequestBuilder;
 import com.lonebytesoft.thetaleclient.sdkandroid.request.PlacesRequestBuilder;

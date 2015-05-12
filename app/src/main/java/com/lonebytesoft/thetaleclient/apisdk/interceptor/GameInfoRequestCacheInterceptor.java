@@ -2,7 +2,6 @@ package com.lonebytesoft.thetaleclient.apisdk.interceptor;
 
 import com.lonebytesoft.thetaleclient.sdk.request.GameInfoRequest;
 import com.lonebytesoft.thetaleclient.sdk.response.GameInfoResponse;
-import com.lonebytesoft.thetaleclient.sdkandroid.interceptor.BaseRequestExecutionInterceptor;
 import com.lonebytesoft.thetaleclient.util.PreferencesManager;
 
 /**

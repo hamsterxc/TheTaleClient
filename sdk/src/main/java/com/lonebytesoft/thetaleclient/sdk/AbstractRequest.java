@@ -4,6 +4,7 @@ import com.lonebytesoft.thetaleclient.sdk.exception.ApiException;
 import com.lonebytesoft.thetaleclient.sdk.exception.HttpException;
 import com.lonebytesoft.thetaleclient.sdk.exception.UpdateException;
 import com.lonebytesoft.thetaleclient.sdk.util.Logger;
+import com.lonebytesoft.thetaleclient.sdk.util.RequestUtils;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -20,7 +21,6 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 
 import java.io.IOException;
-import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.HttpCookie;
 import java.net.URI;
@@ -34,8 +34,6 @@ import java.util.Random;
  */
 public abstract class AbstractRequest<T> {
 
-    private static final String COOKIE_CSRF_TOKEN = "csrftoken";
-
     private static final Object lock = new Object();
 
     /**
@@ -45,12 +43,7 @@ public abstract class AbstractRequest<T> {
      * @throws ApiException
      */
     protected String executeRequest() throws ApiException {
-        CookieHandler cookieHandler = CookieHandler.getDefault();
-        if(cookieHandler == null) {
-            cookieHandler = new CookieManager();
-            CookieHandler.setDefault(cookieHandler);
-        }
-        final CookieManager cookieManager = (CookieManager) cookieHandler;
+        final CookieManager cookieManager = RequestUtils.getCookieManager();
 
         final List<HttpCookie> cookies;
         synchronized (lock) {
@@ -67,7 +60,7 @@ public abstract class AbstractRequest<T> {
             cookie.setPath(httpCookie.getPath());
             cookieStore.addCookie(cookie);
 
-            if(httpCookie.getName().equals(COOKIE_CSRF_TOKEN)) {
+            if(httpCookie.getName().equals(RequestUtils.COOKIE_CSRF_TOKEN)) {
                 csrfToken = httpCookie.getValue();
             }
         }
@@ -83,7 +76,7 @@ public abstract class AbstractRequest<T> {
             }
             csrfToken = stringBuilder.toString();
 
-            final BasicClientCookie cookie = new BasicClientCookie(COOKIE_CSRF_TOKEN, csrfToken);
+            final BasicClientCookie cookie = new BasicClientCookie(RequestUtils.COOKIE_CSRF_TOKEN, csrfToken);
             cookie.setDomain(Urls.BASE_DOMAIN);
             cookie.setPath("/");
             cookieStore.addCookie(cookie);

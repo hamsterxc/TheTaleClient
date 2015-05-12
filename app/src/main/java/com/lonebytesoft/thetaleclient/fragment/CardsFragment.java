@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.lonebytesoft.thetaleclient.DataViewMode;
 import com.lonebytesoft.thetaleclient.R;
+import com.lonebytesoft.thetaleclient.apisdk.RequestExecutor;
 import com.lonebytesoft.thetaleclient.sdk.AbstractApiResponse;
 import com.lonebytesoft.thetaleclient.sdk.dictionary.CardRarity;
 import com.lonebytesoft.thetaleclient.sdk.model.CardInfo;
@@ -24,7 +25,6 @@ import com.lonebytesoft.thetaleclient.sdk.response.CombineCardsResponse;
 import com.lonebytesoft.thetaleclient.sdk.response.GameInfoResponse;
 import com.lonebytesoft.thetaleclient.sdk.response.GetCardResponse;
 import com.lonebytesoft.thetaleclient.sdkandroid.ApiCallback;
-import com.lonebytesoft.thetaleclient.sdkandroid.RequestExecutor;
 import com.lonebytesoft.thetaleclient.sdkandroid.model.CardInfoParcelable;
 import com.lonebytesoft.thetaleclient.sdkandroid.request.CombineCardsRequestBuilder;
 import com.lonebytesoft.thetaleclient.sdkandroid.request.GetCardRequestBuilder;

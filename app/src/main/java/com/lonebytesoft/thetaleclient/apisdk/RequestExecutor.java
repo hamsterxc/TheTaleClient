@@ -1,7 +1,8 @@
-package com.lonebytesoft.thetaleclient.sdkandroid;
+package com.lonebytesoft.thetaleclient.apisdk;
 
 import android.content.Context;
 
+import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.sdk.AbstractApiResponse;
 import com.lonebytesoft.thetaleclient.sdk.AbstractRequest;
 import com.lonebytesoft.thetaleclient.sdk.AbstractResponse;
@@ -9,8 +10,12 @@ import com.lonebytesoft.thetaleclient.sdk.ApiResponseStatus;
 import com.lonebytesoft.thetaleclient.sdk.exception.ApiException;
 import com.lonebytesoft.thetaleclient.sdk.exception.HttpException;
 import com.lonebytesoft.thetaleclient.sdk.exception.UpdateException;
+import com.lonebytesoft.thetaleclient.sdkandroid.AbstractRequestBuilder;
+import com.lonebytesoft.thetaleclient.sdkandroid.ApiCallback;
+import com.lonebytesoft.thetaleclient.sdkandroid.ErrorApiResponse;
+import com.lonebytesoft.thetaleclient.sdkandroid.interceptor.PrerequisiteRequest;
 import com.lonebytesoft.thetaleclient.sdkandroid.interceptor.RequestExecutionInterceptor;
-import com.lonebytesoft.thetaleclient.sdkandroid.util.RequestUtils;
+import com.lonebytesoft.thetaleclient.util.RequestUtils;
 
 import org.json.JSONException;
 
@@ -27,13 +32,15 @@ public class RequestExecutor {
             public void run() {
                 int errorStringResId = 0;
 
-                final Q request = requestBuilder.build(RequestUtils.getClientId(context));
+                final Q request = requestBuilder.build(
+                        com.lonebytesoft.thetaleclient.sdkandroid.util.RequestUtils.getClientId(context));
                 try {
                     final A response = request.execute();
                     if((response instanceof AbstractApiResponse) && (((AbstractApiResponse) response).status != ApiResponseStatus.OK)) {
                         callback.onError((AbstractApiResponse) response);
                     } else {
                         callback.onSuccess(response);
+                        RequestUtils.saveSession();
                     }
                 } catch (UpdateException e) {
                     errorStringResId = R.string.api_error_update;
@@ -89,6 +96,14 @@ public class RequestExecutor {
                 callback.onError(interceptor.getErrorResponseAfterSkip());
             }
         }
+    }
+
+    public static <Q extends AbstractRequest<A>, A extends AbstractResponse> void executeOptional(
+            final Context context, final PrerequisiteRequest<Q, A> prerequisiteRequest, final ApiCallback<A> callback) {
+        execute(context,
+                prerequisiteRequest.getRequestBuilder(),
+                prerequisiteRequest.getRequestExecutionInterceptor(),
+                callback);
     }
 
 }

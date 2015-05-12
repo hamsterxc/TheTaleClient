@@ -3,11 +3,11 @@ package com.lonebytesoft.thetaleclient.apisdk.prerequisite;
 import android.text.TextUtils;
 
 import com.lonebytesoft.thetaleclient.api.dictionary.Action;
+import com.lonebytesoft.thetaleclient.apisdk.interceptor.BaseRequestExecutionInterceptor;
 import com.lonebytesoft.thetaleclient.sdk.request.InfoRequest;
 import com.lonebytesoft.thetaleclient.sdk.response.InfoResponse;
 import com.lonebytesoft.thetaleclient.sdk.util.ObjectUtils;
 import com.lonebytesoft.thetaleclient.sdkandroid.AbstractRequestBuilder;
-import com.lonebytesoft.thetaleclient.sdkandroid.interceptor.BaseRequestExecutionInterceptor;
 import com.lonebytesoft.thetaleclient.sdkandroid.interceptor.PrerequisiteRequest;
 import com.lonebytesoft.thetaleclient.sdkandroid.interceptor.RequestExecutionInterceptor;
 import com.lonebytesoft.thetaleclient.sdkandroid.request.InfoRequestBuilder;

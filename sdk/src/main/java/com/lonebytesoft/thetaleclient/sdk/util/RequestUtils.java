@@ -10,6 +10,10 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.message.BasicNameValuePair;
 
 import java.io.UnsupportedEncodingException;
+import java.net.CookieHandler;
+import java.net.CookieManager;
+import java.net.HttpCookie;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,9 +26,23 @@ import java.util.Map;
  */
 public class RequestUtils {
 
+    public static final String COOKIE_CSRF_TOKEN = "csrftoken";
+    public static final String COOKIE_SESSION = "sessionid";
+
     public static final String PARAM_GET_METHOD_VERSION = "api_version";
     public static final String PARAM_GET_CLIENT_ID = "api_client";
     public static final String PARAM_POST_CSRF_TOKEN = "csrfmiddlewaretoken";
+
+    private static final Object lock = new Object();
+
+    public static CookieManager getCookieManager() {
+        CookieHandler cookieHandler = CookieHandler.getDefault();
+        if(cookieHandler == null) {
+            cookieHandler = new CookieManager();
+            CookieHandler.setDefault(cookieHandler);
+        }
+        return (CookieManager) cookieHandler;
+    }
 
     public static String getApiUrl(final String methodUrl) {
         if(methodUrl == null) {
@@ -101,6 +119,31 @@ public class RequestUtils {
         }
 
         return httpPost;
+    }
+
+    public static String getSession() {
+        final CookieManager cookieManager = getCookieManager();
+
+        final List<HttpCookie> cookies;
+        synchronized (lock) {
+            cookies = new ArrayList<>(cookieManager.getCookieStore().getCookies());
+        }
+
+        for(final HttpCookie httpCookie : cookies) {
+            if(httpCookie.getName().equals(RequestUtils.COOKIE_SESSION)) {
+                return httpCookie.getValue();
+            }
+        }
+        return null;
+    }
+
+    public static void setSession(final String session) {
+        final CookieManager cookieManager = getCookieManager();
+
+        final HttpCookie httpCookie = new HttpCookie(COOKIE_SESSION, session);
+        httpCookie.setDomain(Urls.BASE_DOMAIN);
+        httpCookie.setPath("/");
+        cookieManager.getCookieStore().add(URI.create(Urls.BASE_DOMAIN + "/"), httpCookie);
     }
 
 }

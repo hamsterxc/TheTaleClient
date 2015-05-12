@@ -17,6 +17,7 @@ import com.lonebytesoft.thetaleclient.DataViewMode;
 import com.lonebytesoft.thetaleclient.DrawerItem;
 import com.lonebytesoft.thetaleclient.R;
 import com.lonebytesoft.thetaleclient.TheTaleClientApplication;
+import com.lonebytesoft.thetaleclient.apisdk.RequestExecutor;
 import com.lonebytesoft.thetaleclient.apisdk.interceptor.GameInfoRequestCacheInterceptor;
 import com.lonebytesoft.thetaleclient.apisdk.prerequisite.InfoPrerequisiteRequest;
 import com.lonebytesoft.thetaleclient.fragment.GameFragment;
@@ -30,7 +31,6 @@ import com.lonebytesoft.thetaleclient.sdk.response.CommonResponse;
 import com.lonebytesoft.thetaleclient.sdk.response.GameInfoResponse;
 import com.lonebytesoft.thetaleclient.sdk.response.InfoResponse;
 import com.lonebytesoft.thetaleclient.sdkandroid.ApiCallback;
-import com.lonebytesoft.thetaleclient.sdkandroid.RequestExecutor;
 import com.lonebytesoft.thetaleclient.sdkandroid.request.GameInfoRequestBuilder;
 import com.lonebytesoft.thetaleclient.sdkandroid.request.LogoutRequestBuilder;
 import com.lonebytesoft.thetaleclient.util.DialogUtils;
@@ -188,7 +188,7 @@ public class MainActivity extends ActionBarActivity
                             new ChoiceDialog.ItemChooseListener() {
                                 @Override
                                 public void onItemSelected(final int position) {
-                                    RequestUtils.executePrerequisite(MainActivity.this, new InfoPrerequisiteRequest(), RequestUtils.wrapCallback(new ApiCallback<InfoResponse>() {
+                                    RequestExecutor.executeOptional(MainActivity.this, new InfoPrerequisiteRequest(), RequestUtils.wrapCallback(new ApiCallback<InfoResponse>() {
                                         @Override
                                         public void onSuccess(InfoResponse response) {
                                             final int accountId = PreferencesManager.getAccountId();
@@ -377,7 +377,7 @@ public class MainActivity extends ActionBarActivity
 
     public void updateGlobalInfo(final TurnInfo turnInfo) {
         drawerItemInfoView.setVisibility(View.VISIBLE);
-        RequestUtils.executePrerequisite(this, new InfoPrerequisiteRequest(), RequestUtils.wrapCallback(new ApiCallback<InfoResponse>() {
+        RequestExecutor.executeOptional(this, new InfoPrerequisiteRequest(), RequestUtils.wrapCallback(new ApiCallback<InfoResponse>() {
             @Override
             public void onSuccess(InfoResponse response) {
                 UiUtils.setText(accountNameTextView, PreferencesManager.getAccountName());

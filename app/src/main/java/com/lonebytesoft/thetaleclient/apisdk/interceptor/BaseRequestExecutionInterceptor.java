@@ -1,12 +1,13 @@
-package com.lonebytesoft.thetaleclient.sdkandroid.interceptor;
+package com.lonebytesoft.thetaleclient.apisdk.interceptor;
 
 import android.content.Context;
 
+import com.lonebytesoft.thetaleclient.apisdk.RequestExecutor;
 import com.lonebytesoft.thetaleclient.sdk.AbstractApiResponse;
 import com.lonebytesoft.thetaleclient.sdk.AbstractRequest;
 import com.lonebytesoft.thetaleclient.sdkandroid.AbstractRequestBuilder;
 import com.lonebytesoft.thetaleclient.sdkandroid.ApiCallback;
-import com.lonebytesoft.thetaleclient.sdkandroid.RequestExecutor;
+import com.lonebytesoft.thetaleclient.sdkandroid.interceptor.RequestExecutionInterceptor;
 
 /**
  * Base request execution interceptor with default behaviour

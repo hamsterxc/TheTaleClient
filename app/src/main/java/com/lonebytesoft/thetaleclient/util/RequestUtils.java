@@ -12,15 +12,14 @@ import com.lonebytesoft.thetaleclient.api.AbstractApiResponse;
 import com.lonebytesoft.thetaleclient.api.ApiResponseCallback;
 import com.lonebytesoft.thetaleclient.api.ApiResponseStatus;
 import com.lonebytesoft.thetaleclient.api.CommonResponseCallback;
+import com.lonebytesoft.thetaleclient.apisdk.RequestExecutor;
 import com.lonebytesoft.thetaleclient.apisdk.interceptor.GameInfoRequestCacheInterceptor;
 import com.lonebytesoft.thetaleclient.apisdk.prerequisite.GameInfoPrerequisiteRequest;
-import com.lonebytesoft.thetaleclient.sdk.AbstractRequest;
-import com.lonebytesoft.thetaleclient.sdk.AbstractResponse;
+import com.lonebytesoft.thetaleclient.apisdk.prerequisite.InfoPrerequisiteRequest;
 import com.lonebytesoft.thetaleclient.sdk.response.GameInfoResponse;
+import com.lonebytesoft.thetaleclient.sdk.response.InfoResponse;
 import com.lonebytesoft.thetaleclient.sdk.response.MapResponse;
 import com.lonebytesoft.thetaleclient.sdkandroid.ApiCallback;
-import com.lonebytesoft.thetaleclient.sdkandroid.RequestExecutor;
-import com.lonebytesoft.thetaleclient.sdkandroid.interceptor.PrerequisiteRequest;
 import com.lonebytesoft.thetaleclient.sdkandroid.request.GameInfoRequestBuilder;
 import com.lonebytesoft.thetaleclient.sdkandroid.request.MapRequestBuilder;
 
@@ -63,6 +62,14 @@ public class RequestUtils {
         if(!TextUtils.isEmpty(session)) {
             setSession(session);
         }
+    }
+
+    public static void restoreSession() {
+        com.lonebytesoft.thetaleclient.sdk.util.RequestUtils.setSession(PreferencesManager.getSession());
+    }
+
+    public static void saveSession() {
+        PreferencesManager.setSession(com.lonebytesoft.thetaleclient.sdk.util.RequestUtils.getSession());
     }
 
     public static String getGenericErrorResponse(final String error) {
@@ -179,14 +186,6 @@ public class RequestUtils {
         }
     }
 
-    public static <Q extends AbstractRequest<A>, A extends AbstractResponse> void executePrerequisite(
-            final Context context, final PrerequisiteRequest<Q, A> prerequisiteRequest, final ApiCallback<A> callback) {
-        RequestExecutor.execute(context,
-                prerequisiteRequest.getRequestBuilder(),
-                prerequisiteRequest.getRequestExecutionInterceptor(),
-                callback);
-    }
-
     public static void executeGameInfoRequestWatching(final Context context, final ApiCallback<GameInfoResponse> callback) {
         final int watchingAccountId = PreferencesManager.getWatchingAccountId();
         final boolean isForeignAccount = watchingAccountId != 0;
@@ -206,15 +205,25 @@ public class RequestUtils {
     }
 
     public static void executeMapRequest(final Context context, final ApiCallback<MapResponse> callback) {
-        executePrerequisite(context, new GameInfoPrerequisiteRequest(), new ApiCallback<GameInfoResponse>() {
+        RequestExecutor.executeOptional(context, new InfoPrerequisiteRequest(), new ApiCallback<InfoResponse>() {
             @Override
-            public void onSuccess(GameInfoResponse response) {
-                RequestExecutor.execute(
-                        context,
-                        new MapRequestBuilder()
-                                .setDynamicContentUrl(PreferencesManager.getDynamicContentUrl())
-                                .setMapVersion(PreferencesManager.getMapVersion()),
-                        callback);
+            public void onSuccess(InfoResponse response) {
+                RequestExecutor.executeOptional(context, new GameInfoPrerequisiteRequest(), new ApiCallback<GameInfoResponse>() {
+                    @Override
+                    public void onSuccess(GameInfoResponse response) {
+                        RequestExecutor.execute(
+                                context,
+                                new MapRequestBuilder()
+                                        .setDynamicContentUrl(PreferencesManager.getDynamicContentUrl())
+                                        .setMapVersion(PreferencesManager.getMapVersion()),
+                                callback);
+                    }
+
+                    @Override
+                    public void onError(com.lonebytesoft.thetaleclient.sdk.AbstractApiResponse response) {
+                        callback.onError(response);
+                    }
+                });
             }
 
             @Override
