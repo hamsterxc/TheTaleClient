@@ -26,6 +26,9 @@ Android-клиент для многопользовательской zero-play
 * **AccountInfoRequest**: информация об игроке. Параметры:
     * **String clientId** - идентификатор клиента API;
     * **int accountId** - идентификатор игрока.
+* **AccountsListRequest**: список игроков. Параметры:
+    * **String prefix** - первые символы имени аккаунта;
+    * **int page** - страница, с которой надо вернуть список.
 * **AuthRequest**: вход в игру. Параметры:
     * **String clientId** - идентификатор клиента API;
     * **String login** - E-mail адрес пользователя;
