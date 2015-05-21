@@ -6,7 +6,9 @@ import com.lonebytesoft.thetaleclient.sdk.exception.ApiException;
 import com.lonebytesoft.thetaleclient.sdk.exception.HttpException;
 import com.lonebytesoft.thetaleclient.sdk.exception.UpdateException;
 import com.lonebytesoft.thetaleclient.sdk.helper.MapHelper;
+import com.lonebytesoft.thetaleclient.sdk.model.AccountShortInfo;
 import com.lonebytesoft.thetaleclient.sdk.model.HeroInfo;
+import com.lonebytesoft.thetaleclient.sdk.request.AccountsListRequest;
 import com.lonebytesoft.thetaleclient.sdk.request.GameInfoRequest;
 import com.lonebytesoft.thetaleclient.sdk.request.InfoRequest;
 import com.lonebytesoft.thetaleclient.sdk.request.MapRequest;
@@ -14,17 +16,7 @@ import com.lonebytesoft.thetaleclient.sdk.response.GameInfoResponse;
 import com.lonebytesoft.thetaleclient.sdk.response.InfoResponse;
 import com.lonebytesoft.thetaleclient.sdk.response.MapResponse;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
 import org.apache.http.util.TextUtils;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import java.awt.Point;
 import java.awt.image.BufferedImage;
@@ -75,46 +67,44 @@ public class HeroesMap {
 
         final long currentTime = System.currentTimeMillis() / 1000;
         if(shouldGetHeroes) {
-            final ExecutorService executorService = Executors.newFixedThreadPool(15);
-            final Document document = Jsoup.parse(get("http://the-tale.org/accounts/"));
-            final Elements elements = document.select("div.pagination");
-            final Elements pageLinks = elements.get(0).children().get(0).children();
-            final int pagesCount = Integer.parseInt(pageLinks.get(pageLinks.size() - 1).child(0).ownText());
+            final ExecutorService executorService = Executors.newFixedThreadPool(10);
+            final int pagesCount = new AccountsListRequest("", 0).execute().pagesCount;
             final AtomicInteger countPages = new AtomicInteger(0);
             for(int i = 1; i <= pagesCount; i++) {
                 final int index = i;
                 executorService.execute(new Runnable() {
                     @Override
                     public void run() {
-                        final Document document = Jsoup.parse(get(
-                                String.format("http://the-tale.org/accounts/?prefix=&page=%d", index)));
-                        final Elements elements = document.select("tr.pgf-account-record");
-                        final int elementsCount = elements.size();
-                        for(int elementIndex = 0; elementIndex < elementsCount; elementIndex++) {
-                            final Element linkElement = elements.get(elementIndex).children().get(0).children().get(0);
-                            final String url = linkElement.attr("href");
-                            try {
-                                final GameInfoResponse gameInfoResponse = new GameInfoRequest(Utils.CLIENT_ID,
-                                        Integer.decode(url.substring(url.lastIndexOf('/') + 1))).execute();
-                                for(final Map.Entry<Integer, Pair<AtomicInteger, List<HeroInfo>>> entry : heroes.entrySet()) {
-                                    if((entry.getKey() == 0) || (gameInfoResponse.account.lastVisitTime + entry.getKey() > currentTime)) {
-                                        entry.getValue().getKey().incrementAndGet();
-                                        entry.getValue().getValue().add(gameInfoResponse.account.hero);
+                        try {
+                            final List<AccountShortInfo> accounts = new AccountsListRequest("", index).execute().accounts;
+                            final int elementsCount = accounts.size();
+                            for (int elementIndex = 0; elementIndex < elementsCount; elementIndex++) {
+                                try {
+                                    final GameInfoResponse gameInfoResponse = new GameInfoRequest(
+                                            Utils.CLIENT_ID, accounts.get(elementIndex).id).execute();
+                                    for (final Map.Entry<Integer, Pair<AtomicInteger, List<HeroInfo>>> entry : heroes.entrySet()) {
+                                        if ((entry.getKey() == 0)
+                                                || (gameInfoResponse.account.lastVisitTime + entry.getKey() > currentTime)) {
+                                            entry.getValue().getKey().incrementAndGet();
+                                            entry.getValue().getValue().add(gameInfoResponse.account.hero);
+                                        }
                                     }
+                                } catch (UpdateException e) {
+                                    Utils.consoleWriteError("\rError: Updating");
+                                    System.exit(0);
+                                } catch (ApiException e) {
+                                    if (e instanceof HttpException) {
+                                        Utils.consoleWriteError(String.format("\rError: HTTP %d", ((HttpException) e).getHttpStatusCode()));
+                                    } else {
+                                        Utils.consoleWriteError("\r" + e.getMessage());
+                                    }
+                                    elementIndex--;
                                 }
-                            } catch(UpdateException e) {
-                                Utils.consoleWriteError("\rError: Updating");
-                                System.exit(0);
-                            } catch(ApiException e) {
-                                if(e instanceof HttpException) {
-                                    Utils.consoleWriteError(String.format("\rError: HTTP %d", ((HttpException) e).getHttpStatusCode()));
-                                } else {
-                                    Utils.consoleWriteError("\r" + e.getMessage());
-                                }
-                                elementIndex--;
                             }
+                            System.out.print(String.format("\r%d/%d pages", countPages.incrementAndGet(), pagesCount));
+                        } catch (ApiException e) {
+                            executorService.execute(this);
                         }
-                        System.out.print(String.format("\r%d/%d pages", countPages.incrementAndGet(), pagesCount));
                     }
                 });
             }
@@ -151,22 +141,6 @@ public class HeroesMap {
         }
 
         Utils.consoleWrite(String.format("Done: %d s", System.currentTimeMillis() / 1000 - currentTime));
-    }
-
-    private static String get(final String url) {
-        final HttpClient httpClient = HttpClients.createDefault();
-        final HttpUriRequest httpUriRequest = new HttpGet(url);
-        try {
-            final HttpEntity httpEntity = httpClient.execute(httpUriRequest).getEntity();
-            if(httpEntity == null) {
-                return null;
-            } else {
-                return EntityUtils.toString(httpEntity);
-            }
-        } catch (IOException e) {
-            Utils.consoleWriteError(e.getMessage());
-            return null;
-        }
     }
 
 }

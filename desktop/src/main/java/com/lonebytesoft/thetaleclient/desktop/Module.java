@@ -2,6 +2,7 @@ package com.lonebytesoft.thetaleclient.desktop;
 
 import com.lonebytesoft.thetaleclient.desktop.module.CardsTotalPrice;
 import com.lonebytesoft.thetaleclient.desktop.module.HeroesMap;
+import com.lonebytesoft.thetaleclient.desktop.module.Subscribers;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -14,6 +15,7 @@ public enum Module {
 
     CARDS_TOTAL_PRICE("Account cards total price", CardsTotalPrice.class),
     HEROES_MAP("Map with heroes", HeroesMap.class),
+    SUBSCRIBERS("Subscribers", Subscribers.class),
     ;
 
     public final String name;
