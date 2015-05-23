@@ -237,6 +237,13 @@ public class UiUtils {
         }
     }
 
+    public static void runOnUiThread(final Fragment fragment, final Runnable task) {
+        final Activity activity = fragment.getActivity();
+        if(activity != null) {
+            activity.runOnUiThread(task);
+        }
+    }
+
     public static void updateGlobalInfo(final Fragment fragment,
                                         final com.lonebytesoft.thetaleclient.sdk.response.GameInfoResponse gameInfoResponse) {
         final MainActivity mainActivity = getMainActivity(fragment);

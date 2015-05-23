@@ -104,6 +104,7 @@
     <string name="game_affect_true">Влияет на игру</string>
     <string name="game_affect_false">Не влияет на игру</string>
     <string name="game_boss_fight">" \u2605"</string>
+    <string name="game_find_player_progress">Поиск игроков</string>
     <string name="game_help">Помочь</string>
     <string name="game_help_progress_to_next_card">%1$d / %2$d</string>
     <string name="game_help_to_next_card">Помощи до новой карты</string>
