@@ -3,9 +3,11 @@ package com.lonebytesoft.thetaleclient.sdk;
 import com.lonebytesoft.thetaleclient.sdk.exception.ApiException;
 import com.lonebytesoft.thetaleclient.sdk.exception.HttpException;
 import com.lonebytesoft.thetaleclient.sdk.exception.UpdateException;
-import com.lonebytesoft.thetaleclient.sdk.util.Logger;
+import com.lonebytesoft.thetaleclient.sdk.log.Logger;
 import com.lonebytesoft.thetaleclient.sdk.util.RequestUtils;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -26,6 +28,7 @@ import java.util.Random;
 /**
  * @author Hamster
  * @since 12.03.2015
+ * todo move from Apache HTTP client for Android
  */
 public abstract class AbstractRequest<T> {
 
@@ -45,6 +48,13 @@ public abstract class AbstractRequest<T> {
             cookies = new ArrayList<>(cookieManager.getCookieStore().getCookies());
         }
         final DefaultHttpClient httpClient = new DefaultHttpClient();
+		
+        if(Logger.isDebugEnabled()) {
+            Logger.debug(String.format("%s | Request cookies", getClass().getSimpleName()));
+            for(final HttpCookie httpCookie : cookies) {
+                Logger.debug(String.format("%s=%s", httpCookie.getName(), httpCookie.getValue()));
+            }
+        }
 
         String csrfToken = null;
         for(final HttpCookie httpCookie : cookies) {
@@ -93,9 +103,40 @@ public abstract class AbstractRequest<T> {
 
             final int httpStatusCode = httpResponse.getStatusLine().getStatusCode();
             final String response = EntityUtils.toString(httpResponse.getEntity());
-            Logger.log(String.format("%s | %d ms | %d bytes | %d %s %s",
-                    getClass().getSimpleName(), time, response == null ? 0 : response.length(),
-                    httpStatusCode, httpUriRequest.getMethod(), httpUriRequest.getURI()));
+			
+            if(Logger.isInfoEnabled()) {
+                Logger.info(String.format("%s | %s %s", getClass().getSimpleName(),
+                        httpUriRequest.getMethod(), httpUriRequest.getURI()));
+            }
+
+            if(Logger.isDebugEnabled()) {
+                if(httpUriRequest instanceof HttpEntityEnclosingRequest) {
+                    final HttpEntity httpEntity = ((HttpEntityEnclosingRequest) httpUriRequest).getEntity();
+                    if(httpEntity.isRepeatable()) {
+                        try {
+                            Logger.debug(EntityUtils.toString(httpEntity));
+                        } catch (IOException ignored) {
+                        }
+                    }
+                }
+            }
+
+            if(Logger.isInfoEnabled()) {
+                Logger.info(String.format("HTTP %d | %d ms | %d bytes",
+                        httpStatusCode, time, response == null ? 0 : response.length()));
+            }
+
+            if(Logger.isDebugEnabled()) {
+                if(response != null) {
+                    Logger.debug(response);
+                }
+
+                Logger.debug(String.format("%s | Response cookies", getClass().getSimpleName()));
+                for(final Cookie cookie : httpClient.getCookieStore().getCookies()) {
+                    Logger.debug(String.format("%s=%s", cookie.getName(), cookie.getValue()));
+                }
+            }
+			
             switch(httpStatusCode) {
                 case HttpStatus.SC_OK:
                     return response;
@@ -107,6 +148,10 @@ public abstract class AbstractRequest<T> {
                     throw new HttpException(httpStatusCode);
             }
         } catch (IOException e) {
+            if(Logger.isErrorEnabled()) {
+                Logger.error(e.toString());
+            }
+
             throw new ApiException(e);
         }
     }
