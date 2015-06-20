@@ -30,11 +30,17 @@ public enum RatingItem {
     ACHIEVEMENT_POINTS("achievements_points"),
     HELP("help_count"),
     GIFTS_RETURNED("gifts_returned"),
+    POLITICS_POWER("politics_power") {
+        @Override
+        public String getValue(final double value) {
+            return String.format("%.2f%%", value * 100);
+        }
+    },
     ;
 
     private final String code;
 
-    private RatingItem(final String code) {
+    RatingItem(final String code) {
         this.code = code;
     }
 
