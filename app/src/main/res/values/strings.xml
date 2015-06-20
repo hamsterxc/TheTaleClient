@@ -124,6 +124,7 @@
     <string name="game_read_aloud_wait_message">Инициализация голосового движка&#8230;</string>
 
     <string name="game_might_help_critical_chance">Критический эффект помощи: %.2f%%</string>
+    <string name="game_might_politics_power">Бонус к политическому влиянию: %.2f%%</string>
     <string name="game_might_pvp_effectiveness_bonus">Бонус к эффективности в PvP: %.2f%%</string>
 
     <string name="game_title_bag">Рюкзак (%1$s/%2$s)</string>

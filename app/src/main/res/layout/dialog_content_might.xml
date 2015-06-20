@@ -19,4 +19,11 @@
         android:layout_marginTop="4dp"
         style="?android:attr/textAppearanceMedium"/>
 
+    <TextView
+        android:id="@+id/dialog_might_politics_power"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        style="?android:attr/textAppearanceMedium"/>
+
 </LinearLayout>
