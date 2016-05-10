@@ -106,27 +106,34 @@ public class QuestsFragment extends WrapperFragment {
                             questNameView.setText(TextUtils.concat(questStep.name, rewardsString));
                         }
 
-                        ((ImageView) questStepView.findViewById(R.id.quest_icon)).setImageResource(questStep.type.getDrawableResId());
+                        if (questStep.type != null)
+                            ((ImageView) questStepView.findViewById(R.id.quest_icon)).setImageResource(questStep.type.getDrawableResId());
 
                         final ViewGroup actorsContainer = (ViewGroup) questStepView.findViewById(R.id.quest_actors_container);
                         for(final QuestActorInfo actor : questStep.actors) {
+                            if (actor == null) continue;
                             final View actorView = layoutInflater.inflate(R.layout.item_text, actorsContainer, false);
 
                             final TextView actorTextView = (TextView) actorView.findViewById(R.id.item_text_content);
                             final CharSequence actorText;
                             final Spannable actorName = new SpannableString(actor.name);
                             actorName.setSpan(new StyleSpan(Typeface.BOLD), 0, actorName.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+                            if (actor.type == null) continue;
                             switch(actor.type) {
                                 case PERSON:
+                                    if (actor.personInfo == null) continue;
                                     actorText = TextUtils.concat(actorName, ": ", actor.personInfo.name);
                                     actorNames.put(actorTextView, actor.personInfo.placeId);
                                     break;
 
                                 case PLACE:
+                                    if (actor.placeInfo == null) continue;
                                     actorText = TextUtils.concat(actorName, ": ", actor.placeInfo.name);
                                     break;
 
                                 case SPENDING:
+                                    if (actor.spendingInfo == null) continue;
                                     actorText = TextUtils.concat(actorName, ": ", actor.spendingInfo.goal);
                                     break;
 
